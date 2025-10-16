@@ -1,2 +1,3 @@
-# pwa
-PWA studies project
+# Progresywna Aplikacja Mobilna
+Aplikacja ma na celu wspomoagać wyuczanie indywidualnych nawyków użytkownika poprzez gamifikację.
+Każdy użytkownik tworzy swoją postać którą ma za zadanie systematycznie rozwijać poprzez swoją produktywność i wykonywanie określonych przez siebie czynności. Celem jest w przyjemny sposób wykreować u użytkownika pozytywne nawyki, które rozwiną jego postać, a co za tym idzie jego jako człowieka.
