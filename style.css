@@ -28,14 +28,14 @@ body.offline section {
 }
 
 body {
-  background-color: #15161C;
+  background-color: #15161c;
   color: white;
-  font-family: 'Comfortaa', sans-serif;
-  
+  font-family: "Comfortaa", sans-serif;
 }
 
 .navbar {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0.02rem 2rem;
@@ -55,6 +55,16 @@ body {
   text-decoration: none;
   margin-left: 1.5rem;
   font-weight: 600;
+}
+.tabNav {
+  display: flex;
+
+}
+.tabNavItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar a:hover {
@@ -80,6 +90,12 @@ body {
   width: 40px;
   font-size: 20px;
 }
+.calendar-grid-wrapper {
+  max-width: 600px;
+  margin: 0 auto; /* horyzontalne wyśrodkowanie wrappera */
+  display: block; /* zostawiamy blok, nie flex ani grid */
+  text-align: center;
+}
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -100,7 +116,7 @@ body {
   height: 40px;
   font-size: 16px;
   border-radius: 50px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,9 +131,30 @@ body {
 }
 .day.active {
   background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
 #taskDateTitle {
   padding-top: 2vh;
   padding-left: 2vw;
+}
+.taskList {
+  padding-left: 0px;
+  margin-left: 0px;
+}
+li {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin-left: 0px;
+  padding-left: 0px;
+  list-style: none;
+  /* background-color: red; */
+}
+.addTask {
+  border-radius: 24px;
+  padding: 12px 16px;
+  font-size: 20px;
+  line-height: 20px;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
 }

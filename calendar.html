@@ -10,10 +10,18 @@
     <body>
         <header class="navbar">
             <h1 class="logo">Habit Hero</h1>
-            <nav>
-                <a href="/index.html">Dashboard</a>
-                <a href="/calendar.html">Calendar</a>
-                <a href="#">Friends</a>
+            <nav class="tabNav">
+                <a href="/index.html" class="tabNavItem">Dashboard</a>
+                <a href="/calendar.html" class="tabNavItem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Calendar
+                </a>
+                <a href="#" class="tabNavItem">Friends</a>
             </nav>
         </header>
 
@@ -24,13 +32,17 @@
                 <button id="nextMonth" class="monthArrow">›</button>
             </header>
             
-            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="calendar-grid-wrapper">
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
         </section>
 
         <section class="tasks">
-            <h3 id="taskDateTitle">Tasks: </h3>
+            <h3 id="taskDateTitle"> </h3>
             <ul id="taskList"></ul>
         </section>
+
+        <button class="addTask"> + </button>
           
         <script>
             // -----------------------
@@ -136,17 +148,44 @@
             function renderTasksForDay(date) {
                 const title = document.getElementById('taskDateTitle');
                 const list = document.getElementById('taskList');
-        
+
                 const key = formatDateKey(date);
                 title.textContent = `Tasks for ${date.toDateString()}`;
                 list.innerHTML = '';
-        
-                (tasks[key] || []).forEach(task => {
+
+                // download states from localStorage
+                const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+                const dayState = saved[key] || {};
+
+                (tasks[key] || []).forEach((task, index) => {
                     const li = document.createElement('li');
-                    li.textContent = task;
+
+                    // checkbox
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `task-${key}-${index}`; // unique ID
+                    checkbox.checked = !!dayState[task]; // state from localStorage
+                    checkbox.style.marginRight = '12px';
+
+                    // Label
+                    const label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.textContent = task;
+
+                    // Save change to localStorage
+                    checkbox.addEventListener('change', () => {
+                        const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+                        saved[key] = saved[key] || {};
+                        saved[key][task] = checkbox.checked;
+                        localStorage.setItem('tasksState', JSON.stringify(saved));
+                    });
+
+                    li.appendChild(checkbox);
+                    li.appendChild(label);
                     list.appendChild(li);
                 });
             }
+
         
             // -----------------------
             // month arrows navigation
