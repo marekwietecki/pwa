@@ -60,3 +60,64 @@ body {
 .navbar a:hover {
   opacity: 0.7;
 }
+
+/* Calendar */
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+#currentMonth {
+  width: 204px;
+  text-align: center;
+}
+.monthArrow {
+  border-radius: 50px;
+  height: 40px;
+  width: 40px;
+  font-size: 20px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
+  justify-items: center;
+}
+.day,
+.day-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.day {
+  aspect-ratio: 1;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.day:hover {
+  opacity: 50%;
+}
+.day-label {
+  font-size: 12px;
+  opacity: 0.6;
+}
+.day.active {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
+}
+#taskDateTitle {
+  padding-top: 2vh;
+  padding-left: 2vw;
+}
