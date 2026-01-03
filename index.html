@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BetterMe</title>
+        <link rel="stylesheet" href="./style.css">
+        <link rel="manifest" href="./manifest.webmanifest">
+    </head>
+    <body>
+        <header class="navbar">
+            <h1 class="logo">Habit Hero</h1>
+            <nav>
+              <a href="#">Dashboard</a>
+              <a href="#">Add</a>
+              <a href="#">Hero</a>
+            </nav>
+        </header>
+
+
+        <script src="./app.js"></script>
+        <script>
+            if('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(reg => console.log('SW register success', reg.scope))
+                        .catch(err => console.error('SW register failed', err))
+                })
+            }
+        </script>
+    </body>
+</html>

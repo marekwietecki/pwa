@@ -1,0 +1,26 @@
+{
+    "name": "BetterMe",
+    "short_name": "BetterMe",
+    "description": "Spraw aby twoja codzienność stała się lepsza. Rozwijaj swoje nawyki i zbieraj cenne doświadczenie na przyszłość",
+    "lang": "en",
+    "start_url": "/index.html",
+    "scope": "./",
+    "display": "standalone",
+    "backgroung_color": "#11121C",
+    "theme_color": "#AD22B6",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "assets/192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
