@@ -192,45 +192,49 @@
             // tasks for selected day
             // -----------------------
             function renderTasksForDay(date) {
-                const title = document.getElementById('taskDateTitle');
-                const list = document.getElementById('taskList');
+            const title = document.getElementById('taskDateTitle');
+            const list = document.getElementById('taskList');
 
-                const key = formatDateKey(date);
-                title.textContent = `Tasks for ${date.toDateString()}`;
-                list.innerHTML = '';
+            const key = formatDateKey(date);
+            title.textContent = `Tasks for ${date.toDateString()}`;
+            list.innerHTML = '';
 
-                // download states from localStorage
-                const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
-                const dayState = saved[key] || {};
+            // Pobierz zadania z localStorage
+            const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+            const dayState = saved[key] || {}; // obiekt { taskName: {done: false, location: ...} }
 
-                (tasks[key] || []).forEach((task, index) => {
-                    const li = document.createElement('li');
+            Object.keys(dayState).forEach((taskName, index) => {
+                const li = document.createElement('li');
 
-                    // checkbox
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = `task-${key}-${index}`; // unique ID
-                    checkbox.checked = !!dayState[task]; // state from localStorage
-                    checkbox.style.marginRight = '12px';
+                // checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `task-${key}-${index}`;
+                checkbox.checked = !!dayState[taskName].done;
+                checkbox.style.marginRight = '12px';
 
-                    // Label
-                    const label = document.createElement('label');
-                    label.htmlFor = checkbox.id;
-                    label.textContent = task;
+                // Label
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = taskName;
+                if (dayState[taskName].location) {
+                    label.textContent += ` 📍 ${dayState[taskName].location}`;
+                }
 
-                    // Save change to localStorage
-                    checkbox.addEventListener('change', () => {
-                        const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
-                        saved[key] = saved[key] || {};
-                        saved[key][task] = checkbox.checked;
-                        localStorage.setItem('tasksState', JSON.stringify(saved));
-                    });
-
-                    li.appendChild(checkbox);
-                    li.appendChild(label);
-                    list.appendChild(li);
+                // zapis zmian w localStorage
+                checkbox.addEventListener('change', () => {
+                    const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+                    saved[key] = saved[key] || {};
+                    saved[key][taskName].done = checkbox.checked;
+                    localStorage.setItem('tasksState', JSON.stringify(saved));
                 });
-            }
+
+                li.appendChild(checkbox);
+                li.appendChild(label);
+                list.appendChild(li);
+            });
+        }
+
 
         
             // -----------------------
@@ -250,168 +254,144 @@
             renderCalendar();
         </script>
 
-        
         <script>
-            // -----
-            // fab show/hide
-            // -----
-            const openBtn = document.getElementById('addTaskBtn');
-            const closeBtn = document.getElementById('closeModal');
-            const overlay = document.getElementById('modalOverlay');
-            
-            openBtn.onclick = () => {
-            overlay.classList.add('open');
-            };
-            
-            closeBtn.onclick = () => {
-            overlay.classList.remove('open');
-            };
-            
-            // klik w tło
-            overlay.onclick = (e) => {
-            if (e.target === overlay) {
-                overlay.classList.remove('open');
+            const input = document.getElementById('locationInput');
+            const searchBtn = document.getElementById('searchLocation');
+            const geoBtn = document.getElementById('useMyLocation');
+
+            let selectedLocation = null;
+
+            // ===== 1️⃣ Wyszukiwanie po wpisaniu tekstu =====
+            searchBtn.addEventListener('click', async () => {
+            const query = input.value.trim();
+            if (!query) return;
+
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (!data.length) {
+                input.value = '';
+                input.classList.remove('success');
+                input.classList.add('error');
+                selectedLocation = null;
+                alert('Location not found');
+                return;
+                }
+
+                const place = data[0];
+                selectedLocation = {
+                name: place.display_name,
+                lat: parseFloat(place.lat),
+                lng: parseFloat(place.lon)
+                };
+
+                input.value = place.display_name; // zostaje poprawiona nazwa
+                input.classList.remove('error');
+                input.classList.add('success');
+                console.log('Saved location:', selectedLocation);
+
+            } catch (e) {
+                console.error('Search location error', e);
+                input.value = '';
+                selectedLocation = null;
             }
-            };
-            </script>
+            });
 
-            <script>
-                const input = document.getElementById('locationInput');
-                const searchBtn = document.getElementById('searchLocation');
-                const geoBtn = document.getElementById('useMyLocation');
+            // ===== 2️⃣ Pobranie lokalizacji GPS =====
+            geoBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert('Geolocation not supported');
+                return;
+            }
 
-                let selectedLocation = null;
-
-                // ===== 1️⃣ Wyszukiwanie po wpisaniu tekstu =====
-                searchBtn.addEventListener('click', async () => {
-                const query = input.value.trim();
-                if (!query) return;
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                const { latitude, longitude } = position.coords;
+                console.log('GPS coords:', latitude, longitude);
 
                 try {
-                    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
                     const res = await fetch(url);
                     const data = await res.json();
 
-                    if (!data.length) {
+                    if (!data || !data.display_name) {
                     input.value = '';
-                    input.classList.remove('success');
-                    input.classList.add('error');
                     selectedLocation = null;
                     alert('Location not found');
                     return;
                     }
 
-                    const place = data[0];
                     selectedLocation = {
-                    name: place.display_name,
-                    lat: parseFloat(place.lat),
-                    lng: parseFloat(place.lon)
+                    name: data.display_name,
+                    lat: latitude,
+                    lng: longitude
                     };
 
-                    input.value = place.display_name; // zostaje poprawiona nazwa
+                    input.value = data.display_name; // ← podmienia wartość inputu
                     input.classList.remove('error');
                     input.classList.add('success');
-                    console.log('Saved location:', selectedLocation);
+
+                    console.log('Location set:', selectedLocation);
 
                 } catch (e) {
-                    console.error('Search location error', e);
+                    console.error('Reverse geocoding failed', e);
                     input.value = '';
                     selectedLocation = null;
                 }
-                });
-
-                // ===== 2️⃣ Pobranie lokalizacji GPS =====
-                geoBtn.addEventListener('click', () => {
-                if (!navigator.geolocation) {
-                    alert('Geolocation not supported');
-                    return;
+                },
+                (err) => {
+                console.error('Geolocation error:', err);
+                alert('Could not get location. Make sure you allowed it.');
+                input.value = '';
+                selectedLocation = null;
                 }
-
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                    const { latitude, longitude } = position.coords;
-                    console.log('GPS coords:', latitude, longitude);
-
-                    try {
-                        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-                        const res = await fetch(url);
-                        const data = await res.json();
-
-                        if (!data || !data.display_name) {
-                        input.value = '';
-                        selectedLocation = null;
-                        alert('Location not found');
-                        return;
-                        }
-
-                        selectedLocation = {
-                        name: data.display_name,
-                        lat: latitude,
-                        lng: longitude
-                        };
-
-                        input.value = data.display_name; // ← podmienia wartość inputu
-                        input.classList.remove('error');
-                        input.classList.add('success');
-
-                        console.log('Location set:', selectedLocation);
-
-                    } catch (e) {
-                        console.error('Reverse geocoding failed', e);
-                        input.value = '';
-                        selectedLocation = null;
-                    }
-                    },
-                    (err) => {
-                    console.error('Geolocation error:', err);
-                    alert('Could not get location. Make sure you allowed it.');
-                    input.value = '';
-                    selectedLocation = null;
-                    }
-                );
-                });
-              </script>
+            );
+            });
+        </script>
               
 
               
-              <script>
-                // saving the task
+        <script>
+            // FAB 
+            const fabBtn = document.getElementById('addTaskBtn'); 
+            const closeBtn = document.getElementById('closeModal');
+            const overlay = document.getElementById('modalOverlay');
 
-                const addTaskBtn = document.querySelector('.addTask'); 
-                const taskNameInput = document.getElementById('taskName');
-                const taskDateInput = document.getElementById('taskDate');
-                const locationInput = document.getElementById('locationInput');
-                const overlay = document.getElementById('modalOverlay');
-                
-                addTaskBtn.addEventListener('click', () => {
-                    const name = taskNameInput.value.trim();
-                    const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is picked it gets today's date
-                    const location = locationInput.value.trim();
-                
-                    if (!name) {
-                        alert('Enter task name');
-                        return;
-                    }
-                
-                    const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
-                    saved[dateStr] = saved[dateStr] || {};
-                    
-                    saved[dateStr][name] = {
-                        done: false,
-                        location: location || null
-                    };
-                
-                    localStorage.setItem('tasksState', JSON.stringify(saved));
-                
-                    taskNameInput.value = '';
-                    taskDateInput.value = '';
-                    locationInput.value = '';
-                    overlay.classList.remove('open');
-                
-                    selectedDate = new Date(dateStr);
-                    renderCalendar(); 
-                });
-                </script>
+            fabBtn.addEventListener('click', () => overlay.classList.add('open'));
+            closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) overlay.classList.remove('open');
+            });
+
+            // adding a task
+            const addTaskModalBtn = document.querySelector('.addTask');
+            const taskNameInput = document.getElementById('taskName');
+            const taskDateInput = document.getElementById('taskDate');
+            const locationInput = document.getElementById('locationInput');
+
+            addTaskModalBtn.addEventListener('click', () => {
+                const name = taskNameInput.value.trim();
+                if (!name) return alert('Enter task name');
+
+                const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is provided date will be set for today
+                const location = locationInput.value.trim();
+
+                const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+                saved[dateStr] = saved[dateStr] || {};
+                saved[dateStr][name] = { done: false, location: location || null };
+                localStorage.setItem('tasksState', JSON.stringify(saved));
+
+                taskNameInput.value = '';
+                taskDateInput.value = '';
+                locationInput.value = '';
+                overlay.classList.remove('open');
+
+                selectedDate = new Date(dateStr);
+                renderCalendar();
+            });
+        </script>
                 
             
 
