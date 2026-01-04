@@ -68,25 +68,25 @@
 
         <div class="modal-overlay" id="modalOverlay">
             <div class="modal-sheet">
-            <header class="modal-header">
-                <h3>Add task</h3>
-                <button id="closeModal">✕</button>
-            </header>
-        
-            <input type="text" placeholder="Task name" id="taskName" />
-            <input type="date" id="taskDate" />
+                <header class="modal-header">
+                    <h3>Add task</h3>
+                    <button id="closeModal">✕</button>
+                </header>
             
-            <input
-                type="text"
-                id="locationInput"
-                placeholder="Enter location (e.g. Hanna, Lubuskie)"
-            />
-            <button id="searchLocation">📍 Set location</button>
-            <button id="useMyLocation">📍 Use current location</button>
+                <input type="text" placeholder="Task name" id="taskName" />
+                <input type="date" id="taskDate" />
+                <div style="flex: 1">
+                    <input
+                        type="text"
+                        id="locationInput"
+                        placeholder="Enter location (e.g. Hanna, Lubuskie)"
+                    />
+                    <button id="searchLocation">✔️</button>
+                    <button id="useMyLocation">📍 Current Location</button>
+                </div>
 
 
-
-            <button class="primary">Add</button>
+                <button class="addTask">Add</button>
             </div>
         </div>
           
@@ -370,9 +370,49 @@
                     }
                 );
                 });
-                </script>
               </script>
               
+
+              
+              <script>
+                // saving the task
+
+                const addTaskBtn = document.querySelector('.addTask'); 
+                const taskNameInput = document.getElementById('taskName');
+                const taskDateInput = document.getElementById('taskDate');
+                const locationInput = document.getElementById('locationInput');
+                const overlay = document.getElementById('modalOverlay');
+                
+                addTaskBtn.addEventListener('click', () => {
+                    const name = taskNameInput.value.trim();
+                    const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is picked it gets today's date
+                    const location = locationInput.value.trim();
+                
+                    if (!name) {
+                        alert('Enter task name');
+                        return;
+                    }
+                
+                    const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+                    saved[dateStr] = saved[dateStr] || {};
+                    
+                    saved[dateStr][name] = {
+                        done: false,
+                        location: location || null
+                    };
+                
+                    localStorage.setItem('tasksState', JSON.stringify(saved));
+                
+                    taskNameInput.value = '';
+                    taskDateInput.value = '';
+                    locationInput.value = '';
+                    overlay.classList.remove('open');
+                
+                    selectedDate = new Date(dateStr);
+                    renderCalendar(); 
+                });
+                </script>
+                
             
 
         <!-- im gonna update that later -->

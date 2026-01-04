@@ -53,7 +53,7 @@ body {
 }
 .tabNav {
   display: flex;
-
+  height: 80px;
 }
 .tabNavItem {
   display: flex;
@@ -130,7 +130,7 @@ body {
 }
 #taskDateTitle {
   padding-top: 2vh;
-  padding-left: 2vw;
+  padding-left: 4vw;
 }
 .taskList {
   padding-left: 0px;
@@ -176,6 +176,8 @@ li {
   transform: translateY(100%);
   transition: 0.35s cubic-bezier(.4,0,.2,1);
   height: 240px;
+  display: flex;
+  flex-direction: column;
 }
 .modal-header {
   display: flex;
@@ -212,10 +214,46 @@ li {
   padding: 10px 16px;
   border-radius: 24px;
 }
+#locationInput {
+  padding: 10px 16px;
+  border-radius: 24px;
+}
+#searchLocation {
+  padding: 10px 16px;
+  border-radius: 24px;
+}
+#useMyLocation {
+  padding: 10px 16px;
+  border-radius: 24px;
+}
 input.success {
   border: 1px solid #4caf50;
 }
 
 input.error {
   border: 1px solid #ff4f4f;
+}
+
+.addTask {
+  padding: 10px 16px;
+  border-radius: 24px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+@media (max-width: 740px) {
+  .logo {
+    display: none;
+  }
+  .navbar {
+    align-items: space-between;
+    justify-content: center;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .calendar-grid {
+    padding-left: 4px;
+    padding-right: 4px;
+    gap: 8px;
+  }
 }
