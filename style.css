@@ -11,14 +11,12 @@
   z-index: 9999;
   transition: all 0.3s ease;
 }
-
 /* Gdy aktywny – pokazuje się u góry, a reszta strony się przesuwa */
 body.offline #offline-banner {
   display: block;
   position: sticky;
   top: 0;
 }
-
 /* Dodaj płynne przesunięcie kontentu */
 body.offline main,
 body.offline header,
@@ -26,13 +24,11 @@ body.offline section {
   transition: margin-top 0.3s ease;
   margin-top: 42px; /* wysokość paska */
 }
-
 body {
   background-color: #15161c;
   color: white;
   font-family: "Comfortaa", sans-serif;
 }
-
 .navbar {
   display: flex;
   flex-direction: row;
@@ -49,7 +45,6 @@ body {
   top: 0;
   z-index: 100;
 }
-
 .navbar a {
   color: white;
   text-decoration: none;
@@ -149,12 +144,78 @@ li {
   list-style: none;
   /* background-color: red; */
 }
-.addTask {
+.addTaskBtn {
   border-radius: 24px;
-  padding: 12px 16px;
-  font-size: 20px;
+  padding: 12px 14px;
+  font-size: 28px;
   line-height: 20px;
   position: absolute;
   bottom: 16px;
   right: 16px;
+}
+
+/* Tło */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+/* Sheet */
+.modal-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(30,30,30,0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  transform: translateY(100%);
+  transition: 0.35s cubic-bezier(.4,0,.2,1);
+  height: 240px;
+}
+.modal-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+#closeModal {
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+}
+/* OTWARTY MODAL */
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-overlay.open .modal-sheet {
+  transform: translateY(0);
+}
+#taskDate {
+  padding: 10px 16px;
+  border-radius: 24px;
+  align-items: center;
+}
+#taskName {
+  padding: 10px 16px;
+  border-radius: 24px;
+
+}
+#locBtn {
+  padding: 10px 16px;
+  border-radius: 24px;
+}
+input.success {
+  border: 1px solid #4caf50;
+}
+
+input.error {
+  border: 1px solid #ff4f4f;
 }
