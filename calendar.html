@@ -82,7 +82,8 @@
                 placeholder="Enter location (e.g. Hanna, Lubuskie)"
             />
             <button id="searchLocation">📍 Set location</button>
-            <button id="locBtn">📍 Use current location</button>
+            <button id="useMyLocation">📍 Use current location</button>
+
 
 
             <button class="primary">Add</button>
@@ -275,92 +276,101 @@
             </script>
 
             <script>
-                // location
                 const input = document.getElementById('locationInput');
-                const geoBtn = document.getElementById('locBtn');                
                 const searchBtn = document.getElementById('searchLocation');
-              
+                const geoBtn = document.getElementById('useMyLocation');
+
                 let selectedLocation = null;
-              
-                // 🔹 wspólna funkcja ustawiania lokalizacji
-                function setLocation(location) {
-                  selectedLocation = location;
-                  input.value = location.name;
-                  input.classList.remove('error');
-                  input.classList.add('success');
-              
-                  console.log('Location set:', selectedLocation);
-                }
-              
-                function clearLocation() {
-                  selectedLocation = null;
-                  input.value = '';
-                  input.classList.remove('success');
-                  input.classList.add('error');
-                }
-              
-                // 📍 1. Lokalizacja z GPS
-                geoBtn.addEventListener('click', () => {
-                  if (!navigator.geolocation) {
-                    alert('Geolocation not supported');
-                    return;
-                  }
-              
-                  navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                      const { latitude, longitude } = position.coords;
-              
-                      try {
-                        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-                        const res = await fetch(url);
-                        const data = await res.json();
-              
-                        if (!data || !data.display_name) {
-                          clearLocation();
-                          return;
-                        }
-              
-                        setLocation({
-                          name: data.display_name,
-                          lat: latitude,
-                          lng: longitude
-                        });
-              
-                      } catch {
-                        clearLocation();
-                      }
-                    },
-                    () => clearLocation()
-                  );
-                });
-              
-                // ⌨️ 2. Lokalizacja z inputa (tekst)
+
+                // ===== 1️⃣ Wyszukiwanie po wpisaniu tekstu =====
                 searchBtn.addEventListener('click', async () => {
-                  const query = input.value.trim();
-                  if (!query) return;
-              
-                  try {
+                const query = input.value.trim();
+                if (!query) return;
+
+                try {
                     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
                     const res = await fetch(url);
                     const data = await res.json();
-              
+
                     if (!data.length) {
-                      clearLocation();
-                      return;
+                    input.value = '';
+                    input.classList.remove('success');
+                    input.classList.add('error');
+                    selectedLocation = null;
+                    alert('Location not found');
+                    return;
                     }
-              
+
                     const place = data[0];
-              
-                    setLocation({
-                      name: place.display_name,
-                      lat: parseFloat(place.lat),
-                      lng: parseFloat(place.lon)
-                    });
-              
-                  } catch {
-                    clearLocation();
-                  }
+                    selectedLocation = {
+                    name: place.display_name,
+                    lat: parseFloat(place.lat),
+                    lng: parseFloat(place.lon)
+                    };
+
+                    input.value = place.display_name; // zostaje poprawiona nazwa
+                    input.classList.remove('error');
+                    input.classList.add('success');
+                    console.log('Saved location:', selectedLocation);
+
+                } catch (e) {
+                    console.error('Search location error', e);
+                    input.value = '';
+                    selectedLocation = null;
+                }
                 });
+
+                // ===== 2️⃣ Pobranie lokalizacji GPS =====
+                geoBtn.addEventListener('click', () => {
+                if (!navigator.geolocation) {
+                    alert('Geolocation not supported');
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    console.log('GPS coords:', latitude, longitude);
+
+                    try {
+                        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+                        const res = await fetch(url);
+                        const data = await res.json();
+
+                        if (!data || !data.display_name) {
+                        input.value = '';
+                        selectedLocation = null;
+                        alert('Location not found');
+                        return;
+                        }
+
+                        selectedLocation = {
+                        name: data.display_name,
+                        lat: latitude,
+                        lng: longitude
+                        };
+
+                        input.value = data.display_name; // ← podmienia wartość inputu
+                        input.classList.remove('error');
+                        input.classList.add('success');
+
+                        console.log('Location set:', selectedLocation);
+
+                    } catch (e) {
+                        console.error('Reverse geocoding failed', e);
+                        input.value = '';
+                        selectedLocation = null;
+                    }
+                    },
+                    (err) => {
+                    console.error('Geolocation error:', err);
+                    alert('Could not get location. Make sure you allowed it.');
+                    input.value = '';
+                    selectedLocation = null;
+                    }
+                );
+                });
+                </script>
               </script>
               
             
