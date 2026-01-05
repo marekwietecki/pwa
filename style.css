@@ -26,7 +26,7 @@ body.offline section {
 }
 .helper320 {
   background-color: #ff4f4f;
-  height: 20px;
+  height: 8px;
   width: 320px;
   align-self: center;
 }
@@ -57,17 +57,18 @@ body {
   width: 96%;
   margin: 12px;
   border-radius: 36px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
   flex-shrink: 0;
   padding-left: 8vw;
   padding-right: 8vw;
+  background: rgba(255, 255, 255, 0.05); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
 }
 
 .tabNav {
@@ -89,7 +90,7 @@ body {
 }
 
 .tabNavItem {
-  color: rgb(144, 144, 144);
+  color: rgb(189, 189, 189);
   align-items: center;
   align-items: center;
   justify-content: center;
@@ -109,7 +110,7 @@ body {
 /* Calendar */
 .calendar {
   margin-top: 2svh;
-  height: 40vh;
+  height: 48vh;
   background-color: #15161c;
   flex-shrink: 0;
 }
@@ -121,8 +122,21 @@ body {
   margin-bottom: 2%;
 }
 #currentMonth {
-  width: 204px;
+  width: 176px;
+  margin-left: 12px;
+  margin-right: 12px;
   text-align: center;
+  align-items: center;
+  line-height: 40px;
+  border-radius: 50px;
+  height: 40px;
+  /* liquid glass effect */
+  background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
 }
 .monthArrow {
   border-radius: 50px;
@@ -130,14 +144,23 @@ body {
   width: 40px;
   font-size: 20px;
   cursor: pointer;
+  color: white;
+
+  /* liquid glass effect */
+  background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.2s ease;             /* płynne przejście */
 }
 .monthArrow:hover {
   opacity: 72%;
 }
 .calendar-grid-wrapper {
-  max-width: 600px;
-  margin: 0 auto; /* horyzontalne wyśrodkowanie wrappera */
-  display: block; /* zostawiamy blok, nie flex ani grid */
+  max-width: 560px;
+  margin: 0 auto; 
+  display: block; 
   text-align: center;
 }
 .calendar-grid {
@@ -153,36 +176,41 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
+  opacity: 0.6;
+  line-height: 24px;
 }
 .day {
   aspect-ratio: 1;
   width: 40px;
   height: 40px;
   font-size: 16px;
+  font-weight: 600;
+  color: #ffffff88;
   border-radius: 50px;
   background: rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 .day:hover {
   opacity: 50%;
 }
-.day-label {
-  font-size: 12px;
-  opacity: 0.6;
-}
 .day.active {
+  opacity: 100%;
+  color: #fff;
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
 /* Tasks */
 #taskDateTitle {
-  padding-top: 6vh;
+  padding-top: 4vh;
   padding-left: 4vw;
   margin: 0;
   flex-shrink: 0;
+  margin-top: 2vh;
 }
 .tasks {
   display: flex;
@@ -207,23 +235,27 @@ body {
   padding-left: 0;
   margin-left: 4vw;
   margin-right: 4vw;
-  margin-top: 1vh;
+  margin-top: 0;
 }
 .taskItem {
   padding-top: 16px;
   padding-bottom: 16px;
   padding-left: 24px;
-  padding-right: 8px;
+  padding-right: 16px;
   margin-top: 12px;
   margin-bottom: 12px;
   list-style: none;
-  background-color: rgba(255, 255, 255, 0.155);
   align-items: center;
   justify-content: space-between;
-  border-radius: 24px;
+  border-radius: 32px;
   display: flex;
   flex-direction: row;
   transition: transform 0.25s ease, opacity 0.25s ease;
+  background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
 }
 .taskItem.done {
   opacity: 0.5;
@@ -232,12 +264,25 @@ body {
 .taskLabel {
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
 .taskLabel:hover {
   opacity: 64%;
 }
-
+.rowWrapper {
+  display: flex;
+  align-items: center; /* checkbox + meta na jednej linii */
+  gap: 8px;
+}
+.taskMetaWrapper {
+  display: flex;
+  flex-direction: column; /* data nad lokalizacją */
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+}
 .taskCheckbox {
   width: 20px;
   height: 20px;
@@ -275,6 +320,13 @@ body {
   bottom: 32px;
   right: 32px;
   cursor: pointer;
+  color: rgb(255, 255, 255);
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
 }
 .addTaskBtn:hover {
   opacity: 72%;
@@ -301,9 +353,16 @@ body {
   padding: 20px;
   transform: translateY(100%);
   transition: 0.35s cubic-bezier(.4,0,.2,1);
-  height: 240px;
+  height: 344px;
   display: flex;
   flex-direction: column;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+  gap: 12px;
 }
 .modal-header {
   display: flex;
@@ -317,6 +376,13 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 100%;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+  cursor: pointer;
 }
 /* OTWARTY MODAL */
 .modal-overlay.open {
@@ -334,7 +400,19 @@ body {
 #taskName {
   padding: 10px 16px;
   border-radius: 24px;
-
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+  color: #fff;
+  font-weight: 600;
+}
+#taskName::placeholder { 
+  color: rgba(255, 255, 255, 0.64); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
 }
 #locBtn {
   padding: 10px 16px;
@@ -383,8 +461,6 @@ input.error {
   .navbar {
     display: flex;
     justify-content: center;
-    padding-left: 16vw;
-    padding-right: 16vw;
     margin: 0px;
     margin-top: 8px;
   }
@@ -393,7 +469,7 @@ input.error {
     width: 64px;
   }
   .calendar {
-    height: 32vh;
+    height: 40vh;
   }
   .calendar-grid {
     padding-left: 4px;
