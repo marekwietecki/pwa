@@ -58,6 +58,8 @@
             </div>
         </section>
 
+        <div class="helper320"></div>
+
         <section class="tasks">
             <h3 id="taskDateTitle"> </h3>
             <div class="taskListWrapper">
@@ -242,8 +244,16 @@
             const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
             const dayState = saved[key] || {}; // obiekt { taskName: {done: false, location: ...} }
 
-            Object.keys(dayState).forEach((taskName, index) => {
+            const tasks = Object.entries(dayState).sort(([, a], [, b]) => {
+                return (a.done === b.done) ? 0 : a.done ? 1 : -1;
+            });
+
+            tasks.forEach(([taskName, taskData], index) => {
                 const li = document.createElement('li');
+
+                if (taskData.done) {
+                    li.classList.add('done');
+                }
 
                 // checkbox
                 const checkbox = document.createElement('input');
@@ -272,6 +282,8 @@
                     saved[key] = saved[key] || {};
                     saved[key][taskName].done = checkbox.checked;
                     localStorage.setItem('tasksState', JSON.stringify(saved));
+
+                    renderTasksForDay(selectedDate);
                 });
 
                 li.classList.add('taskItem');
