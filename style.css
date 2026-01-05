@@ -24,10 +24,15 @@ body.offline section {
   transition: margin-top 0.3s ease;
   margin-top: 42px; /* wysokość paska */
 }
+html, body {
+  height: 100%;
+}
 body {
   background-color: #15161c;
   color: white;
   font-family: "Comfortaa", sans-serif;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 .navbar {
   display: flex;
@@ -44,6 +49,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  margin: 12px;
+  margin-top: 12px;
 }
 .navbar a {
   color: white;
@@ -132,9 +139,18 @@ body {
   padding-top: 2vh;
   padding-left: 4vw;
 }
+.tasks {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
 .taskList {
-  padding-left: 0px;
-  margin-left: 0px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 40px;
+  -webkit-overflow-scrolling: touch;
 }
 li {
   padding-top: 12px;

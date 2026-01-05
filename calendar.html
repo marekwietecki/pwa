@@ -106,6 +106,44 @@
                 return `${year}-${month}-${day}`;
             }
         
+            function formatLocation(address) {
+                if (!address) return '';
+
+                const street =
+                    address.road ||
+                    address.pedestrian ||
+                    address.cycleway ||
+                    address.footway;
+
+                const houseNumber = address.house_number;
+
+                const city =
+                    address.city ||
+                    address.town ||
+                    address.village ||
+                    address.hamlet;
+
+                const country = address.country;
+
+                if (street && houseNumber && city) {
+                    return `${street} ${houseNumber}, ${city}`;
+                }
+
+                if (street && city) {
+                    return `${street}, ${city}`;
+                }
+
+                if (city && country) {
+                    return `${city}, ${country}`;
+                }
+
+                if (country) {
+                    return country;
+                }
+
+                return '';
+                }
+
             // -----------------------
             // global variables
             // -----------------------
@@ -267,27 +305,30 @@
             if (!query) return;
 
             try {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+                const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(query)}`;
                 const res = await fetch(url);
                 const data = await res.json();
 
                 if (!data.length) {
-                input.value = '';
-                input.classList.remove('success');
-                input.classList.add('error');
-                selectedLocation = null;
-                alert('Location not found');
-                return;
+                    input.value = '';
+                    input.classList.remove('success');
+                    input.classList.add('error');
+                    selectedLocation = null;
+                    alert('Location not found');
+                    return;
                 }
 
                 const place = data[0];
+                const shortName = formatLocation(place.address);
+
                 selectedLocation = {
-                name: place.display_name,
-                lat: parseFloat(place.lat),
-                lng: parseFloat(place.lon)
+                    name: shortName || place.display_name,
+                    lat: parseFloat(place.lat),
+                    lng: parseFloat(place.lon)
                 };
 
-                input.value = place.display_name; // zostaje poprawiona nazwa
+                input.value = selectedLocation.name;
+
                 input.classList.remove('error');
                 input.classList.add('success');
                 console.log('Saved location:', selectedLocation);
@@ -317,19 +358,22 @@
                     const data = await res.json();
 
                     if (!data || !data.display_name) {
-                    input.value = '';
-                    selectedLocation = null;
-                    alert('Location not found');
-                    return;
+                        input.value = '';
+                        selectedLocation = null;
+                        alert('Location not found');
+                        return;
                     }
 
+                    const shortName = formatLocation(data.address);
+
                     selectedLocation = {
-                    name: data.display_name,
-                    lat: latitude,
-                    lng: longitude
+                        name: shortName || data.display_name,
+                        lat: parseFloat(place.lat),
+                        lng: parseFloat(place.lon)
                     };
 
-                    input.value = data.display_name; // ← podmienia wartość inputu
+                    input.value = selectedLocation.name;
+
                     input.classList.remove('error');
                     input.classList.add('success');
 
