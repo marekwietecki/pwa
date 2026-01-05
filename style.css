@@ -49,7 +49,6 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  margin: 12px;
 }
 .navbar a {
   color: white;
@@ -66,8 +65,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
+  gap: 2px;
 }
-
 .navbar a:hover {
   opacity: 0.7;
 }
@@ -149,28 +149,51 @@ body {
   min-height: 0;
   margin: 0;
   max-width: 600px;
-
+}
+.taskListWrapper {
+  flex: 1;               /* zajmuje całą dostępną przestrzeń pod headerem */
+  min-height: 0;         /* KLUCZOWE */
+  overflow-y: auto;      /* scroll tylko tu */
+  margin-top: 8px;
 }
 #taskList {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-bottom: 40px;
   -webkit-overflow-scrolling: touch;
   padding-left: 0;
   margin-left: 4vw;
   margin-right: 4vw;
+  margin-top: 1vh;
 }
 .taskItem {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 16px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
   list-style: none;
   background-color: rgba(255, 255, 255, 0.155);
   align-items: center;
+  justify-content: space-between;
   border-radius: 24px;
+  display: flex;
+  flex-direction: row;
+}
+.taskLabel {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+.taskLabel:hover {
+  opacity: 64%;
+}
+
+.taskCheckbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 .addTaskBtn {
   border-radius: 24px;
@@ -273,11 +296,21 @@ input.error {
   .logo {
     display: none;
   }
+  .navIcon {
+    width: 20px;
+    height: 20px;
+  }
   .navbar {
     align-items: space-between;
     justify-content: center;
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 0px;
+    padding-right: 12px;
+    margin: 0px;
+    margin-top: 8px;
+  }
+  .tabNavItem {
+    font-size: 8px;
+    width: 40px;
   }
   .calendar-grid {
     padding-left: 4px;

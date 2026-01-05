@@ -12,7 +12,7 @@
             <h1 class="logo">Habit Hero</h1>
             <nav class="tabNav">
                 <a href="/index.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-check-icon lucide-clipboard-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="navIcon" id="lucide-clipboard-check">
                         <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
                         <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
                         <path d="m9 14 2 2 4-4"/>
@@ -20,7 +20,7 @@
                     Dashboard
                 </a>
                 <a href="/calendar.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="navIcon" id="lucide-calendar-days">
                         <path d="M8 2v4"/>
                         <path d="M16 2v4"/>
                         <rect width="18" height="18" x="3" y="4" rx="2"/>
@@ -35,7 +35,7 @@
                     Calendar
                 </a>
                 <a href="#" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  class="navIcon" id="lucide-users">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                         <path d="M16 3.128a4 4 0 0 1 0 7.744"/>
                         <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
@@ -66,7 +66,6 @@
         </section>
 
         <button id="addTaskBtn" class="addTaskBtn"> + </button>
-
 
         <div class="modal-overlay" id="modalOverlay">
             <div class="modal-sheet">
@@ -253,12 +252,18 @@
                 checkbox.checked = !!dayState[taskName].done;
                 checkbox.style.marginRight = '12px';
 
-                // Label
+                // Label tylko z nazwą zadania
                 const label = document.createElement('label');
                 label.htmlFor = checkbox.id;
                 label.textContent = taskName;
+                label.classList.add('taskLabel');
+
+                // osobny element dla lokalizacji
+                let locationSpan = null;
                 if (dayState[taskName].location) {
-                    label.textContent += ` 📍 ${dayState[taskName].location}`;
+                    locationSpan = document.createElement('span');
+                    locationSpan.textContent = `📍 ${dayState[taskName].location}`;
+                    locationSpan.classList.add('taskLocation');
                 }
 
                 // zapis zmian w localStorage
