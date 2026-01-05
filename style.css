@@ -50,7 +50,6 @@ body {
   top: 0;
   z-index: 100;
   margin: 12px;
-  margin-top: 12px;
 }
 .navbar a {
   color: white;
@@ -74,12 +73,14 @@ body {
 }
 
 /* Calendar */
+.calendar {
+  height: 40vh;
+}
 .calendar-header {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 2%;
   margin-bottom: 2%;
 }
 #currentMonth {
@@ -135,30 +136,41 @@ body {
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
+/* Tasks */
 #taskDateTitle {
-  padding-top: 2vh;
+  padding-top: 6vh;
   padding-left: 4vw;
+  margin: 0;
 }
 .tasks {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-height: 0;
+  margin: 0;
+  max-width: 600px;
+
 }
-.taskList {
+#taskList {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   padding-bottom: 40px;
   -webkit-overflow-scrolling: touch;
+  padding-left: 0;
+  margin-left: 4vw;
+  margin-right: 4vw;
 }
-li {
+.taskItem {
   padding-top: 12px;
   padding-bottom: 12px;
-  margin-left: 0px;
-  padding-left: 0px;
+  padding-left: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   list-style: none;
-  /* background-color: red; */
+  background-color: rgba(255, 255, 255, 0.155);
+  align-items: center;
+  border-radius: 24px;
 }
 .addTaskBtn {
   border-radius: 24px;

@@ -60,7 +60,9 @@
 
         <section class="tasks">
             <h3 id="taskDateTitle"> </h3>
-            <ul id="taskList"></ul>
+            <div class="taskListWrapper">
+                <ul id="taskList"></ul>
+            </div>
         </section>
 
         <button id="addTaskBtn" class="addTaskBtn"> + </button>
@@ -267,8 +269,12 @@
                     localStorage.setItem('tasksState', JSON.stringify(saved));
                 });
 
-                li.appendChild(checkbox);
+                li.classList.add('taskItem');
+                label.classList.add('taskLabel');
+                checkbox.classList.add('taskCheckbox');
+
                 li.appendChild(label);
+                li.appendChild(checkbox);
                 list.appendChild(li);
             });
         }
