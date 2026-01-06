@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BetterMe</title>
+        <title>Habit Hero - Calendar</title>
         <link rel="stylesheet" href="./style.css">
         <link rel="manifest" href="./manifest.webmanifest">
     </head>
@@ -88,10 +88,25 @@
                     <input
                         type="text"
                         id="locationInput"
-                        placeholder="Enter location (e.g. Hanna, Lubuskie)"
+                        placeholder="Enter location"
                     />
-                    <button id="searchLocation">✔️</button>
-                    <button id="useMyLocation">📍 Current Location</button>
+                    <button id="searchLocation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-search-check">
+                            <path d="m8 11 2 2 4-4"/>
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.3-4.3"/>
+                        </svg>
+                    </button>
+                    <button id="useMyLocation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-locate">
+                            <line x1="2" x2="5" y1="12" y2="12"/>
+                            <line x1="19" x2="22" y1="12" y2="12"/>
+                            <line x1="12" x2="12" y1="2" y2="5"/>
+                            <line x1="12" x2="12" y1="19" y2="22"/>
+                            <circle cx="12" cy="12" r="7"/>
+                        </svg>
+                        Current Location
+                    </button>
                 </div>
 
 

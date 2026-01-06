@@ -1,118 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BetterMe</title>
-        <link rel="stylesheet" href="./style.css">
-        <link rel="manifest" href="./manifest.webmanifest">
-    </head>
-    <body>
-        <header class="navbar">
-            <h1 class="logo">Habit Hero</h1>
-            <nav class="tabNav">
-                <a href="/index.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="navIcon" id="lucide-clipboard-check">
-                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-                        <path d="m9 14 2 2 4-4"/>
-                    </svg>
-                    To Do
-                </a>
-                <a href="/calendar.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="navIcon" id="lucide-calendar-days">
-                        <path d="M8 2v4"/>
-                        <path d="M16 2v4"/>
-                        <rect width="18" height="18" x="3" y="4" rx="2"/>
-                        <path d="M3 10h18"/>
-                        <path d="M8 14h.01"/>
-                        <path d="M12 14h.01"/>
-                        <path d="M16 14h.01"/>
-                        <path d="M8 18h.01"/>
-                        <path d="M12 18h.01"/>
-                        <path d="M16 18h.01"/>
-                    </svg>
-                    Calendar
-                </a>
-                <a href="/habits.html" class="tabNavItemSelected">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
-                        <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
-                    </svg>
-                    Habits
-                </a>
-                <a href="/friends.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  class="navIcon" id="lucide-users">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <path d="M16 3.128a4 4 0 0 1 0 7.744"/>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                        <circle cx="9" cy="7" r="4"/>
-                    </svg>
-                    Friends
-                </a>
-            </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Hero - Habits</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body>
+    <header class="navbar">
+      <h1 class="logo">Habit Hero</h1>
+      <nav class="tabNav">
+        <a href="/index.html" class="tabNavItem">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="navIcon"
+            id="lucide-clipboard-check"
+          >
+            <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+            <path
+              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+            />
+            <path d="m9 14 2 2 4-4" />
+          </svg>
+          To Do
+        </a>
+        <a href="/calendar.html" class="tabNavItem">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="navIcon"
+            id="lucide-calendar-days"
+          >
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
+            <path d="M8 14h.01" />
+            <path d="M12 14h.01" />
+            <path d="M16 14h.01" />
+            <path d="M8 18h.01" />
+            <path d="M12 18h.01" />
+            <path d="M16 18h.01" />
+          </svg>
+          Calendar
+        </a>
+        <a href="/habits.html" class="tabNavItemSelected">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-flame-icon lucide-flame"
+          >
+            <path
+              d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
+            />
+          </svg>
+          Habits
+        </a>
+        <a href="/friends.html" class="tabNavItem">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="navIcon"
+            id="lucide-users"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <circle cx="9" cy="7" r="4" />
+          </svg>
+          Friends
+        </a>
+      </nav>
+    </header>
+
+    <div class="helper320"></div>
+
+    <section class="tasks">
+      <h3 id="taskDateTitle"></h3>
+      <div class="taskListWrapper">
+        <ul id="taskList"></ul>
+      </div>
+    </section>
+
+    <button id="addTaskBtn" class="addTaskBtn">+</button>
+
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-sheet">
+        <header class="modal-header">
+          <h3>Add Habit</h3>
+          <button id="closeModal">✕</button>
         </header>
 
-        <section class="calendar">
-            <header class="calendar-header">
-                <button id="prevMonth" class="monthArrow">‹</button>
-                <h3 id="currentMonth"></h3>
-                <button id="nextMonth" class="monthArrow">›</button>
-            </header>
-            
-            <div class="calendar-grid-wrapper">
-                <div class="calendar-grid" id="calendarGrid"></div>
-            </div>
-        </section>
-
-        <div class="helper320"></div>
-
-        <section class="tasks">
-            <h3 id="taskDateTitle"> </h3>
-            <div class="taskListWrapper">
-                <ul id="taskList"></ul>
-            </div>
-        </section>
-
-        <button id="addTaskBtn" class="addTaskBtn"> + </button>
-
-        <div class="modal-overlay" id="modalOverlay">
-            <div class="modal-sheet">
-                <header class="modal-header">
-                    <h3>Add task</h3>
-                    <button id="closeModal">✕</button>
-                </header>
-            
-                <input type="text" placeholder="Task name" id="taskName" />
-                <input type="date" id="taskDate" />
-                <div style="flex: 1">
-                    <input
-                        type="text"
-                        id="locationInput"
-                        placeholder="Enter location (e.g. Hanna, Lubuskie)"
-                    />
-                    <button id="searchLocation">✔️</button>
-                    <button id="useMyLocation">📍 Current Location</button>
-                </div>
-
-
-                <button class="addTask">Add</button>
-            </div>
+        <input type="text" placeholder="Task name" id="taskName" />
+        <input type="date" id="taskDate" />
+        <div style="flex: 1">
+          <input
+            type="text"
+            id="locationInput"
+            placeholder="Enter location (e.g. Hanna, Lubuskie)"
+          />
+          <button id="searchLocation">✔️</button>
+          <button id="useMyLocation">📍 Current Location</button>
         </div>
-    
-                
-            
 
-        <!-- im gonna update that later -->
-        <script src="./app.js"></script>
+        <button class="addTask">Add</button>
+      </div>
+    </div>
 
-        <script>
-            if('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js')
-                        .then(reg => console.log('SW register success', reg.scope))
-                        .catch(err => console.error('SW register failed', err))
-                })
-            }
-        </script>
-    </body>
+    <!-- im gonna update that later -->
+    <script src="./app.js"></script>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((reg) => console.log("SW register success", reg.scope))
+            .catch((err) => console.error("SW register failed", err));
+        });
+      }
+    </script>
+  </body>
 </html>

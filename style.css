@@ -345,8 +345,8 @@ body {
 .modal-sheet {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 0; right: 0; margin: 0 auto;
+  transform: translate(-50%, 100%);
   background: rgba(30,30,30,0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px 20px 0 0;
@@ -354,10 +354,12 @@ body {
   transform: translateY(100%);
   transition: 0.35s cubic-bezier(.4,0,.2,1);
   height: 344px;
+  max-width: 660px;
+  align-self: center;
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
   -webkit-backdrop-filter: blur(8px);   /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
@@ -384,6 +386,9 @@ body {
   transition: all 0.3s ease;             /* płynne przejście */
   cursor: pointer;
 }
+#closeModal:hover {
+  opacity: 72%;
+}
 /* OTWARTY MODAL */
 .modal-overlay.open {
   opacity: 1;
@@ -396,6 +401,29 @@ body {
   padding: 10px 16px;
   border-radius: 24px;
   align-items: center;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+#taskDate::-webkit-datetime-edit-fields-wrapper { 
+  color: rgba(255, 255, 255, 0.64); 
+} 
+#taskDate::-webkit-datetime-edit-text { 
+  color: rgba(255, 255, 255, 0.64); 
+} 
+#taskDate::-webkit-datetime-edit-month-field, 
+#taskDate::-webkit-datetime-edit-day-field, 
+#taskDate::-webkit-datetime-edit-year-field { 
+  color: rgba(255, 255, 255, 0.64); 
+} 
+#taskDate:focus::-webkit-datetime-edit-month-field, 
+#taskDate:focus::-webkit-datetime-edit-day-field, 
+#taskDate:focus::-webkit-datetime-edit-year-field { 
+  color: #fff; /* po wpisaniu/wybraniu daty */ 
 }
 #taskName {
   padding: 10px 16px;
@@ -419,16 +447,67 @@ body {
   border-radius: 24px;
 }
 #locationInput {
+  color: #fff;
   padding: 10px 16px;
   border-radius: 24px;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+#locationInput::placeholder {
+  color: rgba(255, 255, 255, 0.64); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+.lucide-search-check {
+  line-height: 16px;
+  margin-top: 2px;
+  justify-content: center;
+  align-items: center;
 }
 #searchLocation {
-  padding: 10px 16px;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
   border-radius: 24px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+#searchLocation:hover {
+  opacity: 72%;
+}
+.lucide-locate {
+  color: #fff;
+  line-height: 16px;
 }
 #useMyLocation {
   padding: 10px 16px;
   border-radius: 24px;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+#useMyLocation::placeholder {
+  color: rgba(255, 255, 255, 0.64); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#useMyLocation:hover {
+  opacity: 72%;
 }
 input.success {
   border: 1px solid #4caf50;

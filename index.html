@@ -1,403 +1,450 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BetterMe</title>
-        <link rel="stylesheet" href="./style.css">
-        <link rel="manifest" href="./manifest.webmanifest">
-    </head>
-    <body>
-        <header class="navbar">
-            <h1 class="logo">Habit Hero</h1>
-            <nav class="tabNav">
-                <a href="/index.html" class="tabNavItemSelected">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="navIcon" id="lucide-clipboard-check">
-                        <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-                        <path d="m9 14 2 2 4-4"/>
-                    </svg>
-                    To Do
-                </a>
-                <a href="/calendar.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="navIcon" id="lucide-calendar-days">
-                        <path d="M8 2v4"/>
-                        <path d="M16 2v4"/>
-                        <rect width="18" height="18" x="3" y="4" rx="2"/>
-                        <path d="M3 10h18"/>
-                        <path d="M8 14h.01"/>
-                        <path d="M12 14h.01"/>
-                        <path d="M16 14h.01"/>
-                        <path d="M8 18h.01"/>
-                        <path d="M12 18h.01"/>
-                        <path d="M16 18h.01"/>
-                    </svg>
-                    Calendar
-                </a>
-                <a href="/habits.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
-                        <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
-                    </svg>
-                    Habits
-                </a>
-                <a href="/friends.html" class="tabNavItem">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  class="navIcon" id="lucide-users">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <path d="M16 3.128a4 4 0 0 1 0 7.744"/>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                        <circle cx="9" cy="7" r="4"/>
-                    </svg>
-                    Friends
-                </a>
-            </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Hero - To Do</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body>
+    <header class="navbar">
+      <h1 class="logo">Habit Hero</h1>
+      <nav class="tabNav">
+        <a href="/index.html" class="tabNavItemSelected">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="navIcon"
+            id="lucide-clipboard-check"
+          >
+            <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+            <path
+              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+            />
+            <path d="m9 14 2 2 4-4" />
+          </svg>
+          To Do
+        </a>
+        <a href="/calendar.html" class="tabNavItem">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="navIcon"
+            id="lucide-calendar-days"
+          >
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
+            <path d="M8 14h.01" />
+            <path d="M12 14h.01" />
+            <path d="M16 14h.01" />
+            <path d="M8 18h.01" />
+            <path d="M12 18h.01" />
+            <path d="M16 18h.01" />
+          </svg>
+          Calendar
+        </a>
+        <a href="/habits.html" class="tabNavItem">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-flame-icon lucide-flame"
+          >
+            <path
+              d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
+            />
+          </svg>
+          Habits
+        </a>
+        <a href="/friends.html" class="tabNavItem">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="navIcon"
+            id="lucide-users"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <circle cx="9" cy="7" r="4" />
+          </svg>
+          Friends
+        </a>
+      </nav>
+    </header>
+
+    <div class="helper320"></div>
+
+    <section class="tasks">
+      <h3 id="taskDateTitle"></h3>
+      <div class="taskListWrapper">
+        <ul id="taskList"></ul>
+      </div>
+    </section>
+
+    <button id="addTaskBtn" class="addTaskBtn">+</button>
+
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-sheet">
+        <header class="modal-header">
+          <h3>Add task</h3>
+          <button id="closeModal">✕</button>
         </header>
 
-        <div class="helper320"></div>
-
-        <section class="tasks">
-            <h3 id="taskDateTitle"> </h3>
-            <div class="taskListWrapper">
-                <ul id="taskList"></ul>
-            </div>
-        </section>
-
-        <button id="addTaskBtn" class="addTaskBtn"> + </button>
-
-        <div class="modal-overlay" id="modalOverlay">
-            <div class="modal-sheet">
-                <header class="modal-header">
-                    <h3>Add task</h3>
-                    <button id="closeModal">✕</button>
-                </header>
-            
-                <input type="text" placeholder="Task name" id="taskName" />
-                <input type="date" id="taskDate" />
-                <div style="flex: 1">
-                    <input
-                        type="text"
-                        id="locationInput"
-                        placeholder="Enter location (e.g. Hanna, Lubuskie)"
-                    />
-                    <button id="searchLocation">✔️</button>
-                    <button id="useMyLocation">📍 Current Location</button>
-                </div>
-
-
-                <button class="addTask">Add</button>
-            </div>
+        <input type="text" placeholder="Task name" id="taskName" />
+        <input type="date" id="taskDate" />
+        <div style="flex: 1">
+          <input
+            type="text"
+            id="locationInput"
+            placeholder="Enter location (e.g. Hanna, Lubuskie)"
+          />
+          <button id="searchLocation">✔️</button>
+          <button id="useMyLocation">📍 Current Location</button>
         </div>
-        <script>
-            // -----------------------
-            // Formatting funcitons
-            // -----------------------
-            function getMondayFirstDay(date) {
-                const day = date.getDay(); // 0 = sunday
-                return day === 0 ? 6 : day - 1;
-            }
-        
-            function formatDateKey(date) {
-                const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-        
-            function formatLocation(address) {
-                if (!address) return '';
 
-                const street =
-                    address.road ||
-                    address.pedestrian ||
-                    address.cycleway ||
-                    address.footway;
+        <button class="addTask">Add</button>
+      </div>
+    </div>
+    <script>
+      // -----------------------
+      // Formatting funcitons
+      // -----------------------
+      function getMondayFirstDay(date) {
+        const day = date.getDay(); // 0 = sunday
+        return day === 0 ? 6 : day - 1;
+      }
 
-                const houseNumber = address.house_number;
+      function formatDateKey(date) {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
 
-                const city =
-                    address.city ||
-                    address.town ||
-                    address.village ||
-                    address.hamlet;
+      function formatLocation(address) {
+        if (!address) return "";
 
-                const country = address.country;
+        const street =
+          address.road ||
+          address.pedestrian ||
+          address.cycleway ||
+          address.footway;
 
-                if (street && houseNumber && city) {
-                    return `${street} ${houseNumber}, ${city}`;
-                }
+        const houseNumber = address.house_number;
 
-                if (street && city) {
-                    return `${street}, ${city}`;
-                }
+        const city =
+          address.city || address.town || address.village || address.hamlet;
 
-                if (city && country) {
-                    return `${city}, ${country}`;
-                }
+        const country = address.country;
 
-                if (country) {
-                    return country;
-                }
+        if (street && houseNumber && city) {
+          return `${street} ${houseNumber}, ${city}`;
+        }
 
-                return '';
-            }
+        if (street && city) {
+          return `${street}, ${city}`;
+        }
 
-            // -----------------------
-            // global variables
-            // -----------------------
-            let date = new Date(); // aktualny miesiąc dla kalendarza
-            let selectedDate = new Date(); // domyślnie dzisiaj
-        
-            const grid = document.getElementById('calendarGrid');
-            const label = document.getElementById('currentMonth');
-        
-        
-            // -----------------------
-            // all undone tasks 
-            // -----------------------
-            function renderAllTasks() {
-                const title = document.getElementById('taskDateTitle');
-                const list = document.getElementById('taskList');
+        if (city && country) {
+          return `${city}, ${country}`;
+        }
 
-                title.textContent = 'Tasks To Do:';
-                list.innerHTML = '';
+        if (country) {
+          return country;
+        }
 
-                const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
+        return "";
+      }
 
-                const allTasks = [];
+      // -----------------------
+      // global variables
+      // -----------------------
+      let date = new Date(); // aktualny miesiąc dla kalendarza
+      let selectedDate = new Date(); // domyślnie dzisiaj
 
-                Object.entries(saved).forEach(([dateKey, tasks]) => {
-                    Object.entries(tasks).forEach(([taskName, taskData]) => {
-                        allTasks.push({
-                            date: dateKey,
-                            name: taskName,
-                            done: !!taskData.done,
-                            location: taskData.location || null
-                        });
-                    });
-                });
+      const grid = document.getElementById("calendarGrid");
+      const label = document.getElementById("currentMonth");
 
-                // Filtr: niewykonane , potem sort po dacie
-                const visibleTasks = allTasks 
-                    .filter(task => !task.done) 
-                    .sort((a, b) => a.date.localeCompare(b.date)); 
+      // -----------------------
+      // all undone tasks
+      // -----------------------
+      function renderAllTasks() {
+        const title = document.getElementById("taskDateTitle");
+        const list = document.getElementById("taskList");
 
-                visibleTasks.forEach((task, index) => {
-                    const li = document.createElement('li');
-                    li.classList.add('taskItem');
-                    if (task.done) li.classList.add('done');
+        title.textContent = "Tasks To Do:";
+        list.innerHTML = "";
 
-                    // Label na nazwę zadania
-                    const label = document.createElement('label');
-                    label.textContent = task.name;
-                    label.classList.add('taskLabel');
+        const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
 
-                    // Checkbox
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.checked = task.done;
-                    checkbox.classList.add('taskCheckbox');
-                    
-                    // ID dla checkboxa + połączenie label
-                    const checkboxId = `task-${task.date}-${index}`;
-                    checkbox.id = checkboxId;
-                    label.htmlFor = checkboxId;
+        const allTasks = [];
 
-                    checkbox.addEventListener('change', () => {
-                        const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
-                        saved[task.date][task.name].done = checkbox.checked;
-                        localStorage.setItem('tasksState', JSON.stringify(saved));
-                        renderAllTasks();
-                    });
+        Object.entries(saved).forEach(([dateKey, tasks]) => {
+          Object.entries(tasks).forEach(([taskName, taskData]) => {
+            allTasks.push({
+              date: dateKey,
+              name: taskName,
+              done: !!taskData.done,
+              location: taskData.location || null,
+            });
+          });
+        });
 
-                    // wrapper na meta + checkbox
-                    const rowWrapper = document.createElement('div');
-                    rowWrapper.classList.add('rowWrapper');
+        // Filtr: niewykonane , potem sort po dacie
+        const visibleTasks = allTasks
+          .filter((task) => !task.done)
+          .sort((a, b) => a.date.localeCompare(b.date));
 
-                    const meta = document.createElement('div');
-                    meta.classList.add('taskMetaWrapper');
+        visibleTasks.forEach((task, index) => {
+          const li = document.createElement("li");
+          li.classList.add("taskItem");
+          if (task.done) li.classList.add("done");
 
-                    const dateSpan = document.createElement('span');
-                    dateSpan.textContent = `📅 ${task.date}`;
-                    meta.appendChild(dateSpan);
+          // Label na nazwę zadania
+          const label = document.createElement("label");
+          label.textContent = task.name;
+          label.classList.add("taskLabel");
 
-                    if (task.location) {
-                        const locationSpan = document.createElement('span');
-                        locationSpan.textContent = `📍 ${task.location}`;
-                        meta.appendChild(locationSpan);
-                    }
+          // Checkbox
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = task.done;
+          checkbox.classList.add("taskCheckbox");
 
-                    rowWrapper.appendChild(meta);
-                    rowWrapper.appendChild(checkbox);
+          // ID dla checkboxa + połączenie label
+          const checkboxId = `task-${task.date}-${index}`;
+          checkbox.id = checkboxId;
+          label.htmlFor = checkboxId;
 
-                    li.appendChild(label);
-                    li.appendChild(rowWrapper);
-                    list.appendChild(li);
-                });
-            }
-
+          checkbox.addEventListener("change", () => {
+            const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
+            saved[task.date][task.name].done = checkbox.checked;
+            localStorage.setItem("tasksState", JSON.stringify(saved));
             renderAllTasks();
-        </script>
+          });
 
-        <script>
-            // ------------------------------
-            // Location inside add task modal
-            // ------------------------------
-            const input = document.getElementById('locationInput');
-            const searchBtn = document.getElementById('searchLocation');
-            const geoBtn = document.getElementById('useMyLocation');
+          // wrapper na meta + checkbox
+          const rowWrapper = document.createElement("div");
+          rowWrapper.classList.add("rowWrapper");
 
-            let selectedLocation = null;
+          const meta = document.createElement("div");
+          meta.classList.add("taskMetaWrapper");
 
-            // After Input
-            searchBtn.addEventListener('click', async () => {
-            const query = input.value.trim();
-            if (!query) return;
+          const dateSpan = document.createElement("span");
+          dateSpan.textContent = `📅 ${task.date}`;
+          meta.appendChild(dateSpan);
+
+          if (task.location) {
+            const locationSpan = document.createElement("span");
+            locationSpan.textContent = `📍 ${task.location}`;
+            meta.appendChild(locationSpan);
+          }
+
+          rowWrapper.appendChild(meta);
+          rowWrapper.appendChild(checkbox);
+
+          li.appendChild(label);
+          li.appendChild(rowWrapper);
+          list.appendChild(li);
+        });
+      }
+
+      renderAllTasks();
+    </script>
+
+    <script>
+      // ------------------------------
+      // Location inside add task modal
+      // ------------------------------
+      const input = document.getElementById("locationInput");
+      const searchBtn = document.getElementById("searchLocation");
+      const geoBtn = document.getElementById("useMyLocation");
+
+      let selectedLocation = null;
+
+      // After Input
+      searchBtn.addEventListener("click", async () => {
+        const query = input.value.trim();
+        if (!query) return;
+
+        try {
+          const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
+            query
+          )}`;
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (!data.length) {
+            input.value = "";
+            input.classList.remove("success");
+            input.classList.add("error");
+            selectedLocation = null;
+            alert("Location not found");
+            return;
+          }
+
+          const place = data[0];
+          const shortName = formatLocation(place.address);
+
+          selectedLocation = {
+            name: shortName || place.display_name,
+            lat: parseFloat(place.lat),
+            lng: parseFloat(place.lon),
+          };
+
+          input.value = selectedLocation.name;
+
+          input.classList.remove("error");
+          input.classList.add("success");
+          console.log("Saved location:", selectedLocation);
+        } catch (e) {
+          console.error("Search location error", e);
+          input.value = "";
+          selectedLocation = null;
+        }
+      });
+
+      // Location from Device's GPS
+      geoBtn.addEventListener("click", () => {
+        if (!navigator.geolocation) {
+          alert("Geolocation not supported");
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log("GPS coords:", latitude, longitude);
 
             try {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(query)}`;
-                const res = await fetch(url);
-                const data = await res.json();
+              const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+              const res = await fetch(url);
+              const data = await res.json();
 
-                if (!data.length) {
-                    input.value = '';
-                    input.classList.remove('success');
-                    input.classList.add('error');
-                    selectedLocation = null;
-                    alert('Location not found');
-                    return;
-                }
-
-                const place = data[0];
-                const shortName = formatLocation(place.address);
-
-                selectedLocation = {
-                    name: shortName || place.display_name,
-                    lat: parseFloat(place.lat),
-                    lng: parseFloat(place.lon)
-                };
-
-                input.value = selectedLocation.name;
-
-                input.classList.remove('error');
-                input.classList.add('success');
-                console.log('Saved location:', selectedLocation);
-
-            } catch (e) {
-                console.error('Search location error', e);
-                input.value = '';
+              if (!data || !data.display_name) {
+                input.value = "";
                 selectedLocation = null;
-            }
-            });
-
-            // Location from Device's GPS
-            geoBtn.addEventListener('click', () => {
-            if (!navigator.geolocation) {
-                alert('Geolocation not supported');
+                alert("Location not found");
                 return;
+              }
+
+              const shortName = formatLocation(data.address);
+
+              selectedLocation = {
+                name: shortName || data.display_name,
+                lat: parseFloat(place.lat),
+                lng: parseFloat(place.lon),
+              };
+
+              input.value = selectedLocation.name;
+
+              input.classList.remove("error");
+              input.classList.add("success");
+
+              console.log("Location set:", selectedLocation);
+            } catch (e) {
+              console.error("Reverse geocoding failed", e);
+              input.value = "";
+              selectedLocation = null;
             }
+          },
+          (err) => {
+            console.error("Geolocation error:", err);
+            alert("Could not get location. Make sure you allowed it.");
+            input.value = "";
+            selectedLocation = null;
+          }
+        );
+      });
+    </script>
 
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                const { latitude, longitude } = position.coords;
-                console.log('GPS coords:', latitude, longitude);
+    <script>
+      // FAB
+      const fabBtn = document.getElementById("addTaskBtn");
+      const closeBtn = document.getElementById("closeModal");
+      const overlay = document.getElementById("modalOverlay");
 
-                try {
-                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-                    const res = await fetch(url);
-                    const data = await res.json();
+      fabBtn.addEventListener("click", () => overlay.classList.add("open"));
+      closeBtn.addEventListener("click", () =>
+        overlay.classList.remove("open")
+      );
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.classList.remove("open");
+      });
 
-                    if (!data || !data.display_name) {
-                        input.value = '';
-                        selectedLocation = null;
-                        alert('Location not found');
-                        return;
-                    }
+      // adding a task
+      const addTaskModalBtn = document.querySelector(".addTask");
+      const taskNameInput = document.getElementById("taskName");
+      const taskDateInput = document.getElementById("taskDate");
+      const locationInput = document.getElementById("locationInput");
 
-                    const shortName = formatLocation(data.address);
+      addTaskModalBtn.addEventListener("click", () => {
+        const name = taskNameInput.value.trim();
+        if (!name) return alert("Enter task name");
 
-                    selectedLocation = {
-                        name: shortName || data.display_name,
-                        lat: parseFloat(place.lat),
-                        lng: parseFloat(place.lon)
-                    };
+        const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is provided date will be set for today
+        const location = locationInput.value.trim();
 
-                    input.value = selectedLocation.name;
+        const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
+        saved[dateStr] = saved[dateStr] || {};
+        saved[dateStr][name] = { done: false, location: location || null };
+        localStorage.setItem("tasksState", JSON.stringify(saved));
 
-                    input.classList.remove('error');
-                    input.classList.add('success');
+        renderAllTasks();
 
-                    console.log('Location set:', selectedLocation);
+        taskNameInput.value = "";
+        taskDateInput.value = "";
+        locationInput.value = "";
+        overlay.classList.remove("open");
 
-                } catch (e) {
-                    console.error('Reverse geocoding failed', e);
-                    input.value = '';
-                    selectedLocation = null;
-                }
-                },
-                (err) => {
-                    console.error('Geolocation error:', err);
-                    alert('Could not get location. Make sure you allowed it.');
-                    input.value = '';
-                    selectedLocation = null;
-                }
-            );
-            });
-        </script>
-              
-        <script>
-            // FAB 
-            const fabBtn = document.getElementById('addTaskBtn'); 
-            const closeBtn = document.getElementById('closeModal');
-            const overlay = document.getElementById('modalOverlay');
+        selectedDate = new Date(dateStr);
+        renderCalendar();
+      });
+    </script>
 
-            fabBtn.addEventListener('click', () => overlay.classList.add('open'));
-            closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
-            overlay.addEventListener('click', e => {
-                if (e.target === overlay) overlay.classList.remove('open');
-            });
+    <!-- im gonna update that later -->
+    <script src="./app.js"></script>
 
-            // adding a task
-            const addTaskModalBtn = document.querySelector('.addTask');
-            const taskNameInput = document.getElementById('taskName');
-            const taskDateInput = document.getElementById('taskDate');
-            const locationInput = document.getElementById('locationInput');
-
-            addTaskModalBtn.addEventListener('click', () => {
-                const name = taskNameInput.value.trim();
-                if (!name) return alert('Enter task name');
-
-                const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is provided date will be set for today
-                const location = locationInput.value.trim();
-
-                const saved = JSON.parse(localStorage.getItem('tasksState')) || {};
-                saved[dateStr] = saved[dateStr] || {};
-                saved[dateStr][name] = { done: false, location: location || null };
-                localStorage.setItem('tasksState', JSON.stringify(saved));
-
-                renderAllTasks();
-
-                taskNameInput.value = '';
-                taskDateInput.value = '';
-                locationInput.value = '';
-                overlay.classList.remove('open');
-
-                selectedDate = new Date(dateStr);
-                renderCalendar();
-            });
-        </script>
-                
-            
-
-        <!-- im gonna update that later -->
-        <script src="./app.js"></script>
-
-        <script>
-            if('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js')
-                        .then(reg => console.log('SW register success', reg.scope))
-                        .catch(err => console.error('SW register failed', err))
-                })
-            }
-        </script>
-    </body>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((reg) => console.log("SW register success", reg.scope))
+            .catch((err) => console.error("SW register failed", err));
+        });
+      }
+    </script>
+  </body>
 </html>
