@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!--
+inner html w js to antypattern
+kod po angielsku
+rozbijać na małe funkcje
+na ios nie ma dostepu do bluetooth api
+alert to antypattern
+-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,26 +19,24 @@
       <h1 class="logo">Habit Hero</h1>
       <nav class="tabNav">
         <a href="/index.html" class="tabNavItemSelected">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="navIcon"
-            id="lucide-clipboard-check"
-          >
-            <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-            <path
-              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-            />
-            <path d="m9 14 2 2 4-4" />
+          <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          class="lucide lucide-list-todo-icon lucide-list-todo">
+          <path d="M13 5h8"/>
+          <path d="M13 12h8"/>
+            <path d="M13 19h8"/>
+            <path d="m3 17 2 2 4-4"/>
+            <rect x="3" y="4" width="6" height="6" rx="1"/>
           </svg>
-          To Do
+          Today
         </a>
         <a href="/calendar.html" class="tabNavItem">
           <svg
@@ -79,26 +84,22 @@
           </svg>
           Habits
         </a>
-        <a href="/friends.html" class="tabNavItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="navIcon"
-            id="lucide-users"
-          >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <circle cx="9" cy="7" r="4" />
+        <a href="/hero.html" class="tabNavItem">
+          <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          class="lucide lucide-user-icon lucide-user">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
           </svg>
-          Friends
+          Hero
         </a>
       </nav>
     </header>
@@ -120,6 +121,14 @@
           <h3>Add task</h3>
           <button id="closeModal">✕</button>
         </header>
+
+        <div style="display: flex; flex-direction: row;">
+          <label for="taskType">Type:</label>
+          <select id="taskType">
+            <option value="task">One-time Task</option>
+            <option value="habit">Daily Habit</option>
+          </select>
+        </div>
 
         <input type="text" placeholder="Task name" id="taskName" />
         <input type="date" id="taskDate" />
@@ -203,7 +212,7 @@
         const title = document.getElementById("taskDateTitle");
         const list = document.getElementById("taskList");
 
-        title.textContent = "Tasks To Do:";
+        title.textContent = "To Do Today:";
         list.innerHTML = "";
 
         const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
@@ -221,6 +230,8 @@
           });
         });
 
+        
+
         // Filtr: niewykonane , potem sort po dacie
         const visibleTasks = allTasks
           .filter((task) => !task.done)
@@ -231,6 +242,12 @@
           li.classList.add("taskItem");
           if (task.done) li.classList.add("done");
 
+          const taskType = task.type || "task";
+          li.classList.add(taskType === "habit" ? "is-habit" : "is-task");
+          const typeIcon = taskType === "habit" ? "🔁 " : "✅ ";
+          label.textContent = typeIcon + task.name;
+
+    
           // Label na nazwę zadania
           const label = document.createElement("label");
           label.textContent = task.name;
@@ -241,6 +258,24 @@
           checkbox.type = "checkbox";
           checkbox.checked = task.done;
           checkbox.classList.add("taskCheckbox");
+
+          // Delete button
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "🗑️";
+          deleteBtn.classList.add("deleteTaskBtn");
+
+          deleteBtn.addEventListener("click", () => {
+            const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
+
+            delete saved[task.date][task.name];
+
+            if (Object.keys(saved[task.date]).length === 0) {
+              delete saved[task.date];
+            }
+
+            localStorage.setItem("tasksState", JSON.stringify(saved));
+            renderAllTasks();
+          });
 
           // ID dla checkboxa + połączenie label
           const checkboxId = `task-${task.date}-${index}`;
@@ -275,6 +310,7 @@
           rowWrapper.appendChild(checkbox);
 
           li.appendChild(label);
+          li.appendChild(deleteBtn); 
           li.appendChild(rowWrapper);
           list.appendChild(li);
         });
@@ -408,6 +444,7 @@
       const taskNameInput = document.getElementById("taskName");
       const taskDateInput = document.getElementById("taskDate");
       const locationInput = document.getElementById("locationInput");
+      const taskTypeSelect = document.getElementById("taskType");
 
       addTaskModalBtn.addEventListener("click", () => {
         const name = taskNameInput.value.trim();
@@ -416,9 +453,15 @@
         const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is provided date will be set for today
         const location = locationInput.value.trim();
 
+        const type = taskTypeSelect.value;
+
         const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
         saved[dateStr] = saved[dateStr] || {};
-        saved[dateStr][name] = { done: false, location: location || null };
+        saved[dateStr][name] = { 
+          done: false, 
+          location: location || null,
+          type, type
+        };
         localStorage.setItem("tasksState", JSON.stringify(saved));
 
         renderAllTasks();
@@ -426,6 +469,7 @@
         taskNameInput.value = "";
         taskDateInput.value = "";
         locationInput.value = "";
+        taskTypeSelect.value = "task"; 
         overlay.classList.remove("open");
 
         selectedDate = new Date(dateStr);
