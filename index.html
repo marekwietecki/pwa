@@ -106,10 +106,10 @@ alert to antypattern
 
     <div class="helper320"></div>
 
-    <section class="tasks">
+    <section class="toDo">
       <h3 id="taskDateTitle"></h3>
-      <div class="taskListWrapper">
-        <ul id="taskList"></ul>
+      <div class="toDoListWrapper">
+        <ul id="toDoList"></ul>
       </div>
     </section>
 
@@ -130,8 +130,31 @@ alert to antypattern
           </select>
         </div>
 
+        
+
+        <div id="habitSection" style="display:none;">
+          <select id="habitFrequency">
+            <option value="daily">Codziennie</option>
+            <option value="weekly">Raz w tygodniu</option>
+            <option value="monthly">Raz w miesiącu</option>
+            <option value="specific">Konkretne dni tygodnia</option>
+          </select>
+        
+          <div id="daysPicker" style="display:none;">
+            <label><input type="checkbox" value="1"> Pon</label>
+            <label><input type="checkbox" value="2"> Wt</label>
+            <label><input type="checkbox" value="3"> Śr</label>
+            <label><input type="checkbox" value="4"> Czw</label>
+            <label><input type="checkbox" value="5"> Pt</label>
+            <label><input type="checkbox" value="6"> Sob</label>
+            <label><input type="checkbox" value="0"> Niedz</label>
+          </div>
+        </div>
+
         <input type="text" placeholder="Task name" id="taskName" />
-        <input type="date" id="taskDate" />
+        <div id="taskDateSection"> 
+          <input type="date" id="taskDate" />
+        </div>        
         <div style="flex: 1">
           <input
             type="text"
@@ -144,338 +167,9 @@ alert to antypattern
 
         <button class="addTask">Add</button>
       </div>
-    </div>
-    <script>
-      // -----------------------
-      // Formatting funcitons
-      // -----------------------
-      function getMondayFirstDay(date) {
-        const day = date.getDay(); // 0 = sunday
-        return day === 0 ? 6 : day - 1;
-      }
-
-      function formatDateKey(date) {
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
-        const day = date.getDate().toString().padStart(2, "0");
-        return `${year}-${month}-${day}`;
-      }
-
-      function formatLocation(address) {
-        if (!address) return "";
-
-        const street =
-          address.road ||
-          address.pedestrian ||
-          address.cycleway ||
-          address.footway;
-
-        const houseNumber = address.house_number;
-
-        const city =
-          address.city || address.town || address.village || address.hamlet;
-
-        const country = address.country;
-
-        if (street && houseNumber && city) {
-          return `${street} ${houseNumber}, ${city}`;
-        }
-
-        if (street && city) {
-          return `${street}, ${city}`;
-        }
-
-        if (city && country) {
-          return `${city}, ${country}`;
-        }
-
-        if (country) {
-          return country;
-        }
-
-        return "";
-      }
-
-      // -----------------------
-      // global variables
-      // -----------------------
-      let date = new Date(); // aktualny miesiąc dla kalendarza
-      let selectedDate = new Date(); // domyślnie dzisiaj
-
-      const grid = document.getElementById("calendarGrid");
-      const label = document.getElementById("currentMonth");
-
-      // -----------------------
-      // all undone tasks
-      // -----------------------
-      function renderAllTasks() {
-        const title = document.getElementById("taskDateTitle");
-        const list = document.getElementById("taskList");
-
-        title.textContent = "To Do Today:";
-        list.innerHTML = "";
-
-        const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
-
-        const allTasks = [];
-
-        Object.entries(saved).forEach(([dateKey, tasks]) => {
-          Object.entries(tasks).forEach(([taskName, taskData]) => {
-            allTasks.push({
-              date: dateKey,
-              name: taskName,
-              done: !!taskData.done,
-              location: taskData.location || null,
-            });
-          });
-        });
-
-        
-
-        // Filtr: niewykonane , potem sort po dacie
-        const visibleTasks = allTasks
-          .filter((task) => !task.done)
-          .sort((a, b) => a.date.localeCompare(b.date));
-
-        visibleTasks.forEach((task, index) => {
-          const li = document.createElement("li");
-          li.classList.add("taskItem");
-          if (task.done) li.classList.add("done");
-
-          const taskType = task.type || "task";
-          li.classList.add(taskType === "habit" ? "is-habit" : "is-task");
-          const typeIcon = taskType === "habit" ? "🔁 " : "✅ ";
-          label.textContent = typeIcon + task.name;
+    </div>       
 
     
-          // Label na nazwę zadania
-          const label = document.createElement("label");
-          label.textContent = task.name;
-          label.classList.add("taskLabel");
-
-          // Checkbox
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = task.done;
-          checkbox.classList.add("taskCheckbox");
-
-          // Delete button
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "🗑️";
-          deleteBtn.classList.add("deleteTaskBtn");
-
-          deleteBtn.addEventListener("click", () => {
-            const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
-
-            delete saved[task.date][task.name];
-
-            if (Object.keys(saved[task.date]).length === 0) {
-              delete saved[task.date];
-            }
-
-            localStorage.setItem("tasksState", JSON.stringify(saved));
-            renderAllTasks();
-          });
-
-          // ID dla checkboxa + połączenie label
-          const checkboxId = `task-${task.date}-${index}`;
-          checkbox.id = checkboxId;
-          label.htmlFor = checkboxId;
-
-          checkbox.addEventListener("change", () => {
-            const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
-            saved[task.date][task.name].done = checkbox.checked;
-            localStorage.setItem("tasksState", JSON.stringify(saved));
-            renderAllTasks();
-          });
-
-          // wrapper na meta + checkbox
-          const rowWrapper = document.createElement("div");
-          rowWrapper.classList.add("rowWrapper");
-
-          const meta = document.createElement("div");
-          meta.classList.add("taskMetaWrapper");
-
-          const dateSpan = document.createElement("span");
-          dateSpan.textContent = `📅 ${task.date}`;
-          meta.appendChild(dateSpan);
-
-          if (task.location) {
-            const locationSpan = document.createElement("span");
-            locationSpan.textContent = `📍 ${task.location}`;
-            meta.appendChild(locationSpan);
-          }
-
-          rowWrapper.appendChild(meta);
-          rowWrapper.appendChild(checkbox);
-
-          li.appendChild(label);
-          li.appendChild(deleteBtn); 
-          li.appendChild(rowWrapper);
-          list.appendChild(li);
-        });
-      }
-
-      renderAllTasks();
-    </script>
-
-    <script>
-      // ------------------------------
-      // Location inside add task modal
-      // ------------------------------
-      const input = document.getElementById("locationInput");
-      const searchBtn = document.getElementById("searchLocation");
-      const geoBtn = document.getElementById("useMyLocation");
-
-      let selectedLocation = null;
-
-      // After Input
-      searchBtn.addEventListener("click", async () => {
-        const query = input.value.trim();
-        if (!query) return;
-
-        try {
-          const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
-            query
-          )}`;
-          const res = await fetch(url);
-          const data = await res.json();
-
-          if (!data.length) {
-            input.value = "";
-            input.classList.remove("success");
-            input.classList.add("error");
-            selectedLocation = null;
-            alert("Location not found");
-            return;
-          }
-
-          const place = data[0];
-          const shortName = formatLocation(place.address);
-
-          selectedLocation = {
-            name: shortName || place.display_name,
-            lat: parseFloat(place.lat),
-            lng: parseFloat(place.lon),
-          };
-
-          input.value = selectedLocation.name;
-
-          input.classList.remove("error");
-          input.classList.add("success");
-          console.log("Saved location:", selectedLocation);
-        } catch (e) {
-          console.error("Search location error", e);
-          input.value = "";
-          selectedLocation = null;
-        }
-      });
-
-      // Location from Device's GPS
-      geoBtn.addEventListener("click", () => {
-        if (!navigator.geolocation) {
-          alert("Geolocation not supported");
-          return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const { latitude, longitude } = position.coords;
-            console.log("GPS coords:", latitude, longitude);
-
-            try {
-              const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-              const res = await fetch(url);
-              const data = await res.json();
-
-              if (!data || !data.display_name) {
-                input.value = "";
-                selectedLocation = null;
-                alert("Location not found");
-                return;
-              }
-
-              const shortName = formatLocation(data.address);
-
-              selectedLocation = {
-                name: shortName || data.display_name,
-                lat: parseFloat(place.lat),
-                lng: parseFloat(place.lon),
-              };
-
-              input.value = selectedLocation.name;
-
-              input.classList.remove("error");
-              input.classList.add("success");
-
-              console.log("Location set:", selectedLocation);
-            } catch (e) {
-              console.error("Reverse geocoding failed", e);
-              input.value = "";
-              selectedLocation = null;
-            }
-          },
-          (err) => {
-            console.error("Geolocation error:", err);
-            alert("Could not get location. Make sure you allowed it.");
-            input.value = "";
-            selectedLocation = null;
-          }
-        );
-      });
-    </script>
-
-    <script>
-      // FAB
-      const fabBtn = document.getElementById("addTaskBtn");
-      const closeBtn = document.getElementById("closeModal");
-      const overlay = document.getElementById("modalOverlay");
-
-      fabBtn.addEventListener("click", () => overlay.classList.add("open"));
-      closeBtn.addEventListener("click", () =>
-        overlay.classList.remove("open")
-      );
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) overlay.classList.remove("open");
-      });
-
-      // adding a task
-      const addTaskModalBtn = document.querySelector(".addTask");
-      const taskNameInput = document.getElementById("taskName");
-      const taskDateInput = document.getElementById("taskDate");
-      const locationInput = document.getElementById("locationInput");
-      const taskTypeSelect = document.getElementById("taskType");
-
-      addTaskModalBtn.addEventListener("click", () => {
-        const name = taskNameInput.value.trim();
-        if (!name) return alert("Enter task name");
-
-        const dateStr = taskDateInput.value || formatDateKey(selectedDate); // if no date is provided date will be set for today
-        const location = locationInput.value.trim();
-
-        const type = taskTypeSelect.value;
-
-        const saved = JSON.parse(localStorage.getItem("tasksState")) || {};
-        saved[dateStr] = saved[dateStr] || {};
-        saved[dateStr][name] = { 
-          done: false, 
-          location: location || null,
-          type, type
-        };
-        localStorage.setItem("tasksState", JSON.stringify(saved));
-
-        renderAllTasks();
-
-        taskNameInput.value = "";
-        taskDateInput.value = "";
-        locationInput.value = "";
-        taskTypeSelect.value = "task"; 
-        overlay.classList.remove("open");
-
-        selectedDate = new Date(dateStr);
-        renderCalendar();
-      });
-    </script>
 
     <!-- im gonna update that later -->
     <script src="./app.js"></script>

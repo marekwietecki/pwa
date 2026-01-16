@@ -227,7 +227,7 @@ body {
   overflow-y: auto;
   margin-top: 8px;
 }
-#taskList {
+#toDoList {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
