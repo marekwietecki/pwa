@@ -164,69 +164,70 @@ const DataManager = {
 */
 const UI = {
   resetModal: () => {
-    elements.taskName.value = "";
-    elements.taskDate.value = "";
-    elements.locationInput.value = "";
-    elements.taskType.value = "task";
-    elements.taskDateSection.style.display = "block";
-    elements.habitSection.style.display = "none";
+    if (elements.taskName) elements.taskName.value = "";
+    if (elements.taskDate) elements.taskDate.value = "";
+    if (elements.locationInput) elements.locationInput.value = "";
+    if (elements.taskType) elements.taskType.value = "task";
+
+    if (elements.taskDateSection) elements.taskDateSection.style.display = "block";
+    if (elements.habitSection) elements.habitSection.style.display = "none";
     
-    // Czyścimy zaznaczone dni tygodnia
-    elements.daysPicker.querySelectorAll("input:checked").forEach(cb => cb.checked = false);
-    elements.daysPicker.style.display = "none";
+    if (elements.daysPicker) {
+      elements.daysPicker.querySelectorAll("input:checked").forEach(cb => cb.checked = false);
+      elements.daysPicker.style.display = "none";
+    }
     
     if (elements.modalOverlay) {
       elements.modalOverlay.classList.remove("open");
     }
   },
 
-  renderAllUndoneTasks: () => {
-    // 1. Sprawdź czy używasz poprawnej nazwy z elements!
-    if (!elements.toDoList) {
-      console.error("BŁĄD: Nie znaleziono elementu toDoList w DOM!");
-      return;
-    }
 
-    const today = new Date();
-    const todayKey = Utils.formatDateKey(today);
-    const todayDayOfWeek = today.getDay(); // 0-6
 
-    elements.taskDateTitle.textContent = "To Do Today:";
-    // Czyścimy listę przed ponownym renderowaniem
+  renderAllUndoneTasks: (targetDate = new Date()) => {
+    if (!elements.toDoList) return;
+
+    // Pobieramy dane dla wybranej daty (targetDate), nie tylko dla dzisiaj
+    const dateKey = Utils.formatDateKey(targetDate);
+    const dayOfWeek = targetDate.getDay(); 
+    const todayKey = Utils.formatDateKey(new Date());
+
+    // Ustawiamy tytuł
+    elements.taskDateTitle.textContent = (dateKey === todayKey) 
+      ? "Today's Hero Goals:" 
+      : `Goals for ${targetDate.toDateString()}:`;
+
     elements.toDoList.innerHTML = "";
 
     const savedTasks = DataManager.getTasks();
     const savedHabits = DataManager.getHabits();
-    
-    // Używamy fragmentu dla lepszej wydajności
     const listFragment = document.createDocumentFragment();
 
-    // --- 1. FILTROWANIE ZADAŃ ---
-    const tasksForToday = savedTasks[todayKey] || {};
-    Object.entries(tasksForToday).forEach(([name, data]) => {
+    // --- 1. FILTROWANIE ZADAŃ (Używamy dateKey!) ---
+    const tasksForDate = savedTasks[dateKey] || {};
+    Object.entries(tasksForDate).forEach(([name, data]) => {
       if (!data.done) {
-        const li = UI.createTaskNode(name, data, todayKey, "task");
+        const li = UI.createTaskNode(name, data, dateKey, "task");
         listFragment.appendChild(li);
       }
     });
 
-    // --- 2. FILTROWANIE NAWYKÓW ---
+    // --- 2. FILTROWANIE NAWYKÓW (Używamy dayOfWeek!) ---
     savedHabits.forEach(habit => {
       let isDueToday = false;
       if (habit.frequency === "daily") isDueToday = true;
-      else if (habit.frequency === "specific" && habit.selectedDays.includes(todayDayOfWeek)) {
+      else if (habit.frequency === "specific" && habit.selectedDays.includes(dayOfWeek)) {
         isDueToday = true;
       }
 
-      const isDoneToday = habit.history && habit.history[todayKey];
+      const isDoneToday = habit.history && habit.history[dateKey];
       
       if (isDueToday && !isDoneToday) {
-        const li = UI.createTaskNode(habit.name, habit, todayKey, "habit");
+        const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
         listFragment.appendChild(li);
       }
     });
 
-    // KLUCZOWA LINIA: Dodaj zebrane elementy do widocznej listy
     elements.toDoList.appendChild(listFragment);
   },
 
@@ -295,11 +296,56 @@ const UI = {
     return li;
   },
 
-  // DODAJ TO:
   renderCalendar: () => {
     if (!elements.grid) return;
-    console.log("Tutaj pojawi się logika rysowania kalendarza");
+
+    elements.grid.innerHTML = '';
+    elements.label.textContent = date.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    // Nagłówki dni tygodnia
+    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(d => {
+      const el = document.createElement('div');
+      el.textContent = d;
+      el.className = 'day-label';
+      elements.grid.appendChild(el);
+    });
+
+    const firstDay = new Date(year, month, 1);
+    const startIndex = Utils.getMondayFirstDay(firstDay);
+
+    for (let i = 0; i < startIndex; i++) {
+      elements.grid.appendChild(document.createElement('div'));
+    }
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const el = document.createElement('div');
+      el.className = 'day';
+      el.textContent = day;
+
+      if (selectedDate.getFullYear() === year && 
+          selectedDate.getMonth() === month && 
+          selectedDate.getDate() === day) {
+        el.classList.add('active');
+      }
+
+      el.onclick = () => {
+        document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+        selectedDate = new Date(year, month, day);
+        UI.renderAllUndoneTasks(selectedDate);
+      };
+
+      elements.grid.appendChild(el);
+    }
   },
+  
   
   renderDailyTasks: () => {
     // To może być Twoje renderAllUndoneTasks lub inna funkcja
@@ -329,7 +375,17 @@ function initEventListeners() {
     if (e.target === elements.modalOverlay) UI.resetModal();
   });
 
+
+  //calendar arrows
+  document.getElementById('prevMonth')?.addEventListener('click', () => {
+    date.setMonth(date.getMonth() - 1);
+    UI.renderCalendar();
+  });
   
+  document.getElementById('nextMonth')?.addEventListener('click', () => {
+    date.setMonth(date.getMonth() + 1);
+    UI.renderCalendar();
+  });
 
 
   // Modal Type Switch
@@ -431,11 +487,13 @@ function initEventListeners() {
       DataManager.addHabit(habit);
     }
 
-    if (typeof UI.renderAllUndoneTasks === "function") UI.renderAllUndoneTasks();
-    if (typeof UI.renderCalendar === "function") UI.renderCalendar();
+    if (elements.grid) {
+      UI.renderCalendar();
+    }
+
+    UI.renderAllUndoneTasks(selectedDate);
      
     UI.resetModal();
-    UI.renderAllUndoneTasks(); 
   });
 }
 
@@ -448,15 +506,17 @@ function initEventListeners() {
 document.addEventListener("DOMContentLoaded", () => {
   initEventListeners(); // To musi być pierwsze
 
-  // Sprawdzamy, czy w obiekcie elements (który pobrał toDoList) jest ten element
-  if (elements.toDoList) {
+  // index
+  if (elements.toDoList && !elements.grid) {
     console.log("Dashboard wykryty: Renderuję zadania...");
     UI.renderAllUndoneTasks();
   } else {
     console.log("To nie jest strona Dashboard (brak toDoList)");
   }
 
+  // calendar
   if (elements.grid) {
     UI.renderCalendar();
+    UI.renderAllUndoneTasks(selectedDate);
   }
 });

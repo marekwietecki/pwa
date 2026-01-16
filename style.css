@@ -212,7 +212,7 @@ body {
   flex-shrink: 0;
   margin-top: 2vh;
 }
-.tasks {
+.toDo {
   display: flex;
   flex: 1 1 0; 
   flex-direction: column;
@@ -221,7 +221,7 @@ body {
   margin: 0;
   width: 740px;
 }
-.taskListWrapper {
+.toDoListWrapper {
   flex: 1 1 0;      
   min-height: 0;     
   overflow-y: auto;
