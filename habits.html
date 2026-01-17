@@ -108,21 +108,65 @@
       </div>
     </section>
 
-
+<!--
+      <svg 
+          fill="none" 
+          height="70" 
+          viewBox="0 0 63 70" 
+          width="63" 
+          xmlns="http://www.w3.org/2000/svg"
+          >
+          <g 
+            stroke="#f0512d" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="7"
+            >
+            <path 
+              clip-rule="evenodd" 
+              d="m3.5 40.6631c0 14.2693 12.3402 25.8369 27.5625 25.8369 15.2224 0 27.5625-11.5676 27.5625-25.8369 0-15.9943-11.0984-28.2037-20.6719-37.1631-3.4626 2.43236-6.219 5.90626-8.2691 10.4217-2.0501 4.5154-3.353 9.9486-3.9087 16.2996-2.7001-.5224-5.0635-1.7847-7.09-3.7871-2.0264-2.0024-4.0217-4.9123-5.9857-8.7297-5.06597 7.1582-9.1996 15.3352-9.1996 22.9586z" 
+              fill-rule="evenodd"
+            />
+            <path   
+              d="m45.0185 41.9631c-.8456 5.5104-5.0945 9.8332-10.5107 10.6935"
+            />
+          </g>
+        </svg>
+        -->
+  
     <!-- HABITS -->
-    <section class="habits"> 
-      <h3 id="habitsTitle">Habits:</h3>
-      <div class="habitsListWrapper">
-        <ul id="habitsList"></ul>
+    <section class="habitStats"> <!-- hero-stats -->
+      <div class="habit-carousel" id="habitCarousel">
       </div>
-    </section>
-
-    <section class="habitStats">
-      <div class="streakCount">
-
-      </div>
-      <div class="streakPercentage">
+    
+      <div id="habitDetails" class="habit-details-card" style="display:none;">
+        <h2 id="detailHabitName">Pick habit</h2>
         
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Ogólny postęp</span>
+            <div id="detailProgressCircle"></div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Current Streak</span>
+            <div class="streak-value"><span id="detailStreak">0</span> dni 🔥</div>
+          </div>
+        </div>
+    
+        <div class="activity-calendar">
+          <h3>Last month</h3>
+          <div class="activity-section">
+            <div class="mini-cal-header">
+                <div class="mini-cal-nav">
+                    <button id="prevStatMonth">‹</button>
+                    <h4>Month Year</h4>
+                    <button id="nextStatMonth">›</button>
+                </div>
+            </div>
+            <div id="activityGrid" class="activity-grid">
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

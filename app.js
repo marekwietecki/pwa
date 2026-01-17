@@ -30,9 +30,11 @@ if (!navigator.onLine) {
 /*
   APP STATE & CONFIG
 */ 
-let date = new Date(); // aktualny miesiąc dla kalendarza
-let selectedDate = new Date(); // domyślnie dzisiaj
-let currentCreateType = "task"; // Domyślny typ
+let date = new Date(); // actual month for calendar view
+let selectedDate = new Date(); // default today 
+let currentCreateType = "task"; // default type
+let statsViewDate = new Date(); // mini calendar data
+let selectedHabitForStats = null; // currently clicked habit
 
 /*
   DOM Elements
@@ -149,9 +151,42 @@ const DataManager = {
     const habit = habits.find(h => h.id === habitId);
     if (habit) {
       habit.history = habit.history || {};
-      habit.history[dateKey] = isDone;
+      if (isDone) {
+        habit.history[dateKey] = true;
+      } else {
+        delete habit.history[dateKey]; 
+      }
       DataManager.saveHabits(habits);
     }
+  },
+
+  calculateHabitProgress: (habit) => {
+    const history = Object.values(habit.history); // [true, false, true...]
+    if (history.length === 0) return 0;
+    
+    const doneCount = history.filter(status => status === true).length;
+    return Math.round((doneCount / history.length) * 100);
+  },
+
+  calculateStreak: (habit) => {
+    let streak = 0;
+    let checkDate = new Date();
+    const history = habit.history || {};
+
+    while (true) {
+      const key = Utils.formatDateKey(checkDate);
+      if (history[key] === true) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        if (streak === 0 && key === Utils.formatDateKey(new Date())) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            continue;
+        }
+        break;
+      }
+    }
+    return streak;
   }
 };
 
@@ -202,52 +237,128 @@ const UI = {
     if (elements.daysPicker) elements.daysPicker.style.display = "none";
   },
 
-  
+  createProgressCircle: (progress) => {
+    const radius = 12;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (progress / 100) * circumference;
+    const svgNS = "http://www.w3.org/2000/svg";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "progress-ring-container";
+
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "34");
+    svg.setAttribute("height", "34");
+    svg.classList.add("progress-ring");
+
+    // Funkcja wewnętrzna do tworzenia elementów SVG
+    const createCircle = (isBg) => {
+      const circle = document.createElementNS(svgNS, "circle");
+      circle.setAttribute("cx", "17");
+      circle.setAttribute("cy", "17");
+      circle.setAttribute("r", radius);
+      circle.setAttribute("stroke-width", "3");
+      circle.setAttribute("fill", "transparent");
+      
+      if (isBg) {
+        circle.classList.add("progress-ring__circle-bg");
+        circle.setAttribute("stroke", "#e6e6e6");
+      } else {
+        circle.classList.add("progress-ring__circle");
+        circle.setAttribute("stroke", "#4caf50");
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = offset;
+      }
+      return circle;
+    };
+
+    svg.appendChild(createCircle(true));
+    svg.appendChild(createCircle(false));
+
+    const text = document.createElement("span");
+    text.className = "progress-text";
+    text.textContent = `${progress}%`;
+
+    wrapper.appendChild(svg);
+    wrapper.appendChild(text);
+    return wrapper;
+  },
 
 
-  renderAllUndoneTasks: (targetDate = new Date()) => {
+  renderTasksForDay: (targetDate = new Date(), showCompleted = false) => {
     if (!elements.toDoList) return;
 
-    // Pobieramy dane dla wybranej daty (targetDate), nie tylko dla dzisiaj
     const dateKey = Utils.formatDateKey(targetDate);
     const dayOfWeek = targetDate.getDay(); 
     const todayKey = Utils.formatDateKey(new Date());
 
-    // Ustawiamy tytuł
     elements.taskDateTitle.textContent = (dateKey === todayKey) 
-      ? "Today's Hero Goals:" 
+      ? "Today's Goals:" 
       : `Goals for ${targetDate.toDateString()}:`;
 
     elements.toDoList.innerHTML = "";
 
     const savedTasks = DataManager.getTasks();
     const savedHabits = DataManager.getHabits();
-    const listFragment = document.createDocumentFragment();
+    
+    const undoneNodes = [];
+    const doneNodes = [];
 
-    // --- 1. FILTROWANIE ZADAŃ (Używamy dateKey!) ---
+    // --- 1. ZADANIA (Tasks) ---
     const tasksForDate = savedTasks[dateKey] || {};
     Object.entries(tasksForDate).forEach(([name, data]) => {
-      if (!data.done) {
-        const li = UI.createTaskNode(name, data, dateKey, "task");
-        listFragment.appendChild(li);
+
+      const li = UI.createTaskNode(name, data, dateKey, "task");
+
+      if (data.done) {
+        if (showCompleted) {
+          const li = UI.createTaskNode(name, data, dateKey, "task");
+          li.classList.add("is-completed");
+          const cb = li.querySelector('input[type="checkbox"]');
+          if (cb) cb.checked = true;
+          doneNodes.push(li);
+        }
+      } else {
+        undoneNodes.push(li);
       }
     });
 
-    // --- 2. FILTROWANIE NAWYKÓW (Używamy dayOfWeek!) ---
+    // --- 2. NAWYKI (Habits) ---
     savedHabits.forEach(habit => {
+      const createdDate = new Date(habit.createdAt);
+      createdDate.setHours(0,0,0,0);
+      const viewingDate = new Date(targetDate);
+      viewingDate.setHours(0,0,0,0);
+
+      if (viewingDate < createdDate) return;
+
       let isDueToday = false;
       if (habit.frequency === "daily") isDueToday = true;
       else if (habit.frequency === "specific" && habit.selectedDays.includes(dayOfWeek)) {
         isDueToday = true;
       }
 
-      const isDoneToday = habit.history && habit.history[dateKey];
-      
-      if (isDueToday && !isDoneToday) {
-        const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
-        listFragment.appendChild(li);
+      if (isDueToday) {
+        const isDone = habit.history && habit.history[dateKey];
+        if (isDone) {
+          if (showCompleted) {
+            const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
+            li.classList.add("is-completed");
+            const cb = li.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = true;
+            doneNodes.push(li);
+          }
+        } else {
+          const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
+          undoneNodes.push(li);
+        }
       }
     });
+
+    // Łączymy listy
+    const listFragment = document.createDocumentFragment();
+    undoneNodes.forEach(node => listFragment.appendChild(node));
+    doneNodes.forEach(node => listFragment.appendChild(node));
 
     elements.toDoList.appendChild(listFragment);
   },
@@ -262,7 +373,6 @@ const UI = {
   
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
-    // Używamy textContent - to neutralizuje wszelkie skrypty!
     taskLabel.textContent = `${type === "habit" ? "🔁" : "✅"} ${name}`;
   
     const metaWrapper = document.createElement("div");
@@ -280,7 +390,13 @@ const UI = {
     // 2. Kontener na akcje
     const taskActions = document.createElement("div");
     taskActions.className = "taskActions";
-  
+
+    if (type === "habit" || type === "goal") {
+      const progress = DataManager.calculateHabitProgress(data);
+      const circle = UI.createProgressCircle(progress);
+      taskActions.appendChild(circle);
+    }
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.className = "taskCheckbox";
@@ -317,22 +433,26 @@ const UI = {
     li.appendChild(taskContent);
     li.appendChild(taskActions);
   
-    // --- LISTENERY (Logika pozostaje ta sama) ---
-    checkbox.addEventListener("change", () => {
+    // --- LISTENERY ---
+    checkbox.addEventListener("change", function() {
+      const isChecked = this.checked; 
+
       if (type === "task") {
         const tasks = DataManager.getTasks();
-        tasks[dateKey][name].done = true;
-        DataManager.saveTasks(tasks);
+        if (tasks[dateKey] && tasks[dateKey][name]) {
+          tasks[dateKey][name].done = isChecked; 
+          DataManager.saveTasks(tasks);
+        }
       } else {
-        DataManager.toggleHabitDone(data.id, dateKey, true);
+        DataManager.toggleHabitDone(data.id, dateKey, isChecked);
       }
-      li.style.opacity = "0.3";
-      setTimeout(() => UI.renderAllUndoneTasks(), 300);
-    });
-  
-    deleteBtn.addEventListener("click", () => {
-      // ... tutaj logika usuwania ...
-      UI.renderAllUndoneTasks();
+    
+      li.style.opacity = isChecked ? "0.3" : "1";
+      
+      const isCalendar = !!elements.grid; 
+      setTimeout(() => {
+        UI.renderTasksForDay(selectedDate, isCalendar);
+      }, 300);
     });
   
     return li;
@@ -381,7 +501,7 @@ const UI = {
         document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
         el.classList.add('active');
         selectedDate = new Date(year, month, day);
-        UI.renderAllUndoneTasks(selectedDate);
+        UI.renderTasksForDay(selectedDate, true);      
       };
 
       elements.grid.appendChild(el);
@@ -389,14 +509,113 @@ const UI = {
   },
   
   
-  renderDailyTasks: () => {
-    // To może być Twoje renderAllUndoneTasks lub inna funkcja
-    UI.renderAllUndoneTasks();
+  renderHabits: () => {
+    const container = document.getElementById("habitCarousel");
+    if (!container) return;
+
+    const habits = DataManager.getHabits();
+    container.innerHTML = "";
+
+    if (habits.length === 0) {
+      container.innerHTML = "<p style='padding: 20px;'>No habits added yet!</p>";
+      return;
+    }
+
+    habits.forEach((habit, index) => {
+      const card = document.createElement("div");
+      card.className = "habit-card-mini";
+      
+      const progress = DataManager.calculateHabitProgress(habit);
+      card.appendChild(UI.createProgressCircle(progress));
+      
+      const name = document.createElement("p");
+      name.textContent = habit.name;
+      name.style.fontSize = "12px";
+      card.appendChild(name);
+
+      card.onclick = () => {
+        document.querySelectorAll('.habit-card-mini').forEach(c => c.classList.remove('active-card'));
+        card.classList.add('active-card');
+        UI.showHabitDetails(habit);
+      };
+
+      container.appendChild(card);
+
+      if (index === 0) {
+        card.classList.add('active-card');
+        UI.showHabitDetails(habit);
+      }
+    });
   },
 
-  renderHabitStats: () => {
-    console.log("Tutaj pojawi się logika wykresów");
-  }
+  showHabitDetails: (habit) => {
+    selectedHabitForStats = habit;
+
+    document.getElementById("habitDetails").style.display = "block";
+    if (!details) return;
+    document.getElementById("detailHabitName").textContent = habit.name;
+    document.getElementById("detailStreak").textContent = DataManager.calculateStreak(habit);
+    
+    const circleContainer = document.getElementById("detailProgressCircle");
+    circleContainer.innerHTML = "";
+    circleContainer.appendChild(UI.createProgressCircle(DataManager.calculateHabitProgress(habit)));
+
+    UI.renderActivityGrid(habit);
+  },
+
+  renderActivityGrid: (habit) => {
+    const grid = document.getElementById("activityGrid");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+    
+    const year = statsViewDate.getFullYear();
+    const month = statsViewDate.getMonth();
+
+    const monthLabel = document.querySelector(".activity-section h4");
+    if (monthLabel) {
+        monthLabel.textContent = statsViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    ['M', 'T', 'W', 'T', 'F', 'S', 'S'].forEach(d => {
+        const el = document.createElement('div');
+        el.textContent = d;
+        el.className = 'mini-day-label';
+        grid.appendChild(el);
+    });
+
+    const firstDay = new Date(year, month, 1);
+    const startIndex = Utils.getMondayFirstDay(firstDay);
+
+    for (let i = 0; i < startIndex; i++) {
+        grid.appendChild(document.createElement('div'));
+    }
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+        const el = document.createElement('div');
+        el.className = 'mini-day';
+        el.textContent = day;
+
+        const currentIterDate = new Date(year, month, day);
+        const dateKey = Utils.formatDateKey(currentIterDate);
+        const createdDate = new Date(habit.createdAt);
+        createdDate.setHours(0,0,0,0);
+
+        if (habit.history && habit.history[dateKey]) {
+            el.classList.add('habit-done');
+        }
+
+        if (currentIterDate < createdDate) {
+            el.classList.add('pre-habit');
+        }
+
+        grid.appendChild(el);
+    }
+},
+
+  //hero stats
+  renderHeroStats: () => {},
 };
 
 
@@ -426,6 +645,16 @@ function initEventListeners() {
     }
   });
 
+  //mini calendar arrows
+  document.getElementById('prevStatMonth')?.addEventListener('click', () => {
+    statsViewDate.setMonth(statsViewDate.getMonth() - 1);
+    if (selectedHabitForStats) UI.renderActivityGrid(selectedHabitForStats);
+  });
+
+  document.getElementById('nextStatMonth')?.addEventListener('click', () => {
+    statsViewDate.setMonth(statsViewDate.getMonth() + 1);
+    if (selectedHabitForStats) UI.renderActivityGrid(selectedHabitForStats);
+  });
 
   //calendar arrows
   document.getElementById('prevMonth')?.addEventListener('click', () => {
@@ -585,7 +814,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // index
   if (elements.toDoList && !elements.grid) {
     console.log("Dashboard wykryty: Renderuję zadania...");
-    UI.renderAllUndoneTasks();
+    UI.renderTasksForDay();
   } else {
     console.log("To nie jest strona Dashboard (brak toDoList)");
   }
@@ -593,6 +822,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // calendar
   if (elements.grid) {
     UI.renderCalendar();
-    UI.renderAllUndoneTasks(selectedDate);
+    UI.renderTasksForDay(selectedDate, true);
+  }
+
+  // hero
+  if (elements.habitSection) {
+    UI.renderHabits();
+
   }
 });
