@@ -113,12 +113,38 @@
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-sheet">
         <header class="modal-header">
-          <h3>Add Habit</h3>
+          <div class="typePickers">
+              <h3>Add new</h3>
+              <button class="typePicker">Task</button>
+              <button class="typePicker active">Habit</button>
+              <button class="typePicker">Goal</button>
+          </div>
           <button id="closeModal">✕</button>
-        </header>
+      </header>
 
-        <input type="text" placeholder="Task name" id="taskName" />
-        <input type="date" id="taskDate" />
+      <div id="habitSection" style="display:none;">
+          <select id="habitFrequency">
+              <option value="daily">Codziennie</option>
+              <option value="weekly">Raz w tygodniu</option>
+              <option value="monthly">Raz w miesiącu</option>
+              <option value="specific">Konkretne dni tygodnia</option>
+          </select>
+          
+          <div id="daysPicker" style="display:none;">
+              <label><input type="checkbox" value="1"> Pon</label>
+              <label><input type="checkbox" value="2"> Wt</label>
+              <label><input type="checkbox" value="3"> Śr</label>
+              <label><input type="checkbox" value="4"> Czw</label>
+              <label><input type="checkbox" value="5"> Pt</label>
+              <label><input type="checkbox" value="6"> Sob</label>
+              <label><input type="checkbox" value="0"> Niedz</label>
+          </div>
+      </div>
+  
+      <input type="text" placeholder="Task name" id="taskName" />
+      <div id="taskDateSection">
+          <input type="date" id="taskDate" />
+      </div>
         <div style="flex: 1">
           <input
             type="text"

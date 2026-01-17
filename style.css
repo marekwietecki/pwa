@@ -372,6 +372,39 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+.typePickers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.typePicker {
+  cursor: pointer;
+  box-shadow: none;
+  color: #dedede;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 6px 12px;
+  line-height: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+.typePicker:hover {
+  opacity: 72%;
+}
+.typePicker.active {
+  color: #fff;
+  text-decoration: underline;
+  cursor: auto;
+}
+.typePicker.active:hover {
+  opacity: 100%;
+}
+
 #closeModal {
   background-color: rgba(0, 0, 0, 0);
   color: white;

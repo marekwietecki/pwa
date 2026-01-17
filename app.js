@@ -32,6 +32,7 @@ if (!navigator.onLine) {
 */ 
 let date = new Date(); // aktualny miesiąc dla kalendarza
 let selectedDate = new Date(); // domyślnie dzisiaj
+let currentCreateType = "task"; // Domyślny typ
 
 /*
   DOM Elements
@@ -167,21 +168,35 @@ const UI = {
     if (elements.taskName) elements.taskName.value = "";
     if (elements.taskDate) elements.taskDate.value = "";
     if (elements.locationInput) elements.locationInput.value = "";
-    if (elements.taskType) elements.taskType.value = "task";
 
-    if (elements.taskDateSection) elements.taskDateSection.style.display = "block";
-    if (elements.habitSection) elements.habitSection.style.display = "none";
-    
-    if (elements.daysPicker) {
-      elements.daysPicker.querySelectorAll("input:checked").forEach(cb => cb.checked = false);
-      elements.daysPicker.style.display = "none";
+    const url = window.location.href.toLowerCase(); 
+    if (url.includes("habit")) {
+        currentCreateType = "habit";
+    } else if (url.includes("hero")) {
+        currentCreateType = "goal";
+    } else {
+        currentCreateType = "task";
     }
-    
+
+    console.log("Strona rozpoznana jako:", currentCreateType); 
+
+    document.querySelectorAll('.typePicker').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-type') === currentCreateType) {
+            btn.classList.add('active');
+        }
+    });
+
+    const isHabit = currentCreateType === "habit";
+    const isGoal = currentCreateType === "goal";
+
+    if (elements.taskDateSection) elements.taskDateSection.style.display = (isHabit || isGoal) ? "none" : "block";
+    if (elements.habitSection) elements.habitSection.style.display = isHabit ? "block" : "none";
+
     if (elements.modalOverlay) {
       elements.modalOverlay.classList.remove("open");
     }
   },
-
 
 
   renderAllUndoneTasks: (targetDate = new Date()) => {
@@ -267,6 +282,27 @@ const UI = {
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "deleteTaskBtn";
     deleteBtn.textContent = "🗑️";
+
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // Żeby nie kliknąć przy okazji w li
+      
+      if (confirm(`Delete "${name}"?`)) {
+          if (type === "task") {
+              const tasks = DataManager.getTasks();
+              if (tasks[dateKey]) {
+                  delete tasks[dateKey][name];
+                  // Czyścimy pusty dzień
+                  if (Object.keys(tasks[dateKey]).length === 0) delete tasks[dateKey];
+                  DataManager.saveTasks(tasks);
+              }
+          } else {
+              const habits = DataManager.getHabits();
+              const filtered = habits.filter(h => h.name !== name); // Proste usuwanie po nazwie
+              DataManager.saveHabits(filtered);
+          }
+          UI.renderAllUndoneTasks(selectedDate);
+      }
+  });
   
     taskActions.appendChild(checkbox);
     taskActions.appendChild(deleteBtn);
@@ -387,12 +423,29 @@ function initEventListeners() {
     UI.renderCalendar();
   });
 
+  // modal type switch
+  document.querySelectorAll('.typePicker').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.typePicker').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+  
+      const selectedType = btn.getAttribute('data-type');
+      currentCreateType = selectedType;
+  
+      const isHabit = selectedType === "habit";
+      const isGoal = selectedType === "goal";
+  
+      if (elements.taskDateSection) {
+        elements.taskDateSection.style.display = (isHabit || isGoal) ? "none" : "block";
+      }
+      
+      if (elements.habitSection) {
+        elements.habitSection.style.display = isHabit ? "block" : "none";
+      }
 
-  // Modal Type Switch
-  elements.taskType?.addEventListener("change", (e) => {
-    const isHabit = e.target.value === "habit";
-    elements.taskDateSection.style.display = isHabit ? "none" : "block";
-    elements.habitSection.style.display = isHabit ? "block" : "none";
+      //goal section
+      if (elements.goalSection) elements.goalSection.style.display = isGoal ? "block" : "none";
+    });
   });
 
 
@@ -460,25 +513,30 @@ function initEventListeners() {
     const name = elements.taskName.value.trim();
     if (!name) return alert("Wpisz nazwę!");
 
-    const type = elements.taskType.value;
-    const location = elements.locationInput.value.trim();
+    const type = currentCreateType; 
+    const location = elements.locationInput?.value.trim() || null;
 
-    if (elements.taskType.value === "task") {
+    // (Task)
+    if (type === "task") {
       const dateStr = elements.taskDate.value || Utils.formatDateKey(selectedDate);
-      DataManager.addTask(name, dateStr, elements.locationInput.value);
-    } else {
+      DataManager.addTask(name, dateStr, location);
+    } 
+    
+    // (Habit)
+    else if (type === "habit") {
       const frequency = elements.habitFrequency.value;
       let selectedDays = [];
       
       if (frequency === "specific") {
         selectedDays = Array.from(elements.daysPicker.querySelectorAll("input:checked"))
-        .map(cb => parseInt(cb.value));
+          .map(cb => parseInt(cb.value));
         if (selectedDays.length === 0) return alert("Wybierz przynajmniej jeden dzień!");
       }
+      
       const habit = {
         id: Date.now(),
         name,
-        location: location || null,
+        location: location,
         frequency: frequency,
         selectedDays: selectedDays,
         createdAt: new Date().toISOString(),
@@ -486,11 +544,14 @@ function initEventListeners() {
       };
       DataManager.addHabit(habit);
     }
-
-    if (elements.grid) {
-      UI.renderCalendar();
+    
+    // (Goal) - przygotowane miejsce
+    else if (type === "goal") {
+      console.log("Dodaję Goal: ", name);
+      // Tutaj w przyszłości dodasz DataManager.addGoal(...)
     }
 
+    if (elements.grid) UI.renderCalendar();
     UI.renderAllUndoneTasks(selectedDate);
      
     UI.resetModal();

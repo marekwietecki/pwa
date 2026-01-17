@@ -118,17 +118,14 @@ alert to antypattern
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-sheet">
         <header class="modal-header">
-          <h3>Add task</h3>
+          <div class="typePickers">
+              <h3>Add new</h3>
+              <button class="typePicker">Task</button>
+              <button class="typePicker">Habit</button>
+              <button class="typePicker">Goal</button>
+          </div>
           <button id="closeModal">✕</button>
-        </header>
-
-        <div style="display: flex; flex-direction: row;">
-          <label for="taskType">Type:</label>
-          <select id="taskType">
-            <option value="task">One-time Task</option>
-            <option value="habit">Daily Habit</option>
-          </select>
-        </div>
+      </header>
 
         
 
