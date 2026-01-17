@@ -167,9 +167,12 @@ const UI = {
   resetModal: () => {
     if (elements.taskName) elements.taskName.value = "";
     if (elements.taskDate) elements.taskDate.value = "";
-    if (elements.locationInput) elements.locationInput.value = "";
+    if (elements.locationInput) {
+      elements.locationInput.value = "";
+      elements.locationInput.classList.remove("success", "error");
+    }
 
-    const url = window.location.href.toLowerCase(); 
+    const url = window.location.href.toLowerCase();
     if (url.includes("habit")) {
         currentCreateType = "habit";
     } else if (url.includes("hero")) {
@@ -178,25 +181,28 @@ const UI = {
         currentCreateType = "task";
     }
 
-    console.log("Strona rozpoznana jako:", currentCreateType); 
+    const typePickers = document.querySelectorAll('.typePicker');
 
-    document.querySelectorAll('.typePicker').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-type') === currentCreateType) {
-            btn.classList.add('active');
-        }
-    });
+    if (typePickers.length > 0) {
+        typePickers.forEach(btn => {
+            const btnType = btn.getAttribute('data-type');
+            btn.classList.remove('active');
+            
+            if (btnType === currentCreateType) {
+                btn.classList.add('active');
+            }
+        });
+    }
 
     const isHabit = currentCreateType === "habit";
     const isGoal = currentCreateType === "goal";
 
     if (elements.taskDateSection) elements.taskDateSection.style.display = (isHabit || isGoal) ? "none" : "block";
     if (elements.habitSection) elements.habitSection.style.display = isHabit ? "block" : "none";
-
-    if (elements.modalOverlay) {
-      elements.modalOverlay.classList.remove("open");
-    }
+    if (elements.daysPicker) elements.daysPicker.style.display = "none";
   },
+
+  
 
 
   renderAllUndoneTasks: (targetDate = new Date()) => {
@@ -403,12 +409,21 @@ const UI = {
 
 function initEventListeners() {
   // Modal Toggles
-  elements.addTaskBtn?.addEventListener("click", () => elements.modalOverlay.classList.add("open"));
-  elements.closeModal?.addEventListener("click", UI.resetModal);
-  
-  // closing while tapping the background
+  elements.addTaskBtn?.addEventListener("click", () => {
+    UI.resetModal(); // Najpierw ustawia typ i czyści pola
+    elements.modalOverlay.classList.add("open"); // Potem otwiera
+  });
+
+  // Zamykanie krzyżykiem
+  elements.closeModal?.addEventListener("click", () => {
+    elements.modalOverlay.classList.remove("open");
+  });
+
+  // Zamykanie tłem
   elements.modalOverlay?.addEventListener("click", (e) => {
-    if (e.target === elements.modalOverlay) UI.resetModal();
+    if (e.target === elements.modalOverlay) {
+      elements.modalOverlay.classList.remove("open");
+    }
   });
 
 

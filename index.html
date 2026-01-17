@@ -106,6 +106,7 @@ alert to antypattern
 
     <div class="helper320"></div>
 
+    <!-- TO DO -->
     <section class="toDo">
       <h3 id="taskDateTitle"></h3>
       <div class="toDoListWrapper">
@@ -113,6 +114,7 @@ alert to antypattern
       </div>
     </section>
 
+    <!-- MODAL -->
     <button id="addTaskBtn" class="addTaskBtn">+</button>
 
     <div class="modal-overlay" id="modalOverlay">
@@ -120,14 +122,12 @@ alert to antypattern
         <header class="modal-header">
           <div class="typePickers">
               <h3>Add new</h3>
-              <button class="typePicker">Task</button>
-              <button class="typePicker">Habit</button>
-              <button class="typePicker">Goal</button>
+              <button class="typePicker" data-type="task">Task</button>
+              <button class="typePicker" data-type="habit">Habit</button>
+              <button class="typePicker" data-type="goal">Goal</button>
           </div>
           <button id="closeModal">✕</button>
       </header>
-
-        
 
         <div id="habitSection" style="display:none;">
           <select id="habitFrequency">

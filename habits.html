@@ -108,55 +108,90 @@
       </div>
     </section>
 
-    <button id="addTaskBtn" class="addTaskBtn">+</button>
+
+    <!-- HABITS -->
+    <section class="habits"> 
+      <h3 id="habitsTitle">Habits:</h3>
+      <div class="habitsListWrapper">
+        <ul id="habitsList"></ul>
+      </div>
+    </section>
+
+    <section class="habitStats">
+      <div class="streakCount">
+
+      </div>
+      <div class="streakPercentage">
+        
+      </div>
+    </section>
+
+
+    <!-- MODAL -->
+    <button id="addTaskBtn" class="addTaskBtn"> + </button>
 
     <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-sheet">
-        <header class="modal-header">
-          <div class="typePickers">
-              <h3>Add new</h3>
-              <button class="typePicker">Task</button>
-              <button class="typePicker active">Habit</button>
-              <button class="typePicker">Goal</button>
-          </div>
-          <button id="closeModal">✕</button>
-      </header>
+        <div class="modal-sheet">
+            <header class="modal-header">
+                <div class="typePickers">
+                    <h3>Add new</h3>
+                    <button class="typePicker" data-type="task">Task</button>
+                    <button class="typePicker" data-type="habit">Habit</button>
+                    <button class="typePicker" data-type="goal">Goal</button>
+                </div>
+                <button id="closeModal">✕</button>
+            </header>
+      
+            <div id="habitSection" style="display:none;">
+                <select id="habitFrequency">
+                    <option value="daily">Codziennie</option>
+                    <option value="weekly">Raz w tygodniu</option>
+                    <option value="monthly">Raz w miesiącu</option>
+                    <option value="specific">Konkretne dni tygodnia</option>
+                </select>
+                
+                <div id="daysPicker" style="display:none;">
+                    <label><input type="checkbox" value="1"> Pon</label>
+                    <label><input type="checkbox" value="2"> Wt</label>
+                    <label><input type="checkbox" value="3"> Śr</label>
+                    <label><input type="checkbox" value="4"> Czw</label>
+                    <label><input type="checkbox" value="5"> Pt</label>
+                    <label><input type="checkbox" value="6"> Sob</label>
+                    <label><input type="checkbox" value="0"> Niedz</label>
+                </div>
+            </div>
+        
+            <input type="text" placeholder="Task name" id="taskName" />
+            <div id="taskDateSection">
+                <input type="date" id="taskDate" />
+            </div>
+            <div style="flex: 1">
+                <input
+                    type="text"
+                    id="locationInput"
+                    placeholder="Enter location"
+                />
+                <button id="searchLocation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-search-check">
+                        <path d="m8 11 2 2 4-4"/>
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                </button>
+                <button id="useMyLocation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-locate">
+                        <line x1="2" x2="5" y1="12" y2="12"/>
+                        <line x1="19" x2="22" y1="12" y2="12"/>
+                        <line x1="12" x2="12" y1="2" y2="5"/>
+                        <line x1="12" x2="12" y1="19" y2="22"/>
+                        <circle cx="12" cy="12" r="7"/>
+                    </svg>
+                    Current Location
+                </button>
+            </div>
 
-      <div id="habitSection" style="display:none;">
-          <select id="habitFrequency">
-              <option value="daily">Codziennie</option>
-              <option value="weekly">Raz w tygodniu</option>
-              <option value="monthly">Raz w miesiącu</option>
-              <option value="specific">Konkretne dni tygodnia</option>
-          </select>
-          
-          <div id="daysPicker" style="display:none;">
-              <label><input type="checkbox" value="1"> Pon</label>
-              <label><input type="checkbox" value="2"> Wt</label>
-              <label><input type="checkbox" value="3"> Śr</label>
-              <label><input type="checkbox" value="4"> Czw</label>
-              <label><input type="checkbox" value="5"> Pt</label>
-              <label><input type="checkbox" value="6"> Sob</label>
-              <label><input type="checkbox" value="0"> Niedz</label>
-          </div>
-      </div>
-  
-      <input type="text" placeholder="Task name" id="taskName" />
-      <div id="taskDateSection">
-          <input type="date" id="taskDate" />
-      </div>
-        <div style="flex: 1">
-          <input
-            type="text"
-            id="locationInput"
-            placeholder="Enter location (e.g. Hanna, Lubuskie)"
-          />
-          <button id="searchLocation">✔️</button>
-          <button id="useMyLocation">📍 Current Location</button>
+            <button class="addTask">Add</button>
         </div>
-
-        <button class="addTask">Add</button>
-      </div>
     </div>
 
     <!-- im gonna update that later -->
