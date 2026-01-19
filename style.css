@@ -393,7 +393,7 @@ body {
   padding: 20px;
   transform: translateY(100%);
   transition: 0.35s cubic-bezier(.4,0,.2,1);
-  height: 344px;
+  height: auto;
   max-width: 660px;
   align-self: center;
   display: flex;
@@ -515,6 +515,66 @@ body {
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
+.month-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  max-height: 200px; 
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.month-selector-grid label, .day-selector-grid label {
+  cursor: pointer;
+}
+
+.month-selector-grid input, .day-selector-grid input {
+  display: none; /* Chowamy ten brzydki kwadracik */
+}
+
+.month-selector-grid span, .day-selector-grid span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.month-selector-grid input:checked + span, 
+.day-selector-grid input:checked + span {
+  background: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+#monthDaysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 kolumn, jak w kalendarzu */
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#monthDaysGrid span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+#monthDaysGrid input:checked + span {
+  background: #4caf50; /* Twój zielony kolor */
+  color: white;
+}
+
+
 #locBtn {
   padding: 10px 16px;
   border-radius: 24px;
@@ -558,6 +618,24 @@ body {
 #searchLocation:hover {
   opacity: 72%;
 }
+/* Animacja obracania */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Klasa dodawana do przycisku podczas ładowania */
+.loading svg {
+  animation: spin 1s linear infinite;
+  opacity: 0.5;
+}
+
+/* Opcjonalnie: zablokowanie przycisku podczas ładowania */
+button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
 .lucide-locate {
   color: #fff;
   line-height: 16px;
@@ -602,42 +680,97 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 20px 0;
+  padding: 32px 16px;
   scroll-snap-type: x mandatory;
+  max-width: 600px;
+  align-items: center;
+  justify-content: safe center;  
+  margin: 0 auto;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.stats-grid {
+  max-width: 480px;
+  width: 100%;
+  justify-self: center;
+  justify-content: flex-start;
+  padding: 0px 12px; /* TRBL // Trzy wartości (Góra, Boki, Dół) // Dwie wartości (Góra/Dół, Boki)*/
 }
 
 .habit-card-mini {
   flex: 0 0 100px;
+  flex-direction: column;
   background: rgb(67, 67, 67);
   padding: 15px;
   border-radius: 15px;
   text-align: center;
+  text-wrap: wrap;
+  max-width: 120px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   scroll-snap-align: start;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent; 
 }
 
-.activity-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 dni w rzędzie */
-  gap: 5px;
-  margin-top: 10px;
+.habit-card-mini.active-card {
+  background: rgb(80, 80, 80); 
+  border-color: #4caf50;      
+  transform: translateY(-5px); 
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
 
-.activity-dot {
-  width: 10px;
-  height: 10px;
-  background: #eee;
-  border-radius: 2px;
+.habit-percentage-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4caf50; /* Zielony kolor dla procentów */
+  margin-top: 5px;
 }
 
-.activity-dot.active {
-  background: #4caf50;
+.habit-name-label {
+  font-size: 12px;
+  color: white;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.activity-calendar {
+  max-width: 600px;
+  width: 100%;
+  justify-self: center;
+  margin-top: 32px;
+}
+
+.progress-value {
+  display: flex;         /* Włączamy elastyczny układ */
+  flex-direction: row;   /* Ustawiamy w poziomie */
+  align-items: center;   /* Centrujemy oba elementy względem siebie w pionie */
+  justify-content: flex-start; 
+  gap: 8px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #140ec4;
 }
 
 .streak-value {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
   font-size: 24px;
   font-weight: bold;
   color: #ff9800;
+  
 }
 
 .activity-grid {
@@ -646,13 +779,23 @@ input.error {
   gap: 4px;
   text-align: center;
   font-size: 0.7rem;
+  align-self: center;
+  width: 100%;
+  max-width: 300px;        
+  margin: 0 auto;
+  margin-top: 4px;
 }
 
 .mini-day {
-  padding: 5px 0;
-  border-radius: 4px;
+  display: flex;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
   background: #f0f0f0;
   color: #999;
+  width: 32px;
+  height: 32px;
 }
 
 .mini-day.habit-done {
@@ -661,7 +804,7 @@ input.error {
   font-weight: bold;
 }
 
-.mini-day.pre-habit {
+.mini-day.inactive {
   opacity: 0.3; 
 }
 
@@ -670,14 +813,60 @@ input.error {
   font-size: 0.6rem;
   color: #666;
   padding-bottom: 5px;
+  text-align: center;
+  width: 34px;
 }
 
-.mini-cal-header {
+.mini-cal-nav {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
   margin-bottom: 10px;
+  width: 100%;
 }
+
+.mini-cal-header h4 {
+  width: 176px;
+  margin-left: 12px;
+  margin-right: 12px;
+  text-align: center;
+  align-items: center;
+  line-height: 40px;
+  border-radius: 50px;
+  height: 40px;
+  /* liquid glass effect */
+  background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+
+.mini-cal-nav button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+  height: 40px;
+  width: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+
+  /* liquid glass effect */
+  background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.2s ease;             /* płynne przejście */
+}
+.mini-cal-nav button:hover {
+  opacity: 72%;
+}
+
 
 @media (max-width: 740px) {
   .logo {
@@ -715,7 +904,7 @@ input.error {
     width: 36px;
     height: 36px;
   }
-  .tasks {
+  .toDo {
     width: 96%;
     max-width: 660px;
   }

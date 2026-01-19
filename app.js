@@ -53,6 +53,7 @@ const elements = {
   get habitSection() { return document.getElementById("habitSection"); },
   get habitFrequency() { return document.getElementById("habitFrequency"); },
   get daysPicker() { return document.getElementById("daysPicker"); },
+  get monthlyDayPicker() { return document.getElementById("monthlyDayPicker");},
   get addTaskBtn() { return document.getElementById("addTaskBtn"); }, 
   get closeModal() { return document.getElementById("closeModal"); },
   get confirmAddBtn() { return document.querySelector(".addTask"); },
@@ -161,12 +162,53 @@ const DataManager = {
   },
 
   calculateHabitProgress: (habit) => {
-    const history = Object.values(habit.history); // [true, false, true...]
-    if (history.length === 0) return 0;
-    
-    const doneCount = history.filter(status => status === true).length;
-    return Math.round((doneCount / history.length) * 100);
-  },
+    try {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        // Zabezpieczenie: jeśli brak createdAt, przyjmij dzisiaj
+        const createdDate = habit.createdAt ? new Date(habit.createdAt) : new Date();
+        if (isNaN(createdDate)) return 0; // Jeśli data jest nieprawidłowa
+        createdDate.setHours(0, 0, 0, 0);
+
+        let scheduledDaysCount = 0;
+        let completedDaysCount = 0;
+
+        // Ważne: Tworzymy nową instancję daty do pętli, żeby nie modyfikować oryginału
+        let d = new Date(createdDate.getTime());
+
+        while (d <= now) {
+            const dateKey = Utils.formatDateKey(d);
+            const dayOfWeek = d.getDay();
+            const dayOfMonth = d.getDate();
+
+            let isScheduled = false;
+            // Spójność nazw z Twoim zapisywaniem:
+            if (habit.frequency === "everyday" || habit.frequency === "daily") {
+                isScheduled = true;
+            } else if (habit.frequency === "weekly") {
+                isScheduled = (habit.schedule || []).includes(dayOfWeek);
+            } else if (habit.frequency === "monthly") {
+                isScheduled = (habit.schedule || []).includes(dayOfMonth);
+            }
+
+            if (isScheduled) {
+                scheduledDaysCount++;
+                if (habit.history && habit.history[dateKey] === true) {
+                    completedDaysCount++;
+                }
+            }
+            d.setDate(d.getDate() + 1); // Przejdź do kolejnego dnia
+        }
+
+        console.log(`Habit: ${habit.name} | Sched: ${scheduledDaysCount} | Done: ${completedDaysCount}`);
+        return scheduledDaysCount === 0 ? 0 : Math.round((completedDaysCount / scheduledDaysCount) * 100);
+
+    } catch (e) {
+        console.error("Critical error in progress calculation:", e);
+        return 0;
+    }
+},
 
   calculateStreak: (habit) => {
     let streak = 0;
@@ -237,51 +279,72 @@ const UI = {
     if (elements.daysPicker) elements.daysPicker.style.display = "none";
   },
 
-  createProgressCircle: (progress) => {
-    const radius = 12;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (progress / 100) * circumference;
+  setupMonthlyGrid: () => {
+    const grid = document.getElementById("monthDaysGrid");
+    if (!grid) return;
+    
+    while (grid.firstChild) {
+        grid.removeChild(grid.firstChild);
+    }
+
+    for (let i = 1; i <= 31; i++) {
+        const label = document.createElement("label");
+        
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = i.toString();
+
+        const span = document.createElement("span");
+        span.textContent = i.toString();
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        
+        grid.appendChild(label);
+    }
+},
+
+  createProgressCircle: (percentage) => {
+    const size = 36;
+    const stroke = 4;
+    const radius = (size - stroke) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const offset = circumference - (percentage / 100) * circumference;
     const svgNS = "http://www.w3.org/2000/svg";
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "progress-ring-container";
+    const container = document.createElement('div');
+    container.className = 'progress-ring-container';
 
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("width", "34");
-    svg.setAttribute("height", "34");
-    svg.classList.add("progress-ring");
+    svg.setAttribute("width", size);
+    svg.setAttribute("height", size);
 
-    // Funkcja wewnętrzna do tworzenia elementów SVG
-    const createCircle = (isBg) => {
-      const circle = document.createElementNS(svgNS, "circle");
-      circle.setAttribute("cx", "17");
-      circle.setAttribute("cy", "17");
-      circle.setAttribute("r", radius);
-      circle.setAttribute("stroke-width", "3");
-      circle.setAttribute("fill", "transparent");
-      
-      if (isBg) {
-        circle.classList.add("progress-ring__circle-bg");
-        circle.setAttribute("stroke", "#e6e6e6");
-      } else {
-        circle.classList.add("progress-ring__circle");
-        circle.setAttribute("stroke", "#4caf50");
-        circle.style.strokeDasharray = circumference;
-        circle.style.strokeDashoffset = offset;
-      }
-      return circle;
-    };
+    const bgCircle = document.createElementNS(svgNS, "circle");
+    bgCircle.setAttribute("class", "progress-ring-circle-bg");
+    bgCircle.setAttribute("stroke", "rgba(255,255,255,0.1)");
+    bgCircle.setAttribute("stroke-width", stroke);
+    bgCircle.setAttribute("fill", "transparent");
+    bgCircle.setAttribute("r", radius);
+    bgCircle.setAttribute("cx", size / 2);
+    bgCircle.setAttribute("cy", size / 2);
 
-    svg.appendChild(createCircle(true));
-    svg.appendChild(createCircle(false));
+    const progressCircle = document.createElementNS(svgNS, "circle");
+    progressCircle.setAttribute("class", "progress-ring-circle");
+    progressCircle.setAttribute("stroke", "#4caf50");
+    progressCircle.setAttribute("stroke-width", stroke);
+    progressCircle.setAttribute("fill", "transparent");
+    progressCircle.setAttribute("r", radius);
+    progressCircle.setAttribute("cx", size / 2);
+    progressCircle.setAttribute("cy", size / 2);
+    progressCircle.setAttribute("stroke-dasharray", `${circumference} ${circumference}`);
+    progressCircle.style.strokeDashoffset = offset;
+    progressCircle.setAttribute("stroke-linecap", "round");
 
-    const text = document.createElement("span");
-    text.className = "progress-text";
-    text.textContent = `${progress}%`;
+    svg.appendChild(bgCircle);
+    svg.appendChild(progressCircle);
+    container.appendChild(svg);
 
-    wrapper.appendChild(svg);
-    wrapper.appendChild(text);
-    return wrapper;
+    return container;
   },
 
 
@@ -289,7 +352,8 @@ const UI = {
     if (!elements.toDoList) return;
 
     const dateKey = Utils.formatDateKey(targetDate);
-    const dayOfWeek = targetDate.getDay(); 
+    const dayOfWeek = targetDate.getDay();
+    const dayOfMonth = targetDate.getDate(); 
     const todayKey = Utils.formatDateKey(new Date());
 
     elements.taskDateTitle.textContent = (dateKey === todayKey) 
@@ -333,9 +397,14 @@ const UI = {
       if (viewingDate < createdDate) return;
 
       let isDueToday = false;
-      if (habit.frequency === "daily") isDueToday = true;
-      else if (habit.frequency === "specific" && habit.selectedDays.includes(dayOfWeek)) {
+      const schedule = habit.schedule || []; 
+
+      if ( habit.frequency === "daily") {
         isDueToday = true;
+      } else if (habit.frequency === "weekly") {
+        isDueToday = schedule.includes(dayOfWeek);
+      } else if (habit.frequency === "monthly") {
+        isDueToday = schedule.includes(dayOfMonth);
       }
 
       if (isDueToday) {
@@ -422,7 +491,7 @@ const UI = {
               const filtered = habits.filter(h => h.name !== name); // Proste usuwanie po nazwie
               DataManager.saveHabits(filtered);
           }
-          UI.renderAllUndoneTasks(selectedDate);
+          UI.renderTasksForDay(selectedDate);
       }
   });
   
@@ -522,28 +591,41 @@ const UI = {
     }
 
     habits.forEach((habit, index) => {
-      const card = document.createElement("div");
-      card.className = "habit-card-mini";
-      
-      const progress = DataManager.calculateHabitProgress(habit);
-      card.appendChild(UI.createProgressCircle(progress));
-      
-      const name = document.createElement("p");
-      name.textContent = habit.name;
-      name.style.fontSize = "12px";
-      card.appendChild(name);
+      try {
+        const card = document.createElement("div");
+        card.className = "habit-card-mini";
+        
+        const progress = DataManager.calculateHabitProgress(habit);
+        
+        card.appendChild(UI.createProgressCircle(progress));
+        
+        const percentage = document.createElement("div");
+        percentage.className = "habit-percentage-label";
+        percentage.textContent = `${progress}%`;
+        card.appendChild(percentage);
+        
+        const name = document.createElement("p");
+        name.textContent = habit.name;
+        name.className = "habit-name-label"; 
+        card.appendChild(name);
 
-      card.onclick = () => {
-        document.querySelectorAll('.habit-card-mini').forEach(c => c.classList.remove('active-card'));
-        card.classList.add('active-card');
-        UI.showHabitDetails(habit);
-      };
+        card.onclick = () => {
+          document.querySelectorAll('.habit-card-mini').forEach(c => c.classList.remove('active-card'));
+          card.classList.add('active-card');
+          UI.showHabitDetails(habit);
+          card.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        };
 
-      container.appendChild(card);
+        container.appendChild(card);
 
-      if (index === 0) {
-        card.classList.add('active-card');
-        UI.showHabitDetails(habit);
+        // PRZENIESIONE TUTAJ - do środka try
+        if (index === 0) {
+          card.classList.add('active-card');
+          UI.showHabitDetails(habit);
+        }
+
+      } catch (error) {
+        console.error(`Błąd przy nawyku: ${habit.name}`, error);
       }
     });
   },
@@ -551,15 +633,17 @@ const UI = {
   showHabitDetails: (habit) => {
     selectedHabitForStats = habit;
 
+    const progress = DataManager.calculateHabitProgress(habit);
+
     document.getElementById("habitDetails").style.display = "block";
-    if (!details) return;
     document.getElementById("detailHabitName").textContent = habit.name;
     document.getElementById("detailStreak").textContent = DataManager.calculateStreak(habit);
     
+    document.getElementById("completionPercent").textContent = `${progress}\u00A0%`;
+
     const circleContainer = document.getElementById("detailProgressCircle");
     circleContainer.innerHTML = "";
-    circleContainer.appendChild(UI.createProgressCircle(DataManager.calculateHabitProgress(habit)));
-
+    circleContainer.appendChild(UI.createProgressCircle(progress));
     UI.renderActivityGrid(habit);
   },
 
@@ -593,26 +677,41 @@ const UI = {
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
-        const el = document.createElement('div');
-        el.className = 'mini-day';
-        el.textContent = day;
+      const el = document.createElement('div');
+      el.className = 'mini-day';
+      el.textContent = day;
 
-        const currentIterDate = new Date(year, month, day);
-        const dateKey = Utils.formatDateKey(currentIterDate);
-        const createdDate = new Date(habit.createdAt);
-        createdDate.setHours(0,0,0,0);
+      const currentIterDate = new Date(year, month, day);
+      const dateKey = Utils.formatDateKey(currentIterDate);
+      const dayOfWeek = currentIterDate.getDay(); // 0-6 (0 - sunday)
+      
+      let isScheduled = false;
+      
+      if (habit.frequency === "daily") {
+          isScheduled = true;
+      } else if (habit.frequency === "weekly") {
+          isScheduled = habit.schedule.includes(dayOfWeek);
+      } else if (habit.frequency === "monthly") {
+          isScheduled = habit.schedule.includes(day);
+      }
 
-        if (habit.history && habit.history[dateKey]) {
-            el.classList.add('habit-done');
-        }
+      if (habit.history && habit.history[dateKey]) {
+          el.classList.add('habit-done');
+      }
 
-        if (currentIterDate < createdDate) {
-            el.classList.add('pre-habit');
-        }
+      // making pre-habit style
+      else {
+          const createdDate = new Date(habit.createdAt);
+          createdDate.setHours(0,0,0,0);
+          
+          if (!isScheduled || currentIterDate < createdDate) {
+              el.classList.add('inactive');
+          }
+      }
 
-        grid.appendChild(el);
+      grid.appendChild(el);
     }
-},
+  },
 
   //hero stats
   renderHeroStats: () => {},
@@ -693,10 +792,14 @@ function initEventListeners() {
   });
 
 
-  // habit frequency listener
+  // habit frequency listeners
   elements.habitFrequency?.addEventListener("change", () => {
-    elements.daysPicker.style.display = elements.habitFrequency.value === "specific" ? "block" : "none";
+    elements.daysPicker.style.display = elements.habitFrequency.value === "weekly" ? "block" : "none";
   });
+  elements.habitFrequency?.addEventListener("change", () => {
+    elements.monthlyDayPicker.style.display = elements.habitFrequency.value === "monthly" ? "block" : "none";
+});
+
 
 
   //Wyszukiwanie lokalizacji przyciskiem lupy
@@ -730,32 +833,64 @@ function initEventListeners() {
   // 2. Lokalizacja z GPS (przycisk pinezki)
   elements.geoLocBtn.addEventListener("click", () => {
     if (!navigator.geolocation) return alert("Geolocation not supported");
-
+  
+    // --- START LOADING ---
+    const btn = elements.geoLocBtn;
+    const input = elements.locationInput;
+    const originalPlaceholder = input.placeholder;
+  
+    btn.classList.add("loading");
+    btn.disabled = true;
+    input.placeholder = "Locating... ⏳";
+    input.classList.remove("success", "error");
+  
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
-
+  
       try {
         const data = await LocationService.reverse(latitude, longitude);
-        if (!data || !data.display_name) return alert("Location not found");
-
+        
+        if (!data || !data.display_name) {
+          throw new Error("Location not found");
+        }
+  
         const shortName = Utils.formatLocation(data.address);
-        elements.locationInput.value = shortName || data.display_name;
-        elements.locationInput.classList.remove("error");
-        elements.locationInput.classList.add("success");
+        input.value = shortName || data.display_name;
+        input.classList.add("success");
+        
       } catch (e) {
         console.error("Reverse geocoding failed", e);
-        elements.locationInput.value = "";
+        input.classList.add("error");
+        alert("Address not found, but we have your coords!");
+      } finally {
+        // --- END LOADING (Success/Error) ---
+        btn.classList.remove("loading");
+        btn.disabled = false;
+        input.placeholder = originalPlaceholder;
       }
     }, (err) => {
-      alert("Could not get location. Make sure you allowed it.");
+      // --- END LOADING (Permission Denied/Timeout) ---
+      btn.classList.remove("loading");
+      btn.disabled = false;
+      input.placeholder = originalPlaceholder;
+      
+      const messages = {
+        1: "Permission denied. Enable location in settings.",
+        2: "Position unavailable. Check your GPS.",
+        3: "Timeout. Try again."
+      };
+      alert(messages[err.code] || "Could not get location.");
+    }, {
+      enableHighAccuracy: true,
+      timeout: 10000 // 10 sekund na odpowiedź GPS
     });
   });
 
-
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
-    const name = elements.taskName.value.trim();
+    let name = elements.taskName.value.trim();
     if (!name) return alert("Wpisz nazwę!");
+    name = name.charAt(0).toUpperCase() + name.slice(1);
 
     const type = currentCreateType; 
     const location = elements.locationInput?.value.trim() || null;
@@ -769,12 +904,17 @@ function initEventListeners() {
     // (Habit)
     else if (type === "habit") {
       const frequency = elements.habitFrequency.value;
-      let selectedDays = [];
+      let schedule = [];
       
-      if (frequency === "specific") {
-        selectedDays = Array.from(elements.daysPicker.querySelectorAll("input:checked"))
-          .map(cb => parseInt(cb.value));
-        if (selectedDays.length === 0) return alert("Wybierz przynajmniej jeden dzień!");
+      if (frequency === "weekly") {
+        schedule = Array.from(elements.daysPicker.querySelectorAll("input[type='checkbox']:checked"))
+        .map(cb => parseInt(cb.value));
+        if (schedule.length === 0) return alert("Select at least one day!");
+      } else if (frequency === "monthly") {
+        const monthlyGrid = document.getElementById("monthDaysGrid");
+        schedule = Array.from(monthlyGrid.querySelectorAll("input[type='checkbox']:checked"))
+        .map(cb => parseInt(cb.value));
+        if (schedule.length === 0) return alert("Enter days of the month!");
       }
       
       const habit = {
@@ -782,7 +922,7 @@ function initEventListeners() {
         name,
         location: location,
         frequency: frequency,
-        selectedDays: selectedDays,
+        schedule: schedule,
         createdAt: new Date().toISOString(),
         history: {}
       };
@@ -796,8 +936,11 @@ function initEventListeners() {
     }
 
     if (elements.grid) UI.renderCalendar();
-    UI.renderAllUndoneTasks(selectedDate);
-     
+    UI.renderTasksForDay(selectedDate);
+
+    if (elements.habitSection) UI.renderHabits();
+
+    elements.modalOverlay.classList.remove("open");
     UI.resetModal();
   });
 }
@@ -810,6 +953,7 @@ function initEventListeners() {
 */
 document.addEventListener("DOMContentLoaded", () => {
   initEventListeners(); // To musi być pierwsze
+  UI.setupMonthlyGrid();
 
   // index
   if (elements.toDoList && !elements.grid) {
