@@ -687,10 +687,25 @@ input.error {
   justify-content: safe center;  
   margin: 0 auto;
 }
+.crucialHabitStats {
+  display: flex;
+  flex-direction: row;
+  gap: 20%;
+  margin-bottom: 24px;
+}
 
 .stat-item {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.stat-item-secondary {
+  display: flex;
+  flex-direction: row;
   gap: 6px;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -786,16 +801,35 @@ input.error {
   margin-top: 4px;
 }
 
+/* Styl dla nagłówków dni w statystykach */
+.activity-day-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;              /* Taki sam gap jak w gridzie niżej */
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 auto 8px auto; /* Centrowanie i odstęp od kafelków */
+  width: 100%;
+  max-width: 300px;      /* Identyczna szerokość jak activity-grid */
+}
+
+.activity-day-labels div {
+  padding: 4px 0;
+}
+
 .mini-day {
   display: flex;
-  padding: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 100%;
-  background: #f0f0f0;
-  color: #999;
+  border-radius: 50%;    /* Zmienione na 50% dla idealnego koła */
+  background: rgba(255, 255, 255, 0.06); /* Dopasowane do Twojego stylu glass */
+  color: rgba(255, 255, 255, 0.4);
   width: 32px;
   height: 32px;
+  font-size: 12px;
+  margin: 0 auto;        /* Centrowanie wewnątrz kolumny grida */
 }
 
 .mini-day.habit-done {

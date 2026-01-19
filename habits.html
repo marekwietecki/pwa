@@ -2,8 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="description" content="Build life-changing habits and maintain your streaks. Visualize your progress with detailed activity grids and real-time completion statistics.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Habit Hero - Habits</title>
+    <title>Habits - Habit Hero</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="manifest" href="./manifest.webmanifest" />
   </head>
@@ -136,20 +137,32 @@
         
         <div class="stats-grid">
           <h2 id="detailHabitName">Pick habit</h2>
-          <div class="stat-item">
-            <div class="progress-value">            
-              <div id="detailProgressCircle"></div>
-              <span id="completionPercent">0 %</span>          
+          <div class="crucialHabitStats">
+            <div class="stat-item">
+              <div class="progress-value">            
+                <div id="detailProgressCircle"></div>
+                <span id="completionPercent">0 %</span>          
+              </div>
+              <span class="stat-label">Completion percentage</span>
             </div>
-            <span class="stat-label">Completion percentage</span>
+            <div class="stat-item">
+              <div class="streak-value">
+                <div style="width: 32px; align-self: center; justify-content: center;">🔥</div>
+                <span id="detailStreak">0</span> 
+                <span>&nbsp;days</span> 
+              </div>
+              <span class="stat-label">Current Streak</span>
+            </div>
           </div>
-          <div class="stat-item">
-            <div class="streak-value">
-              <div style="width: 32px;">🔥</div>
-              <span id="detailStreak">0</span> 
-              <span>&nbsp;days</span> 
-            </div>
-            <span class="stat-label">Current Streak</span>
+          <div class="stat-item-secondary">
+            <span class="stat-label">Frequency:</span>
+            <span id="frequencyData">0</span>          
+            <button class="editHabitFrequency">Edit</button>
+          </div>
+          <div class="stat-item-secondary">
+            <span class="stat-label">Start Date:</span>
+            <span id="startData">0</span>          
+            <button class="editHabitStartDate">Edit</button>
           </div>
         </div>
     
@@ -157,14 +170,16 @@
           <!-- <h3>Last month</h3> -->
           <div class="activity-section">
             <div class="mini-cal-header">
-                <div class="mini-cal-nav">
-                    <button id="prevStatMonth">‹</button>
-                    <h4>Month Year</h4>
-                    <button id="nextStatMonth">›</button>
-                </div>
-            </div>
-            <div id="activityGrid" class="activity-grid">
-            </div>
+              <div class="mini-cal-nav">
+                <button id="prevStatMonth">‹</button>
+                <h4>Month Year</h4>
+                <button id="nextStatMonth">›</button>
+              </div>
+              <div class="activity-day-labels">                
+                <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+              </div>
+              <div id="activityGrid" class="activity-grid">            
+              </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 /*
-  Offline Mode
+  Offline Mode  ////////////////////////////////////////////////////////////////////
 */
 
 // Tworzymy pasek, jeśli go nie ma
@@ -23,49 +23,45 @@ window.addEventListener("offline", () => {
 if (!navigator.onLine) {
   document.body.classList.add("offline");
 }
-
-
-
-
 /*
-  APP STATE & CONFIG
+  APP STATE & CONFIG  //////////////////////////////////////////////////////////////////
 */ 
 let date = new Date(); // actual month for calendar view
 let selectedDate = new Date(); // default today 
 let currentCreateType = "task"; // default type
 let statsViewDate = new Date(); // mini calendar data
 let selectedHabitForStats = null; // currently clicked habit
-
 /*
-  DOM Elements
+  DOM Elements /////////////////////////////////////////////////////////////////////
 */ 
-const elements = {
-  get grid() { return document.getElementById("calendarGrid"); },
-  get label() { return document.getElementById("currentMonth"); },
-  get toDoList() { return document.getElementById("toDoList"); },
-  get taskDateTitle() { return document.getElementById("taskDateTitle"); },
-  get modalOverlay() { return document.getElementById("modalOverlay"); },
-  get taskType() { return document.getElementById("taskType"); },
-  get taskName() { return document.getElementById("taskName"); },
-  get taskDate() { return document.getElementById("taskDate"); },
-  get locationInput() { return document.getElementById("locationInput"); },
-  get taskDateSection() { return document.getElementById("taskDateSection"); },
-  get habitSection() { return document.getElementById("habitSection"); },
-  get habitFrequency() { return document.getElementById("habitFrequency"); },
-  get daysPicker() { return document.getElementById("daysPicker"); },
-  get monthlyDayPicker() { return document.getElementById("monthlyDayPicker");},
-  get addTaskBtn() { return document.getElementById("addTaskBtn"); }, 
-  get closeModal() { return document.getElementById("closeModal"); },
-  get confirmAddBtn() { return document.querySelector(".addTask"); },
-  get searchLocBtn() { return document.getElementById("searchLocation"); },
-  get geoLocBtn() { return document.getElementById("useMyLocation"); }
-};
+const elements = {};
 
+function cacheElements() {
+  const ids = [
+    "calendarGrid", "currentMonth", "toDoList", "taskDateTitle", 
+    "modalOverlay", "taskType", "taskName", "taskDate", 
+    "locationInput", "taskDateSection", "habitSection", 
+    "habitFrequency", "daysPicker", "monthlyDayPicker", 
+    "addTaskBtn", "closeModal", "searchLocation", "useMyLocation", 
+    "goalSection"
+  ];
 
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      elements[id] = el;
+    } else {
+      console.warn(`Element #${id} not found in DOM`);
+      elements[id] = null; 
+    }
+  });
 
-
+  elements.confirmAddBtn = document.querySelector(".addTask");
+  elements.searchLocBtn = elements["searchLocation"];
+  elements.geoLocBtn = elements["useMyLocation"];
+}
 /*
-  LOGIC: Location Service
+  LOGIC: Location Service  //////////////////////////////////////////////////////////////////
 */
 const LocationService = {
   // Wyszukiwanie po tekście
@@ -82,12 +78,8 @@ const LocationService = {
     return await res.json();
   }
 };
-
-
-
-
 /*
-  1. FORMATTING & UTILS
+  1. FORMATTING & UTILS //////////////////////////////////////////////////////////////////
 */
 const Utils = {
   getMondayFirstDay: (date) => {
@@ -115,11 +107,8 @@ const Utils = {
     return country || "";
   }
 };
-
-
-
 /*
-  2. DATA MANAGEMENT (LocalStorage)
+  2. DATA MANAGEMENT (LocalStorage) //////////////////////////////////////////////////////////////////
 */
 const DataManager = {
   getTasks: () => JSON.parse(localStorage.getItem("tasksState")) || {},
@@ -174,7 +163,8 @@ const DataManager = {
         let scheduledDaysCount = 0;
         let completedDaysCount = 0;
 
-        // Ważne: Tworzymy nową instancję daty do pętli, żeby nie modyfikować oryginału
+        // Ważne: Tworzymy nową instancję daty do pętli, 
+        // żeby nie modyfikować oryginału
         let d = new Date(createdDate.getTime());
 
         while (d <= now) {
@@ -210,35 +200,50 @@ const DataManager = {
     }
 },
 
-  calculateStreak: (habit) => {
-    let streak = 0;
-    let checkDate = new Date();
-    const history = habit.history || {};
+calculateStreak: (habit) => {
+  if (!habit.history || Object.keys(habit.history).length === 0) return 0;
 
-    while (true) {
-      const key = Utils.formatDateKey(checkDate);
-      if (history[key] === true) {
-        streak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        if (streak === 0 && key === Utils.formatDateKey(new Date())) {
-            checkDate.setDate(checkDate.getDate() - 1);
-            continue;
-        }
-        break;
-      }
-    }
-    return streak;
+  //sorting
+  const completedDates = Object.keys(habit.history)
+    .filter(key => habit.history[key] === true)
+    .sort()
+    .reverse();
+
+  if (completedDates.length === 0) return 0;
+
+  let streak = 0;
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  let yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const todayKey = Utils.formatDateKey(today);
+  const yesterdayKey = Utils.formatDateKey(yesterday);
+
+  if (!habit.history[todayKey] && !habit.history[yesterdayKey]) {
+    return 0;
   }
+
+  // ciągłość dzień po dniu
+  let checkDate = habit.history[todayKey] ? today : yesterday;
+  
+  while (true) {
+    const key = Utils.formatDateKey(checkDate);
+    if (habit.history[key]) {
+      streak++;
+      // Jeśli streak to 5, pętla leci 5 razy, a nie 365.
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
 };
-
-
-
-
-
-
 /*
-  3. UI RENDERING
+  3. UI RENDERING //////////////////////////////////////////////////////////////////
 */
 const UI = {
   resetModal: () => {
@@ -305,7 +310,7 @@ const UI = {
 },
 
   createProgressCircle: (percentage) => {
-    const size = 36;
+    const size = 28;
     const stroke = 4;
     const radius = (size - stroke) / 2;
     const circumference = radius * 2 * Math.PI;
@@ -376,7 +381,6 @@ const UI = {
 
       if (data.done) {
         if (showCompleted) {
-          const li = UI.createTaskNode(name, data, dateKey, "task");
           li.classList.add("is-completed");
           const cb = li.querySelector('input[type="checkbox"]');
           if (cb) cb.checked = true;
@@ -409,16 +413,16 @@ const UI = {
 
       if (isDueToday) {
         const isDone = habit.history && habit.history[dateKey];
+        const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
+
         if (isDone) {
           if (showCompleted) {
-            const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
             li.classList.add("is-completed");
             const cb = li.querySelector('input[type="checkbox"]');
             if (cb) cb.checked = true;
             doneNodes.push(li);
           }
         } else {
-          const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
           undoneNodes.push(li);
         }
       }
@@ -528,10 +532,11 @@ const UI = {
   },
 
   renderCalendar: () => {
-    if (!elements.grid) return;
+    if (!elements.calendarGrid) return;
 
-    elements.grid.innerHTML = '';
-    elements.label.textContent = date.toLocaleDateString('en-US', {
+    elements.calendarGrid.innerHTML = '';
+    
+    elements.currentMonth.textContent = date.toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric'
     });
@@ -539,19 +544,18 @@ const UI = {
     const year = date.getFullYear();
     const month = date.getMonth();
 
-    // Nagłówki dni tygodnia
     ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(d => {
       const el = document.createElement('div');
       el.textContent = d;
       el.className = 'day-label';
-      elements.grid.appendChild(el);
+      elements.calendarGrid.appendChild(el);
     });
 
     const firstDay = new Date(year, month, 1);
     const startIndex = Utils.getMondayFirstDay(firstDay);
 
     for (let i = 0; i < startIndex; i++) {
-      elements.grid.appendChild(document.createElement('div'));
+      elements.calendarGrid.appendChild(document.createElement('div'));
     }
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -573,7 +577,7 @@ const UI = {
         UI.renderTasksForDay(selectedDate, true);      
       };
 
-      elements.grid.appendChild(el);
+      elements.calendarGrid.appendChild(el);
     }
   },
   
@@ -601,8 +605,8 @@ const UI = {
         
         const percentage = document.createElement("div");
         percentage.className = "habit-percentage-label";
-        percentage.textContent = `${progress}%`;
-        card.appendChild(percentage);
+        //percentage.textContent = `${progress}%`;
+        //card.appendChild(percentage);
         
         const name = document.createElement("p");
         name.textContent = habit.name;
@@ -634,12 +638,34 @@ const UI = {
     selectedHabitForStats = habit;
 
     const progress = DataManager.calculateHabitProgress(habit);
-
+    const freqMap = {
+      "daily": "Everyday",
+      "weekly": "Days of the week",
+      "monthly": "Days of the month"
+    };
+    let frequencyText = freqMap[habit.frequency] || habit.frequency;
+    if (habit.frequency === "weekly" && habit.schedule && habit.schedule.length > 0) {
+      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const selectedDays = habit.schedule
+        .sort((a, b) => a - b)
+        .map(dayNum => dayNames[dayNum]);
+      frequencyText += `: ${selectedDays.join(", ")}`;
+    }
+    if (habit.frequency === "monthly" && habit.schedule && habit.schedule.length > 0) {
+      const selectedDays = habit.schedule.sort((a, b) => a - b);
+      frequencyText += `: ${selectedDays.join(", ")}`;
+    }
+    const startDate = habit.createdAt ? new Date(habit.createdAt).toLocaleDateString('en-US') : "Unknown";
+    
     document.getElementById("habitDetails").style.display = "block";
     document.getElementById("detailHabitName").textContent = habit.name;
     document.getElementById("detailStreak").textContent = DataManager.calculateStreak(habit);
     
     document.getElementById("completionPercent").textContent = `${progress}\u00A0%`;
+    document.getElementById("frequencyData").textContent = frequencyText;
+    document.getElementById("startData").textContent = startDate;
+    
+
 
     const circleContainer = document.getElementById("detailProgressCircle");
     circleContainer.innerHTML = "";
@@ -660,13 +686,6 @@ const UI = {
     if (monthLabel) {
         monthLabel.textContent = statsViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
-
-    ['M', 'T', 'W', 'T', 'F', 'S', 'S'].forEach(d => {
-        const el = document.createElement('div');
-        el.textContent = d;
-        el.className = 'mini-day-label';
-        grid.appendChild(el);
-    });
 
     const firstDay = new Date(year, month, 1);
     const startIndex = Utils.getMondayFirstDay(firstDay);
@@ -716,15 +735,9 @@ const UI = {
   //hero stats
   renderHeroStats: () => {},
 };
-
-
-
-
-
 /*
-  EVENT LISTENERS
+  EVENT LISTENERS ///////////////////////////////////////////////////////////////////////////////
 */
-
 function initEventListeners() {
   // Modal Toggles
   elements.addTaskBtn?.addEventListener("click", () => {
@@ -800,10 +813,8 @@ function initEventListeners() {
     elements.monthlyDayPicker.style.display = elements.habitFrequency.value === "monthly" ? "block" : "none";
 });
 
-
-
   //Wyszukiwanie lokalizacji przyciskiem lupy
-  elements.searchLocBtn.addEventListener("click", async () => {
+  elements.searchLocation.addEventListener("click", async () => {
     const query = elements.locationInput.value.trim();
     if (!query) return;
 
@@ -944,15 +955,12 @@ function initEventListeners() {
     UI.resetModal();
   });
 }
-
-
-
-
 /*
-  GŁÓWNY INICJATOR
+  GŁÓWNY INICJATOR  //////////////////////////////////////////////////////////////////
 */
 document.addEventListener("DOMContentLoaded", () => {
-  initEventListeners(); // To musi być pierwsze
+  cacheElements();
+  initEventListeners(); 
   UI.setupMonthlyGrid();
 
   // index
@@ -962,16 +970,13 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.log("To nie jest strona Dashboard (brak toDoList)");
   }
-
   // calendar
-  if (elements.grid) {
+  if (elements.calendarGrid) {
     UI.renderCalendar();
     UI.renderTasksForDay(selectedDate, true);
   }
-
   // hero
   if (elements.habitSection) {
     UI.renderHabits();
-
   }
 });
