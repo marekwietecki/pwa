@@ -588,6 +588,7 @@ body {
   color: #fff; /* po wpisaniu/wybraniu daty */ 
 }
 
+
 .month-selector-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -747,12 +748,14 @@ input.error {
   font-weight: 600;
 }
 
-/* HABITS */
+/* HABITS */ /* ------------------------------------------------------------------------ */
 .habit-carousel {
   display: flex;
   overflow-x: auto;
   gap: 15px;
   padding: 32px 16px;
+  margin-left: 20px;
+  margin-right: 20px;
   scroll-snap-type: x mandatory;
   max-width: 600px;
   align-items: center;
@@ -782,6 +785,15 @@ input.error {
   padding-top: 12px;
   padding-bottom: 12px;
 }
+
+.month-stats-row{
+  display: flex; 
+  justify-content: space-between; 
+  margin-top: 15px; 
+  font-size: 13px;
+  max-width: 264px;
+  width: 100%;
+} 
 
 .stats-grid {
   max-width: 480px;
@@ -829,6 +841,12 @@ input.error {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+}
+
+.activity-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .activity-calendar {
@@ -973,6 +991,37 @@ input.error {
   opacity: 72%;
 }
 
+
+/* HERO */ /* ------------------------------------------------------------------------ */
+
+.userStats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.usernameWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 360px;
+  width: 100%;
+  align-items: center;
+}
+
+.levelWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 360px;
+  width: 100%;
+  align-items: center;
+}
+
+.levelIndicator {
+  height: 8px;
+  width: 200px;
+  border-radius: 12px;
+  background-color: rgb(87, 87, 87);
+}
 
 @media (max-width: 740px) {
   .logo {

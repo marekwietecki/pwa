@@ -279,7 +279,7 @@ const UI = {
     const isHabit = currentCreateType === "habit";
     const isGoal = currentCreateType === "goal";
 
-    if (elements.taskDateSection) elements.taskDateSection.style.display = (isHabit || isGoal) ? "none" : "block";
+    if (elements.taskDateSection) elements.taskDateSection.style.display = (isHabit) ? "none" : "block";
     if (elements.habitSection) elements.habitSection.style.display = isHabit ? "block" : "none";
     if (elements.daysPicker) elements.daysPicker.style.display = "none";
   },
@@ -474,6 +474,10 @@ const UI = {
     checkbox.type = "checkbox";
     checkbox.className = "taskCheckbox";
   
+    // checkbox setting
+    const isActuallyDone = type === "task" ? data.done : (data.history && data.history[dateKey]);
+    checkbox.checked = isActuallyDone;
+
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "deleteTaskBtn";
     deleteBtn.textContent = "🗑️";
@@ -520,9 +524,10 @@ const UI = {
         DataManager.toggleHabitDone(data.id, dateKey, isChecked);
       }
     
-      li.style.opacity = isChecked ? "0.3" : "1";
-      
-      const isCalendar = !!elements.grid; 
+      if (isChecked) li.classList.add("is-completed");
+      else li.classList.remove("is-completed");
+
+      const isCalendar = !!elements.calendarGrid; 
       setTimeout(() => {
         UI.renderTasksForDay(selectedDate, isCalendar);
       }, 300);
@@ -753,7 +758,14 @@ const UI = {
 },
 
   //hero stats
-  renderHeroStats: () => {},
+  renderHeroStats: () => {
+
+  },
+
+  //hero goals
+  renderHeroGoals: () => {
+
+  }
 };
 /*
   EVENT LISTENERS ///////////////////////////////////////////////////////////////////////////////

@@ -101,20 +101,24 @@
           
                 <div id="habitSection" style="display:none;">
                     <select id="habitFrequency">
-                        <option value="daily">Codziennie</option>
-                        <option value="weekly">Raz w tygodniu</option>
-                        <option value="monthly">Raz w miesiącu</option>
-                        <option value="specific">Konkretne dni tygodnia</option>
+                        <option value="daily">Everyday</option>
+                        <option value="weekly">Select days of the week</option>
+                        <option value="monthly">Select days of the month</option>
                     </select>
                     
                     <div id="daysPicker" style="display:none;">
-                        <label><input type="checkbox" value="1"> Pon</label>
-                        <label><input type="checkbox" value="2"> Wt</label>
-                        <label><input type="checkbox" value="3"> Śr</label>
-                        <label><input type="checkbox" value="4"> Czw</label>
-                        <label><input type="checkbox" value="5"> Pt</label>
-                        <label><input type="checkbox" value="6"> Sob</label>
-                        <label><input type="checkbox" value="0"> Niedz</label>
+                        <label><input type="checkbox" value="1"> MON </label>
+                        <label><input type="checkbox" value="2"> TUE </label>
+                        <label><input type="checkbox" value="3"> WED </label>
+                        <label><input type="checkbox" value="4"> THU </label>
+                        <label><input type="checkbox" value="5"> FRI </label>
+                        <label><input type="checkbox" value="6"> SAT </label>
+                        <label><input type="checkbox" value="0"> SUN </label>
+                    </div>
+    
+                    <div id="monthlyDayPicker" style="display:none;">
+                      <div id="monthDaysGrid" class="month-selector-grid">
+                      </div>
                     </div>
                 </div>
             

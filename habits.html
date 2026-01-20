@@ -180,20 +180,21 @@
               </div>
               <div id="activityGrid" class="activity-grid">            
               </div>
+            </div>
 
-              <div class="month-stats-row" style="display: flex; justify-content: space-around; margin-top: 15px; font-size: 13px;">
-                <div class="stat-box">
-                    <span style="display: block; opacity: 0.6;">Best Streak</span>
-                    <strong id="monthBestStreak">0 days</strong>
-                </div>
-                <div class="stat-box">
-                    <span style="display: block; opacity: 0.6;">Completion</span>
-                    <strong id="monthPercentage">0%</strong>
-                </div>
-                <div class="stat-box">
-                    <span style="display: block; opacity: 0.6;">Done</span>
-                    <strong id="monthCount">0 / 0</strong>
-                </div>
+            <div class="month-stats-row">
+              <div class="stat-box">
+                  <span style="display: block; opacity: 0.6;">Best Streak</span>
+                  <strong id="monthBestStreak">0 days</strong>
+              </div>
+              <div class="stat-box">
+                  <span style="display: block; opacity: 0.6;">Completion</span>
+                  <strong id="monthPercentage">0%</strong>
+              </div>
+              <div class="stat-box">
+                  <span style="display: block; opacity: 0.6;">Done</span>
+                  <strong id="monthCount">0 / 0</strong>
+              </div>
             </div>
           </div>
         </div>
@@ -217,27 +218,26 @@
             </header>
       
             <div id="habitSection" style="display:none;">
-                <select id="habitFrequency">
-                    <option value="daily">Everyday</option>
-                    <option value="weekly">Select days of the week</option>
-                    <option value="monthly">Select days of the month</option>
-                </select>
-                
-                <div id="daysPicker" style="display:none;">
-                    <label><input type="checkbox" value="1"> MON </label>
-                    <label><input type="checkbox" value="2"> TUE </label>
-                    <label><input type="checkbox" value="3"> WED </label>
-                    <label><input type="checkbox" value="4"> THU </label>
-                    <label><input type="checkbox" value="5"> FRI </label>
-                    <label><input type="checkbox" value="6"> SAT </label>
-                    <label><input type="checkbox" value="0"> SUN </label>
-                </div>
+              <select id="habitFrequency">
+                  <option value="daily">Everyday</option>
+                  <option value="weekly">Select days of the week</option>
+                  <option value="monthly">Select days of the month</option>
+              </select>
+              
+              <div id="daysPicker" style="display:none;">
+                  <label><input type="checkbox" value="1"> MON </label>
+                  <label><input type="checkbox" value="2"> TUE </label>
+                  <label><input type="checkbox" value="3"> WED </label>
+                  <label><input type="checkbox" value="4"> THU </label>
+                  <label><input type="checkbox" value="5"> FRI </label>
+                  <label><input type="checkbox" value="6"> SAT </label>
+                  <label><input type="checkbox" value="0"> SUN </label>
+              </div>
 
-                <div id="monthlyDayPicker" style="display:none;">
-                  <div id="monthDaysGrid" class="month-selector-grid">
-                  </div>
+              <div id="monthlyDayPicker" style="display:none;">
+                <div id="monthDaysGrid" class="month-selector-grid">
                 </div>
-
+              </div>
             </div>
         
             <input type="text" placeholder="Task name" id="taskName" />
