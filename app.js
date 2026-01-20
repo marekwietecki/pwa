@@ -338,7 +338,7 @@ const UI = {
 
     const progressCircle = document.createElementNS(svgNS, "circle");
     progressCircle.setAttribute("class", "progress-ring-circle");
-    progressCircle.setAttribute("stroke", "#4caf50");
+    progressCircle.setAttribute("stroke", "#3DADFF");
     progressCircle.setAttribute("stroke-width", stroke);
     progressCircle.setAttribute("fill", "transparent");
     progressCircle.setAttribute("r", radius);
@@ -359,7 +359,6 @@ const UI = {
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
     
-    // Ustawienie atrybutów SVG
     svg.setAttribute("width", "20");
     svg.setAttribute("height", "20");
     svg.setAttribute("viewBox", "0 0 24 24");
@@ -370,7 +369,6 @@ const UI = {
     svg.setAttribute("stroke-linejoin", "round");
     svg.classList.add("lucide", "lucide-ellipsis");
 
-    // Współrzędne środków trzech kółek
     const circles = [
         { cx: "12", cy: "12" },
         { cx: "19", cy: "12" },
@@ -700,7 +698,10 @@ const UI = {
     container.innerHTML = "";
 
     if (habits.length === 0) {
-      container.innerHTML = "<p style='padding: 20px;'>No habits added yet!</p>";
+      const noHabitsMsg = document.createElement("p");
+      noHabitsMsg.textContent = "No habits added yet! Add one to see its statistics.";
+      noHabitsMsg.className = "noHabitsMsg";
+      container.appendChild(noHabitsMsg);
       return;
     }
 

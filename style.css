@@ -858,56 +858,11 @@ input.error {
   justify-content: safe center;  
   margin: 0 auto;
 }
-.crucialHabitStats {
-  display: flex;
-  flex-direction: row;
-  gap: 20%;
-  margin-bottom: 24px;
-}
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 6px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-}
-
-.editHabitDetail {
-  background: transparent;
-  cursor: pointer;
-  border: none;
-  color: rgb(172, 172, 172);
-  text-decoration: underline;
-}
-.editHabitDetail:hover {
-  opacity: 72%;
-}
-
-.stat-item-secondary {
-  display: flex;
-  flex-direction: row;
-  gap: 6px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-}
-
-.month-stats-row{
-  display: flex; 
-  justify-content: space-between; 
-  margin-top: 15px; 
-  font-size: 13px;
-  max-width: 264px;
-  width: 100%;
-} 
-
-.stats-grid {
-  max-width: 480px;
-  width: 100%;
-  justify-self: center;
-  justify-content: flex-start;
-  padding: 0px 12px; /* TRBL // Trzy wartości (Góra, Boki, Dół) // Dwie wartości (Góra/Dół, Boki)*/
+.noHabitsMsg {
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
 }
 
 .habit-card-mini {
@@ -915,8 +870,8 @@ input.error {
   flex-direction: column;
   flex: 0 0 100px;
   background: rgb(67, 67, 67);
-  padding: 15px;
-  border-radius: 15px;
+  padding: 12px;
+  border-radius: 20px;
   text-align: center;
   text-wrap: wrap;
   max-width: 120px;
@@ -933,6 +888,82 @@ input.error {
   border-color: #4caf50;      
   transform: translateY(-5px); 
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.crucialHabitStats {
+  display: flex;
+  flex-direction: row;
+  gap: 20%;
+  margin-bottom: 40px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.editHabitDetail {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  padding: 4px; 
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  line-height: 0; 
+  margin-left: 4px;
+}
+.editHabitDetail:hover {
+  opacity: 72%;
+}
+
+.stat-items-secondary {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 32px;
+}
+
+.stat-item-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  opacity: 72%;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.64); 
+
+}
+.stat-data {
+  font-size: 14px;
+}
+
+.month-stats-row{
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between; 
+  margin-top: 15px; 
+  font-size: 13px;
+  max-width: 264px;
+  width: 100%;
+} 
+
+.stats-grid {
+  max-width: 480px;
+  width: 100%;
+  justify-self: center;
+  justify-content: flex-start;
+  padding: 0px 12px; /* TRBL // Trzy wartości (Góra, Boki, Dół) // Dwie wartości (Góra/Dół, Boki)*/
 }
 
 .habit-percentage-label {
@@ -973,7 +1004,7 @@ input.error {
   gap: 8px;
   font-size: 24px;
   font-weight: bold;
-  color: #140ec4;
+  color: #3DADFF;
 }
 
 .streak-value {
@@ -983,10 +1014,12 @@ input.error {
   justify-content: flex-start;
   font-size: 24px;
   font-weight: bold;
-  color: #ff9800;
-  
+  color: #F0512D;
 }
 
+.detailFireIcon {
+  height: 32px;
+}
 .activity-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr); 
