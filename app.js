@@ -687,6 +687,11 @@ const UI = {
         monthLabel.textContent = statsViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
 
+    let scheduledThisMonth = 0;
+    let completedThisMonth = 0;
+    let currentStreak = 0;
+    let bestStreak = 0;
+
     const firstDay = new Date(year, month, 1);
     const startIndex = Utils.getMondayFirstDay(firstDay);
 
@@ -696,41 +701,56 @@ const UI = {
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
-      const el = document.createElement('div');
-      el.className = 'mini-day';
-      el.textContent = day;
+        const el = document.createElement('div');
+        el.className = 'mini-day';
+        el.textContent = day;
 
-      const currentIterDate = new Date(year, month, day);
-      const dateKey = Utils.formatDateKey(currentIterDate);
-      const dayOfWeek = currentIterDate.getDay(); // 0-6 (0 - sunday)
-      
-      let isScheduled = false;
-      
-      if (habit.frequency === "daily") {
-          isScheduled = true;
-      } else if (habit.frequency === "weekly") {
-          isScheduled = habit.schedule.includes(dayOfWeek);
-      } else if (habit.frequency === "monthly") {
-          isScheduled = habit.schedule.includes(day);
-      }
+        const currentIterDate = new Date(year, month, day);
+        const dateKey = Utils.formatDateKey(currentIterDate);
+        const dayOfWeek = currentIterDate.getDay();
+        
+        const createdDate = new Date(habit.createdAt);
+        createdDate.setHours(0,0,0,0);
 
-      if (habit.history && habit.history[dateKey]) {
-          el.classList.add('habit-done');
-      }
+        let isScheduled = false;
+        if (habit.frequency === "daily") {
+            isScheduled = true;
+        } else if (habit.frequency === "weekly") {
+            isScheduled = habit.schedule.includes(dayOfWeek);
+        } else if (habit.frequency === "monthly") {
+            isScheduled = habit.schedule.includes(day);
+        }
 
-      // making pre-habit style
-      else {
-          const createdDate = new Date(habit.createdAt);
-          createdDate.setHours(0,0,0,0);
-          
-          if (!isScheduled || currentIterDate < createdDate) {
-              el.classList.add('inactive');
-          }
-      }
+        const isDone = habit.history && habit.history[dateKey] === true;
 
-      grid.appendChild(el);
+        if (isScheduled && currentIterDate >= createdDate) {
+            scheduledThisMonth++;
+            if (isDone) {
+                completedThisMonth++;
+                currentStreak++;
+                bestStreak = Math.max(bestStreak, currentStreak);
+                el.classList.add('habit-done');
+            } else {
+                currentStreak = 0; // Streak crash
+            }
+        } else {
+            el.classList.add('inactive');
+        }
+
+        grid.appendChild(el);
     }
-  },
+
+    // ---  STATS UPDATE ---
+    const percentage = scheduledThisMonth === 0 ? 0 : Math.round((completedThisMonth / scheduledThisMonth) * 100);
+
+    const streakEl = document.getElementById("monthBestStreak");
+    const percentEl = document.getElementById("monthPercentage");
+    const countEl = document.getElementById("monthCount");
+
+    if (streakEl) streakEl.textContent = `${bestStreak} days`;
+    if (percentEl) percentEl.textContent = `${percentage}%`;
+    if (countEl) countEl.textContent = `${completedThisMonth} / ${scheduledThisMonth}`;
+},
 
   //hero stats
   renderHeroStats: () => {},
@@ -807,7 +827,7 @@ function initEventListeners() {
 
   // habit frequency listeners
   elements.habitFrequency?.addEventListener("change", () => {
-    elements.daysPicker.style.display = elements.habitFrequency.value === "weekly" ? "block" : "none";
+    elements.daysPicker.style.display = elements.habitFrequency.value === "weekly" ? "flex" : "none";
   });
   elements.habitFrequency?.addEventListener("change", () => {
     elements.monthlyDayPicker.style.display = elements.habitFrequency.value === "monthly" ? "block" : "none";

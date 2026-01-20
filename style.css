@@ -412,6 +412,33 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+
+
+#closeModal {
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+  cursor: pointer;
+}
+#closeModal:hover {
+  opacity: 72%;
+}
+/* OTWARTY MODAL */
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-overlay.open .modal-sheet {
+  transform: translateY(0);
+}
 .typePickers {
   display: flex;
   align-items: center;
@@ -445,31 +472,93 @@ body {
   opacity: 100%;
 }
 
-#closeModal {
-  background-color: rgba(0, 0, 0, 0);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
+#taskName {
+  padding: 10px 16px;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(8px);           /* efekt rozmycia tła */
   -webkit-backdrop-filter: blur(8px);   /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
   transition: all 0.3s ease;             /* płynne przejście */
+  color: #fff;
+  font-weight: 600;
+}
+#taskName::placeholder { 
+  color: rgba(255, 255, 255, 0.64); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+
+#habitFrequency {
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 24px;
+  appearance: none;
+
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+  
+  padding-right: 40px; 
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+#daysPicker:not([style*="display: none"]) {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin: 15px 0;
+}
+
+/* Styl dla labela - robimy z niego małe kółko/kwadrat */
+#daysPicker label {
+  width: 40px;               /* Stała szerokość */
+  height: 40px;              /* Stała wysokość (taka sama jak szerokość) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;        /* 50% zrobi idealne kółka, np. 8px zrobi kwadraty */
+  
+  color: white;
+  font-size: 11px;           /* Mniejszy font, żeby MON/WED się zmieściły */
+  font-weight: bold;
   cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(2px);
 }
-#closeModal:hover {
-  opacity: 72%;
+
+/* Ukrywamy checkbox */
+#daysPicker input[type="checkbox"] {
+  display: none;
 }
-/* OTWARTY MODAL */
-.modal-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
+
+/* Styl po zaznaczeniu */
+#daysPicker label:has(input:checked) {
+  background: #4caf50;
+  border-color: #81c784;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  transform: scale(1.1);     /* Lekkie powiększenie zaznaczonego dnia */
 }
-.modal-overlay.open .modal-sheet {
-  transform: translateY(0);
+
+/* Hover dla efektu interakcji */
+#daysPicker label:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
+
 #taskDate {
   padding: 10px 16px;
   border-radius: 24px;
@@ -498,30 +587,13 @@ body {
 #taskDate:focus::-webkit-datetime-edit-year-field { 
   color: #fff; /* po wpisaniu/wybraniu daty */ 
 }
-#taskName {
-  padding: 10px 16px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
-  color: #fff;
-  font-weight: 600;
-}
-#taskName::placeholder { 
-  color: rgba(255, 255, 255, 0.64); 
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
-  font-weight: 400;
-}
+
 .month-selector-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   background: rgba(255, 255, 255, 0.05);
-  max-height: 200px; 
-  overflow-y: auto;
+  max-height: 240px; 
   padding: 10px;
   border-radius: 12px;
 }
