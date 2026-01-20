@@ -30,7 +30,7 @@ body.offline section {
   width: 320px;
   align-self: center;
 }
-/* Body */
+/* BODY */ /* ------------------------------------------------------------------------ */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -107,7 +107,7 @@ body {
   opacity: 0.72;
 }
 
-/* Calendar */
+/* CALENDAR */ /* ------------------------------------------------------------------------ */
 .calendar {
   margin-top: 2svh;
   height: 48vh;
@@ -204,7 +204,7 @@ body {
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
-/* Tasks */
+/* TASKS */ /* ------------------------------------------------------------------------ */
 #taskDateTitle {
   padding-top: 4vh;
   padding-left: 4vw;
@@ -372,6 +372,8 @@ body {
   opacity: 72%;
 }
 
+
+/* MODAL */  /* ------------------------------------------------------------------------ */
 /* Tło */
 .modal-overlay {
   position: fixed;
@@ -381,7 +383,7 @@ body {
   pointer-events: none;
   transition: 0.3s ease;
 }
-/* Sheet */
+
 .modal-sheet {
   position: absolute;
   bottom: 0;
@@ -412,7 +414,6 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
 
 #closeModal {
   background-color: rgba(0, 0, 0, 0);
@@ -472,6 +473,20 @@ body {
   opacity: 100%;
 }
 
+.modalSubTitle {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nameSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 #taskName {
   padding: 10px 16px;
   border-radius: 24px;
@@ -488,6 +503,12 @@ body {
   color: rgba(255, 255, 255, 0.64); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
+}
+
+#habitSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 #habitFrequency {
@@ -557,6 +578,12 @@ body {
 #daysPicker label:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
+}
+
+#dateSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 #taskDate {
@@ -647,6 +674,41 @@ body {
   color: white;
 }
 
+#heroSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#descriptionInput {
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+#descriptionInput::placeholder {
+  color: rgba(255, 255, 255, 0.64); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+
+.locationSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.locationContentWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
 
 #locBtn {
   padding: 10px 16px;
@@ -714,7 +776,7 @@ button:disabled {
   line-height: 16px;
 }
 #useMyLocation {
-  padding: 10px 16px;
+  padding: 10px 12px;
   border-radius: 24px;
   cursor: pointer;
   color: #fff;
@@ -1066,5 +1128,11 @@ input.error {
   .addTaskBtn {
     bottom: 16px;
     right: 16px;  
+  }
+  
+}
+@media (max-width: 360px) {
+  .typePickers {
+    gap: 2px;
   }
 }

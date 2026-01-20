@@ -40,7 +40,7 @@ function cacheElements() {
   const ids = [
     "calendarGrid", "currentMonth", "toDoList", "taskDateTitle", 
     "modalOverlay", "taskType", "taskName", "taskDate", 
-    "locationInput", "taskDateSection", "habitSection", 
+    "locationInput", "dateSection", "habitSection", 
     "habitFrequency", "daysPicker", "monthlyDayPicker", 
     "addTaskBtn", "closeModal", "searchLocation", "useMyLocation", 
     "goalSection"
@@ -279,8 +279,8 @@ const UI = {
     const isHabit = currentCreateType === "habit";
     const isGoal = currentCreateType === "goal";
 
-    if (elements.taskDateSection) elements.taskDateSection.style.display = (isHabit) ? "none" : "block";
-    if (elements.habitSection) elements.habitSection.style.display = isHabit ? "block" : "none";
+    if (elements.dateSection) elements.dateSection.style.display = (isHabit) ? "none" : "flex";
+    if (elements.habitSection) elements.habitSection.style.display = isHabit ? "flex" : "none";
     if (elements.daysPicker) elements.daysPicker.style.display = "none";
   },
 
@@ -823,12 +823,12 @@ function initEventListeners() {
       const isHabit = selectedType === "habit";
       const isGoal = selectedType === "goal";
   
-      if (elements.taskDateSection) {
-        elements.taskDateSection.style.display = (isHabit || isGoal) ? "none" : "block";
+      if (elements.dateSection) {
+        elements.dateSection.style.display = (isHabit || isGoal) ? "none" : "flex";
       }
       
       if (elements.habitSection) {
-        elements.habitSection.style.display = isHabit ? "block" : "none";
+        elements.habitSection.style.display = isHabit ? "flex" : "none";
       }
 
       //goal section
