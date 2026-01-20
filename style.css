@@ -1,5 +1,5 @@
 #offline-banner {
-  display: none; /* ukryty domyślnie */
+  display: none; 
   position: relative;
   width: 100%;
   background: #ff4f4f;
@@ -11,13 +11,13 @@
   z-index: 9999;
   transition: all 0.3s ease;
 }
-/* Gdy aktywny – pokazuje się u góry, a reszta strony się przesuwa */
+/* displayed when active */
 body.offline #offline-banner {
   display: block;
   position: sticky;
   top: 0;
 }
-/* Dodaj płynne przesunięcie kontentu */
+/* smooth content shift */
 body.offline main,
 body.offline header,
 body.offline section {
@@ -289,20 +289,60 @@ body {
 }
 .rowWrapper {
   display: flex;
-  align-items: center; /* checkbox + meta na jednej linii */
+  align-items: center; 
   gap: 8px;
 }
 .taskMetaWrapper {
   display: flex;
-  flex-direction: column; /* data nad lokalizacją */
+  flex-direction: column; 
   font-size: 10px;
   color: rgba(255,255,255,0.6);
 }
+.taskActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
 .taskCheckbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.moreBtn, .deleteTaskBtn {
+  background: transparent; 
+  color: #fff;
+  border: none;             
+  padding: 8px;             
+  cursor: pointer;          
+  outline: none;            
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.show-delete .moreBtn {
+  color: #ff4e4e;
+  background: transparent; 
+}
+
+.deleteTaskBtn {
+  display: none; 
+  animation: fadeIn 0.2s ease forwards;
+  background-color: rgba(255, 255, 255, 0)000;
+}
+
+.show-delete .deleteTaskBtn {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(5px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .progress-ring-container {
@@ -541,32 +581,29 @@ body {
   margin: 15px 0;
 }
 
-/* Styl dla labela - robimy z niego małe kółko/kwadrat */
 #daysPicker label {
-  width: 40px;               /* Stała szerokość */
-  height: 40px;              /* Stała wysokość (taka sama jak szerokość) */
+  width: 40px;               
+  height: 40px;              
   display: flex;
   align-items: center;
   justify-content: center;
   
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;        /* 50% zrobi idealne kółka, np. 8px zrobi kwadraty */
+  border-radius: 50%;        
   
   color: white;
-  font-size: 11px;           /* Mniejszy font, żeby MON/WED się zmieściły */
+  font-size: 11px;           
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(2px);
 }
 
-/* Ukrywamy checkbox */
 #daysPicker input[type="checkbox"] {
   display: none;
 }
 
-/* Styl po zaznaczeniu */
 #daysPicker label:has(input:checked) {
   background: #4caf50;
   border-color: #81c784;
@@ -574,7 +611,6 @@ body {
   transform: scale(1.1);     /* Lekkie powiększenie zaznaczonego dnia */
 }
 
-/* Hover dla efektu interakcji */
 #daysPicker label:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
@@ -631,7 +667,7 @@ body {
 }
 
 .month-selector-grid input, .day-selector-grid input {
-  display: none; /* Chowamy ten brzydki kwadracik */
+  display: none; /* hiding default checkbox */
 }
 
 .month-selector-grid span, .day-selector-grid span {
@@ -759,13 +795,11 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Klasa dodawana do przycisku podczas ładowania */
 .loading svg {
   animation: spin 1s linear infinite;
   opacity: 0.5;
 }
 
-/* Opcjonalnie: zablokowanie przycisku podczas ładowania */
 button:disabled {
   cursor: not-allowed;
   filter: grayscale(1);
@@ -840,6 +874,17 @@ input.error {
   padding-bottom: 12px;
 }
 
+.editHabitDetail {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  color: rgb(172, 172, 172);
+  text-decoration: underline;
+}
+.editHabitDetail:hover {
+  opacity: 72%;
+}
+
 .stat-item-secondary {
   display: flex;
   flex-direction: row;
@@ -866,8 +911,9 @@ input.error {
 }
 
 .habit-card-mini {
-  flex: 0 0 100px;
+  display: flex;
   flex-direction: column;
+  flex: 0 0 100px;
   background: rgb(67, 67, 67);
   padding: 15px;
   border-radius: 15px;
@@ -879,6 +925,7 @@ input.error {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent; 
+  gap: 4px;
 }
 
 .habit-card-mini.active-card {
@@ -891,7 +938,7 @@ input.error {
 .habit-percentage-label {
   font-size: 14px;
   font-weight: bold;
-  color: #4caf50; /* Zielony kolor dla procentów */
+  color: #614caf; 
   margin-top: 5px;
 }
 
@@ -919,9 +966,9 @@ input.error {
 }
 
 .progress-value {
-  display: flex;         /* Włączamy elastyczny układ */
-  flex-direction: row;   /* Ustawiamy w poziomie */
-  align-items: center;   /* Centrujemy oba elementy względem siebie w pionie */
+  display: flex;         
+  flex-direction: row;   
+  align-items: center;   
   justify-content: flex-start; 
   gap: 8px;
   font-size: 24px;
@@ -953,18 +1000,18 @@ input.error {
   margin-top: 4px;
 }
 
-/* Styl dla nagłówków dni w statystykach */
+
 .activity-day-labels {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;              /* Taki sam gap jak w gridzie niżej */
+  gap: 4px;              
   text-align: center;
   font-size: 11px;
   font-weight: bold;
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 auto 8px auto; /* Centrowanie i odstęp od kafelków */
+  margin: 0 auto 8px auto; 
   width: 100%;
-  max-width: 300px;      /* Identyczna szerokość jak activity-grid */
+  max-width: 300px;      
 }
 
 .activity-day-labels div {
@@ -975,13 +1022,13 @@ input.error {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;    /* Zmienione na 50% dla idealnego koła */
-  background: rgba(255, 255, 255, 0.06); /* Dopasowane do Twojego stylu glass */
+  border-radius: 50%;    
+  background: rgba(255, 255, 255, 0.06); 
   color: rgba(255, 255, 255, 0.4);
   width: 32px;
   height: 32px;
   font-size: 12px;
-  margin: 0 auto;        /* Centrowanie wewnątrz kolumny grida */
+  margin: 0 auto;        
 }
 
 .mini-day.habit-done {

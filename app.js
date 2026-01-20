@@ -323,6 +323,9 @@ const UI = {
     const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("width", size);
     svg.setAttribute("height", size);
+    svg.style.transform = "rotate(-90deg) scaleY(-1)";
+    svg.style.transformOrigin = "center";
+    svg.style.display = "block";
 
     const bgCircle = document.createElementNS(svgNS, "circle");
     bgCircle.setAttribute("class", "progress-ring-circle-bg");
@@ -352,6 +355,90 @@ const UI = {
     return container;
   },
 
+  createEllipsisIcon: () => {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    
+    // Ustawienie atrybutów SVG
+    svg.setAttribute("width", "20");
+    svg.setAttribute("height", "20");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.classList.add("lucide", "lucide-ellipsis");
+
+    // Współrzędne środków trzech kółek
+    const circles = [
+        { cx: "12", cy: "12" },
+        { cx: "19", cy: "12" },
+        { cx: "5", cy: "12" }
+    ];
+
+    circles.forEach(coords => {
+        const circle = document.createElementNS(svgNS, "circle");
+        circle.setAttribute("cx", coords.cx);
+        circle.setAttribute("cy", coords.cy);
+        circle.setAttribute("r", "1");
+        svg.appendChild(circle);
+    });
+
+    return svg;
+  },
+
+  createDeleteIcon: () => {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    
+    svg.setAttribute("width", "18");
+    svg.setAttribute("height", "18");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.classList.add("lucide", "lucide-trash");
+
+    const path1 = document.createElementNS(svgNS, "path");
+    path1.setAttribute("d", "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6");
+    
+    const path2 = document.createElementNS(svgNS, "path");
+    path2.setAttribute("d", "M3 6h18");
+    
+    const path3 = document.createElementNS(svgNS, "path");
+    path3.setAttribute("d", "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2");
+
+    svg.appendChild(path1);
+    svg.appendChild(path2);
+    svg.appendChild(path3);
+    
+    return svg;
+  },
+
+  createEllipsisIcon: () => {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "20");
+    svg.setAttribute("height", "20");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.classList.add("lucide", "lucide-ellipsis");
+
+    const circles = [{cx: "12", cy: "12"}, {cx: "19", cy: "12"}, {cx: "5", cy: "12"}];
+    circles.forEach(c => {
+        const circle = document.createElementNS(svgNS, "circle");
+        circle.setAttribute("cx", c.cx);
+        circle.setAttribute("cy", c.cy);
+        circle.setAttribute("r", "1");
+        svg.appendChild(circle);
+    });
+    return svg;
+  },
 
   renderTasksForDay: (targetDate = new Date(), showCompleted = false) => {
     if (!elements.toDoList) return;
@@ -478,33 +565,51 @@ const UI = {
     const isActuallyDone = type === "task" ? data.done : (data.history && data.history[dateKey]);
     checkbox.checked = isActuallyDone;
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "deleteTaskBtn";
-    deleteBtn.textContent = "🗑️";
+    const moreBtn = document.createElement("button");
+    moreBtn.className = "moreBtn";
+    const ellipsisIcon = UI.createEllipsisIcon(); 
+    const deleteIcon = UI.createDeleteIcon();
+    moreBtn.appendChild(ellipsisIcon);
 
-    deleteBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Żeby nie kliknąć przy okazji w li
+
+    moreBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       
-      if (confirm(`Delete "${name}"?`)) {
-          if (type === "task") {
-              const tasks = DataManager.getTasks();
-              if (tasks[dateKey]) {
-                  delete tasks[dateKey][name];
-                  // Czyścimy pusty dzień
-                  if (Object.keys(tasks[dateKey]).length === 0) delete tasks[dateKey];
-                  DataManager.saveTasks(tasks);
-              }
-          } else {
-              const habits = DataManager.getHabits();
-              const filtered = habits.filter(h => h.name !== name); // Proste usuwanie po nazwie
-              DataManager.saveHabits(filtered);
-          }
-          UI.renderTasksForDay(selectedDate);
+      const isReadyToDelete = li.classList.contains("show-delete");
+
+      if (isReadyToDelete) {
+        if (type === "task") {
+            const tasks = DataManager.getTasks();
+            if (tasks[dateKey]) {
+                delete tasks[dateKey][name];
+                if (Object.keys(tasks[dateKey]).length === 0) delete tasks[dateKey];
+                DataManager.saveTasks(tasks);
+            }
+        } else {
+            const habits = DataManager.getHabits();
+            const filtered = habits.filter(h => h.name !== name); 
+            DataManager.saveHabits(filtered);
+        }
+        
+        const calendarEl = document.getElementById("calendarGrid");
+        const isCalendar = calendarEl && window.getComputedStyle(calendarEl).display !== "none";
+        UI.renderTasksForDay(selectedDate, isCalendar);
+
+      } else {
+        li.classList.add("show-delete");
+        moreBtn.replaceChildren(deleteIcon);
+
+        setTimeout(() => {
+            if (li.classList.contains("show-delete")) {
+                li.classList.remove("show-delete");
+                moreBtn.replaceChildren(ellipsisIcon);
+            }
+        }, 3000);
       }
-  });
+    });
   
     taskActions.appendChild(checkbox);
-    taskActions.appendChild(deleteBtn);
+    taskActions.appendChild(moreBtn);
   
     // 3. Składanie całości
     li.appendChild(taskContent);
