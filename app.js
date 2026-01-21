@@ -1382,17 +1382,17 @@ function initEventListeners() {
     }
     
     else if (type === "goal") {
+      
       const description = elements.descriptionInput?.value.trim() || "";
       const deadline = elements.goalDeadline?.value || null;
-      
-      const linkedHabitId = elements.goalHabitSelect?.value || null;
+      const habitSelectEl = document.getElementById("goalHabitSelect");
 
       const goal = {
         id: Date.now(),
         name: name,
         description: description,
         deadline: deadline,
-        linkedHabitId: linkedHabitId ? parseInt(linkedHabitId) : null,
+        linkedHabitId: (habitSelectEl && habitSelectEl.value) ? parseInt(habitSelectEl.value) : null,        
         createdAt: new Date().toISOString(),
         isCompleted: false
       };
