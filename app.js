@@ -117,13 +117,10 @@ const DataManager = {
   //getHabits: () => JSON.parse(localStorage.getItem("habitsState")) || [],
   getHabits: () => {
     const data = JSON.parse(localStorage.getItem("habitsState")) || [];
-    
-    // Jeśli data jest tablicą, zwróć ją. 
-    // Jeśli jest obiektem, który ma w środku pole .habits, zwróć to pole.
     if (Array.isArray(data)) return data;
     if (data && data.habits) return data.habits;
     
-    return []; // Zabezpieczenie: zawsze zwracaj tablicę, żeby .find() i .filter() działały
+    return [];
   },
   saveHabits: (habits) => localStorage.setItem("habitsState", JSON.stringify(habits)),
 
@@ -167,7 +164,7 @@ const DataManager = {
 
         // Zabezpieczenie: jeśli brak createdAt, przyjmij dzisiaj
         const createdDate = habit.createdAt ? new Date(habit.createdAt) : new Date();
-        if (isNaN(createdDate)) return 0; // Jeśli data jest nieprawidłowa
+        if (isNaN(createdDate)) return 0; 
         createdDate.setHours(0, 0, 0, 0);
 
         let scheduledDaysCount = 0;
@@ -183,7 +180,6 @@ const DataManager = {
             const dayOfMonth = d.getDate();
 
             let isScheduled = false;
-            // Spójność nazw z Twoim zapisywaniem:
             if (habit.frequency === "everyday" || habit.frequency === "daily") {
                 isScheduled = true;
             } else if (habit.frequency === "weekly") {
@@ -198,7 +194,7 @@ const DataManager = {
                     completedDaysCount++;
                 }
             }
-            d.setDate(d.getDate() + 1); // Przejdź do kolejnego dnia
+            d.setDate(d.getDate() + 1); 
         }
 
         console.log(`Habit: ${habit.name} | Sched: ${scheduledDaysCount} | Done: ${completedDaysCount}`);
@@ -340,19 +336,26 @@ const UI = {
   },
 
   renderGoals: () => {
-    if (!elements.goalsList) return; 
+    const list = document.getElementById("goalsList");
+    if (!list) return;
 
-    elements.goalsList.innerHTML = "";
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    }
+
     const goals = DataManager.getGoals();
 
     if (goals.length === 0) {
-        elements.goalsList.innerHTML = `<li class="empty-state">No goals yet. Add one to start!</li>`;
+        const emptyState = document.createElement("li");
+        emptyState.className = "empty-state";
+        emptyState.textContent = "No goals yet. Add one to start!";
+        list.appendChild(emptyState);
         return;
     }
 
     goals.forEach(goal => {
-      const goalNode = UI.createTaskNode(goal.name, goal, null, "goal");
-      elements.goalsList.appendChild(goalNode);
+        const goalNode = UI.createTaskNode(goal.name, goal, null, "goal");
+        list.appendChild(goalNode);
     });
   },
 
@@ -425,6 +428,41 @@ const UI = {
     container.appendChild(svg);
 
     return container;
+  },
+
+  createDeadlineIcon: () => {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "10");
+    svg.setAttribute("height", "10");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.classList.add("lucide", "lucide-calendar-clock");
+
+    const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path1.setAttribute("d", "M16 14v2.2l1.6 1");
+    
+    const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path2.setAttribute("d", "M16 2v4");
+    const path5 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path5.setAttribute("d", "M8 2v4");
+    
+    const path3 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path3.setAttribute("d", "M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5");
+    
+    const path4 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path4.setAttribute("d", "M3 10h5");
+    
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", "16");
+    circle.setAttribute("cy", "16");
+    circle.setAttribute("r", "6");
+
+    svg.append(path1, path2, path3, path4, path5, circle);
+    return svg;
   },
 
   createRepeatIcon: () => {
@@ -569,6 +607,32 @@ const UI = {
     return svg;
   },
 
+  createDescriptionIcon: () => {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "10"); 
+    svg.setAttribute("height", "10");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.classList.add("lucide", "lucide-align-left");
+
+    const paths = [
+        "M21 6H3",
+        "M21 12H3",
+        "M17 18H3"
+    ];
+    paths.forEach(d => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        svg.appendChild(path);
+    });
+
+    return svg;
+  },
+
   createEllipsisIcon: () => {
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
@@ -674,6 +738,29 @@ const UI = {
     elements.toDoList.appendChild(listFragment);
   },
 
+  updateGoalHabitSelect: () => {
+    const select = document.getElementById("goalHabitSelect");
+    if (!select) return;
+
+    while (select.firstChild) {
+        select.removeChild(select.firstChild);
+    }
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "No linked habit";
+    select.appendChild(defaultOption);
+
+    const habits = DataManager.getHabits();
+    console.log(DataManager.getHabits());
+    habits.forEach(habit => {
+        const option = document.createElement("option");
+        option.value = habit.id;
+        option.textContent = habit.name;
+        select.appendChild(option);
+    });
+  },
+
   createTaskNode: (name, data, dateKey, type) => {
     const li = document.createElement("li");
     li.className = `taskItem ${type === "habit" ? "is-habit" : type === "goal" ? "is-goal" : "is-task"}`;
@@ -701,33 +788,60 @@ const UI = {
       metaWrapper.appendChild(locSpan);
     }
 
-    console.log("Dane dla node'a:", type, data);
+    //console.log("Dane dla node'a:", type, data);
     if (type === "goal") {
-      if (data.description) {
-        const descDiv = document.createElement("div");
-        descDiv.className = "goalDescription";
-        descDiv.textContent = data.description;
-        metaWrapper.appendChild(descDiv);
-      }
-
       if (data.deadline) {
         const deadlineSpan = document.createElement("span");
+        deadlineSpan.style.marginTop = "4px";
+
         deadlineSpan.className = "goalDeadline";
+        const deadlineIcon = UI.createDeadlineIcon();
+        deadlineIcon.style.verticalAlign = "center";
+        deadlineIcon.style.marginRight = "6px";
         const dateObj = new Date(data.deadline);
-        deadlineSpan.textContent = `🏁 Deadline: ${dateObj.toLocaleDateString()}`;
+        const dateText = document.createTextNode(`Deadline: ${dateObj.toLocaleDateString()}`);
+        
+        deadlineSpan.appendChild(deadlineIcon);
+        deadlineSpan.appendChild(dateText);
         metaWrapper.appendChild(deadlineSpan);
       }
 
       if (data.linkedHabitId) {
         const habits = DataManager.getHabits();
-        const habit = habits.find(h => h.id === Number(data.linkedHabitId));
+        console.log(DataManager.getHabits());
+        const habit = habits.find(h => Number(h.id) === Number(data.linkedHabitId));        
         if (habit) {
-            const linkedSpan = document.createElement("span");
-            linkedSpan.className = "linkedHabitBadge";
-            linkedSpan.textContent = `🔄 Linked: ${habit.name}`;
-            metaWrapper.appendChild(linkedSpan);
+          const linkedSpan = document.createElement("span");
+          linkedSpan.className = "linkedHabitBadge";
+          
+          const icon = UI.createRepeatIcon ? UI.createRepeatIcon() : document.createTextNode("🔄 ");
+          
+          linkedSpan.appendChild(icon);
+          linkedSpan.appendChild(document.createTextNode(` Linked: ${habit.name}`));
+          
+          metaWrapper.appendChild(linkedSpan);
+        } else {
+            console.warn("Nie znaleziono nawyku o ID:", data.linkedHabitId);
         }
       }
+
+      if (data.description) {
+        const descDiv = document.createElement("div");
+        descDiv.className = "goalDescription";
+        descDiv.style.marginTop = "4px";
+        
+        const descIcon = UI.createDescriptionIcon();
+        descIcon.style.marginRight = "6px";
+        descIcon.style.opacity = "0.7"; 
+        descIcon.style.verticalAlign = "middle";
+
+        const descText = document.createElement("span");
+        descText.textContent = data.description;
+
+        descDiv.appendChild(descIcon);
+        descDiv.appendChild(descText);
+        metaWrapper.appendChild(descDiv);
+      }      
     }
   
     taskLabel.appendChild(statusIcon);
@@ -844,7 +958,8 @@ const UI = {
     });
   
     return li;
-  },
+    },
+  
 
   renderCalendar: () => {
     if (!elements.calendarGrid) return;
@@ -1070,15 +1185,8 @@ const UI = {
     if (countEl) countEl.textContent = `${completedThisMonth} / ${scheduledThisMonth}`;
 },
 
-  //hero stats
-  renderHeroStats: () => {
 
-  },
 
-  //hero goals
-  renderHeroGoals: () => {
-
-  }
 };
 /*
   EVENT LISTENERS ///////////////////////////////////////////////////////////////////////////////
@@ -1311,6 +1419,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
   initEventListeners(); 
   UI.setupMonthlyGrid();
+  UI.updateGoalHabitSelect();
 
   // index
   if (elements.toDoList && !elements.grid) {
