@@ -272,7 +272,7 @@ body {
 }
 
 .taskItem.is-completed .taskCheckbox {
-  accent-color: #4caf50;
+  accent-color: #3DADFF;
 }
 
 
@@ -283,9 +283,27 @@ body {
   white-space: nowrap; 
   overflow: hidden; 
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
 }
+
+/*
 .taskLabel:hover {
   opacity: 64%;
+}
+*/
+
+.task-type-icon {
+  flex-shrink: 0; /* Ikona się nie skurczy mi */
+  opacity: 0.7;
+}
+
+.taskMetaWrapper {
+  font-size: 0.85em;
+  opacity: 0.6;
+  margin-top: 4px;
 }
 .rowWrapper {
   display: flex;
@@ -538,6 +556,7 @@ body {
   transition: all 0.3s ease;             /* płynne przejście */
   color: #fff;
   font-weight: 600;
+  width: 32%;
 }
 #taskName::placeholder { 
   color: rgba(255, 255, 255, 0.64); 
@@ -651,7 +670,6 @@ body {
   color: #fff; /* po wpisaniu/wybraniu daty */ 
 }
 
-
 .month-selector-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -716,9 +734,22 @@ body {
   flex: 1;
 }
 
+#goalSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.descriptionSection, .linkHabitSection, .deadlineSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 #descriptionInput {
   color: #fff;
   padding: 10px 16px;
+  padding-bottom: 48px;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(8px);           /* efekt rozmycia tła */
@@ -731,6 +762,18 @@ body {
   color: rgba(255, 255, 255, 0.64); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
+}
+
+#goalDeadline {
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
 }
 
 .locationSection {
@@ -926,8 +969,9 @@ input.error {
 .stat-items-secondary {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   width: 100%;
-  gap: 32px;
+  gap: 40px;
 }
 
 .stat-item-secondary {
@@ -1017,9 +1061,25 @@ input.error {
   color: #F0512D;
 }
 
+.xp-value {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2df047;
+}
+
+
 .detailFireIcon {
   height: 32px;
 }
+
+#detailStreak {
+  margin-left: 4px;
+}
+
 .activity-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr); 
@@ -1056,8 +1116,8 @@ input.error {
   align-items: center;
   justify-content: center;
   border-radius: 50%;    
-  background: rgba(255, 255, 255, 0.06); 
-  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1); 
+  color: rgba(255, 255, 255, 0.5);
   width: 32px;
   height: 32px;
   font-size: 12px;
@@ -1065,13 +1125,13 @@ input.error {
 }
 
 .mini-day.habit-done {
-  background: #4caf50; 
+  background: #3DADFF; 
   color: white;
   font-weight: bold;
 }
 
 .mini-day.inactive {
-  opacity: 0.3; 
+  opacity: 0.2; 
 }
 
 .mini-day-label {
@@ -1140,6 +1200,9 @@ input.error {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .usernameWrapper {
@@ -1148,6 +1211,24 @@ input.error {
   max-width: 360px;
   width: 100%;
   align-items: center;
+}
+
+#editUserName {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  padding: 4px; 
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  line-height: 0; 
+  margin-left: 4px;
+}
+
+#editUserName:hover {
+  opacity: 72%;
 }
 
 .levelWrapper {
@@ -1164,6 +1245,21 @@ input.error {
   border-radius: 12px;
   background-color: rgb(87, 87, 87);
 }
+
+.secondaryLevelWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 360px;
+  width: 100%;
+  align-items: center;
+}
+
+.nextLevelWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
 
 @media (max-width: 740px) {
   .logo {

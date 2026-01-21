@@ -13,24 +13,22 @@
       <h1 class="logo">Habit Hero</h1>
       <nav class="tabNav">
         <a href="/index.html" class="tabNavItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="navIcon"
-            id="lucide-clipboard-check"
-          >
-            <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-            <path
-              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-            />
-            <path d="m9 14 2 2 4-4" />
+          <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          class="lucide lucide-list-todo-icon lucide-list-todo">
+          <path d="M13 5h8"/>
+          <path d="M13 12h8"/>
+            <path d="M13 19h8"/>
+            <path d="m3 17 2 2 4-4"/>
+            <rect x="3" y="4" width="6" height="6" rx="1"/>
           </svg>
           Today
         </a>
@@ -138,13 +136,6 @@
           <h2 id="detailHabitName">Pick habit</h2>
           <div class="crucialHabitStats">
             <div class="stat-item">
-              <div class="progress-value">            
-                <div id="detailProgressCircle"></div>
-                <span id="completionPercent">0 %</span>          
-              </div>
-              <span class="stat-label">Completion percentage</span>
-            </div>
-            <div class="stat-item">
               <div class="streak-value">
                 <div class="detailFireIcon">
                   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -156,6 +147,23 @@
                 <span>&nbsp;days</span> 
               </div>
               <span class="stat-label">Current Streak</span>
+            </div>
+            <div class="stat-item">
+              <div class="progress-value">            
+                <div id="detailProgressCircle"></div>
+                <span id="completionPercent">0 %</span>          
+              </div>
+              <span class="stat-label">Efectiveness</span>
+            </div>
+            <div class="stat-item">
+              <div class="xp-value">
+                <div class="xpIcon">
+                  xp
+                </div>
+                <span id="detailStreak">0</span> 
+                <span>&nbsp;xp</span> 
+              </div>
+              <span class="stat-label">XP gained</span>
             </div>
           </div>
           <div class="stat-items-secondary">

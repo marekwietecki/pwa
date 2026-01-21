@@ -13,24 +13,22 @@
       <h1 class="logo">Habit Hero</h1>
       <nav class="tabNav">
         <a href="/index.html" class="tabNavItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="navIcon"
-            id="lucide-clipboard-check"
-          >
-            <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-            <path
-              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-            />
-            <path d="m9 14 2 2 4-4" />
+          <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          class="lucide lucide-list-todo-icon lucide-list-todo">
+          <path d="M13 5h8"/>
+          <path d="M13 12h8"/>
+            <path d="M13 19h8"/>
+            <path d="m3 17 2 2 4-4"/>
+            <rect x="3" y="4" width="6" height="6" rx="1"/>
           </svg>
           Today
         </a>
@@ -106,14 +104,32 @@
     <div class="userStats">
       <div class="usernameWrapper">
         <h3>User name</h3>
-        <button>edit</button>
+        <button id="editUserName">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+        </button>
       </div>
       <div class="levelWrapper">
         <div>Level: <span>0</span></div>
         <div class="levelIndicator"></div>
         <span class="nextLevel">1</span>
       </div>
-      <div>Total XP gained: <span>0</span></div>
+      <div class="secondaryLevelWrapper">
+        <div class="nextLevelWrapper">
+          <div>Xp to level</div>
+          <span class="nextLevel">1:</span>
+          <div class="nextLevelXpNeeded">100</div>
+        </div>
+        <div class="totalXpWrapper">
+          Total XP gained: 
+          <span>0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="goalsContainer">
+      <h2 class="sectionTitle">My Goals</h2>
+      <ul id="goalsList" class="toDoList">
+        </ul>
     </div>
 
 
@@ -161,20 +177,30 @@
             </div>
           </div>
 
-          <div id="heroSection">
-            <span class="modalSubTitle">Description</span>
-            <input
-                  type="text"
-                  id="descriptionInput"
-                  placeholder="Enter description of your Goal"
-              />
+          <div id="goalSection" style="display:none;">
+            <div class="descriptionSection">
+              <span class="modalSubTitle">Description</span>
+              <textarea id="descriptionInput" placeholder="What is your goal about?"></textarea>
+            </div>
+      
+            <div class="deadlineSection">
+              <span class="modalSubTitle">Deadline</span>
+              <input type="date" id="goalDeadline" />
+            </div>
+      
+            <div class="linkHabitSection">
+              <span class="modalSubTitle">Link with Habit (Optional)</span>
+              <select id="goalHabitSelect">
+                <option value="">No linked habit</option>
+                </select>
+            </div>
           </div>
           
           <div id="dateSection">
             <span class="modalSubTitle">Date</span>
             <input type="date" id="taskDate" />
           </div>
-          <div class="locationSection">
+          <div class="locationSection" id="locationSection">
             <span class="modalSubTitle">Location</span>
             <div class="locationContentWrapper">  
               <input
