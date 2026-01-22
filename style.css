@@ -611,6 +611,7 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
+  gap: 12px;
 }
 
 #habitFrequency {
@@ -798,6 +799,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+#habitIcon {
+  height: 40px; 
+  width: 64px;
+  padding: 0;           
+  text-align: center;   
+  display: flex;        
+  align-items: center;
+  justify-content: center;
+  line-height: 40px;    
+  font-size: 16px;      
+  color: #fff;
+  border-radius: 24px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
 }
 
 #goalSection {

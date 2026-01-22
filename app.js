@@ -210,42 +210,40 @@ const DataManager = {
   calculateStreak: (habit) => {
     if (!habit.history || Object.keys(habit.history).length === 0) return 0;
 
-    //sorting
-    const completedDates = Object.keys(habit.history)
-      .filter(key => habit.history[key] === true)
-      .sort()
-      .reverse();
-
-    if (completedDates.length === 0) return 0;
-
     let streak = 0;
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
+    let checkDate = new Date();
+    checkDate.setHours(0, 0, 0, 0);
     
-    let yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+    const todayKey = Utils.formatDateKey(checkDate);
+    const createdDate = new Date(habit.createdAt);
+    createdDate.setHours(0, 0, 0, 0);
 
-    const todayKey = Utils.formatDateKey(today);
-    const yesterdayKey = Utils.formatDateKey(yesterday);
+    while (checkDate >= createdDate) {
+      const dateKey = Utils.formatDateKey(checkDate);
+      const dayOfWeek = checkDate.getDay();
+      const dayOfMonth = checkDate.getDate();
 
-    if (!habit.history[todayKey] && !habit.history[yesterdayKey]) {
-      return 0;
-    }
-
-    // ciągłość dzień po dniu
-    let checkDate = habit.history[todayKey] ? today : yesterday;
-    
-    while (true) {
-      const key = Utils.formatDateKey(checkDate);
-      if (habit.history[key]) {
-        streak++;
-        // Jeśli streak to 5, pętla leci 5 razy, a nie 365.
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
+      let isScheduled = false;
+      if (habit.frequency === "daily") {
+        isScheduled = true;
+      } else if (habit.frequency === "weekly") {
+        isScheduled = habit.schedule.includes(dayOfWeek);
+      } else if (habit.frequency === "monthly") {
+        isScheduled = habit.schedule.includes(dayOfMonth);
       }
-    }
 
+      if (isScheduled) {
+        if (habit.history[dateKey] === true) {
+          streak++;
+        } else {
+          if (dateKey === todayKey) {
+          } else {
+            break;
+          }
+        }
+      } 
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
     return streak;
   },
 
@@ -1143,8 +1141,14 @@ const UI = {
     
     document.getElementById("habitDetails").style.display = "block";
     document.getElementById("detailHabitName").textContent = habit.name;
-    document.getElementById("detailStreak").textContent = DataManager.calculateStreak(habit);
-    
+    const streakValue = DataManager.calculateStreak(habit);
+    if (habit.frequency === "daily") {
+      unit = streakValue === 1 ? "day" : "days";
+    } else {
+      unit = streakValue === 1 ? "time" : "times";
+    }
+    document.getElementById("detailStreak").textContent = `${streakValue} ${unit}`;
+
     document.getElementById("completionPercent").textContent = `${progress}\u00A0%`;
     document.getElementById("frequencyData").textContent = frequencyText;
     document.getElementById("startData").textContent = startDate;
@@ -1310,11 +1314,19 @@ function initEventListeners() {
     const query = elements.locationInput.value.trim();
     if (!query) return;
 
+    const originalValue = query;
+    const input = elements.locationInput;
+    const btn = elements.searchLocation;
+    input.value = "Searching... 🔍"; 
+    input.disabled = true;
+    btn.disabled = true;
+    input.classList.remove("success", "error");
+
     try {
       const data = await LocationService.search(query);
 
       if (!data.length) {
-        elements.locationInput.value = "";
+        input.value = originalValue;
         elements.locationInput.classList.remove("success");
         elements.locationInput.classList.add("error");
         alert("Location not found");
@@ -1329,7 +1341,11 @@ function initEventListeners() {
       elements.locationInput.classList.add("success");
     } catch (e) {
       console.error("Search location error", e);
-      elements.locationInput.value = "";
+      input.value = "";
+      input.classList.add("error");
+    } finally {
+      input.disabled = false;
+      btn.disabled = false;
     }
   });
 
@@ -1344,7 +1360,7 @@ function initEventListeners() {
   
     btn.classList.add("loading");
     btn.disabled = true;
-    input.placeholder = "Locating... ⏳";
+    input.value = "Locating... ⏳";
     input.classList.remove("success", "error");
   
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -1375,6 +1391,7 @@ function initEventListeners() {
       // --- END LOADING (Permission Denied/Timeout) ---
       btn.classList.remove("loading");
       btn.disabled = false;
+      input.disabled = false;
       input.placeholder = originalPlaceholder;
       
       const messages = {

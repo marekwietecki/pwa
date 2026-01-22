@@ -154,25 +154,31 @@
         </div>
 
         <div id="habitSection" style="display:none;">
-          <span class="modalSubTitle">Frequency</span>
-          <select id="habitFrequency">
-            <option value="daily">Everyday</option>
-            <option value="weekly">Select days of the week</option>
-            <option value="monthly">Select days of the month</option>
-          </select>
-            
-          <div id="daysPicker" style="display:none;">
-            <label><input type="checkbox" value="1"> MON </label>
-            <label><input type="checkbox" value="2"> TUE </label>
-            <label><input type="checkbox" value="3"> WED </label>
-            <label><input type="checkbox" value="4"> THU </label>
-            <label><input type="checkbox" value="5"> FRI </label>
-            <label><input type="checkbox" value="6"> SAT </label>
-            <label><input type="checkbox" value="0"> SUN </label>
+          <div style="display: flex; flex-direction: column;">
+            <span class="modalSubTitle">Icon</span>
+            <input type="text" id="habitIcon" placeholder="😀" maxlength="2" autocomplete="off" spellcheck="false"/>
           </div>
+          <div style="display: flex; flex-direction: column;">
+            <span class="modalSubTitle">Frequency</span>
+            <select id="habitFrequency">
+              <option value="daily">Everyday</option>
+              <option value="weekly">Select days of the week</option>
+              <option value="monthly">Select days of the month</option>
+            </select>
+              
+            <div id="daysPicker" style="display:none;">
+              <label><input type="checkbox" value="1"> MON </label>
+              <label><input type="checkbox" value="2"> TUE </label>
+              <label><input type="checkbox" value="3"> WED </label>
+              <label><input type="checkbox" value="4"> THU </label>
+              <label><input type="checkbox" value="5"> FRI </label>
+              <label><input type="checkbox" value="6"> SAT </label>
+              <label><input type="checkbox" value="0"> SUN </label>
+            </div>
 
-          <div id="monthlyDayPicker" style="display:none;">
-            <div id="monthDaysGrid" class="month-selector-grid">
+            <div id="monthlyDayPicker" style="display:none;">
+              <div id="monthDaysGrid" class="month-selector-grid">
+              </div>
             </div>
           </div>
         </div>
