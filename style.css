@@ -204,6 +204,27 @@ body {
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
+
+.emptyListMessage {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #888; 
+  animation: fadeInCenter 0.4s ease-out;
+}
+
+@keyframes fadeInCenter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#emptyListMessageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 0;    
+}
+
 /* TASKS */ /* ------------------------------------------------------------------------ */
 #taskDateTitle {
   padding-top: 4vh;
@@ -449,7 +470,7 @@ body {
   background: rgba(30,30,30,0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px 20px 0 0;
-  padding: 20px;
+  padding: 20px 32px;
   transform: translateY(100%);
   transition: 0.35s cubic-bezier(.4,0,.2,1);
   height: auto;
@@ -532,8 +553,8 @@ body {
 
 .modalSubTitle {
   margin-top: 8px;
-  margin-bottom: 8px;
-  padding: 0;
+  margin-bottom: 6px;
+  padding: 0 0 0 16px; /* TRBL */
   font-size: 12px;
   font-weight: 600;
 }
@@ -547,15 +568,23 @@ body {
 #taskName {
   padding: 10px 16px;
   border-radius: 24px;
+  color: #fff;
+  font-weight: 600;
+  width: 184px; /* 32% */
+
+  white-space: nowrap;      /* hidden text in one line*/
+  overflow: hidden;         
+  text-overflow: ellipsis;
+
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(8px);           /* efekt rozmycia tła */
   -webkit-backdrop-filter: blur(8px);   /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
   transition: all 0.3s ease;             /* płynne przejście */
-  color: #fff;
-  font-weight: 600;
-  width: 32%;
+}
+#taskName:focus {
+  text-overflow: clip;
 }
 #taskName::placeholder { 
   color: rgba(255, 255, 255, 0.64); 
@@ -575,7 +604,7 @@ body {
   padding: 10px 16px;
   border-radius: 24px;
   appearance: none;
-  width: 40%;
+  width: 224px;
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(12px);           /* efekt rozmycia tła */
@@ -587,7 +616,7 @@ body {
   padding-right: 40px; 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 8px center;
+  background-position: right 12px center;
 }
 
 #daysPicker:not([style*="display: none"]) {
@@ -641,17 +670,39 @@ body {
   flex: 1;
 }
 
-#taskDate {
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+#taskDate, #goalDeadline {
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
   padding: 10px 16px;
   border-radius: 24px;
   align-items: center;
   color: #fff;
+  width: 224px;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(8px);           /* efekt rozmycia tła */
   -webkit-backdrop-filter: blur(8px);   /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
   transition: all 0.3s ease;             /* płynne przejście */
+
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
 }
 #taskDate::-webkit-datetime-edit-fields-wrapper { 
   color: rgba(255, 255, 255, 0.64); 
@@ -738,6 +789,7 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
+  gap: 12px;
 }
 
 #goalHabitSelect {
@@ -746,7 +798,11 @@ body {
   padding: 10px 16px;
   border-radius: 24px;
   appearance: none;
-  width: 40%;
+  width: 224px; /* 40% */
+
+  white-space: nowrap;      /* hidden text in one line*/
+  overflow: hidden;         
+  text-overflow: ellipsis;
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(12px);           /* efekt rozmycia tła */
@@ -758,7 +814,7 @@ body {
   padding-right: 40px; 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 8px center;
+  background-position: right 10px center;
 }
 
 .descriptionSection, .linkHabitSection, .deadlineSection {
@@ -767,7 +823,18 @@ body {
   flex: 1;
 }
 
+.deadlinePlusLinkHabit {
+  display: flex;
+  flex-direction: row; 
+  justify-content: space-between;
+  gap: 12px;
+}
+
 #descriptionInput {
+  resize: vertical;    /* allows to only spread vertically */
+  min-height: 88px;    
+  max-height: 240px;   
+  width: 100%;
   color: #fff;
   padding: 10px 16px;
   padding-bottom: 48px;
@@ -783,19 +850,6 @@ body {
   color: rgba(255, 255, 255, 0.64); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
-}
-
-#goalDeadline {
-  color: #fff;
-  width: 40%;
-  padding: 10px 16px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
 }
 
 .locationSection {
@@ -819,13 +873,21 @@ body {
   color: #fff;
   padding: 10px 16px;
   border-radius: 24px;
-  width: 40%;
+  width: 224px;
+
+  white-space: nowrap;      /* hidden text in one line*/
+  overflow: hidden;         
+  text-overflow: ellipsis;
+
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(8px);           /* efekt rozmycia tła */
   -webkit-backdrop-filter: blur(8px);   /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
   transition: all 0.3s ease;             /* płynne przejście */
+}
+#locationInput:focus {
+  text-overflow: clip; /* when focus user is able to scroll */
 }
 #locationInput::placeholder {
   color: rgba(255, 255, 255, 0.64); 
@@ -838,23 +900,37 @@ body {
   justify-content: center;
   align-items: center;
 }
-#searchLocation {
+#searchLocation, #useMyLocation {
+  width: 40px;  
+  height: 40px; 
+  padding: 0;   
+  
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+
+  border-radius: 50%; 
   cursor: pointer;
-  border-radius: 24px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }
 #searchLocation:hover {
   opacity: 72%;
 }
+#useMyLocation::placeholder {
+  color: rgba(255, 255, 255, 0.64); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#useMyLocation:hover {
+  opacity: 72%;
+}
+
 /* Animacja obracania */
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -875,26 +951,8 @@ button:disabled {
   color: #fff;
   line-height: 16px;
 }
-#useMyLocation {
-  padding: 10px 12px;
-  border-radius: 24px;
-  cursor: pointer;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
-}
-#useMyLocation::placeholder {
-  color: rgba(255, 255, 255, 0.64); 
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
-  font-weight: 400;
-}
-#useMyLocation:hover {
-  opacity: 72%;
-}
+
+
 input.success {
   border: 1px solid #4caf50;
 }
@@ -1291,8 +1349,6 @@ input.error {
   margin-top: 40px;
 }
 
-
-
 @media (max-width: 740px) {
   .logo {
     display: none;
@@ -1338,6 +1394,12 @@ input.error {
     right: 16px;  
   }
   
+}
+
+@media (max-width: 560px) {
+  .deadlinePlusLinkHabit {
+    flex-direction: column; 
+  }
 }
 @media (max-width: 360px) {
   .typePickers {

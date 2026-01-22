@@ -43,7 +43,8 @@ function cacheElements() {
     "locationInput", "locationSection", "dateSection", "habitSection", 
     "habitFrequency", "daysPicker", "monthlyDayPicker", 
     "addTaskBtn", "closeModal", "searchLocation", "useMyLocation", 
-    "goalSection", "goalsList", "goalDeadline", "descriptionInput"
+    "goalSection", "goalsList", "goalDeadline", "descriptionInput", 
+    "emptyListMessageWrapper"
   ];
 
   ids.forEach(id => {
@@ -664,10 +665,10 @@ const UI = {
     const todayKey = Utils.formatDateKey(new Date());
 
     elements.taskDateTitle.textContent = (dateKey === todayKey) 
-      ? "Today's Goals:" 
-      : `Goals for ${targetDate.toDateString()}:`;
+      ? "Today's Tasks:" 
+      : `Tasks for ${targetDate.toDateString()}:`;
 
-    elements.toDoList.innerHTML = "";
+    //elements.toDoList.innerHTML = "";
 
     const savedTasks = DataManager.getTasks();
     const savedHabits = DataManager.getHabits();
@@ -730,11 +731,20 @@ const UI = {
       }
     });
 
+    while (elements.toDoList.firstChild) {
+      elements.toDoList.removeChild(elements.toDoList.firstChild);
+    }
+
+    if (elements.emptyListMessageWrapper) elements.emptyListMessageWrapper.style.display = "none";
+
+    if (undoneNodes.length === 0) {
+      if (elements.emptyListMessageWrapper) elements.emptyListMessageWrapper.style.display = "flex";
+    }
+
     // Łączymy listy
     const listFragment = document.createDocumentFragment();
     undoneNodes.forEach(node => listFragment.appendChild(node));
     doneNodes.forEach(node => listFragment.appendChild(node));
-
     elements.toDoList.appendChild(listFragment);
   },
 
