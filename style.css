@@ -179,6 +179,7 @@ body {
   font-size: 12px;
   opacity: 0.6;
   line-height: 24px;
+  position: relative;
 }
 .day {
   aspect-ratio: 1;
@@ -203,6 +204,20 @@ body {
   color: #fff;
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+.day-goal-wrapper {
+  position: absolute;
+  bottom: 3px; 
+  left: 50%;
+  transform: translateX(-50%); 
+  display: flex;
+  justify-content: center;
+}
+
+.day-goal-wrapper svg {
+  width: 8px !important;
+  height: 8px !important;
 }
 
 .emptyListMessage {
@@ -1077,7 +1092,7 @@ input.error {
   display: flex; 
   flex-direction: row;
   justify-content: space-between; 
-  margin-top: 15px; 
+  margin-top: 20px; 
   font-size: 13px;
   max-width: 264px;
   width: 100%;
@@ -1229,7 +1244,6 @@ input.error {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
   width: 100%;
 }
 

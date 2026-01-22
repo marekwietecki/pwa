@@ -355,7 +355,7 @@ const UI = {
     }
 
     goals.forEach(goal => {
-        const goalNode = UI.createTaskNode(goal.name, goal, null, "goal");
+        const goalNode = UI.createItem(goal.name, goal, null, "goal");
         list.appendChild(goalNode);
     });
   },
@@ -672,6 +672,7 @@ const UI = {
 
     const savedTasks = DataManager.getTasks();
     const savedHabits = DataManager.getHabits();
+    const savedGoals = DataManager.getGoals();
     
     const undoneNodes = [];
     const doneNodes = [];
@@ -680,7 +681,7 @@ const UI = {
     const tasksForDate = savedTasks[dateKey] || {};
     Object.entries(tasksForDate).forEach(([name, data]) => {
 
-      const li = UI.createTaskNode(name, data, dateKey, "task");
+      const li = UI.createItem(name, data, dateKey, "task");
 
       if (data.done) {
         if (showCompleted) {
@@ -716,9 +717,27 @@ const UI = {
 
       if (isDueToday) {
         const isDone = habit.history && habit.history[dateKey];
-        const li = UI.createTaskNode(habit.name, habit, dateKey, "habit");
+        const li = UI.createItem(habit.name, habit, dateKey, "habit");
 
         if (isDone) {
+          if (showCompleted) {
+            li.classList.add("is-completed");
+            const cb = li.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = true;
+            doneNodes.push(li);
+          }
+        } else {
+          undoneNodes.push(li);
+        }
+      }
+    });
+
+    // --- 3. CELE (Goals) ---
+    savedGoals.forEach(goal => {
+      if (goal.deadline === dateKey) {
+        const li = UI.createItem(goal.name, goal, dateKey, "goal");
+        
+        if (goal.done) {
           if (showCompleted) {
             li.classList.add("is-completed");
             const cb = li.querySelector('input[type="checkbox"]');
@@ -737,8 +756,11 @@ const UI = {
 
     if (elements.emptyListMessageWrapper) elements.emptyListMessageWrapper.style.display = "none";
 
-    if (undoneNodes.length === 0) {
+    if (undoneNodes.length === 0 && (doneNodes.length === 0 || !showCompleted)) {
       if (elements.emptyListMessageWrapper) elements.emptyListMessageWrapper.style.display = "flex";
+      const isToday = dateKey === todayKey;
+      if (elements.messageToday) elements.messageToday.style.display = isToday ? "block" : "none";
+      if (elements.messageFuture) elements.messageFuture.style.display = isToday ? "none" : "block";
     }
 
     // Łączymy listy
@@ -771,7 +793,7 @@ const UI = {
     });
   },
 
-  createTaskNode: (name, data, dateKey, type) => {
+  createItem: (name, data, dateKey, type) => {
     const li = document.createElement("li");
     li.className = `taskItem ${type === "habit" ? "is-habit" : type === "goal" ? "is-goal" : "is-task"}`;
   
@@ -903,17 +925,19 @@ const UI = {
           const habits = DataManager.getHabits();
           const filtered = habits.filter(h => h.id !== data.id); 
           DataManager.saveHabits(filtered);
+          if (elements.habitSection) UI.renderHabits();
         } else if (type === "goal") {
           const goals = DataManager.getGoals();
           const filtered = goals.filter(g => g.id !== data.id);
           DataManager.saveGoals(filtered);
+          if (elements.goalsList) UI.renderGoals();
+          if (elements.calendarGrid) UI.renderCalendar();
         }
         
         const calendarEl = document.getElementById("calendarGrid");
         const isCalendar = calendarEl && window.getComputedStyle(calendarEl).display !== "none";
         UI.renderTasksForDay(selectedDate, isCalendar);
 
-        if (elements.habitSection) UI.renderHabits();
 
       } else {
         li.classList.add("show-delete");
@@ -924,7 +948,7 @@ const UI = {
                 li.classList.remove("show-delete");
                 moreBtn.replaceChildren(ellipsisIcon);
             }
-        }, 3000);
+        }, 2500);
       }
     });
   
@@ -953,7 +977,7 @@ const UI = {
         const goals = DataManager.getGoals();
         const goal = goals.find(g => g.id === data.id);
         if (goal) {
-          goal.isCompleted = isChecked;
+          goal.done = isChecked;
           DataManager.saveGoals(goals);
         }
       }
@@ -998,11 +1022,28 @@ const UI = {
       elements.calendarGrid.appendChild(document.createElement('div'));
     }
 
+    const allGoals = DataManager.getGoals();
+
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
       const el = document.createElement('div');
       el.className = 'day';
-      el.textContent = day;
+
+      const currentLoopDate = new Date(year, month, day);
+      const dateKey = Utils.formatDateKey(currentLoopDate); 
+
+      const hasGoalDeadline = allGoals.some(goal => goal.deadline === dateKey);
+
+      const dayNumber = document.createElement('span');
+      dayNumber.textContent = day;
+      el.appendChild(dayNumber);
+
+      if (hasGoalDeadline) {
+        const iconWrapper = document.createElement('div');
+        iconWrapper.className = 'day-goal-wrapper';
+        iconWrapper.appendChild(UI.createGoalIcon()); 
+        el.appendChild(iconWrapper);
+      }
 
       if (selectedDate.getFullYear() === year && 
           selectedDate.getMonth() === month && 
@@ -1351,7 +1392,7 @@ function initEventListeners() {
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
     let name = elements.taskName.value.trim();
-    if (!name) return alert("Wpisz nazwę!");
+    if (!name) return alert("Provide a name!");
     name = name.charAt(0).toUpperCase() + name.slice(1);
 
     const type = currentCreateType; 
@@ -1392,10 +1433,15 @@ function initEventListeners() {
     }
     
     else if (type === "goal") {
-      
       const description = elements.descriptionInput?.value.trim() || "";
       const deadline = elements.goalDeadline?.value || null;
       const habitSelectEl = document.getElementById("goalHabitSelect");
+      
+      if (!deadline) {
+        alert("Provide a deadline for your goal! 📅");
+        if (elements.taskDate) elements.taskDate.focus();
+        return;
+      }
 
       const goal = {
         id: Date.now(),
@@ -1404,7 +1450,7 @@ function initEventListeners() {
         deadline: deadline,
         linkedHabitId: (habitSelectEl && habitSelectEl.value) ? parseInt(habitSelectEl.value) : null,        
         createdAt: new Date().toISOString(),
-        isCompleted: false
+        done: false
       };
 
       console.log("Dodaję Goal: ", goal);
