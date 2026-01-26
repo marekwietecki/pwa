@@ -1,12 +1,12 @@
 {
     "name": "Habit Hero",
     "short_name": "Habit Hero",
-    "description": "Spraw aby twoja codzienność stała się lepsza. Rozwijaj swoje nawyki i zbieraj cenne doświadczenie na przyszłość",
+    "description": "Elevate your everyday life. Grow your habits and build a foundation of experience for your future self.",
     "lang": "en",
-    "start_url": "/index.html",
+    "start_url": "./index.html",
     "scope": "./",
     "display": "standalone",
-    "backgroung_color": "#11121C",
+    "background_color": "#11121C",
     "theme_color": "#AD22B6",
     "orientation": "portrait",
     "icons": [
@@ -14,7 +14,7 @@
             "src": "assets/192x192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any"
+            "purpose": "any maskable"
         },
         {
             "src": "assets/512x512.png",

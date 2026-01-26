@@ -220,6 +220,10 @@ body {
   height: 8px !important;
 }
 
+.day-goal-wrapper.is-overdue svg {
+  stroke: #ff4444;
+}
+
 .emptyListMessage {
   text-align: center;
   font-size: 1.1rem;
@@ -272,6 +276,14 @@ body {
   margin-right: 4vw;
   margin-top: 0;
 }
+
+#goalsList { 
+  list-style-type: none;      
+  padding-inline-start: 0;   
+  padding: 0;                
+  margin: 0;                 
+}
+
 .taskItem {
   padding-top: 16px;
   padding-bottom: 16px;
@@ -312,7 +324,6 @@ body {
 
 
 .taskLabel {
-  cursor: pointer;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap; 
@@ -339,6 +350,7 @@ body {
   font-size: 0.85em;
   opacity: 0.6;
   margin-top: 4px;
+  max-width: 360px;
 }
 .rowWrapper {
   display: flex;
@@ -351,6 +363,17 @@ body {
   font-size: 10px;
   color: rgba(255,255,255,0.6);
 }
+.taskLocation {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.taskLocation svg {
+  margin-right: 4px;
+}
+
 .taskActions {
   display: flex;
   flex-direction: row;
@@ -363,6 +386,7 @@ body {
   height: 20px;
   cursor: pointer;
   flex-shrink: 0;
+  margin-left: 20px;
 }
 
 .moreBtn, .deleteTaskBtn {
@@ -602,7 +626,7 @@ body {
   text-overflow: clip;
 }
 #taskName::placeholder { 
-  color: rgba(255, 255, 255, 0.64); 
+  color: rgba(255, 255, 255, 0.56); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -822,6 +846,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
   transition: all 0.3s ease;             /* płynne przejście */
 }
+#habitIcon::placeholder { 
+  color: rgba(255, 255, 255, 0.56); 
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
 
 #goalSection {
   display: flex;
@@ -885,7 +914,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: all 0.3s ease;             /* płynne przejście */
 }
 #descriptionInput::placeholder {
-  color: rgba(255, 255, 255, 0.64); 
+  color: rgba(255, 255, 255, 0.56); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -928,7 +957,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   text-overflow: clip; /* when focus user is able to scroll */
 }
 #locationInput::placeholder {
-  color: rgba(255, 255, 255, 0.64); 
+  color: rgba(255, 255, 255, 0.56); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -961,7 +990,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 72%;
 }
 #useMyLocation::placeholder {
-  color: rgba(255, 255, 255, 0.64); 
+  color: rgba(255, 255, 255, 0.56); 
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -1011,7 +1040,7 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 32px 16px;
+  padding: 20px 16px;
   margin-left: 20px;
   margin-right: 20px;
   scroll-snap-type: x mandatory;
@@ -1030,33 +1059,66 @@ input.error {
 .habit-card-mini {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   flex: 0 0 100px;
-  background: rgb(67, 67, 67);
   padding: 12px;
   border-radius: 20px;
   text-align: center;
   text-wrap: wrap;
-  max-width: 120px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  max-width: 136px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   scroll-snap-align: start;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent; 
-  gap: 4px;
+  gap: 8px;
 }
 
-.habit-card-mini.active-card {
+.habit-card-icon.active-habit-icon {
   background: rgb(80, 80, 80); 
-  border-color: #4caf50;      
-  transform: translateY(-5px); 
+  border-color: #fff;      
+  transform: translateY(-2px); 
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.habit-card-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgb(67, 67, 67);
+
+  background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
+  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  border: 2px solid rgba(255, 255, 255, 0.1); /* delikatna ramka */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transition: all 0.3s ease;             /* płynne przejście */
+}
+
+.habit-name-label {
+  font-size: 10px;
+  color: white;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.detailHabitName {
+  margin: 0;
+  padding: 0;
 }
 
 .crucialHabitStats {
   display: flex;
   flex-direction: row;
   gap: 20%;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .stat-item {
@@ -1136,16 +1198,6 @@ input.error {
   margin-top: 5px;
 }
 
-.habit-name-label {
-  font-size: 12px;
-  color: white;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-}
-
 .activity-section {
   display: flex;
   flex-direction: column;
@@ -1156,7 +1208,7 @@ input.error {
   max-width: 600px;
   width: 100%;
   justify-self: center;
-  margin-top: 32px;
+  margin-top: 28px;
 }
 
 .progress-value {
@@ -1196,7 +1248,9 @@ input.error {
 }
 
 #detailStreak {
-  margin-left: 4px;
+  display: inline-block;
+  white-space: nowrap;
+  margin-left: 6px;
 }
 
 .activity-grid {
@@ -1384,6 +1438,18 @@ input.error {
   width: 100%;
   padding: 0 20px;
   margin-top: 40px;
+}
+
+.linkedHabitBadge .small-icon {
+  width: 10px !important;
+  height: 10px !important;
+  display: inline-block;
+  vertical-align: middle; 
+  margin-right: 4px;
+}
+
+.linkedHabitBadge {
+  padding-top: 4px;
 }
 
 @media (max-width: 740px) {

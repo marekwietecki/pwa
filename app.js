@@ -464,6 +464,30 @@ const UI = {
     return svg;
   },
 
+  createLocationIcon: () => {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "10"); 
+    svg.setAttribute("height", "10");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.classList.add("lucide", "lucide-map-pin");
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0");
+    
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", "12");
+    circle.setAttribute("cy", "10");
+    circle.setAttribute("r", "3");
+
+    svg.append(path, circle);
+    return svg;
+  },
+
   createRepeatIcon: () => {
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
@@ -795,7 +819,6 @@ const UI = {
     const li = document.createElement("li");
     li.className = `taskItem ${type === "habit" ? "is-habit" : type === "goal" ? "is-goal" : "is-task"}`;
   
-    // 1. Kontener na treść
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
   
@@ -803,10 +826,19 @@ const UI = {
     taskLabel.className = "taskLabel";
     const statusIcon = type === "habit" ? UI.createRepeatIcon() : type === "goal" ? UI.createGoalIcon() : UI.createCheckIcon();
     statusIcon.classList.add("task-type-icon");
+    taskLabel.appendChild(statusIcon);
+
+    if (type === "habit") {
+      const habitIconEmoji = document.createElement("span");
+      habitIconEmoji.className = "habit-mini-emoji";
+      habitIconEmoji.textContent = data.icon || name.charAt(0).toUpperCase();
+      taskLabel.appendChild(habitIconEmoji);
+    }
 
     const nameSpan = document.createElement("span");
     nameSpan.className = "taskNodeName";
     nameSpan.textContent = name;
+    taskLabel.appendChild(nameSpan);
 
     const metaWrapper = document.createElement("div");
     metaWrapper.className = "taskMetaWrapper";
@@ -814,7 +846,13 @@ const UI = {
     if (data.location) {
       const locSpan = document.createElement("span");
       locSpan.className = "taskLocation";
-      locSpan.textContent = `📍 ${data.location}`;
+
+      const locationIcon = UI.createLocationIcon();
+      locSpan.appendChild(locationIcon);
+
+      const textNode = document.createTextNode(` ${data.location}`); 
+      locSpan.appendChild(textNode);
+
       metaWrapper.appendChild(locSpan);
     }
 
@@ -845,7 +883,8 @@ const UI = {
           linkedSpan.className = "linkedHabitBadge";
           
           const icon = UI.createRepeatIcon ? UI.createRepeatIcon() : document.createTextNode("🔄 ");
-          
+          icon.classList.add("small-icon");
+
           linkedSpan.appendChild(icon);
           linkedSpan.appendChild(document.createTextNode(` Linked: ${habit.name}`));
           
@@ -874,8 +913,6 @@ const UI = {
       }      
     }
   
-    taskLabel.appendChild(statusIcon);
-    taskLabel.appendChild(nameSpan);
     taskContent.appendChild(taskLabel);
     taskContent.appendChild(metaWrapper);
   
@@ -990,7 +1027,7 @@ const UI = {
     });
   
     return li;
-    },
+  },
   
 
   renderCalendar: () => {
@@ -1030,17 +1067,28 @@ const UI = {
       const currentLoopDate = new Date(year, month, day);
       const dateKey = Utils.formatDateKey(currentLoopDate); 
 
-      const hasGoalDeadline = allGoals.some(goal => goal.deadline === dateKey);
+      const goalsForThisDay = allGoals.filter(goal => goal.deadline === dateKey);
+      const hasGoalDeadline = goalsForThisDay.length > 0;
 
       const dayNumber = document.createElement('span');
       dayNumber.textContent = day;
       el.appendChild(dayNumber);
 
       if (hasGoalDeadline) {
-        const iconWrapper = document.createElement('div');
-        iconWrapper.className = 'day-goal-wrapper';
-        iconWrapper.appendChild(UI.createGoalIcon()); 
-        el.appendChild(iconWrapper);
+        const deadlineIconWrapper = document.createElement('div');
+        deadlineIconWrapper.className = 'day-goal-wrapper';
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+
+        const isAnyUnfinishedOverdue = goalsForThisDay.some(goal => !goal.done && currentLoopDate < today);
+
+        if (isAnyUnfinishedOverdue) {
+            deadlineIconWrapper.classList.add('is-overdue');
+        }
+
+        deadlineIconWrapper.appendChild(UI.createGoalIcon()); 
+        el.appendChild(deadlineIconWrapper);
       }
 
       if (selectedDate.getFullYear() === year && 
@@ -1081,14 +1129,10 @@ const UI = {
         const card = document.createElement("div");
         card.className = "habit-card-mini";
         
-        const progress = DataManager.calculateHabitProgress(habit);
-        
-        card.appendChild(UI.createProgressCircle(progress));
-        
-        const percentage = document.createElement("div");
-        percentage.className = "habit-percentage-label";
-        //percentage.textContent = `${progress}%`;
-        //card.appendChild(percentage);
+        const iconCircle = document.createElement("div");
+        iconCircle.className = "habit-card-icon";
+        iconCircle.textContent = habit.icon || habit.name.charAt(0).toUpperCase();
+        card.appendChild(iconCircle);
         
         const name = document.createElement("p");
         name.textContent = habit.name;
@@ -1096,8 +1140,8 @@ const UI = {
         card.appendChild(name);
 
         card.onclick = () => {
-          document.querySelectorAll('.habit-card-mini').forEach(c => c.classList.remove('active-card'));
-          card.classList.add('active-card');
+          document.querySelectorAll('.habit-card-icon').forEach(c => c.classList.remove('active-habit-icon'));
+          iconCircle.classList.add('active-habit-icon');
           UI.showHabitDetails(habit);
           card.scrollIntoView({ behavior: 'smooth', inline: 'center' });
         };
@@ -1106,7 +1150,7 @@ const UI = {
 
         // PRZENIESIONE TUTAJ - do środka try
         if (index === 0) {
-          card.classList.add('active-card');
+          iconCircle.classList.add('active-habit-icon');
           UI.showHabitDetails(habit);
         }
 
@@ -1406,6 +1450,21 @@ function initEventListeners() {
     });
   });
 
+  // live habit placeholder
+  elements.taskName.addEventListener("input", (e) => {
+    const iconInput = document.getElementById("habitIcon");
+    if (!iconInput) return;
+
+    if (iconInput.value.trim() === "") {
+        const nameValue = e.target.value.trim();
+        if (nameValue.length > 0) {
+            iconInput.placeholder = nameValue.charAt(0).toUpperCase();
+        } else {
+            iconInput.placeholder = "★";
+        }
+    }
+});
+
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
     let name = elements.taskName.value.trim();
@@ -1424,8 +1483,16 @@ function initEventListeners() {
     // (Habit)
     else if (type === "habit") {
       const frequency = elements.habitFrequency.value;
+
+      const iconInput = document.getElementById("habitIcon");
+      let finalIcon = iconInput ? iconInput.value.trim() : "";
+
+      if (!finalIcon) {
+        finalIcon = name.charAt(0).toUpperCase();
+      }
+
       let schedule = [];
-      
+
       if (frequency === "weekly") {
         schedule = Array.from(elements.daysPicker.querySelectorAll("input[type='checkbox']:checked"))
         .map(cb => parseInt(cb.value));
@@ -1440,6 +1507,7 @@ function initEventListeners() {
       const habit = {
         id: Date.now(),
         name,
+        icon: finalIcon,
         location: location,
         frequency: frequency,
         schedule: schedule,
