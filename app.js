@@ -31,6 +31,15 @@ let selectedDate = new Date(); // default today
 let currentCreateType = "task"; // default type
 let statsViewDate = new Date(); // mini calendar data
 let selectedHabitForStats = null; // currently clicked habit
+
+const STATS_KEY = 'habit_hero_stats';
+
+const defaultStats = {
+    totalXp: 0,
+    currentXp: 0,
+    level: 1,
+    userName: "New Hero"
+};
 /*
   DOM Elements /////////////////////////////////////////////////////////////////////
 */ 
@@ -44,7 +53,7 @@ function cacheElements() {
     "habitFrequency", "daysPicker", "monthlyDayPicker", 
     "addTaskBtn", "closeModal", "searchLocation", "useMyLocation", 
     "goalSection", "goalsList", "goalDeadline", "descriptionInput", 
-    "emptyListMessageWrapper"
+    "emptyListMessageWrapper", "editUserName"
   ];
 
   ids.forEach(id => {
@@ -259,6 +268,89 @@ const DataManager = {
     const goals = DataManager.getGoals();
     goals.push(goal);
     DataManager.saveGoals(goals);
+  },
+
+  getUserStats: () => {
+    const stats = localStorage.getItem(STATS_KEY);
+    return stats ? JSON.parse(stats) : defaultStats;
+  },
+
+  saveUserStats: (stats) => {
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  },
+
+  updateUserName: (newName) => {
+    const stats = DataManager.getUserStats();
+    stats.userName = newName;
+    DataManager.saveUserStats(stats);
+  }
+};
+
+const LevelManager = {
+  // lvl 1 = 100xp, lvl 2 = 200xp, ... lvl 100 = 10000|
+  getXpThreshold: (level) =>  {
+    const standardThreshold = level * 100;
+    return Math.min(standardThreshold, 10000);
+  },
+
+  calculateXP: (type, data) => {
+    let xpGain = 0;
+
+    switch (type) {
+      case "task":
+        // Standardowy task = 100 XP
+        xpGain = 100;
+        break;
+
+      case "habit": // 100xp * streak
+        const streak = data.streak || 1; 
+        xpGain = streak * 100;
+        break;
+
+      case "goal":
+        let goalXP = 1000;
+        
+        const created = new Date(goal.createdAt);
+        const deadline = new Date(goal.deadline);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // every 30 days of goal duration +1000 XP
+        const diffTime = Math.abs(deadline - created);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const monthlyBonuses = Math.floor(diffDays / 30);
+        goalXP += (monthlyBonuses * 1000);
+
+        // if before deadline +1000 XP
+        if (today <= deadline) {
+          goalXP += 1000;
+        }
+        
+        xpGain = goalXP;
+        break;
+    }
+    return xpGain;
+  },
+
+
+  applyXP: (amount) => {
+    const stats = DataManager.getUserStats(); // { totalXp: 0, currentXp: 0, level: 1 }
+    stats.totalXp += amount;
+    stats.currentXp += amount;
+
+    while (stats.currentXp >= LevelManager.getXpThreshold(stats.level)) {
+      stats.currentXp -= LevelManager.getXpThreshold(stats.level);
+      stats.level++;
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+    }
+
+    while (stats.currentXp < 0 && stats.level > 1) {
+      stats.level--;
+      stats.currentXp += LevelManager.getXpThreshold(stats.level);
+    }
+
+    DataManager.saveUserStats(stats);
+    UI.updateXPBar(); // refresh
   }
 };
 /*
@@ -997,6 +1089,8 @@ const UI = {
     // --- LISTENERY ---
     checkbox.addEventListener("change", function() {
       const isChecked = this.checked; 
+      const todayKey = Utils.formatDateKey(new Date());
+      const isToday = (dateKey === todayKey);
 
       if (type === "task") {
         const tasks = DataManager.getTasks();
@@ -1008,12 +1102,21 @@ const UI = {
         DataManager.toggleHabitDone(data.id, dateKey, isChecked);
       }
       else if (type === "goal") {
-        //  logic of checking goal as done
         const goals = DataManager.getGoals();
         const goal = goals.find(g => g.id === data.id);
         if (goal) {
           goal.done = isChecked;
           DataManager.saveGoals(goals);
+        }
+      }
+
+      if (isToday) {
+        const xpValue = LevelManager.calculateXP(type, data);
+        
+        LevelManager.applyXP(isChecked ? xpValue : -xpValue);
+        
+        if (isChecked && navigator.vibrate) {
+          navigator.vibrate(50); 
         }
       }
     
@@ -1282,9 +1385,30 @@ const UI = {
     if (streakEl) streakEl.textContent = `${bestStreak} days`;
     if (percentEl) percentEl.textContent = `${percentage}%`;
     if (countEl) countEl.textContent = `${completedThisMonth} / ${scheduledThisMonth}`;
-},
+  },
 
+  updateXPBar: () => {
+    const stats = DataManager.getUserStats();
+    const threshold = LevelManager.getXpThreshold(stats.level);
+    
+    const progressPercent = (stats.currentXp / threshold) * 100;
+    
+    const bar = document.getElementById("xp-progress-bar"); 
+    const lvlDisplay = document.getElementById("user-level-value");
+    const curLvlDisplay = document.getElementById("currentLevel");
+    const nextLvlDisplay = document.getElementById("next-level-value");
+    const xpRatio = document.getElementById("xp-next-level");
+    const totalXpDisplay = document.getElementById("total-xp-value");
 
+    if (bar) bar.style.width = `${progressPercent}%`;
+    if (lvlDisplay) lvlDisplay.textContent = stats.level;
+    if (curLvlDisplay) curLvlDisplay.textContent = stats.level;
+    if (nextLvlDisplay) nextLvlDisplay.textContent = stats.level + 1;
+    
+    if (xpRatio) xpRatio.textContent = `${Math.floor(stats.currentXp)} / ${threshold}`;
+    
+    if (totalXpDisplay) totalXpDisplay.textContent = stats.totalXp;
+}
 
 };
 /*
@@ -1351,7 +1475,7 @@ function initEventListeners() {
   });
   elements.habitFrequency?.addEventListener("change", () => {
     elements.monthlyDayPicker.style.display = elements.habitFrequency.value === "monthly" ? "block" : "none";
-});
+  });
 
   //Wyszukiwanie lokalizacji przyciskiem lupy
   elements.searchLocation.addEventListener("click", async () => {
@@ -1463,7 +1587,29 @@ function initEventListeners() {
             iconInput.placeholder = "★";
         }
     }
-});
+  });
+
+  //editing username
+  if (elements.editUserName) {
+    elements.editUserName.addEventListener("click", () => {
+      const stats = DataManager.getUserStats();
+      
+      const newName = prompt("Jak ma się nazywać Twój bohater?", stats.userName);
+
+      if (newName !== null) {
+        const trimmedName = newName.trim() || "New Hero";
+        
+        DataManager.updateUserName(trimmedName);
+        
+        const nameDisplay = document.getElementById("displayUserName");
+        if (nameDisplay) {
+          nameDisplay.textContent = trimmedName;
+        }
+
+        if (navigator.vibrate) navigator.vibrate(30);
+      }
+    });
+  }
 
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
@@ -1561,6 +1707,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initEventListeners(); 
   UI.setupMonthlyGrid();
   UI.updateGoalHabitSelect();
+  const stats = DataManager.getUserStats();
+  const nameLabel = document.getElementById("displayUserName");
+  if (nameLabel) {
+    nameLabel.textContent = stats.userName;
+  }
+  DataManager.getUserStats();
+  UI.updateXPBar();
 
   // index
   if (elements.toDoList && !elements.grid) {

@@ -1370,33 +1370,56 @@ input.error {
 
 .userStats {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   max-width: 600px;
   width: 100%;
-  margin: 0 auto;
+  margin: 56px auto 0;
+  padding: 0 40px;
+  gap: 40px;
+}
+
+#xp-progress-bar {
+  height: 100%;
+  width: 0%; 
+  background: linear-gradient(90deg, #AD22B6, #FF00FF);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .usernameWrapper {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   max-width: 360px;
   width: 100%;
-  align-items: center;
+  align-items: flex-start;
+  margin: 0px;
+  gap: 8px;
+}
+
+button, h3 {
+  margin: 0;
+  padding: 0;
+}
+
+#displayUserName {
+  font-size: 28px;
 }
 
 #editUserName {
+  display: flex;
+  flex-direction: row;
+  max-width: 360px;
+  width: 100%;
+
   background: transparent;
   cursor: pointer;
   border: none;
   color: #fff;
-  padding: 4px; 
-  display: flex; 
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   transition: opacity 0.2s;
-  line-height: 0; 
-  margin-left: 4px;
+  line-height: 24px; 
+  gap: 4px;
 }
 
 #editUserName:hover {
@@ -1405,9 +1428,18 @@ input.error {
 
 .levelWrapper {
   display: flex;
-  flex-direction: row;
-  max-width: 360px;
+  flex-direction: column;
+  max-width: 226px;
   width: 100%;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.levelIndicatorWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
   align-items: center;
 }
 
@@ -1416,20 +1448,23 @@ input.error {
   width: 200px;
   border-radius: 12px;
   background-color: rgb(87, 87, 87);
-}
-
-.secondaryLevelWrapper {
-  display: flex;
-  flex-direction: row;
-  max-width: 360px;
-  width: 100%;
-  align-items: center;
+  overflow: hidden; 
+  position: relative;
 }
 
 .nextLevelWrapper {
   display: flex;
   flex-direction: row;
+  align-self: center;
   gap: 4px;
+  font-size: 10px;
+}
+
+.totalXpWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  font-size: 10px;
 }
 
 .goalsContainer {
@@ -1437,7 +1472,7 @@ input.error {
   margin: 0 auto;
   width: 100%;
   padding: 0 20px;
-  margin-top: 40px;
+  margin-top: 32px;
 }
 
 .linkedHabitBadge .small-icon {
@@ -1502,6 +1537,9 @@ input.error {
 @media (max-width: 560px) {
   .deadlinePlusLinkHabit {
     flex-direction: column; 
+  }
+  .userStats {
+    flex-direction: column;
   }
 }
 @media (max-width: 360px) {

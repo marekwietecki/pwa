@@ -98,30 +98,31 @@
       </nav>
     </header>
 
-    <div class="helper320">
-    </div>
 
     <div class="userStats">
       <div class="usernameWrapper">
-        <h3>User name</h3>
         <button id="editUserName">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+          <h3 id="displayUserName">User name</h3>
+          <svg style="margin-top: 4px" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
         </button>
+        <div class="totalXpWrapper">
+          XP Gained in total:
+          <span id="total-xp-value">0</span>
+        </div>
       </div>
       <div class="levelWrapper">
-        <div>Level: <span>0</span></div>
-        <div class="levelIndicator"></div>
-        <span class="nextLevel">1</span>
-      </div>
-      <div class="secondaryLevelWrapper">
-        <div class="nextLevelWrapper">
-          <div>Xp to level</div>
-          <span class="nextLevel">1:</span>
-          <div class="nextLevelXpNeeded">100</div>
+        <div>
+          Hero Experience lvl: <span id="user-level-value">0</span>
         </div>
-        <div class="totalXpWrapper">
-          Total XP gained: 
-          <span>0</span>
+        <div class="levelIndicatorWrapper">
+          <span id="currentLevel">0</span>
+          <div class="levelIndicator">
+            <div id="xp-progress-bar"></div>
+          </div>
+          <span class="nextLevel" id="next-level-value">1</span>
+        </div>    
+        <div class="nextLevelWrapper">
+          <div class="nextLevelXpNeeded" id="xp-next-level">100/100</div>
         </div>
       </div>
     </div>
