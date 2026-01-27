@@ -474,8 +474,8 @@ body {
   font-size: 28px;
   line-height: 20px;
   position: absolute;
-  bottom: 32px;
-  right: 32px;
+  bottom: 48px;
+  right: 48px;
   cursor: pointer;
   color: rgb(255, 255, 255);
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
@@ -530,6 +530,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 #closeModal {
@@ -557,6 +558,11 @@ body {
 .modal-overlay.open .modal-sheet {
   transform: translateY(0);
 }
+
+#modalTitle {
+  padding-left: 10px;
+}
+
 .typePickersWrapper {
   display: flex;
   align-items: center;
@@ -1116,15 +1122,17 @@ input.error {
   width: 100%;
 }
 
-.detailHabitName {
+#detailHabitName {
+  display: flex;
   margin: 0;
-  padding: 0;
+  padding: 0 0 16px 16px;
 }
 
 .crucialHabitStats {
   display: flex;
   flex-direction: row;
-  gap: 20%;
+  justify-content: center;
+  gap: 12%;
   margin-bottom: 28px;
 }
 
@@ -1142,13 +1150,13 @@ input.error {
   cursor: pointer;
   border: none;
   color: #fff;
-  padding: 4px; 
+  padding: 4px 4px 4px 0; 
   display: flex; 
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s;
   line-height: 0; 
-  margin-left: 4px;
+  gap: 4px;
 }
 .editHabitDetail:hover {
   opacity: 72%;
@@ -1386,10 +1394,14 @@ input.error {
   gap: 40px;
 }
 
+:root {
+  --hero-gradient: linear-gradient(90deg, #AD22B6, #FF00FF);
+}
+
 #xp-progress-bar {
   height: 100%;
   width: 0%; 
-  background: linear-gradient(90deg, #AD22B6, #FF00FF);
+  background: var(--hero-gradient);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Build life-changing habits and maintain your streaks. Visualize your progress with detailed activity grids and real-time completion statistics.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Habits - Habit Hero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>Habits - Habit Hero</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="manifest" href="./manifest.webmanifest" />
   </head>
@@ -154,6 +153,7 @@
               </div>
               <span class="stat-label">Efectiveness</span>
             </div>
+            <!--
             <div class="stat-item">
               <div class="xp-value">
                 <div class="xpIcon">
@@ -164,23 +164,24 @@
               </div>
               <span class="stat-label">XP gained</span>
             </div>
+            -->
           </div>
           <div class="stat-items-secondary">
             <div class="stat-item-secondary">
               <span class="stat-label">Frequency:</span>
               <div style="display: flex; flex-direction: row; align-items: center;">
-                <span id="frequencyData" class="stat-data">0</span>          
                 <button id="editHabitFrequency" class="editHabitDetail">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                  <span id="frequencyData" class="stat-data">0</span>          
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
                 </button>
               </div>
             </div>
             <div class="stat-item-secondary">
               <span class="stat-label">Start Date:</span>
               <div style="display: flex; flex-direction: row; align-items: center;">
-                <span id="startData" class="stat-data">0</span>          
                 <button id="editHabitStartDate" class="editHabitDetail">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                  <span id="startData" class="stat-data">0</span>          
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
                 </button>
               </div>
             </div>
@@ -229,14 +230,16 @@
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-sheet">
         <header class="modal-header">
-            <div class="typePickers">
-                <h3>New</h3>
+          <div class="typePickersWrapper">
+              <h3 id="modalTitle">New</h3>
+              <div class="typePickers">
                 <button class="typePicker" data-type="task">Task</button>
                 <button class="typePicker" data-type="habit">Habit</button>
                 <button class="typePicker" data-type="goal">Goal</button>
-            </div>
-            <button id="closeModal">✕</button>
-        </header>
+              </div>
+          </div>
+          <button id="closeModal">✕</button>
+      </header>
 
         <div id="modalMessageWrapper" style="display: none;">
           <span id="modalMessage" class="modalMessage">message</span>
@@ -248,7 +251,7 @@
         </div>
 
         <div id="habitSection" style="display:none;">
-          <div style="display: flex; flex-direction: column;">
+          <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
             <span class="modalSubTitle">Icon</span>
             <input type="text" id="habitIcon" placeholder="★" maxlength="2" autocomplete="off" spellcheck="false"/>
           </div>
@@ -329,7 +332,7 @@
           </div>
         </div>
 
-        <button class="addTask">Create</button>
+        <button class="addTask" id="confirmAddBtn">Create</button>
       </div>
     </div>
 

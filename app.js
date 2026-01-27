@@ -40,6 +40,15 @@ const defaultStats = {
     level: 1,
     userName: "New Hero"
 };
+
+const GRADIENTS = [
+  "linear-gradient(90deg, #AD22B6, #FF00FF)", // Twój oryginał
+  "linear-gradient(90deg, #4facfe, #00f2fe)", // Błękitny
+  "linear-gradient(90deg, #43e97b, #38f9d7)", // Zielony
+  "linear-gradient(90deg, #fa709a, #fee140)", // Różowo-żółty
+  "linear-gradient(90deg, #667eea, #764ba2)", // Fioletowy "Deep Blue"
+  "linear-gradient(90deg, #f093fb, #f5576c)"  // Ciepły róż
+];
 /*
   DOM Elements /////////////////////////////////////////////////////////////////////
 */ 
@@ -53,7 +62,7 @@ function cacheElements() {
     "habitFrequency", "daysPicker", "monthlyDayPicker", 
     "addTaskBtn", "closeModal", "searchLocation", "useMyLocation", 
     "goalSection", "goalsList", "goalDeadline", "descriptionInput", 
-    "emptyListMessageWrapper", "editUserName"
+    "emptyListMessageWrapper", "editUserName", "habitIconWrapper", "modalTitle"
   ];
 
   ids.forEach(id => {
@@ -167,12 +176,27 @@ const DataManager = {
     }
   },
 
+  updateHabitDetails: (habitId, newFrequency, newSchedule, newStartDate) => {
+    const habits = DataManager.getHabits();
+    const index = habits.findIndex(h => h.id === habitId);
+    
+    if (index !== -1) {
+        habits[index].frequency = newFrequency;
+        habits[index].schedule = newSchedule;
+        habits[index].createdAt = new Date(newStartDate).toISOString();
+        
+        DataManager.saveHabits(habits);
+        console.log("Successfully updated habit in habitsState!");
+    } else {
+        console.error("Habit not found for ID:", habitId);
+    }
+  },
+
   calculateHabitProgress: (habit) => {
     try {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
 
-        // Zabezpieczenie: jeśli brak createdAt, przyjmij dzisiaj
         const createdDate = habit.createdAt ? new Date(habit.createdAt) : new Date();
         if (isNaN(createdDate)) return 0; 
         createdDate.setHours(0, 0, 0, 0);
@@ -180,8 +204,6 @@ const DataManager = {
         let scheduledDaysCount = 0;
         let completedDaysCount = 0;
 
-        // Ważne: Tworzymy nową instancję daty do pętli, 
-        // żeby nie modyfikować oryginału
         let d = new Date(createdDate.getTime());
 
         while (d <= now) {
@@ -367,6 +389,33 @@ const UI = {
       elements.locationInput.value = "";
       elements.locationInput.classList.remove("success", "error");
     }
+    if (elements.modalTitle) modalTitle.textContent = "New";
+
+    const btn = document.getElementById("confirmAddBtn");
+    if (btn) {
+        btn.textContent = "Create"; 
+        btn.removeAttribute("data-edit-id"); 
+    }
+
+    const sectionsToReset = [
+      { sel: ".typePickers", display: "flex" },
+      { sel: ".nameSection", display: "flex" },
+      { sel: "#habitIconWrapper", display: "flex" }, 
+      { sel: "#locationSection", display: "flex" },
+      { sel: "#habitSection .modalSubTitle", text: "Icon" } 
+    ];
+
+    sectionsToReset.forEach(item => {
+      const el = document.querySelector(item.sel);
+      if (el) {
+          if (item.display) el.style.display = item.display;
+          if (item.text) el.textContent = item.text;
+      }
+    });
+
+    // oryginalny tytuł sekcji daty
+    const dateTitle = document.querySelector("#dateSection .modalSubTitle");
+    if (dateTitle) dateTitle.textContent = "Date";
 
     const url = window.location.href.toLowerCase();
     if (url.includes("habit")) {
@@ -383,7 +432,19 @@ const UI = {
       btn.classList.toggle('active', btnType === currentCreateType);
     });
 
+    // Odświeżenie pól pod konkretny typ
     UI.toggleModalFields(currentCreateType);
+
+    // Odznaczanie checkboxów w pickerach dni
+    const allCheckboxes = document.querySelectorAll('#daysPicker input, #monthDaysGrid input');
+    allCheckboxes.forEach(cb => cb.checked = false);
+  },
+
+  applyRandomGradient: () => {
+    const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
+    const selectedGradient = GRADIENTS[randomIndex];
+    
+    document.documentElement.style.setProperty('--hero-gradient', selectedGradient);
   },
 
   toggleModalFields: (type) => {
@@ -403,6 +464,44 @@ const UI = {
     if (isGoal) {
         UI.fillHabitSelect();
     }
+  },
+
+  openEditHabitModal: (habit) => {
+    UI.resetModal(); 
+    
+    document.querySelector(".typePickers").style.display = "none";
+    document.querySelector(".nameSection").style.display = "none";
+    document.getElementById("locationSection").style.display = "none";
+    document.getElementById("goalSection").style.display = "none";
+    document.getElementById("habitIconWrapper").style.display = "none";
+
+    document.getElementById("habitSection").style.display = "flex";
+    document.getElementById("dateSection").style.display = "flex";
+    document.querySelector("#dateSection .modalSubTitle").textContent = "Start Date";
+    document.getElementById("modalTitle").textContent = "Edit Habit";
+
+    const freqSelect = document.getElementById("habitFrequency");
+    freqSelect.value = habit.frequency;
+    
+    const startDate = new Date(habit.createdAt).toISOString().split('T')[0];
+    document.getElementById("taskDate").value = startDate;
+
+    freqSelect.dispatchEvent(new Event('change'));
+
+    if (habit.schedule) {
+        const container = habit.frequency === "weekly" ? elements.daysPicker : document.getElementById("monthDaysGrid");
+        habit.schedule.forEach(val => {
+            const cb = container.querySelector(`input[value="${val}"]`);
+            if (cb) cb.checked = true;
+        });
+    }
+
+    const btn = document.getElementById("confirmAddBtn");
+    btn.textContent = "Save Changes";
+    
+    btn.setAttribute("data-edit-id", habit.id);
+    
+    elements.modalOverlay.classList.add("open");
   },
 
   fillHabitSelect: () => {
@@ -811,10 +910,8 @@ const UI = {
 
     // --- 2. NAWYKI (Habits) ---
     savedHabits.forEach(habit => {
-      const createdDate = new Date(habit.createdAt);
-      createdDate.setHours(0,0,0,0);
-      const viewingDate = new Date(targetDate);
-      viewingDate.setHours(0,0,0,0);
+      const viewingDate = Utils.formatDateKey(targetDate); 
+      const createdDate = Utils.formatDateKey(new Date(habit.createdAt));
 
       if (viewingDate < createdDate) return;
 
@@ -1438,6 +1535,15 @@ function initEventListeners() {
     elements.modalOverlay.classList.add("open"); // Potem otwiera
   });
 
+  // Editing habit
+  document.getElementById("editHabitFrequency")?.addEventListener("click", () => {
+    if (selectedHabitForStats) UI.openEditHabitModal(selectedHabitForStats);
+  });
+
+  document.getElementById("editHabitStartDate")?.addEventListener("click", () => {
+    if (selectedHabitForStats) UI.openEditHabitModal(selectedHabitForStats);
+  });
+
   // Zamykanie krzyżykiem
   elements.closeModal?.addEventListener("click", () => {
     elements.modalOverlay.classList.remove("open");
@@ -1630,6 +1736,34 @@ function initEventListeners() {
 
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
+    const editId = elements.confirmAddBtn.getAttribute("data-edit-id");
+
+    if (editId) {
+      const newFreq = document.getElementById("habitFrequency").value;
+      const newStartDate = document.getElementById("taskDate").value;
+      let newSchedule = [];
+
+      if (newFreq === "weekly") {
+        newSchedule = Array.from(elements.daysPicker.querySelectorAll("input[type='checkbox']:checked")).map(cb => parseInt(cb.value));
+      } else if (newFreq === "monthly") {
+        newSchedule = Array.from(document.getElementById("monthDaysGrid").querySelectorAll("input[type='checkbox']:checked")).map(cb => parseInt(cb.value));
+      }
+
+      DataManager.updateHabitDetails(parseInt(editId), newFreq, newSchedule, newStartDate);
+      
+      const updatedHabit = DataManager.getHabits().find(h => h.id === parseInt(editId));
+      if (updatedHabit) {
+        selectedHabitForStats = updatedHabit;
+        UI.showHabitDetails(updatedHabit);
+      }
+      UI.renderHabits();
+      UI.renderTasksForDay(selectedDate, true);
+      
+      elements.modalOverlay.classList.remove("open");
+      UI.resetModal();
+      return; 
+    }
+    
     let name = elements.taskName.value.trim();
     if (!name) {
       UI.showModalMessage("Provide a name! ✍️");
@@ -1709,9 +1843,13 @@ function initEventListeners() {
     }
 
     if (elements.grid) UI.renderCalendar();
-    UI.renderTasksForDay(selectedDate);
+    
+    if (elements.toDoList && !elements.habitSection) UI.renderTasksForDay(selectedDate, false);
 
-    if (elements.habitSection) UI.renderHabits();
+    if (elements.habitSection) {
+      UI.renderHabits();
+      UI.renderTasksForDay(selectedDate, true);
+    }
 
     if (elements.goalsList) UI.renderGoals();
 
@@ -1725,6 +1863,7 @@ function initEventListeners() {
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
   initEventListeners(); 
+  UI.applyRandomGradient();
   UI.setupMonthlyGrid();
   UI.updateGoalHabitSelect();
   const stats = DataManager.getUserStats();

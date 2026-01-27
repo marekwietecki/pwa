@@ -3,8 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="description" content="Plan your future and review your past. Use our interactive calendar to schedule upcoming goals and analyze your task history with ease.">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Calendar - Habit Hero</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">        <title>Calendar - Habit Hero</title>
         <link rel="stylesheet" href="./style.css">
         <link rel="manifest" href="./manifest.webmanifest">
     </head>
@@ -102,11 +101,13 @@
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-sheet">
         <header class="modal-header">
-            <div class="typePickers">
-                <h3>New</h3>
-                <button class="typePicker" data-type="task">Task</button>
-                <button class="typePicker" data-type="habit">Habit</button>
-                <button class="typePicker" data-type="goal">Goal</button>
+            <div class="typePickersWrapper">
+                <h3 id="modalTitle">New</h3>
+                <div class="typePickers">
+                  <button class="typePicker" data-type="task">Task</button>
+                  <button class="typePicker" data-type="habit">Habit</button>
+                  <button class="typePicker" data-type="goal">Goal</button>
+                </div>
             </div>
             <button id="closeModal">✕</button>
         </header>
@@ -121,33 +122,33 @@
         </div>
 
         <div id="habitSection" style="display:none;">
-          <div style="display: flex; flex-direction: column;">
-            <span class="modalSubTitle">Icon</span>
-            <input type="text" id="habitIcon" placeholder="★" maxlength="2" autocomplete="off" spellcheck="false"/>
-          </div>
-          <div style="display: flex; flex-direction: column;">
-            <span class="modalSubTitle">Frequency</span>
-            <select id="habitFrequency">
-              <option value="daily">Everyday</option>
-              <option value="weekly">Select days of the week</option>
-              <option value="monthly">Select days of the month</option>
-            </select>
+            <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
+                <span class="modalSubTitle">Icon</span>
+                <input type="text" id="habitIcon" placeholder="★" maxlength="2" autocomplete="off" spellcheck="false"/>
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <span class="modalSubTitle">Frequency</span>
+                <select id="habitFrequency">
+                <option value="daily">Everyday</option>
+                <option value="weekly">Select days of the week</option>
+                <option value="monthly">Select days of the month</option>
+                </select>
               
-            <div id="daysPicker" style="display:none;">
-              <label><input type="checkbox" value="1"> MON </label>
-              <label><input type="checkbox" value="2"> TUE </label>
-              <label><input type="checkbox" value="3"> WED </label>
-              <label><input type="checkbox" value="4"> THU </label>
-              <label><input type="checkbox" value="5"> FRI </label>
-              <label><input type="checkbox" value="6"> SAT </label>
-              <label><input type="checkbox" value="0"> SUN </label>
-            </div>
+                <div id="daysPicker" style="display:none;">
+                <label><input type="checkbox" value="1"> MON </label>
+                <label><input type="checkbox" value="2"> TUE </label>
+                <label><input type="checkbox" value="3"> WED </label>
+                <label><input type="checkbox" value="4"> THU </label>
+                <label><input type="checkbox" value="5"> FRI </label>
+                <label><input type="checkbox" value="6"> SAT </label>
+                <label><input type="checkbox" value="0"> SUN </label>
+                </div>
 
-            <div id="monthlyDayPicker" style="display:none;">
-              <div id="monthDaysGrid" class="month-selector-grid">
-              </div>
+                <div id="monthlyDayPicker" style="display:none;">
+                <div id="monthDaysGrid" class="month-selector-grid">
+                </div>
+                </div>
             </div>
-          </div>
         </div>
 
         <div id="goalSection" style="display:none;">

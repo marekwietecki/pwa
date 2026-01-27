@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Turn your big ambitions into reality. Set long-term goals, monitor stats of your own Hero, and visualize your journey toward personal excellence.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hero - Habit Hero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>Hero - Habit Hero</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="manifest" href="./manifest.webmanifest" />
   </head>
@@ -141,12 +140,12 @@
       <div class="modal-sheet">
         <header class="modal-header">
             <div class="typePickersWrapper">
-                <h3>New</h3>
-                <div class="typePickers">
-                  <button class="typePicker" data-type="task">Task</button>
-                  <button class="typePicker" data-type="habit">Habit</button>
-                  <button class="typePicker" data-type="goal">Goal</button>
-                </div>
+              <h3 id="modalTitle">New</h3>
+              <div class="typePickers">
+                <button class="typePicker" data-type="task">Task</button>
+                <button class="typePicker" data-type="habit">Habit</button>
+                <button class="typePicker" data-type="goal">Goal</button>
+              </div>
             </div>
             <button id="closeModal">✕</button>
         </header>
@@ -161,7 +160,7 @@
         </div>
 
         <div id="habitSection" style="display:none;">
-          <div style="display: flex; flex-direction: column;">
+          <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
             <span class="modalSubTitle">Icon</span>
             <input type="text" id="habitIcon" placeholder="★" maxlength="2" autocomplete="off" spellcheck="false"/>
           </div>
