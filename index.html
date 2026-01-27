@@ -11,6 +11,13 @@ sw, cache api, manifest
 ---
 23.10
 PWA = reliable + fast + engaging
+theme_color to pasek statusu, który ios ignoruje
+najlepiej png z przezroczystym tłem
+sw powinien przechwytywać tylko requesty z tego samego origina
+sw nie ma dostępu do domu
+sw jest w pełni asynchroniczny
+CYKL ŻYCIA: registration, installing (cache'ujemy ikony, css'a itd. - jak fail 
+to idzie do redundant), installed/waiting, activating, activated, redundant
 -->
 <html lang="en">
   <head>
@@ -230,7 +237,7 @@ PWA = reliable + fast + engaging
           </div>
         </div>
 
-        <button class="addTask">Create</button>
+        <button class="addTask" id="confirmAddBtn">Create</button>
       </div>
     </div>
 

@@ -62,7 +62,9 @@ function cacheElements() {
     "habitFrequency", "daysPicker", "monthlyDayPicker", 
     "addTaskBtn", "closeModal", "searchLocation", "useMyLocation", 
     "goalSection", "goalsList", "goalDeadline", "descriptionInput", 
-    "emptyListMessageWrapper", "editUserName", "habitIconWrapper", "modalTitle"
+    "emptyListMessageWrapper", "editUserName", "habitIconWrapper", 
+    "modalTitle", "goalHabitSelect", "displayUserName", "userNameInput",
+    "editUserName"
   ];
 
   ids.forEach(id => {
@@ -292,6 +294,21 @@ const DataManager = {
     DataManager.saveGoals(goals);
   },
 
+  updateGoalDetails: (goalId, newData) => {
+    const goals = DataManager.getGoals();
+    const index = goals.findIndex(g => g.id === goalId);
+    
+    if (index !== -1) {
+        goals[index].name = newData.name;
+        goals[index].description = newData.description;
+        goals[index].deadline = newData.deadline;
+        goals[index].linkedHabitId = newData.linkedHabitId;
+        
+        DataManager.saveGoals(goals);
+        console.log("Goal updated!");
+    }
+  },
+
   getUserStats: () => {
     const stats = localStorage.getItem(STATS_KEY);
     return stats ? JSON.parse(stats) : defaultStats;
@@ -393,8 +410,9 @@ const UI = {
 
     const btn = document.getElementById("confirmAddBtn");
     if (btn) {
-        btn.textContent = "Create"; 
-        btn.removeAttribute("data-edit-id"); 
+      btn.textContent = "Create"; 
+      btn.removeAttribute("data-edit-id"); 
+      btn.removeAttribute("data-edit-type");
     }
 
     const sectionsToReset = [
@@ -503,6 +521,56 @@ const UI = {
     
     elements.modalOverlay.classList.add("open");
   },
+
+  openEditGoalModal: (goal) => {
+    console.log("Próba edycji celu:", goal);
+    
+    // 1. Reset na start
+    UI.resetModal(); 
+
+    // 2. Łapiemy przycisk bezpośrednio z DOM (olewamy na chwilę obiekt elements)
+    const btn = document.getElementById("confirmAddBtn");
+    const title = document.getElementById("modalTitle");
+
+    if (!btn) {
+        console.error("KATASTROFA: Nie znaleziono przycisku confirmAddBtn w HTML!");
+        return;
+    }
+
+    // 3. Forsujemy zmiany (używamy style.display bezpośrednio)
+    btn.textContent = "Save Changes";
+    btn.setAttribute("data-edit-id", goal.id);
+    btn.setAttribute("data-edit-type", "goal");
+
+    if (title) title.textContent = "Edit Goal";
+
+    // 4. Ukrywamy zbędne rzeczy - agresywnie
+    const toHide = [".typePickers", "#habitSection", "#locationSection", "#dateSection"];
+    toHide.forEach(s => {
+        const el = document.querySelector(s);
+        if (el) el.style.setProperty("display", "none", "important");
+    });
+
+    // 5. Pokazujemy sekcje celu
+    const goalSec = document.getElementById("goalSection");
+    const nameSec = document.querySelector(".nameSection");
+    if (goalSec) goalSec.style.setProperty("display", "flex", "important");
+    if (nameSec) nameSec.style.setProperty("display", "flex", "important");
+
+    // 6. Wpychamy dane do pól
+    document.getElementById("taskName").value = goal.name || "";
+    if (elements.descriptionInput) elements.descriptionInput.value = goal.description || "";
+    if (elements.goalDeadline) elements.goalDeadline.value = goal.deadline || "";
+    
+    // Ustawienie nawyku
+    if (elements.goalHabitSelect) {
+        elements.goalHabitSelect.value = goal.linkedHabitId ? String(goal.linkedHabitId) : "";
+    }
+
+    // 7. Otwieramy modal
+    elements.modalOverlay.classList.add("open");
+    console.log("Modal powinien być otwarty w trybie EDIT");
+},
 
   fillHabitSelect: () => {
     const select = elements.goalHabitSelect;
@@ -1028,6 +1096,19 @@ const UI = {
     nameSpan.className = "taskNodeName";
     nameSpan.textContent = name;
     taskLabel.appendChild(nameSpan);
+
+    if (type === "goal") {
+      const editGoalBtn = document.createElement("button");
+      editGoalBtn.className = "edit-inline-btn";
+      editGoalBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`;
+      
+      editGoalBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); 
+        UI.openEditGoalModal(data);
+      });
+
+      taskLabel.appendChild(editGoalBtn);
+    }
 
     const metaWrapper = document.createElement("div");
     metaWrapper.className = "taskMetaWrapper";
@@ -1712,58 +1793,96 @@ function initEventListeners() {
     }
   });
 
-  //editing username
+  // Edycja Nazwy Użytkownika Inline
   if (elements.editUserName) {
     elements.editUserName.addEventListener("click", () => {
-      const stats = DataManager.getUserStats();
-      
-      const newName = prompt("What's your hero called?", stats.userName);
+        const stats = DataManager.getUserStats();
+        elements.userNameInput.value = stats.userName || elements.displayUserName.textContent;
+        
+        elements.displayUserName.style.display = "none";
+        elements.editUserName.style.display = "none";
+        elements.userNameInput.style.display = "inline-block";
+        
+        elements.userNameInput.focus();
+        elements.userNameInput.select();
+    });
+  }
 
-      if (newName !== null) {
-        const trimmedName = newName.trim() || "New Hero";
-        
-        DataManager.updateUserName(trimmedName);
-        
-        const nameDisplay = document.getElementById("displayUserName");
-        if (nameDisplay) {
-          nameDisplay.textContent = trimmedName;
+  if (elements.userNameInput) {
+    elements.userNameInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") elements.userNameInput.blur();
+        if (e.key === "Escape") {
+            elements.displayUserName.style.display = "block";
+            elements.userNameInput.style.display = "none";
+            elements.editUserName.style.display = "inline-flex";
         }
+    });
+
+    elements.userNameInput.addEventListener("blur", () => {
+        // Logika zapisu
+        if (elements.userNameInput.style.display === "none") return;
+
+        const newName = elements.userNameInput.value.trim() || "New Hero";
+        DataManager.updateUserName(newName);
+        
+        elements.displayUserName.textContent = newName;
+        elements.displayUserName.style.display = "block";
+        elements.userNameInput.style.display = "none";
+        elements.editUserName.style.display = "inline-flex";
 
         if (navigator.vibrate) navigator.vibrate(30);
-      }
     });
   }
 
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
     const editId = elements.confirmAddBtn.getAttribute("data-edit-id");
+    const editType = elements.confirmAddBtn.getAttribute("data-edit-type"); 
+
+    console.log("Przycisk ma ID:", editId, "Typ:", editType);
 
     if (editId) {
-      const newFreq = document.getElementById("habitFrequency").value;
-      const newStartDate = document.getElementById("taskDate").value;
-      let newSchedule = [];
+      if (editType === "goal") {
+          const newData = {
+              name: elements.taskName.value.trim(),
+              description: elements.descriptionInput.value.trim(),
+              deadline: elements.goalDeadline.value,
+              linkedHabitId: elements.goalHabitSelect.value ? parseInt(elements.goalHabitSelect.value) : null
+          };
 
-      if (newFreq === "weekly") {
-        newSchedule = Array.from(elements.daysPicker.querySelectorAll("input[type='checkbox']:checked")).map(cb => parseInt(cb.value));
-      } else if (newFreq === "monthly") {
-        newSchedule = Array.from(document.getElementById("monthDaysGrid").querySelectorAll("input[type='checkbox']:checked")).map(cb => parseInt(cb.value));
-      }
+          if (!newData.name || !newData.deadline) {
+              return UI.showModalMessage("Name and Deadline are required!");
+          }
 
-      DataManager.updateHabitDetails(parseInt(editId), newFreq, newSchedule, newStartDate);
-      
-      const updatedHabit = DataManager.getHabits().find(h => h.id === parseInt(editId));
-      if (updatedHabit) {
-        selectedHabitForStats = updatedHabit;
-        UI.showHabitDetails(updatedHabit);
+          DataManager.updateGoalDetails(parseInt(editId), newData);
+          if (elements.goalsList) UI.renderGoals(); 
+      } 
+      else {
+        const newFreq = document.getElementById("habitFrequency").value;
+        const newStartDate = document.getElementById("taskDate").value;
+        let newSchedule = [];
+
+        if (newFreq === "weekly") {
+          newSchedule = Array.from(elements.daysPicker.querySelectorAll("input[type='checkbox']:checked")).map(cb => parseInt(cb.value));
+        } else if (newFreq === "monthly") {
+          newSchedule = Array.from(document.getElementById("monthDaysGrid").querySelectorAll("input[type='checkbox']:checked")).map(cb => parseInt(cb.value));
+        }
+
+        DataManager.updateHabitDetails(parseInt(editId), newFreq, newSchedule, newStartDate);
+        
+        const updatedHabit = DataManager.getHabits().find(h => h.id === parseInt(editId));
+        if (updatedHabit) {
+          selectedHabitForStats = updatedHabit;
+          UI.showHabitDetails(updatedHabit);
+        }
+        UI.renderHabits();
+        UI.renderTasksForDay(selectedDate, true);
       }
-      UI.renderHabits();
-      UI.renderTasksForDay(selectedDate, true);
-      
       elements.modalOverlay.classList.remove("open");
-      UI.resetModal();
-      return; 
+        UI.resetModal();
+        return; 
     }
-    
+
     let name = elements.taskName.value.trim();
     if (!name) {
       UI.showModalMessage("Provide a name! ✍️");

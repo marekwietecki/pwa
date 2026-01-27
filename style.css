@@ -489,6 +489,23 @@ body {
   opacity: 72%;
 }
 
+.edit-inline-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted, #888);
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+
+.edit-inline-btn:hover {
+  opacity: 72%;;
+}
+
+
 
 /* MODAL */  /* ------------------------------------------------------------------------ */
 /* Tło */
@@ -646,9 +663,9 @@ body {
 
 #habitSection {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex: 1;
-  gap: 12px;
+  gap: 40px;
 }
 
 #habitFrequency {
@@ -1405,7 +1422,7 @@ input.error {
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.usernameWrapper {
+.userWrapper {
   display: flex;
   flex-direction: column;
   max-width: 360px;
@@ -1420,8 +1437,42 @@ button, h3 {
   padding: 0;
 }
 
+.usernameWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 360px;
+  width: 100%;
+  align-items: center;
+  margin: 0px;
+  gap: 8px;
+  text-wrap: nowrap;
+}
+
 #displayUserName {
   font-size: 28px;
+}
+
+.user-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#userNameInput {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--accent-color, #AD22B6);
+  color: white;
+  font-size: 1.17em; /* Taka sama wielkość jak H3 */
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 2px 6px;
+  outline: none;
+  width: auto;
+  max-width: 200px;
+}
+
+#displayUserName {
+  cursor: pointer;
 }
 
 #editUserName {
@@ -1448,22 +1499,23 @@ button, h3 {
 .levelWrapper {
   display: flex;
   flex-direction: column;
-  max-width: 226px;
+  max-width: 232px;
   width: 100%;
   align-items: flex-start;
+  justify-content: flex-end;
   gap: 8px;
-  margin-bottom: 8px;
+  padding-top: 16px;
 }
 
 .levelIndicatorWrapper {
   display: flex;
   flex-direction: row;
-  gap: 4px;
+  gap: 8px;
   align-items: center;
 }
 
 .levelIndicator {
-  height: 8px;
+  height: 12px;
   width: 200px;
   border-radius: 12px;
   background-color: rgb(87, 87, 87);
@@ -1480,6 +1532,13 @@ button, h3 {
 }
 
 .totalXpWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.heroLvlWrapper {
   display: flex;
   flex-direction: row;
   gap: 4px;
@@ -1559,6 +1618,10 @@ button, h3 {
   }
   .userStats {
     flex-direction: column;
+  }
+  #habitSection {
+    flex-direction: column;
+    gap: 12px;
   }
 }
 @media (max-width: 424px) {
