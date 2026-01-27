@@ -140,14 +140,20 @@
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-sheet">
         <header class="modal-header">
-            <div class="typePickers">
+            <div class="typePickersWrapper">
                 <h3>New</h3>
-                <button class="typePicker" data-type="task">Task</button>
-                <button class="typePicker" data-type="habit">Habit</button>
-                <button class="typePicker" data-type="goal">Goal</button>
+                <div class="typePickers">
+                  <button class="typePicker" data-type="task">Task</button>
+                  <button class="typePicker" data-type="habit">Habit</button>
+                  <button class="typePicker" data-type="goal">Goal</button>
+                </div>
             </div>
             <button id="closeModal">✕</button>
         </header>
+
+        <div id="modalMessageWrapper" style="display: none;">
+          <span id="modalMessage" class="modalMessage">message</span>
+        </div>
   
         <div class="nameSection">    
           <span class="modalSubTitle">Name</span>

@@ -1408,7 +1408,24 @@ const UI = {
     if (xpRatio) xpRatio.textContent = `${Math.floor(stats.currentXp)} / ${threshold}`;
     
     if (totalXpDisplay) totalXpDisplay.textContent = stats.totalXp;
-}
+  },  
+
+  showModalMessage: (text, duration = 3000) => {
+    const wrapper = document.getElementById('modalMessageWrapper');
+    const msgSpan = document.getElementById('modalMessage');
+
+    if (!wrapper || !msgSpan) return;
+
+    msgSpan.textContent = text;
+    wrapper.style.display = 'flex'; 
+
+    wrapper.classList.add('shake-animation');
+
+    setTimeout(() => {
+      wrapper.style.display = 'none';
+      wrapper.classList.remove('shake-animation');
+    }, duration);
+  },
 
 };
 /*
@@ -1497,7 +1514,7 @@ function initEventListeners() {
         input.value = originalValue;
         elements.locationInput.classList.remove("success");
         elements.locationInput.classList.add("error");
-        alert("Location not found");
+        UI.showModalMessage("Location not found")
         return;
       }
 
@@ -1519,7 +1536,7 @@ function initEventListeners() {
 
   // 2. Lokalizacja z GPS (przycisk pinezki)
   elements.geoLocBtn.addEventListener("click", () => {
-    if (!navigator.geolocation) return alert("Geolocation not supported");
+    if (!navigator.geolocation) return UI.showModalMessage("Geolocation not supported");
   
     // --- START LOADING ---
     const btn = elements.geoLocBtn;
@@ -1548,7 +1565,7 @@ function initEventListeners() {
       } catch (e) {
         console.error("Reverse geocoding failed", e);
         input.classList.add("error");
-        alert("Address not found, but we have your coords!");
+        UI.showModalMessage("Address not found, but we have your coords!")
       } finally {
         // --- END LOADING (Success/Error) ---
         btn.classList.remove("loading");
@@ -1567,7 +1584,7 @@ function initEventListeners() {
         2: "Position unavailable. Check your GPS.",
         3: "Timeout. Try again."
       };
-      alert(messages[err.code] || "Could not get location.");
+      UI.showModalMessage(messages[err.code] || "Could not get location.")
     }, {
       enableHighAccuracy: true,
       timeout: 10000 // 10 sekund na odpowiedź GPS
@@ -1594,7 +1611,7 @@ function initEventListeners() {
     elements.editUserName.addEventListener("click", () => {
       const stats = DataManager.getUserStats();
       
-      const newName = prompt("Jak ma się nazywać Twój bohater?", stats.userName);
+      const newName = prompt("What's your hero called?", stats.userName);
 
       if (newName !== null) {
         const trimmedName = newName.trim() || "New Hero";
@@ -1614,7 +1631,10 @@ function initEventListeners() {
   //adding logic
   elements.confirmAddBtn.addEventListener("click", () => {
     let name = elements.taskName.value.trim();
-    if (!name) return alert("Provide a name!");
+    if (!name) {
+      UI.showModalMessage("Provide a name! ✍️");
+      return; 
+    }
     name = name.charAt(0).toUpperCase() + name.slice(1);
 
     const type = currentCreateType; 
@@ -1642,12 +1662,12 @@ function initEventListeners() {
       if (frequency === "weekly") {
         schedule = Array.from(elements.daysPicker.querySelectorAll("input[type='checkbox']:checked"))
         .map(cb => parseInt(cb.value));
-        if (schedule.length === 0) return alert("Select at least one day!");
+        if (schedule.length === 0) return UI.showModalMessage("Select at least one day!");
       } else if (frequency === "monthly") {
         const monthlyGrid = document.getElementById("monthDaysGrid");
         schedule = Array.from(monthlyGrid.querySelectorAll("input[type='checkbox']:checked"))
         .map(cb => parseInt(cb.value));
-        if (schedule.length === 0) return alert("Enter days of the month!");
+        if (schedule.length === 0) return UI.showModalMessage("Enter days of the month!");
       }
       
       const habit = {
@@ -1669,7 +1689,7 @@ function initEventListeners() {
       const habitSelectEl = document.getElementById("goalHabitSelect");
       
       if (!deadline) {
-        alert("Provide a deadline for your goal! 📅");
+        UI.showModalMessage("Provide a deadline for your goal! 📅");
         if (elements.taskDate) elements.taskDate.focus();
         return;
       }
