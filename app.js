@@ -64,7 +64,8 @@ function cacheElements() {
     "goalSection", "goalsList", "goalDeadline", "descriptionInput", 
     "emptyListMessageWrapper", "editUserName", "habitIconWrapper", 
     "modalTitle", "goalHabitSelect", "displayUserName", "userNameInput",
-    "editUserName"
+    "editUserName", "messageToday", "messageFuture", "messageGoals",
+    "goalsList",
   ];
 
   ids.forEach(id => {
@@ -603,12 +604,14 @@ const UI = {
 
     const goals = DataManager.getGoals();
 
-    if (goals.length === 0) {
-        const emptyState = document.createElement("li");
-        emptyState.className = "empty-state";
-        emptyState.textContent = "No goals yet. Add one to start!";
-        list.appendChild(emptyState);
-        return;
+    if (elements.emptyListMessageWrapper) {
+      if (goals.length === 0) {
+        elements.emptyListMessageWrapper.style.display = "flex";
+        if (elements.messageGoals) elements.messageGoals.style.display = "block";
+      } else {
+        elements.emptyListMessageWrapper.style.display = "none";
+        if (elements.messageGoals) elements.messageGoals.style.display = "none";
+      }
     }
 
     goals.forEach(goal => {
@@ -1038,8 +1041,11 @@ const UI = {
     if (undoneNodes.length === 0 && (doneNodes.length === 0 || !showCompleted)) {
       if (elements.emptyListMessageWrapper) elements.emptyListMessageWrapper.style.display = "flex";
       const isToday = dateKey === todayKey;
-      if (elements.messageToday) elements.messageToday.style.display = isToday ? "block" : "none";
-      if (elements.messageFuture) elements.messageFuture.style.display = isToday ? "none" : "block";
+      if (isToday) {
+        if (elements.messageToday) elements.messageToday.style.display = "block";
+      } else {
+        if (elements.messageFuture) elements.messageFuture.style.display = "block";
+      }
     }
 
     // Łączymy listy
@@ -1995,11 +2001,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // index
   if (elements.toDoList && !elements.grid) {
-    console.log("Dashboard wykryty: Renderuję zadania...");
     UI.renderTasksForDay();
-  } else {
-    console.log("To nie jest strona Dashboard (brak toDoList)");
-  }
+  } 
   // calendar
   if (elements.calendarGrid) {
     UI.renderCalendar();
@@ -2009,9 +2012,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (elements.habitSection) {
     UI.renderHabits();
   }
-
+  // goals
   if (elements.goalsList) {
-    console.log("Renderuję cele na stronie Hero...");
     UI.renderGoals();
   }
 });

@@ -1,7 +1,7 @@
 {
     "name": "Habit Hero",
     "short_name": "Habit Hero",
-    "description": "Elevate your everyday life. Grow your habits and build a foundation of experience for your future self.",
+    "description": "Improve your everyday life. Grow your habits and build a foundation of experience for your future self.",
     "lang": "en",
     "start_url": "./index.html",
     "scope": "./",

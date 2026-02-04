@@ -1,55 +1,105 @@
-const CACHE_VERSION = 'v';
+const CACHE_VERSION = "v";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
-    './',
-    './index.html',
-    './style.css',
-    './app.js',
-    './manifest.webmanifest',
-    './assets/192x192.png',
-    './assets/512x512.png',
-]
+  // tylko niezbędne do działania offline
+  "./",
+  "./index.html",
+  "./calendar.html",
+  "./habits.html",
+  "./hero.html",
+  "./style.css",
+  "./app.js",
+  "./manifest.webmanifest",
+  "./assets/192x192.png",
+  "./assets/512x512.png",
+];
 
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(APP_ASSETS))
-    );
+console.log('🔧 SW: Inicjalizacja - Cache Name:', CACHE_NAME);
+console.log('📦 SW: Zasoby do Cacheowania:', APP_ASSETS);
 
-    self.skipWaiting();
-})
+// nie ma widnow i this ale jest self czyli sw
+// to się odpali tylko raz przy instalacji nowego sw
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    // przeglądarka otwiera lub tworzy cache, jest to operacja atomowa
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('✅ INSTALL: Cache otwarty pomyślnie');
+        console.log('📥 INSTALL: Dodawanie zasobów do cache...');
+        return cache.addAll(APP_ASSETS);
+      })
+      .then(() => {
+        console.log('✅ INSTALL: Wszystkie zasoby dodane do cache');
+        console.log('⚡️ INSTALL: Wywołanie skipWaiting() - natychmiastowa aktywacja');
+        // to tylko do developmentu - jest też checkbox w dev toolsach
+        return self.skipWaiting();
+      })
+      .then(() => {
+        console.log('🏁 INSTALL: Instalacja zakończona');
+      })
+      .catch(() => {
+        console.log('❌ INSTALL: Błąd podczas cacheowania:', error);
+      })
+  );
+});
 
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(
-                keys
-                    .filter(k => k.startsWith('habitHero-cache-') && k !== CACHE_NAME)
-                    .map(k => caches.delete(k))
-            )
+//cleanup, czyścimy stare cache
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((k) => k.startsWith("habitHero-cache-") && k !== CACHE_NAME)
+            .map((k) => caches.delete(k))
         )
-    );
-    self.clients.claim();
-})
+      )
+  );
+  // development, bo claim może nam zepsuć działające strony ..
+  // .. jak się mocno różnią sw między sobą
+  self.clients.claim();
+});
 
-self.addEventListener('fetch', event => {
-    const {request} = event;
-    if(request.method !== 'GET') return;
+// każdy request http przechodzi przez to tutaj
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  // bezpiecznie jest samo get dla prostych pwa,
+  // przy wysylaniu po odzyskaniu sieci lub offline editing notatek np.
+  if (request.method !== "GET") return;
 
-    event.respondWith(
-        caches.match(request).then( cached => {
-            const networkFetch = fetch(request)
-                .then( response => {
-                    const clone = response.clone();
+  //Cache only
+  if (APP_ASSETS.some(asset => event.request.url.includes(asset.replace('./', '')))) {
+    event.respondWith(caches.match(event.request));
+    return
+  }
 
-                    if(response.ok && request.url.startsWith(self.location.origin)) {
-                        caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-                    }
+  //Network first 
 
-                    return response
-                })
-                .catch(() => cached);
+  //cache first
 
-        return cached || networkFetch;
+  //network only
+
+  //stale while revalidate
+  event.respondWith(
+    // jak jest w cache, to pokazujemy i w trakcie równolegle ..
+    // .. szukamy w sieci nowszej wersji i jak jest to następnym razem podmianka
+    caches.match(request).then((cached) => {
+      const networkFetch = fetch(request)
+        .then((response) => {
+          // musimy klonować żeby go zwrócić, bo response to strumień
+          const clone = response.clone();
+
+          // response od 200 do 299 i tutaj chcemy tylko od swojego api brać zasoby (można z zew. ale trzeba czasami ograć dodatkowo)
+          if (response.ok && request.url.startsWith(self.location.origin)) {
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+
+          return response;
         })
-    )
-})
+        .catch(() => cached);
+
+      return cached || networkFetch;
+    })
+  );
+});
