@@ -24,6 +24,10 @@ dawać w promiskach tego try catcha i ogólnie error handling
 sw kontroluje zakres swojego scope'a i poniżej (bo czasami jest >1 sw, ale 99% przypadków mamy 1 sw)
 
 przeglądarka sprawdza co 24h czy jest nowa wersja sw, ale jest button zaktualizuj w dev tools aby natychmiastowo sprawdzić
+---
+LCP <2.5s
+INP/FID reakcja na działanie 100 lub mniej super, 100-200 ok, 200 słabo w lighthouse Total Blocking Time
+CLS skok nieprzewidziany -> 0.1 to dobry próg
 -->
 <html lang="en">
   <head>
@@ -158,13 +162,13 @@ przeglądarka sprawdza co 24h czy jest nowa wersja sw, ale jest button zaktualiz
   
         <div class="nameSection">    
           <span class="modalSubTitle">Name</span>
-          <input type="text" placeholder="Enter name" id="taskName" />
+          <input type="text" placeholder="Enter name" id="taskName" name="taskName" />
         </div>
 
         <div id="habitSection" style="display:none;">
           <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
             <span class="modalSubTitle">Icon</span>
-            <input type="text" id="habitIcon" placeholder="★" maxlength="2" autocomplete="off" spellcheck="false"/>
+            <input type="text" id="habitIcon" placeholder="★" name="habitIcon" maxlength="2" autocomplete="off" spellcheck="false"/>
           </div>
           <div style="display: flex; flex-direction: column;">
             <span class="modalSubTitle">Frequency</span>
@@ -175,13 +179,13 @@ przeglądarka sprawdza co 24h czy jest nowa wersja sw, ale jest button zaktualiz
             </select>
               
             <div id="daysPicker" style="display:none;">
-              <label><input type="checkbox" value="1"> MON </label>
-              <label><input type="checkbox" value="2"> TUE </label>
-              <label><input type="checkbox" value="3"> WED </label>
-              <label><input type="checkbox" value="4"> THU </label>
-              <label><input type="checkbox" value="5"> FRI </label>
-              <label><input type="checkbox" value="6"> SAT </label>
-              <label><input type="checkbox" value="0"> SUN </label>
+              <label><input type="checkbox" name="habitDays" value="1"> MON </label>
+              <label><input type="checkbox" name="habitDays" value="2"> TUE </label>
+              <label><input type="checkbox" name="habitDays" value="3"> WED </label>
+              <label><input type="checkbox" name="habitDays" value="4"> THU </label>
+              <label><input type="checkbox" name="habitDays" value="5"> FRI </label>
+              <label><input type="checkbox" name="habitDays" value="6"> SAT </label>
+              <label><input type="checkbox" name="habitDays" value="0"> SUN </label>
             </div>
 
             <div id="monthlyDayPicker" style="display:none;">
@@ -195,25 +199,25 @@ przeglądarka sprawdza co 24h czy jest nowa wersja sw, ale jest button zaktualiz
           <div class="deadlinePlusLinkHabit">  
             <div class="deadlineSection">
               <span class="modalSubTitle">Deadline</span>
-              <input type="date" id="goalDeadline" />
+              <input type="date" id="goalDeadline" name="goalDeadline"/>
             </div>
       
             <div class="linkHabitSection">
               <span class="modalSubTitle">Link Habit - make goal measurable</span>
-              <select id="goalHabitSelect">
+              <select id="goalHabitSelect" name="goalHabitSelect">
                 <option value="">No linked habit</option>
               </select>
             </div>
           </div>
           <div class="descriptionSection">
             <span class="modalSubTitle">Description</span>
-            <textarea id="descriptionInput" placeholder="Any more details about your goal?"></textarea>
+            <textarea id="descriptionInput" name="descriptionInput" placeholder="Any more details about your goal?"></textarea>
           </div>
         </div>
         
         <div id="dateSection">
           <span class="modalSubTitle">Date</span>
-          <input type="date" id="taskDate" />
+          <input type="date" id="taskDate" name="taskDate"/>
         </div>
         <div class="locationSection" id="locationSection">
           <span class="modalSubTitle">Location</span>
@@ -221,6 +225,7 @@ przeglądarka sprawdza co 24h czy jest nowa wersja sw, ale jest button zaktualiz
             <input
                 type="text"
                 id="locationInput"
+                name="locationInput"
                 placeholder="Enter location"
             />
             <button id="searchLocation">

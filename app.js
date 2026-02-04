@@ -23,6 +23,50 @@ window.addEventListener("offline", () => {
 if (!navigator.onLine) {
   document.body.classList.add("offline");
 }
+
+/* 
+  notifications ////////////////////////////////////////////////////////////////////////
+*/
+const NotificationService = {
+  async init() {
+    if (!("Notification" in window)) {
+      console.warn("Ta przeglądarka nie obsługuje powiadomień.");
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        await this.sendNotification("Habit Hero", "Powiadomienia aktywne! 🦸‍♂️");
+      }
+    } catch (err) {
+      console.error("Błąd podczas prośby o zgodę:", err);
+    }
+  },
+
+  async sendNotification(title, message) {
+    if (!('serviceWorker' in navigator)) {
+       new Notification(title, { body: message, icon: "./assets/192x192.png" });
+       return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    await registration.showNotification(title, {
+      body: message,
+      icon: "./assets/192x192.png",
+      badge: "./assets/192x192.png",
+      vibrate: [200, 100, 200], 
+      tag: "habit-hero-alert"    
+    });
+  }
+};
+
+const addTaskBtn = document.getElementById("addTaskBtn");
+if (addTaskBtn) {
+  addTaskBtn.addEventListener("click", () => {
+    NotificationService.init();
+  });
+}
 /*
   APP STATE & CONFIG  //////////////////////////////////////////////////////////////////
 */ 
@@ -73,7 +117,7 @@ function cacheElements() {
     if (el) {
       elements[id] = el;
     } else {
-      console.warn(`Element #${id} not found in DOM`);
+      console.log(`Element #${id} not found in DOM`);
       elements[id] = null; 
     }
   });

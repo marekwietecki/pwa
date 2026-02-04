@@ -224,117 +224,118 @@
     </section>
 
 
-    <!-- MODAL -->
-    <button id="addTaskBtn" class="addTaskBtn"> + </button>
+        <!-- MODAL -->
+        <button id="addTaskBtn" class="addTaskBtn"> + </button>
 
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal-sheet">
-        <header class="modal-header">
-          <div class="typePickersWrapper">
-              <h3 id="modalTitle">New</h3>
-              <div class="typePickers">
-                <button class="typePicker" data-type="task">Task</button>
-                <button class="typePicker" data-type="habit">Habit</button>
-                <button class="typePicker" data-type="goal">Goal</button>
+        <div class="modal-overlay" id="modalOverlay">
+          <div class="modal-sheet">
+            <header class="modal-header">
+              <div class="typePickersWrapper">
+                <h3 id="modalTitle">New</h3>
+                  <div class="typePickers">
+                    <button class="typePicker" data-type="task">Task</button>
+                    <button class="typePicker" data-type="habit">Habit</button>
+                    <button class="typePicker" data-type="goal">Goal</button>
+                  </div>
               </div>
-          </div>
-          <button id="closeModal">✕</button>
-      </header>
-
-        <div id="modalMessageWrapper" style="display: none;">
-          <span id="modalMessage" class="modalMessage">message</span>
-        </div>
-  
-        <div class="nameSection">    
-          <span class="modalSubTitle">Name</span>
-          <input type="text" placeholder="Enter name" id="taskName" />
-        </div>
-
-        <div id="habitSection" style="display:none;">
-          <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
-            <span class="modalSubTitle">Icon</span>
-            <input type="text" id="habitIcon" placeholder="★" maxlength="2" autocomplete="off" spellcheck="false"/>
-          </div>
-          <div style="display: flex; flex-direction: column;">
-            <span class="modalSubTitle">Frequency</span>
-            <select id="habitFrequency">
-              <option value="daily">Everyday</option>
-              <option value="weekly">Select days of the week</option>
-              <option value="monthly">Select days of the month</option>
-            </select>
-              
-            <div id="daysPicker" style="display:none;">
-              <label><input type="checkbox" value="1"> MON </label>
-              <label><input type="checkbox" value="2"> TUE </label>
-              <label><input type="checkbox" value="3"> WED </label>
-              <label><input type="checkbox" value="4"> THU </label>
-              <label><input type="checkbox" value="5"> FRI </label>
-              <label><input type="checkbox" value="6"> SAT </label>
-              <label><input type="checkbox" value="0"> SUN </label>
-            </div>
-
-            <div id="monthlyDayPicker" style="display:none;">
-              <div id="monthDaysGrid" class="month-selector-grid">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="goalSection" style="display:none;">
-          <div class="deadlinePlusLinkHabit">  
-            <div class="deadlineSection">
-              <span class="modalSubTitle">Deadline</span>
-              <input type="date" id="goalDeadline" />
+              <button id="closeModal">✕</button>
+            </header>
+    
+            <div id="modalMessageWrapper" style="display: none;">
+              <span id="modalMessage" class="modalMessage">message</span>
             </div>
       
-            <div class="linkHabitSection">
-              <span class="modalSubTitle">Link Habit - make goal measurable</span>
-              <select id="goalHabitSelect">
-                <option value="">No linked habit</option>
-              </select>
+            <div class="nameSection">    
+              <span class="modalSubTitle">Name</span>
+              <input type="text" placeholder="Enter name" id="taskName" name="taskName" />
             </div>
-          </div>
-          <div class="descriptionSection">
-            <span class="modalSubTitle">Description</span>
-            <textarea id="descriptionInput" placeholder="Any more details about your goal?"></textarea>
+    
+            <div id="habitSection" style="display:none;">
+              <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
+                <span class="modalSubTitle">Icon</span>
+                <input type="text" id="habitIcon" placeholder="★" name="habitIcon" maxlength="2" autocomplete="off" spellcheck="false"/>
+              </div>
+              <div style="display: flex; flex-direction: column;">
+                <span class="modalSubTitle">Frequency</span>
+                <select id="habitFrequency">
+                  <option value="daily">Everyday</option>
+                  <option value="weekly">Select days of the week</option>
+                  <option value="monthly">Select days of the month</option>
+                </select>
+                  
+                <div id="daysPicker" style="display:none;">
+                  <label><input type="checkbox" name="habitDays" value="1"> MON </label>
+                  <label><input type="checkbox" name="habitDays" value="2"> TUE </label>
+                  <label><input type="checkbox" name="habitDays" value="3"> WED </label>
+                  <label><input type="checkbox" name="habitDays" value="4"> THU </label>
+                  <label><input type="checkbox" name="habitDays" value="5"> FRI </label>
+                  <label><input type="checkbox" name="habitDays" value="6"> SAT </label>
+                  <label><input type="checkbox" name="habitDays" value="0"> SUN </label>
+                </div>
+    
+                <div id="monthlyDayPicker" style="display:none;">
+                  <div id="monthDaysGrid" class="month-selector-grid">
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <div id="goalSection" style="display:none;">
+              <div class="deadlinePlusLinkHabit">  
+                <div class="deadlineSection">
+                  <span class="modalSubTitle">Deadline</span>
+                  <input type="date" id="goalDeadline" name="goalDeadline"/>
+                </div>
+          
+                <div class="linkHabitSection">
+                  <span class="modalSubTitle">Link Habit - make goal measurable</span>
+                  <select id="goalHabitSelect" name="goalHabitSelect">
+                    <option value="">No linked habit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="descriptionSection">
+                <span class="modalSubTitle">Description</span>
+                <textarea id="descriptionInput" name="descriptionInput" placeholder="Any more details about your goal?"></textarea>
+              </div>
+            </div>
+            
+            <div id="dateSection">
+              <span class="modalSubTitle">Date</span>
+              <input type="date" id="taskDate" name="taskDate"/>
+            </div>
+            <div class="locationSection" id="locationSection">
+              <span class="modalSubTitle">Location</span>
+              <div class="locationContentWrapper">  
+                <input
+                    type="text"
+                    id="locationInput"
+                    name="locationInput"
+                    placeholder="Enter location"
+                />
+                <button id="searchLocation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-search-check">
+                        <path d="m8 11 2 2 4-4"/>
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                </button>
+                <button id="useMyLocation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-locate">
+                        <line x1="2" x2="5" y1="12" y2="12"/>
+                        <line x1="19" x2="22" y1="12" y2="12"/>
+                        <line x1="12" x2="12" y1="2" y2="5"/>
+                        <line x1="12" x2="12" y1="19" y2="22"/>
+                        <circle cx="12" cy="12" r="7"/>
+                    </svg>
+                    <!--Current Location-->
+                </button>
+              </div>
+            </div>
+    
+            <button class="addTask" id="confirmAddBtn">Create</button>
           </div>
         </div>
-        
-        <div id="dateSection">
-          <span class="modalSubTitle">Date</span>
-          <input type="date" id="taskDate" />
-        </div>
-        <div class="locationSection" id="locationSection">
-          <span class="modalSubTitle">Location</span>
-          <div class="locationContentWrapper">  
-            <input
-                type="text"
-                id="locationInput"
-                placeholder="Enter location"
-            />
-            <button id="searchLocation">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-search-check">
-                    <path d="m8 11 2 2 4-4"/>
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.3-4.3"/>
-                </svg>
-            </button>
-            <button id="useMyLocation">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-locate">
-                    <line x1="2" x2="5" y1="12" y2="12"/>
-                    <line x1="19" x2="22" y1="12" y2="12"/>
-                    <line x1="12" x2="12" y1="2" y2="5"/>
-                    <line x1="12" x2="12" y1="19" y2="22"/>
-                    <circle cx="12" cy="12" r="7"/>
-                </svg>
-                <!--Current Location-->
-            </button>
-          </div>
-        </div>
-
-        <button class="addTask" id="confirmAddBtn">Create</button>
-      </div>
-    </div>
 
     <!-- im gonna update that later -->
     <script src="./app.js"></script>

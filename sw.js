@@ -54,7 +54,8 @@ self.addEventListener("activate", (event) => {
             .filter((k) => k.startsWith("habitHero-cache-") && k !== CACHE_NAME)
             .map((k) => caches.delete(k))
         )
-      )
+      ),
+      checkStorageQuota(),
   );
   // development, bo claim może nam zepsuć działające strony ..
   // .. jak się mocno różnią sw między sobą
@@ -100,6 +101,56 @@ self.addEventListener("fetch", (event) => {
         .catch(() => cached);
 
       return cached || networkFetch;
+    })
+  );
+});
+
+
+async function checkStorageQuota() {
+  if('storage' in navigator && 'estimate' in navigator.storage) {
+    const estimate = await navigator.storage.estimate();
+
+    const usageInMb = (estimate.usage / (1024*1024)).toFixed(2);
+    const quotaInMb = (estimate.quota / (1024*1024)).toFixed(2);
+    const percentageUsed = ((estimate.usage / estimate.quota) * 100).toFixed(1);
+
+    console.log(`Storage Używane: ${usageInMb} MB`);
+    console.log(`Storage Dostępne: ${quotaInMb} MB`);
+    console.log(`Procent Użycia: ${percentageUsed} %`);
+
+    if(percentageUsed > 80) {
+      console.warn('Storage quota > 80%')
+      await cleanupOldCaches()
+    }
+
+    return {
+      usage: estimate.usage,
+      quota: estimate.quota,
+      percentageUsed
+    }
+  }
+}
+
+async function cleanupOldCaches() {
+  const keys = await caches.keys();
+
+  return Promise.all(
+    keys.map(key => {
+      if (key !== CACHE_NAME) {
+        console.log(`🗑️ SW: Usuwanie starego cache: ${key}`);
+        return caches.delete(key);
+      }
+    })
+  );
+}
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close(); 
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((clientList) => {
+      if (clientList.length > 0) return clientList[0].focus();
+      return clients.openWindow('/');
     })
   );
 });
