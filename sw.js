@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -75,16 +75,9 @@ self.addEventListener("fetch", (event) => {
   // CACHE ONLY: Manifest
   if (path.endsWith('manifest.webmanifest')) {
     event.respondWith(
-      caches.match(request).then((response) => {
-        // Zabezpieczenie: jeśli manifestu nie ma w cache, pobierz go raz
-        return response || fetch(request).then(netRes => {
-          const clone = netRes.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-          return netRes;
-        });
-      })
+      caches.match(request).then((response) => response || fetch(request))
     );
-    return;
+    return; 
   }
   /*Cache only
   if (APP_ASSETS.some(asset => event.request.url.includes(asset.replace('./', '')))) {
@@ -107,6 +100,25 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  //NETWORK FIRST: Motivational Quotes API 
+  if (url.hostname.includes('api.quotable.io')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(request);
+          return cached || new Response(JSON.stringify({ content: "Hero, stay disciplined!", author: "Habit Hero" }), {
+            headers: { 'Content-Type': 'application/json' }
+          });
+        })
+    );
+    return;
+  }
+
   // STALE WHILE REVALIDATE: pages, app.js
   event.respondWith(
     // jak jest w cache, to pokazujemy i w trakcie równolegle ..
@@ -125,26 +137,9 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => cached);
-
       return cached || networkFetch;
     })
   );
-
-  //NETWORK FIRST: Motivational Quotes API 
-  if (url.hostname.includes('api.quotable.io')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => {
-          return caches.match(request);
-        })
-    );
-    return;
-  }
 });
 
 
