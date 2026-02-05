@@ -1,13 +1,14 @@
 #offline-banner {
   display: none; 
   position: relative;
-  width: 100%;
-  background: #ff4f4f;
+  width: 80%;
+  border-radius: 16px;
   color: #fff;
+  align-self: center;
   text-align: center;
   font-weight: 500;
-  font-size: 15px;
-  padding: 10px 0;
+  font-size: 12px;
+  padding: 16px 0;
   z-index: 9999;
   transition: all 0.3s ease;
 }
@@ -22,14 +23,9 @@ body.offline main,
 body.offline header,
 body.offline section {
   transition: margin-top 0.3s ease;
-  margin-top: 42px; /* wysokość paska */
+  margin-top: 0px; /* wysokość paska */
 }
-.helper320 {
-  background-color: #ff4f4f;
-  height: 8px;
-  width: 320px;
-  align-self: center;
-}
+
 /* BODY */ /* ------------------------------------------------------------------------ */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -245,6 +241,13 @@ body {
 }
 
 /* TASKS */ /* ------------------------------------------------------------------------ */
+#quote-container {
+  padding: 14px; 
+  font-style: italic;
+  color: #555; 
+  text-align: center;
+}
+
 #taskDateTitle {
   padding-top: 4vh;
   padding-left: 4vw;

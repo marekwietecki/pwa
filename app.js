@@ -76,6 +76,36 @@ const LocationService = {
   }
 };
 /*
+  LOGIC: Motivational Quotes
+*/
+async function fetchDailyQuote() {
+  const quoteText = document.getElementById('quote-text');
+  const quoteAuthor = document.getElementById('quote-author');
+  
+  const fallbackQuote = "Hero, your discipline is your biggest strength.";
+  const fallbackAuthor = "— Habit Hero Team";
+
+  const API_URL = "https://api.quotable.io/random?tags=motivational";
+
+  try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error("Network issues");
+      
+      const data = await response.json();
+      
+      quoteText.textContent = `"${data.content}"`;
+      quoteAuthor.textContent = `— ${data.author}`;
+      
+  } catch (error) {
+      console.log("Offline/Error mode: Using fallback quote.");
+      
+      quoteText.textContent = fallbackQuote;
+      quoteAuthor.textContent = fallbackAuthor;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchDailyQuote);
+/*
   Offline Mode  ////////////////////////////////////////////////////////////////////
 */
 
@@ -83,7 +113,7 @@ const LocationService = {
 if (!document.getElementById("offline-banner")) {
   const banner = document.createElement("div");
   banner.id = "offline-banner";
-  banner.textContent = "Brak połączenia z internetem";
+  banner.textContent = "Brak połączenia z internetem. Aplikacja działa w trybie offline!";
   document.body.prepend(banner);
 }
 

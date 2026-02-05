@@ -107,7 +107,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  //stale while revalidate
+  // STALE WHILE REVALIDATE: pages, app.js
   event.respondWith(
     // jak jest w cache, to pokazujemy i w trakcie równolegle ..
     // .. szukamy w sieci nowszej wersji i jak jest to następnym razem podmianka
@@ -129,10 +129,22 @@ self.addEventListener("fetch", (event) => {
       return cached || networkFetch;
     })
   );
-  //NETWORK FIRST 
 
-  //NETWORK ONLY
-
+  //NETWORK FIRST: Motivational Quotes API 
+  if (url.hostname.includes('api.quotable.io')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => {
+          return caches.match(request);
+        })
+    );
+    return;
+  }
 });
 
 
