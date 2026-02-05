@@ -37,8 +37,8 @@ self.addEventListener("install", (event) => {
       .then(() => {
         console.log('🏁 INSTALL: Instalacja zakończona');
       })
-      .catch(() => {
-        console.log('❌ INSTALL: Błąd podczas cacheowania:', error);
+      .catch((err) => {
+        console.log('❌ INSTALL: Błąd podczas cacheowania:', err);
       })
   );
 });
@@ -69,17 +69,43 @@ self.addEventListener("fetch", (event) => {
   // przy wysylaniu po odzyskaniu sieci lub offline editing notatek np.
   if (request.method !== "GET") return;
 
-  //Cache only
+  const url = new URL(request.url);
+  const path = url.pathname;
+
+  // CACHE ONLY: Manifest
+  if (path.endsWith('manifest.webmanifest')) {
+    event.respondWith(
+      caches.match(request).then((response) => {
+        // Zabezpieczenie: jeśli manifestu nie ma w cache, pobierz go raz
+        return response || fetch(request).then(netRes => {
+          const clone = netRes.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          return netRes;
+        });
+      })
+    );
+    return;
+  }
+  /*Cache only
   if (APP_ASSETS.some(asset => event.request.url.includes(asset.replace('./', '')))) {
     event.respondWith(caches.match(event.request));
     return
   }
+  */
 
-  //Network first 
-
-  //cache first
-
-  //network only
+  //CACHE FIRST: css, assets
+  if (path.endsWith('.css') || path.includes('/assets/')) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        return cached || fetch(request).then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        });
+      })
+    );
+    return;
+  }
 
   //stale while revalidate
   event.respondWith(
@@ -103,7 +129,13 @@ self.addEventListener("fetch", (event) => {
       return cached || networkFetch;
     })
   );
+  //NETWORK FIRST 
+
+  //NETWORK ONLY
+  
 });
+
+
 
 
 async function checkStorageQuota() {

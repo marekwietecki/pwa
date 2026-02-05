@@ -1,73 +1,4 @@
 /*
-  Offline Mode  ////////////////////////////////////////////////////////////////////
-*/
-
-// Tworzymy pasek, jeśli go nie ma
-if (!document.getElementById("offline-banner")) {
-  const banner = document.createElement("div");
-  banner.id = "offline-banner";
-  banner.textContent = "Brak połączenia z internetem";
-  document.body.prepend(banner);
-}
-
-// Obsługa zmian stanu sieci
-window.addEventListener("online", () => {
-  document.body.classList.remove("offline");
-});
-
-window.addEventListener("offline", () => {
-  document.body.classList.add("offline");
-});
-
-// Jeśli użytkownik startuje już bez neta
-if (!navigator.onLine) {
-  document.body.classList.add("offline");
-}
-
-/* 
-  notifications ////////////////////////////////////////////////////////////////////////
-*/
-const NotificationService = {
-  async init() {
-    if (!("Notification" in window)) {
-      console.warn("Ta przeglądarka nie obsługuje powiadomień.");
-      return;
-    }
-
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        await this.sendNotification("Habit Hero", "Powiadomienia aktywne! 🦸‍♂️");
-      }
-    } catch (err) {
-      console.error("Błąd podczas prośby o zgodę:", err);
-    }
-  },
-
-  async sendNotification(title, message) {
-    if (!('serviceWorker' in navigator)) {
-       new Notification(title, { body: message, icon: "./assets/192x192.png" });
-       return;
-    }
-
-    const registration = await navigator.serviceWorker.ready;
-    await registration.showNotification(title, {
-      body: message,
-      icon: "./assets/192x192.png",
-      badge: "./assets/192x192.png",
-      vibrate: [200, 100, 200], 
-      tag: "habit-hero-alert"    
-    });
-  }
-};
-
-const addTaskBtn = document.getElementById("addTaskBtn");
-if (addTaskBtn) {
-  addTaskBtn.addEventListener("click", () => {
-    NotificationService.init();
-  });
-}
-/*
   APP STATE & CONFIG  //////////////////////////////////////////////////////////////////
 */ 
 let date = new Date(); // actual month for calendar view
@@ -144,6 +75,74 @@ const LocationService = {
     return await res.json();
   }
 };
+/*
+  Offline Mode  ////////////////////////////////////////////////////////////////////
+*/
+
+// Tworzymy pasek, jeśli go nie ma
+if (!document.getElementById("offline-banner")) {
+  const banner = document.createElement("div");
+  banner.id = "offline-banner";
+  banner.textContent = "Brak połączenia z internetem";
+  document.body.prepend(banner);
+}
+
+// Obsługa zmian stanu sieci
+window.addEventListener("online", () => {
+  document.body.classList.remove("offline");
+});
+
+window.addEventListener("offline", () => {
+  document.body.classList.add("offline");
+});
+
+// Jeśli użytkownik startuje już bez neta
+if (!navigator.onLine) {
+  document.body.classList.add("offline");
+}
+/* 
+  notifications ////////////////////////////////////////////////////////////////////////
+*/
+const NotificationService = {
+  async init() {
+    if (!("Notification" in window)) {
+      console.warn("Ta przeglądarka nie obsługuje powiadomień.");
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        await this.sendNotification("Habit Hero", "Powiadomienia aktywne! 🦸‍♂️");
+      }
+    } catch (err) {
+      console.error("Błąd podczas prośby o zgodę:", err);
+    }
+  },
+
+  async sendNotification(title, message) {
+    if (!('serviceWorker' in navigator)) {
+       new Notification(title, { body: message, icon: "./assets/192x192.png" });
+       return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    await registration.showNotification(title, {
+      body: message,
+      icon: "./assets/192x192.png",
+      badge: "./assets/192x192.png",
+      vibrate: [200, 100, 200], 
+      tag: "habit-hero-alert"    
+    });
+  }
+};
+
+const addTaskBtn = document.getElementById("addTaskBtn");
+if (addTaskBtn) {
+  addTaskBtn.addEventListener("click", () => {
+    NotificationService.init();
+  });
+}
 /*
   1. FORMATTING & UTILS //////////////////////////////////////////////////////////////////
 */
