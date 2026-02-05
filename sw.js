@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v";
+const CACHE_VERSION = "v2";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -132,7 +132,7 @@ self.addEventListener("fetch", (event) => {
   //NETWORK FIRST 
 
   //NETWORK ONLY
-  
+
 });
 
 
