@@ -778,6 +778,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-appearance: none;
   padding: 10px 16px;
   border-radius: 24px;
+  height: 37.5px;
   align-items: center;
   color: #fff;
   width: 224px;

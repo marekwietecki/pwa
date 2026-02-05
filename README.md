@@ -48,7 +48,7 @@ The app leverages modern Web APIs to deliver an experience comparable to native 
 
 ---
 
-## 🌐 API & Data Strategies
+## 🌐 Caching Strategies
 
 A **Service Worker** is implemented to manage network traffic and provide robust **Offline Support**:
 
