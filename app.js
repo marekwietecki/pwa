@@ -88,7 +88,7 @@ async function fetchDailyQuote() {
   const fallbackQuote = "Hero, your discipline is your biggest strength.";
   const fallbackAuthor = "— Habit Hero Team";
 
-  const API_URL = "https://zenquotes.io/api/random";
+  const API_URL = "https://api.adviceslip.com/advice";
 
   try {
       const response = await fetch(API_URL);
@@ -96,8 +96,8 @@ async function fetchDailyQuote() {
       
       const data = await response.json();
       
-      quoteText.textContent = `"${data.content}"`;
-      quoteAuthor.textContent = `— ${data.author}`;
+      quoteText.textContent = `"${data.slip.advice}"`;
+      quoteAuthor.textContent = `— Daily Hero Advice`;
       
   } catch (error) {
       console.log("Offline/Error mode: Using fallback quote.");

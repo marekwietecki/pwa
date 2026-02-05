@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -101,7 +101,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   //NETWORK FIRST: Motivational Quotes API 
-  if (url.hostname.includes('api.quotable.io')) {
+  if (url.hostname.includes('api.adviceslip.com')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -111,7 +111,7 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(async () => {
           const cached = await caches.match(request);
-          return cached || new Response(JSON.stringify({ content: "Hero, stay disciplined!", author: "Habit Hero" }), {
+          return cached || new Response(JSON.stringify({ advice: "Hero, stay disciplined!" }), {
             headers: { 'Content-Type': 'application/json' }
           });
         })
