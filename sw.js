@@ -14,31 +14,34 @@ const APP_ASSETS = [
   "./assets/512x512.png",
 ];
 
-console.log('🔧 SW: Inicjalizacja - Cache Name:', CACHE_NAME);
-console.log('📦 SW: Zasoby do Cacheowania:', APP_ASSETS);
+console.log("🔧 SW: Inicjalizacja - Cache Name:", CACHE_NAME);
+console.log("📦 SW: Zasoby do Cacheowania:", APP_ASSETS);
 
 // nie ma widnow i this ale jest self czyli sw
 // to się odpali tylko raz przy instalacji nowego sw
 self.addEventListener("install", (event) => {
   event.waitUntil(
     // przeglądarka otwiera lub tworzy cache, jest to operacja atomowa
-    caches.open(CACHE_NAME)
+    caches
+      .open(CACHE_NAME)
       .then((cache) => {
-        console.log('✅ INSTALL: Cache otwarty pomyślnie');
-        console.log('📥 INSTALL: Dodawanie zasobów do cache...');
+        console.log("✅ INSTALL: Cache otwarty pomyślnie");
+        console.log("📥 INSTALL: Dodawanie zasobów do cache...");
         return cache.addAll(APP_ASSETS);
       })
       .then(() => {
-        console.log('✅ INSTALL: Wszystkie zasoby dodane do cache');
-        console.log('⚡️ INSTALL: Wywołanie skipWaiting() - natychmiastowa aktywacja');
+        console.log("✅ INSTALL: Wszystkie zasoby dodane do cache");
+        console.log(
+          "⚡️ INSTALL: Wywołanie skipWaiting() - natychmiastowa aktywacja"
+        );
         // to tylko do developmentu - jest też checkbox w dev toolsach
         return self.skipWaiting();
       })
       .then(() => {
-        console.log('🏁 INSTALL: Instalacja zakończona');
+        console.log("🏁 INSTALL: Instalacja zakończona");
       })
       .catch((err) => {
-        console.log('❌ INSTALL: Błąd podczas cacheowania:', err);
+        console.log("❌ INSTALL: Błąd podczas cacheowania:", err);
       })
   );
 });
@@ -55,7 +58,7 @@ self.addEventListener("activate", (event) => {
             .map((k) => caches.delete(k))
         )
       ),
-      checkStorageQuota(),
+    checkStorageQuota()
   );
   // development, bo claim może nam zepsuć działające strony ..
   // .. jak się mocno różnią sw między sobą
@@ -73,11 +76,11 @@ self.addEventListener("fetch", (event) => {
   const path = url.pathname;
 
   // CACHE ONLY: Manifest
-  if (path.endsWith('manifest.webmanifest')) {
+  if (path.endsWith("manifest.webmanifest")) {
     event.respondWith(
       caches.match(request).then((response) => response || fetch(request))
     );
-    return; 
+    return;
   }
   /*Cache only
   if (APP_ASSETS.some(asset => event.request.url.includes(asset.replace('./', '')))) {
@@ -87,21 +90,24 @@ self.addEventListener("fetch", (event) => {
   */
 
   //CACHE FIRST: css, assets
-  if (path.endsWith('.css') || path.includes('/assets/')) {
+  if (path.endsWith(".css") || path.includes("/assets/")) {
     event.respondWith(
       caches.match(request).then((cached) => {
-        return cached || fetch(request).then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return response;
-        });
+        return (
+          cached ||
+          fetch(request).then((response) => {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            return response;
+          })
+        );
       })
     );
     return;
   }
 
-  //NETWORK FIRST: Motivational Quotes API 
-  if (url.hostname.includes('api.adviceslip.com')) {
+  //NETWORK FIRST: Motivational Quotes API
+  if (url.hostname.includes("api.adviceslip.com")) {
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -111,9 +117,15 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(async () => {
           const cached = await caches.match(request);
-          return cached || new Response(JSON.stringify({ advice: "Hero, stay disciplined!" }), {
-            headers: { 'Content-Type': 'application/json' }
-          });
+          return (
+            cached ||
+            new Response(
+              JSON.stringify({ advice: "Hero, stay disciplined!" }),
+              {
+                headers: { "Content-Type": "application/json" },
+              }
+            )
+          );
         })
     );
     return;
@@ -142,31 +154,28 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-
-
-
 async function checkStorageQuota() {
-  if('storage' in navigator && 'estimate' in navigator.storage) {
+  if ("storage" in navigator && "estimate" in navigator.storage) {
     const estimate = await navigator.storage.estimate();
 
-    const usageInMb = (estimate.usage / (1024*1024)).toFixed(2);
-    const quotaInMb = (estimate.quota / (1024*1024)).toFixed(2);
+    const usageInMb = (estimate.usage / (1024 * 1024)).toFixed(2);
+    const quotaInMb = (estimate.quota / (1024 * 1024)).toFixed(2);
     const percentageUsed = ((estimate.usage / estimate.quota) * 100).toFixed(1);
 
     console.log(`Storage Używane: ${usageInMb} MB`);
     console.log(`Storage Dostępne: ${quotaInMb} MB`);
     console.log(`Procent Użycia: ${percentageUsed} %`);
 
-    if(percentageUsed > 80) {
-      console.warn('Storage quota > 80%')
-      await cleanupOldCaches()
+    if (percentageUsed > 80) {
+      console.warn("Storage quota > 80%");
+      await cleanupOldCaches();
     }
 
     return {
       usage: estimate.usage,
       quota: estimate.quota,
-      percentageUsed
-    }
+      percentageUsed,
+    };
   }
 }
 
@@ -174,7 +183,7 @@ async function cleanupOldCaches() {
   const keys = await caches.keys();
 
   return Promise.all(
-    keys.map(key => {
+    keys.map((key) => {
       if (key !== CACHE_NAME) {
         console.log(`🗑️ SW: Usuwanie starego cache: ${key}`);
         return caches.delete(key);
@@ -183,13 +192,13 @@ async function cleanupOldCaches() {
   );
 }
 
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close(); 
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
 
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((clientList) => {
+    clients.matchAll({ type: "window" }).then((clientList) => {
       if (clientList.length > 0) return clientList[0].focus();
-      return clients.openWindow('/');
+      return clients.openWindow("/");
     })
   );
 });

@@ -1,5 +1,5 @@
 #offline-banner {
-  display: none; 
+  display: none;
   position: relative;
   width: 80%;
   border-radius: 16px;
@@ -27,10 +27,13 @@ body.offline section {
 }
 
 /* BODY */ /* ------------------------------------------------------------------------ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   overflow: hidden;
@@ -60,11 +63,11 @@ body {
   padding-left: 8vw;
   padding-right: 8vw;
   background: rgba(255, 255, 255, 0.05); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.2); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 
 .tabNav {
@@ -128,11 +131,11 @@ body {
   height: 40px;
   /* liquid glass effect */
   background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 .monthArrow {
   border-radius: 50px;
@@ -144,19 +147,19 @@ body {
 
   /* liquid glass effect */
   background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.2s ease;             /* płynne przejście */
+  transition: all 0.2s ease; /* płynne przejście */
 }
 .monthArrow:hover {
   opacity: 72%;
 }
 .calendar-grid-wrapper {
   max-width: 560px;
-  margin: 0 auto; 
-  display: block; 
+  margin: 0 auto;
+  display: block;
   text-align: center;
 }
 .calendar-grid {
@@ -204,9 +207,9 @@ body {
 
 .day-goal-wrapper {
   position: absolute;
-  bottom: 3px; 
+  bottom: 3px;
   left: 50%;
-  transform: translateX(-50%); 
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
 }
@@ -223,13 +226,19 @@ body {
 .emptyListMessage {
   text-align: center;
   font-size: 1.1rem;
-  color: #888; 
+  color: #888;
   animation: fadeInCenter 0.4s ease-out;
 }
 
 @keyframes fadeInCenter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #emptyListMessageWrapper {
@@ -237,14 +246,14 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 32px 16px;    
+  padding: 32px 16px;
 }
 
 /* TASKS */ /* ------------------------------------------------------------------------ */
 #quote-container {
-  padding: 14px; 
+  padding: 14px;
   font-style: italic;
-  color: #555; 
+  color: #555;
   text-align: center;
 }
 
@@ -256,7 +265,7 @@ body {
 }
 .toDo {
   display: flex;
-  flex: 1 1 0; 
+  flex: 1 1 0;
   flex-direction: column;
   align-self: center;
   min-height: 0;
@@ -264,8 +273,8 @@ body {
   width: 740px;
 }
 .toDoListWrapper {
-  flex: 1 1 0;      
-  min-height: 0;     
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
   margin-top: 8px;
 }
@@ -280,11 +289,11 @@ body {
   margin-top: 0;
 }
 
-#goalsList { 
-  list-style-type: none;      
-  padding-inline-start: 0;   
-  padding: 0;                
-  margin: 0;                 
+#goalsList {
+  list-style-type: none;
+  padding-inline-start: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .taskItem {
@@ -302,8 +311,8 @@ body {
   flex-direction: row;
   transition: transform 0.25s ease, opacity 0.25s ease;
   background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
 }
@@ -312,7 +321,7 @@ body {
   text-decoration: line-through;
 }
 .taskItem.is-completed {
-  opacity: 0.5 !important; 
+  opacity: 0.5 !important;
   transition: all 0.3s ease;
 }
 
@@ -322,15 +331,14 @@ body {
 }
 
 .taskItem.is-completed .taskCheckbox {
-  accent-color: #3DADFF;
+  accent-color: #3dadff;
 }
-
 
 .taskLabel {
   font-size: 14px;
   font-weight: 600;
-  white-space: nowrap; 
-  overflow: hidden; 
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
@@ -357,14 +365,14 @@ body {
 }
 .rowWrapper {
   display: flex;
-  align-items: center; 
+  align-items: center;
   gap: 8px;
 }
 .taskMetaWrapper {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   font-size: 10px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
 }
 .taskLocation {
   display: inline-flex;
@@ -392,13 +400,14 @@ body {
   margin-left: 20px;
 }
 
-.moreBtn, .deleteTaskBtn {
-  background: transparent; 
+.moreBtn,
+.deleteTaskBtn {
+  background: transparent;
   color: #fff;
-  border: none;             
-  padding: 8px;             
-  cursor: pointer;          
-  outline: none;            
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  outline: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,13 +416,13 @@ body {
 
 .show-delete .moreBtn {
   color: #ff4e4e;
-  background: transparent; 
+  background: transparent;
 }
 
 .deleteTaskBtn {
-  display: none; 
+  display: none;
   animation: fadeIn 0.2s ease forwards;
-  background-color: rgba(255, 255, 255, 0)000;
+  background-color: rgba(255, 255, 255, 0) 000;
 }
 
 .show-delete .deleteTaskBtn {
@@ -421,8 +430,14 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateX(5px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .progress-ring-container {
@@ -452,23 +467,23 @@ body {
 
 /* Light Scrollbar Chrome, Safari, Edge */
 .taskListWrapper::-webkit-scrollbar {
-  width: 8px; 
+  width: 8px;
 }
 .taskListWrapper::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05); 
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
 }
 .taskListWrapper::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.6); 
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 4px;
 }
 .taskListWrapper::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.8); 
+  background: rgba(255, 255, 255, 0.8);
 }
 /* Firefox */
 .taskListWrapper {
-  scrollbar-width: thin; 
-  scrollbar-color: rgba(255, 255, 255, 0.6) rgba(255, 255, 255, 0.05); 
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.6) rgba(255, 255, 255, 0.05);
 }
 
 .addTaskBtn {
@@ -482,11 +497,11 @@ body {
   cursor: pointer;
   color: rgb(255, 255, 255);
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 .addTaskBtn:hover {
   opacity: 72%;
@@ -505,17 +520,15 @@ body {
 }
 
 .edit-inline-btn:hover {
-  opacity: 72%;;
+  opacity: 72%;
 }
 
-
-
-/* MODAL */  /* ------------------------------------------------------------------------ */
+/* MODAL */ /* ------------------------------------------------------------------------ */
 /* Tło */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   opacity: 0;
   pointer-events: none;
   transition: 0.3s ease;
@@ -524,25 +537,27 @@ body {
 .modal-sheet {
   position: absolute;
   bottom: 0;
-  left: 0; right: 0; margin: 0 auto;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   transform: translate(-50%, 100%);
-  background: rgba(30,30,30,0.95);
+  background: rgba(30, 30, 30, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px 20px 0 0;
   padding: 20px 32px;
   transform: translateY(100%);
-  transition: 0.35s cubic-bezier(.4,0,.2,1);
+  transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   height: auto;
   max-width: 660px;
   align-self: center;
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(12px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
   gap: 12px;
 }
 .modal-header {
@@ -560,11 +575,11 @@ body {
   height: 40px;
   border-radius: 100%;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
   cursor: pointer;
 }
 #closeModal:hover {
@@ -605,11 +620,11 @@ body {
   line-height: 16px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(12px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 .typePicker:hover {
   opacity: 72%;
@@ -644,22 +659,22 @@ body {
   font-weight: 600;
   width: 184px; /* 32% */
 
-  white-space: nowrap;      /* hidden text in one line*/
-  overflow: hidden;         
+  white-space: nowrap; /* hidden text in one line*/
+  overflow: hidden;
   text-overflow: ellipsis;
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 #taskName:focus {
   text-overflow: clip;
 }
-#taskName::placeholder { 
-  color: rgba(255, 255, 255, 0.56); 
+#taskName::placeholder {
+  color: rgba(255, 255, 255, 0.56);
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -680,13 +695,13 @@ body {
   width: 224px;
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(12px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
-  
-  padding-right: 40px; 
+  transition: all 0.3s ease; /* płynne przejście */
+
+  padding-right: 40px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
@@ -703,18 +718,18 @@ body {
 }
 
 #daysPicker label {
-  width: 40px;               
-  height: 40px;              
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;        
-  
+  border-radius: 50%;
+
   color: white;
-  font-size: 11px;           
+  font-size: 11px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -729,7 +744,7 @@ body {
   background: #4caf50;
   border-color: #81c784;
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-  transform: scale(1.1);     /* Lekkie powiększenie zaznaczonego dnia */
+  transform: scale(1.1); /* Lekkie powiększenie zaznaczonego dnia */
 }
 
 #daysPicker label:hover {
@@ -756,7 +771,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: auto;
 }
 
-#taskDate, #goalDeadline {
+#taskDate,
+#goalDeadline {
   position: relative;
   appearance: none;
   -webkit-appearance: none;
@@ -766,32 +782,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #fff;
   width: 224px;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>');
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
 }
-#taskDate::-webkit-datetime-edit-fields-wrapper { 
-  color: rgba(255, 255, 255, 0.64); 
-} 
-#taskDate::-webkit-datetime-edit-text { 
-  color: rgba(255, 255, 255, 0.64); 
-} 
-#taskDate::-webkit-datetime-edit-month-field, 
-#taskDate::-webkit-datetime-edit-day-field, 
-#taskDate::-webkit-datetime-edit-year-field { 
-  color: rgba(255, 255, 255, 0.64); 
-} 
-#taskDate:focus::-webkit-datetime-edit-month-field, 
-#taskDate:focus::-webkit-datetime-edit-day-field, 
-#taskDate:focus::-webkit-datetime-edit-year-field { 
-  color: #fff; /* po wpisaniu/wybraniu daty */ 
+#taskDate::-webkit-datetime-edit-fields-wrapper {
+  color: rgba(255, 255, 255, 0.64);
+}
+#taskDate::-webkit-datetime-edit-text {
+  color: rgba(255, 255, 255, 0.64);
+}
+#taskDate::-webkit-datetime-edit-month-field,
+#taskDate::-webkit-datetime-edit-day-field,
+#taskDate::-webkit-datetime-edit-year-field {
+  color: rgba(255, 255, 255, 0.64);
+}
+#taskDate:focus::-webkit-datetime-edit-month-field,
+#taskDate:focus::-webkit-datetime-edit-day-field,
+#taskDate:focus::-webkit-datetime-edit-year-field {
+  color: #fff; /* po wpisaniu/wybraniu daty */
 }
 
 .month-selector-grid {
@@ -799,20 +815,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   background: rgba(255, 255, 255, 0.05);
-  max-height: 240px; 
+  max-height: 240px;
   padding: 10px;
   border-radius: 12px;
 }
 
-.month-selector-grid label, .day-selector-grid label {
+.month-selector-grid label,
+.day-selector-grid label {
   cursor: pointer;
 }
 
-.month-selector-grid input, .day-selector-grid input {
+.month-selector-grid input,
+.day-selector-grid input {
   display: none; /* hiding default checkbox */
 }
 
-.month-selector-grid span, .day-selector-grid span {
+.month-selector-grid span,
+.day-selector-grid span {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -823,7 +842,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: 0.2s;
 }
 
-.month-selector-grid input:checked + span, 
+.month-selector-grid input:checked + span,
 .day-selector-grid input:checked + span {
   background: #4caf50;
   color: white;
@@ -859,28 +878,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #habitIcon {
-  height: 40px; 
+  height: 40px;
   width: 64px;
-  padding: 0;           
-  text-align: center;   
-  display: flex;        
+  padding: 0;
+  text-align: center;
+  display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 40px;    
-  font-size: 16px;      
+  line-height: 40px;
+  font-size: 16px;
   color: #fff;
   border-radius: 24px;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
-#habitIcon::placeholder { 
-  color: rgba(255, 255, 255, 0.56); 
+#habitIcon::placeholder {
+  color: rgba(255, 255, 255, 0.56);
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -900,24 +919,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   appearance: none;
   width: 224px; /* 40% */
 
-  white-space: nowrap;      /* hidden text in one line*/
-  overflow: hidden;         
+  white-space: nowrap; /* hidden text in one line*/
+  overflow: hidden;
   text-overflow: ellipsis;
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(12px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(12px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
-  
-  padding-right: 40px; 
+  transition: all 0.3s ease; /* płynne przejście */
+
+  padding-right: 40px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
 }
 
-.descriptionSection, .linkHabitSection, .deadlineSection {
+.descriptionSection,
+.linkHabitSection,
+.deadlineSection {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -925,29 +946,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .deadlinePlusLinkHabit {
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   justify-content: space-between;
   gap: 12px;
 }
 
 #descriptionInput {
-  resize: vertical;    /* allows to only spread vertically */
-  min-height: 88px;    
-  max-height: 240px;   
+  resize: vertical; /* allows to only spread vertically */
+  min-height: 88px;
+  max-height: 240px;
   width: 100%;
   color: #fff;
   padding: 10px 16px;
   padding-bottom: 48px;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 #descriptionInput::placeholder {
-  color: rgba(255, 255, 255, 0.56); 
+  color: rgba(255, 255, 255, 0.56);
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -975,22 +996,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 24px;
   width: 224px;
 
-  white-space: nowrap;      /* hidden text in one line*/
-  overflow: hidden;         
+  white-space: nowrap; /* hidden text in one line*/
+  overflow: hidden;
   text-overflow: ellipsis;
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 #locationInput:focus {
   text-overflow: clip; /* when focus user is able to scroll */
 }
 #locationInput::placeholder {
-  color: rgba(255, 255, 255, 0.56); 
+  color: rgba(255, 255, 255, 0.56);
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -1000,16 +1021,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   justify-content: center;
   align-items: center;
 }
-#searchLocation, #useMyLocation {
-  width: 40px;  
-  height: 40px; 
-  padding: 0;   
-  
+#searchLocation,
+#useMyLocation {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%; 
+  border-radius: 50%;
   cursor: pointer;
   color: #fff;
   background: rgba(255, 255, 255, 0.2);
@@ -1023,7 +1045,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 72%;
 }
 #useMyLocation::placeholder {
-  color: rgba(255, 255, 255, 0.56); 
+  color: rgba(255, 255, 255, 0.56);
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
   font-weight: 400;
 }
@@ -1033,8 +1055,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Animacja obracania */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading svg {
@@ -1051,7 +1077,6 @@ button:disabled {
   color: #fff;
   line-height: 16px;
 }
-
 
 input.success {
   border: 1px solid #4caf50;
@@ -1079,7 +1104,7 @@ input.error {
   scroll-snap-type: x mandatory;
   max-width: 600px;
   align-items: center;
-  justify-content: safe center;  
+  justify-content: safe center;
   margin: 0 auto;
 }
 
@@ -1100,19 +1125,19 @@ input.error {
   text-align: center;
   text-wrap: wrap;
   max-width: 136px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   scroll-snap-align: start;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent; 
+  border: 2px solid transparent;
   gap: 8px;
 }
 
 .habit-card-icon.active-habit-icon {
-  background: rgb(80, 80, 80); 
-  border-color: #fff;      
-  transform: translateY(-2px); 
-  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+  background: rgb(80, 80, 80);
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .habit-card-icon {
@@ -1125,11 +1150,11 @@ input.error {
   background: rgb(67, 67, 67);
 
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 2px solid rgba(255, 255, 255, 0.1); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 
 .habit-name-label {
@@ -1170,12 +1195,12 @@ input.error {
   cursor: pointer;
   border: none;
   color: #fff;
-  padding: 4px 4px 4px 0; 
-  display: flex; 
+  padding: 4px 4px 4px 0;
+  display: flex;
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s;
-  line-height: 0; 
+  line-height: 0;
   gap: 4px;
 }
 .editHabitDetail:hover {
@@ -1201,22 +1226,21 @@ input.error {
 
 .stat-label {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.64); 
-
+  color: rgba(255, 255, 255, 0.64);
 }
 .stat-data {
   font-size: 14px;
 }
 
-.month-stats-row{
-  display: flex; 
+.month-stats-row {
+  display: flex;
   flex-direction: row;
-  justify-content: space-between; 
-  margin-top: 20px; 
+  justify-content: space-between;
+  margin-top: 20px;
   font-size: 13px;
   max-width: 264px;
   width: 100%;
-} 
+}
 
 .stats-grid {
   max-width: 480px;
@@ -1229,7 +1253,7 @@ input.error {
 .habit-percentage-label {
   font-size: 14px;
   font-weight: bold;
-  color: #614caf; 
+  color: #614caf;
   margin-top: 5px;
 }
 
@@ -1247,14 +1271,14 @@ input.error {
 }
 
 .progress-value {
-  display: flex;         
-  flex-direction: row;   
-  align-items: center;   
-  justify-content: flex-start; 
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
   gap: 8px;
   font-size: 24px;
   font-weight: bold;
-  color: #3DADFF;
+  color: #3dadff;
 }
 
 .streak-value {
@@ -1264,7 +1288,7 @@ input.error {
   justify-content: flex-start;
   font-size: 24px;
   font-weight: bold;
-  color: #F0512D;
+  color: #f0512d;
 }
 
 .xp-value {
@@ -1276,7 +1300,6 @@ input.error {
   font-weight: bold;
   color: #2df047;
 }
-
 
 .detailFireIcon {
   height: 32px;
@@ -1290,29 +1313,28 @@ input.error {
 
 .activity-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); 
+  grid-template-columns: repeat(7, 1fr);
   gap: 4px;
   text-align: center;
   font-size: 0.7rem;
   align-self: center;
   width: 100%;
-  max-width: 300px;        
+  max-width: 300px;
   margin: 0 auto;
   margin-top: 4px;
 }
 
-
 .activity-day-labels {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;              
+  gap: 4px;
   text-align: center;
   font-size: 11px;
   font-weight: bold;
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 auto 8px auto; 
+  margin: 0 auto 8px auto;
   width: 100%;
-  max-width: 300px;      
+  max-width: 300px;
 }
 
 .activity-day-labels div {
@@ -1323,23 +1345,23 @@ input.error {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;    
-  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.5);
   width: 32px;
   height: 32px;
   font-size: 12px;
-  margin: 0 auto;        
+  margin: 0 auto;
 }
 
 .mini-day.habit-done {
-  background: #3DADFF; 
+  background: #3dadff;
   color: white;
   font-weight: bold;
 }
 
 .mini-day.inactive {
-  opacity: 0.2; 
+  opacity: 0.2;
 }
 
 .mini-day-label {
@@ -1370,14 +1392,14 @@ input.error {
   height: 40px;
   /* liquid glass effect */
   background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.3s ease;             /* płynne przejście */
+  transition: all 0.3s ease; /* płynne przejście */
 }
 
-.mini-cal-nav button{
+.mini-cal-nav button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1390,16 +1412,15 @@ input.error {
 
   /* liquid glass effect */
   background: rgba(255, 255, 255, 0.02); /* półprzezroczyste */
-  backdrop-filter: blur(8px);           /* efekt rozmycia tła */
-  -webkit-backdrop-filter: blur(8px);   /* dla Safari */
+  backdrop-filter: blur(8px); /* efekt rozmycia tła */
+  -webkit-backdrop-filter: blur(8px); /* dla Safari */
   border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
-  transition: all 0.2s ease;             /* płynne przejście */
+  transition: all 0.2s ease; /* płynne przejście */
 }
 .mini-cal-nav button:hover {
   opacity: 72%;
 }
-
 
 /* HERO */ /* ------------------------------------------------------------------------ */
 
@@ -1416,12 +1437,12 @@ input.error {
 }
 
 :root {
-  --hero-gradient: linear-gradient(90deg, #AD22B6, #FF00FF);
+  --hero-gradient: linear-gradient(90deg, #ad22b6, #ff00ff);
 }
 
 #xp-progress-bar {
   height: 100%;
-  width: 0%; 
+  width: 0%;
   background: var(--hero-gradient);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1435,7 +1456,8 @@ input.error {
   gap: 8px;
 }
 
-button, h3 {
+button,
+h3 {
   margin: 0;
   padding: 0;
 }
@@ -1463,7 +1485,7 @@ button, h3 {
 
 #userNameInput {
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--accent-color, #AD22B6);
+  border: 1px solid var(--accent-color, #ad22b6);
   color: white;
   font-size: 1.17em; /* Taka sama wielkość jak H3 */
   font-weight: bold;
@@ -1491,7 +1513,7 @@ button, h3 {
   align-items: center;
   justify-content: flex-start;
   transition: opacity 0.2s;
-  line-height: 24px; 
+  line-height: 24px;
   gap: 4px;
 }
 
@@ -1522,7 +1544,7 @@ button, h3 {
   width: 200px;
   border-radius: 12px;
   background-color: rgb(87, 87, 87);
-  overflow: hidden; 
+  overflow: hidden;
   position: relative;
 }
 
@@ -1560,7 +1582,7 @@ button, h3 {
   width: 10px !important;
   height: 10px !important;
   display: inline-block;
-  vertical-align: middle; 
+  vertical-align: middle;
   margin-right: 4px;
 }
 
@@ -1610,14 +1632,13 @@ button, h3 {
   }
   .addTaskBtn {
     bottom: 16px;
-    right: 16px;  
+    right: 16px;
   }
-  
 }
 
 @media (max-width: 560px) {
   .deadlinePlusLinkHabit {
-    flex-direction: column; 
+    flex-direction: column;
   }
   .userStats {
     flex-direction: column;

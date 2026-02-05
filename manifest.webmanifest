@@ -1,26 +1,26 @@
 {
-    "name": "Habit Hero",
-    "short_name": "Habit Hero",
-    "description": "Improve your everyday life. Grow your habits and build a foundation of experience for your future self.",
-    "lang": "en",
-    "start_url": "./index.html",
-    "scope": "./",
-    "display": "standalone",
-    "background_color": "#11121C",
-    "theme_color": "#AD22B6",
-    "orientation": "portrait",
-    "icons": [
-        {
-            "src": "assets/192x192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "assets/512x512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any"
-        }
-    ]
+  "name": "Habit Hero",
+  "short_name": "Habit Hero",
+  "description": "Improve your everyday life. Grow your habits and build a foundation of experience for your future self.",
+  "lang": "en",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#11121C",
+  "theme_color": "#AD22B6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }

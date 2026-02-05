@@ -2,8 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Build life-changing habits and maintain your streaks. Visualize your progress with detailed activity grids and real-time completion statistics.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>Habits - Habit Hero</title>
+    <meta
+      name="description"
+      content="Build life-changing habits and maintain your streaks. Visualize your progress with detailed activity grids and real-time completion statistics."
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Habits - Habit Hero</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="manifest" href="./manifest.webmanifest" />
   </head>
@@ -12,22 +19,23 @@
       <h1 class="logo">Habit Hero</h1>
       <nav class="tabNav">
         <a href="/index.html" class="tabNavItem">
-          <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="2" 
-          stroke-linecap="round" 
-          stroke-linejoin="round" 
-          class="lucide lucide-list-todo-icon lucide-list-todo">
-          <path d="M13 5h8"/>
-          <path d="M13 12h8"/>
-            <path d="M13 19h8"/>
-            <path d="m3 17 2 2 4-4"/>
-            <rect x="3" y="4" width="6" height="6" rx="1"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-list-todo-icon lucide-list-todo"
+          >
+            <path d="M13 5h8" />
+            <path d="M13 12h8" />
+            <path d="M13 19h8" />
+            <path d="m3 17 2 2 4-4" />
+            <rect x="3" y="4" width="6" height="6" rx="1" />
           </svg>
           Today
         </a>
@@ -78,28 +86,29 @@
           Habits
         </a>
         <a href="/hero.html" class="tabNavItem">
-          <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="2" 
-          stroke-linecap="round" 
-          stroke-linejoin="round" 
-          class="lucide lucide-user-icon lucide-user">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-user-icon lucide-user"
+          >
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
           </svg>
           Hero
         </a>
       </nav>
     </header>
 
-  <!-- <div class="helper320"></div> -->
+    <!-- <div class="helper320"></div> -->
 
-<!--
+    <!--
       <svg 
           fill="none" 
           height="70" 
@@ -124,32 +133,52 @@
           </g>
         </svg>
         -->
-  
+
     <!-- HABITS -->
-    <section class="habitStats"> <!-- hero-stats -->
-      <div class="habit-carousel" id="habitCarousel">
-      </div>
-    
-      <div id="habitDetails" class="habit-details-card" style="display:none;">
+    <section class="habitStats">
+      <!-- hero-stats -->
+      <div class="habit-carousel" id="habitCarousel"></div>
+
+      <div id="habitDetails" class="habit-details-card" style="display: none">
         <div class="stats-grid">
           <h2 id="detailHabitName">Pick habit</h2>
           <div class="crucialHabitStats">
             <div class="stat-item">
               <div class="streak-value">
                 <div class="detailFireIcon">
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6 18.1574C6 23.5933 10.701 28 16.5 28C22.299 28 27 23.5933 27 18.1574C27 12.0643 22.7721 7.41311 19.125 4C17.8059 4.92661 16.7558 6.25 15.9748 7.97017C15.1939 9.69034 14.6975 11.7601 14.4858 14.1795C13.4572 13.9806 12.5569 13.4997 11.7849 12.7368C11.0129 11.974 10.2528 10.8655 9.50462 9.41123C7.57472 12.1382 6 15.2532 6 18.1574Z" stroke="#F0512D" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M21.8166 18.6526C21.4944 20.7518 19.8758 22.3986 17.8125 22.7263" stroke="#F0512D" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M6 18.1574C6 23.5933 10.701 28 16.5 28C22.299 28 27 23.5933 27 18.1574C27 12.0643 22.7721 7.41311 19.125 4C17.8059 4.92661 16.7558 6.25 15.9748 7.97017C15.1939 9.69034 14.6975 11.7601 14.4858 14.1795C13.4572 13.9806 12.5569 13.4997 11.7849 12.7368C11.0129 11.974 10.2528 10.8655 9.50462 9.41123C7.57472 12.1382 6 15.2532 6 18.1574Z"
+                      stroke="#F0512D"
+                      stroke-width="2.66667"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21.8166 18.6526C21.4944 20.7518 19.8758 22.3986 17.8125 22.7263"
+                      stroke="#F0512D"
+                      stroke-width="2.66667"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </svg>
                 </div>
-                <span id="detailStreak">0 times</span> 
+                <span id="detailStreak">0 times</span>
               </div>
               <span class="stat-label">Current Streak</span>
             </div>
             <div class="stat-item">
-              <div class="progress-value">            
+              <div class="progress-value">
                 <div id="detailProgressCircle"></div>
-                <span id="completionPercent">0 %</span>          
+                <span id="completionPercent">0 %</span>
               </div>
               <span class="stat-label">Efectiveness</span>
             </div>
@@ -169,25 +198,61 @@
           <div class="stat-items-secondary">
             <div class="stat-item-secondary">
               <span class="stat-label">Frequency:</span>
-              <div style="display: flex; flex-direction: row; align-items: center;">
+              <div
+                style="display: flex; flex-direction: row; align-items: center"
+              >
                 <button id="editHabitFrequency" class="editHabitDetail">
-                  <span id="frequencyData" class="stat-data">0</span>          
-                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                  <span id="frequencyData" class="stat-data">0</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-pencil-icon lucide-pencil"
+                  >
+                    <path
+                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                    />
+                    <path d="m15 5 4 4" />
+                  </svg>
                 </button>
               </div>
             </div>
             <div class="stat-item-secondary">
               <span class="stat-label">Start Date:</span>
-              <div style="display: flex; flex-direction: row; align-items: center;">
+              <div
+                style="display: flex; flex-direction: row; align-items: center"
+              >
                 <button id="editHabitStartDate" class="editHabitDetail">
-                  <span id="startData" class="stat-data">0</span>          
-                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                  <span id="startData" class="stat-data">0</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-pencil-icon lucide-pencil"
+                  >
+                    <path
+                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                    />
+                    <path d="m15 5 4 4" />
+                  </svg>
                 </button>
               </div>
             </div>
           </div>
         </div>
-    
+
         <div class="activity-calendar">
           <!-- <h3>Last month</h3> -->
           <div class="activity-section">
@@ -197,25 +262,30 @@
                 <h4>Month Year</h4>
                 <button id="nextStatMonth">›</button>
               </div>
-              <div class="activity-day-labels">                
-                <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+              <div class="activity-day-labels">
+                <div>M</div>
+                <div>T</div>
+                <div>W</div>
+                <div>T</div>
+                <div>F</div>
+                <div>S</div>
+                <div>S</div>
               </div>
-              <div id="activityGrid" class="activity-grid">            
-              </div>
+              <div id="activityGrid" class="activity-grid"></div>
             </div>
 
             <div class="month-stats-row">
               <div class="stat-box">
-                  <span style="display: block; opacity: 0.6;">Best Streak</span>
-                  <strong id="monthBestStreak">0 days</strong>
+                <span style="display: block; opacity: 0.6">Best Streak</span>
+                <strong id="monthBestStreak">0 days</strong>
               </div>
               <div class="stat-box">
-                  <span style="display: block; opacity: 0.6;">Completion</span>
-                  <strong id="monthPercentage">0%</strong>
+                <span style="display: block; opacity: 0.6">Completion</span>
+                <strong id="monthPercentage">0%</strong>
               </div>
               <div class="stat-box">
-                  <span style="display: block; opacity: 0.6;">Done</span>
-                  <strong id="monthCount">0 / 0</strong>
+                <span style="display: block; opacity: 0.6">Done</span>
+                <strong id="monthCount">0 / 0</strong>
               </div>
             </div>
           </div>
@@ -223,118 +293,176 @@
       </div>
     </section>
 
-
     <!-- MODAL -->
-    <button id="addTaskBtn" class="addTaskBtn" aria-label="Add new task"> + </button>
+    <button id="addTaskBtn" class="addTaskBtn" aria-label="Add new task">
+      +
+    </button>
 
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-sheet">
-            <header class="modal-header">
-            <div class="typePickersWrapper">
-                <h3 id="modalTitle">New</h3>
-                <div class="typePickers">
-                    <button class="typePicker" data-type="task">Task</button>
-                    <button class="typePicker" data-type="habit">Habit</button>
-                    <button class="typePicker" data-type="goal">Goal</button>
-                </div>
+      <div class="modal-sheet">
+        <header class="modal-header">
+          <div class="typePickersWrapper">
+            <h3 id="modalTitle">New</h3>
+            <div class="typePickers">
+              <button class="typePicker" data-type="task">Task</button>
+              <button class="typePicker" data-type="habit">Habit</button>
+              <button class="typePicker" data-type="goal">Goal</button>
             </div>
-            <button id="closeModal" aria-label="Close modal">✕</button>
-            </header>
+          </div>
+          <button id="closeModal" aria-label="Close modal">✕</button>
+        </header>
 
-            <div id="modalMessageWrapper" style="display: none;">
-            <span id="modalMessage" class="modalMessage">message</span>
-            </div>
-    
-            <div class="nameSection">    
-            <label class="modalSubTitle" for="taskName">Name</label>
-            <input type="text" placeholder="Enter name" id="taskName" name="taskName" />
-            </div>
-
-            <div id="habitSection" style="display:none;">
-            <div id="habitIconWrapper" style="display: flex; flex-direction: column;">
-                <label class="modalSubTitle">Icon</label>
-                <input type="text" id="habitIcon" placeholder="★" name="habitIcon" maxlength="2" autocomplete="off" spellcheck="false"/>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label class="modalSubTitle">Frequency</label>
-                <select id="habitFrequency">
-                <option value="daily">Everyday</option>
-                <option value="weekly">Select days of the week</option>
-                <option value="monthly">Select days of the month</option>
-                </select>
-                
-                <div id="daysPicker" style="display:none;">
-                <label><input type="checkbox" name="habitDays" value="1"> MON </label>
-                <label><input type="checkbox" name="habitDays" value="2"> TUE </label>
-                <label><input type="checkbox" name="habitDays" value="3"> WED </label>
-                <label><input type="checkbox" name="habitDays" value="4"> THU </label>
-                <label><input type="checkbox" name="habitDays" value="5"> FRI </label>
-                <label><input type="checkbox" name="habitDays" value="6"> SAT </label>
-                <label><input type="checkbox" name="habitDays" value="0"> SUN </label>
-                </div>
-
-                <div id="monthlyDayPicker" style="display:none;">
-                <div id="monthDaysGrid" class="month-selector-grid">
-                </div>
-                </div>
-            </div>
-            </div>
-
-            <div id="goalSection" style="display:none;">
-            <div class="deadlinePlusLinkHabit">  
-                <div class="deadlineSection">
-                <label class="modalSubTitle">Deadline</label>
-                <input type="date" id="goalDeadline" name="goalDeadline"/>
-                </div>
-        
-                <div class="linkHabitSection">
-                <label class="modalSubTitle">Link Habit - make goal measurable</label>
-                <select id="goalHabitSelect" name="goalHabitSelect">
-                    <option value="">No linked habit</option>
-                </select>
-                </div>
-            </div>
-            <div class="descriptionSection">
-                <label class="modalSubTitle">Description</label>
-                <textarea id="descriptionInput" name="descriptionInput" placeholder="Any more details about your goal?"></textarea>
-            </div>
-            </div>
-            
-            <div id="dateSection">
-            <label class="modalSubTitle" for="taskDate">Date</label>
-            <input type="date" id="taskDate" name="taskDate"/>
-            </div>
-            <div class="locationSection" id="locationSection">
-            <label class="modalSubTitle">Location</label>
-            <div class="locationContentWrapper">  
-                <input
-                    type="text"
-                    id="locationInput"
-                    name="locationInput"
-                    placeholder="Enter location"
-                />
-                <button id="searchLocation" aria-label="Search location">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-search-check">
-                        <path d="m8 11 2 2 4-4"/>
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.3-4.3"/>
-                    </svg>
-                </button>
-                <button id="useMyLocation" aria-label="Use my current location">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-locate">
-                        <line x1="2" x2="5" y1="12" y2="12"/>
-                        <line x1="19" x2="22" y1="12" y2="12"/>
-                        <line x1="12" x2="12" y1="2" y2="5"/>
-                        <line x1="12" x2="12" y1="19" y2="22"/>
-                        <circle cx="12" cy="12" r="7"/>
-                    </svg>
-                    <!--Current Location-->
-                </button>
-            </div>
-            </div>
-
-            <button class="addTask" id="confirmAddBtn">Create</button>
+        <div id="modalMessageWrapper" style="display: none">
+          <span id="modalMessage" class="modalMessage">message</span>
         </div>
+
+        <div class="nameSection">
+          <label class="modalSubTitle" for="taskName">Name</label>
+          <input
+            type="text"
+            placeholder="Enter name"
+            id="taskName"
+            name="taskName"
+          />
+        </div>
+
+        <div id="habitSection" style="display: none">
+          <div
+            id="habitIconWrapper"
+            style="display: flex; flex-direction: column"
+          >
+            <label class="modalSubTitle">Icon</label>
+            <input
+              type="text"
+              id="habitIcon"
+              placeholder="★"
+              name="habitIcon"
+              maxlength="2"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <div style="display: flex; flex-direction: column">
+            <label class="modalSubTitle">Frequency</label>
+            <select id="habitFrequency">
+              <option value="daily">Everyday</option>
+              <option value="weekly">Select days of the week</option>
+              <option value="monthly">Select days of the month</option>
+            </select>
+
+            <div id="daysPicker" style="display: none">
+              <label
+                ><input type="checkbox" name="habitDays" value="1" /> MON
+              </label>
+              <label
+                ><input type="checkbox" name="habitDays" value="2" /> TUE
+              </label>
+              <label
+                ><input type="checkbox" name="habitDays" value="3" /> WED
+              </label>
+              <label
+                ><input type="checkbox" name="habitDays" value="4" /> THU
+              </label>
+              <label
+                ><input type="checkbox" name="habitDays" value="5" /> FRI
+              </label>
+              <label
+                ><input type="checkbox" name="habitDays" value="6" /> SAT
+              </label>
+              <label
+                ><input type="checkbox" name="habitDays" value="0" /> SUN
+              </label>
+            </div>
+
+            <div id="monthlyDayPicker" style="display: none">
+              <div id="monthDaysGrid" class="month-selector-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="goalSection" style="display: none">
+          <div class="deadlinePlusLinkHabit">
+            <div class="deadlineSection">
+              <label class="modalSubTitle">Deadline</label>
+              <input type="date" id="goalDeadline" name="goalDeadline" />
+            </div>
+
+            <div class="linkHabitSection">
+              <label class="modalSubTitle"
+                >Link Habit - make goal measurable</label
+              >
+              <select id="goalHabitSelect" name="goalHabitSelect">
+                <option value="">No linked habit</option>
+              </select>
+            </div>
+          </div>
+          <div class="descriptionSection">
+            <label class="modalSubTitle">Description</label>
+            <textarea
+              id="descriptionInput"
+              name="descriptionInput"
+              placeholder="Any more details about your goal?"
+            ></textarea>
+          </div>
+        </div>
+
+        <div id="dateSection">
+          <label class="modalSubTitle" for="taskDate">Date</label>
+          <input type="date" id="taskDate" name="taskDate" />
+        </div>
+        <div class="locationSection" id="locationSection">
+          <label class="modalSubTitle">Location</label>
+          <div class="locationContentWrapper">
+            <input
+              type="text"
+              id="locationInput"
+              name="locationInput"
+              placeholder="Enter location"
+            />
+            <button id="searchLocation" aria-label="Search location">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide-search-check"
+              >
+                <path d="m8 11 2 2 4-4" />
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </button>
+            <button id="useMyLocation" aria-label="Use my current location">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide-locate"
+              >
+                <line x1="2" x2="5" y1="12" y2="12" />
+                <line x1="19" x2="22" y1="12" y2="12" />
+                <line x1="12" x2="12" y1="2" y2="5" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+                <circle cx="12" cy="12" r="7" />
+              </svg>
+              <!--Current Location-->
+            </button>
+          </div>
+        </div>
+
+        <button class="addTask" id="confirmAddBtn">Create</button>
+      </div>
     </div>
 
     <script src="./app.js"></script>
