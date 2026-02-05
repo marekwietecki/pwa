@@ -82,10 +82,13 @@ async function fetchDailyQuote() {
   const quoteText = document.getElementById('quote-text');
   const quoteAuthor = document.getElementById('quote-author');
   
+  if (!quoteText || !quoteAuthor) {
+    return; 
+}
   const fallbackQuote = "Hero, your discipline is your biggest strength.";
   const fallbackAuthor = "— Habit Hero Team";
 
-  const API_URL = "https://api.quotable.io/random?tags=motivational";
+  const API_URL = "https://zenquotes.io/api/random";
 
   try {
       const response = await fetch(API_URL);
