@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -8,7 +8,13 @@ const APP_ASSETS = [
   "./habits.html",
   "./hero.html",
   "./style.css",
-  "./app.js",
+  "./js/app.js",     
+  "./js/data.js",
+  "./js/elements.js",
+  "./js/events.js",
+  "./js/icons.js",
+  "./js/services.js",
+  "./js/ui.js",
   "./manifest.webmanifest",
   "./assets/192x192.png",
   "./assets/512x512.png",

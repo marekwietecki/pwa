@@ -241,7 +241,7 @@ body {
   }
 }
 
-#emptyListMessageWrapper {
+#emptyListMessageWrapper, #calendarEmptyListMessageWrapper {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -257,7 +257,7 @@ body {
   text-align: center;
 }
 
-#taskDateTitle {
+#taskDateTitle, #calendarTaskDateTitle {
   padding-top: 4vh;
   padding-left: 4vw;
   margin: 0;
@@ -272,15 +272,16 @@ body {
   margin: 0;
   width: 740px;
 }
-.toDoListWrapper {
+.toDoListWrapper, .calendarToDoListWrapper {
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
   margin-top: 8px;
 }
-#toDoList {
+#toDoList, #calendarToDoList {
   flex: 1;
   min-height: 0;
+  display: block;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-left: 0;
@@ -288,6 +289,7 @@ body {
   margin-right: 4vw;
   margin-top: 0;
 }
+
 
 #goalsList {
   list-style-type: none;
@@ -540,13 +542,10 @@ body {
   left: 0;
   right: 0;
   margin: 0 auto;
-  transform: translate(-50%, 100%);
-  background: rgba(30, 30, 30, 0.95);
-  backdrop-filter: blur(20px);
   border-radius: 20px 20px 0 0;
-  padding: 20px 32px;
+  padding: 32px 32px 20px;
+  gap: 12px;
   transform: translateY(100%);
-  transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   height: auto;
   max-width: 660px;
   align-self: center;
@@ -555,10 +554,12 @@ body {
   background: rgba(255, 255, 255, 0.2); /* półprzezroczyste */
   backdrop-filter: blur(12px); /* efekt rozmycia tła */
   -webkit-backdrop-filter: blur(8px); /* dla Safari */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* delikatna ramka */
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* lekki cień */
+  transform: translate(-50%, 100%);
   transition: all 0.3s ease; /* płynne przejście */
-  gap: 12px;
 }
 .modal-header {
   display: flex;
@@ -778,6 +779,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-appearance: none;
   padding: 10px 16px;
   border-radius: 24px;
+  min-height: 37.5px;
   height: 37.5px;
   align-items: center;
   color: #fff;
@@ -1436,6 +1438,45 @@ input.error {
   padding: 0 40px;
   gap: 40px;
 }
+
+.permission-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider { background-color: #4cd964; } /* Kolor zielony sukcesu */
+input:checked + .slider:before { transform: translateX(22px); }
 
 :root {
   --hero-gradient: linear-gradient(90deg, #ad22b6, #ff00ff);

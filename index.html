@@ -329,13 +329,13 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
       </div>
     </div>
 
-    <script src="./app.js"></script>
+    <script type="module" src="./js/app.js"></script>
 
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
-            .register("./sw.js")
+            .register("./sw.js", { type: "module" })
             .then((reg) => console.log("SW register success", reg.scope))
             .catch((err) => console.error("SW register failed", err));
         });
