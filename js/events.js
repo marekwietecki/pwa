@@ -20,14 +20,14 @@ export function initEventListeners(AppState) {
     .getElementById("editHabitFrequency")
     ?.addEventListener("click", () => {
       if (AppState.selectedHabitForStats)
-        UI.openEditHabitModal(AppState.selectedHabitForStats);
+        UI.openEditHabitModal(AppState.selectedHabitForStats, AppState);
     });
 
   document
     .getElementById("editHabitStartDate")
     ?.addEventListener("click", () => {
       if (AppState.selectedHabitForStats)
-        UI.openEditHabitModal(AppState.selectedHabitForStats);
+        UI.openEditHabitModal(AppState.selectedHabitForStats, AppState);
     });
 
   // Zamykanie krzyżykiem
@@ -46,13 +46,13 @@ export function initEventListeners(AppState) {
   document.getElementById("prevStatMonth")?.addEventListener("click", () => {
     AppState.statsViewDate.setMonth(AppState.statsViewDate.getMonth() - 1);
     if (AppState.selectedHabitForStats)
-      UI.renderActivityGrid(AppState.selectedHabitForStats);
+      UI.renderActivityGrid(AppState.selectedHabitForStats, AppState);
   });
 
   document.getElementById("nextStatMonth")?.addEventListener("click", () => {
     AppState.statsViewDate.setMonth(AppState.statsViewDate.getMonth() + 1);
     if (AppState.selectedHabitForStats)
-      UI.renderActivityGrid(AppState.selectedHabitForStats);
+      UI.renderActivityGrid(AppState.selectedHabitForStats, AppState);
   });
 
   //calendar arrows

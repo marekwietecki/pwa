@@ -101,9 +101,9 @@ export const UI = {
   createPencilIcon: () => getIcon("pencil"),
 
   createProgressCircle: (percentage) => {
-    const size = 28;
+    const size = 32;
     const stroke = 4;
-    const radius = (size - stroke) / 2;
+    const radius = (size - 10) / 2;
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (percentage / 100) * circumference;
     const svgNS = "http://www.w3.org/2000/svg";
@@ -184,8 +184,8 @@ export const UI = {
     }
   },
 
-  openEditHabitModal: (habit) => {
-    UI.resetModal();
+  openEditHabitModal: (habit, AppState) => {
+    UI.resetModal(AppState);
 
     document.querySelector(".typePickers").style.display = "none";
     document.querySelector(".nameSection").style.display = "none";
@@ -962,8 +962,8 @@ export const UI = {
     const progress = DataManager.calculateHabitProgress(habit);
     const freqMap = {
       daily: "Everyday",
-      weekly: "Days of the week",
-      monthly: "Days of the month",
+      weekly: "Every", //Days of the week
+      monthly: "Every", //Days of the month
     };
     let frequencyText = freqMap[habit.frequency] || habit.frequency;
     if (
@@ -1018,6 +1018,10 @@ export const UI = {
   },
 
   renderActivityGrid: (habit, AppState) => {
+    if (!AppState) return console.error("Mordo, zapomniałeś o AppState w renderActivityGrid!");
+    
+    const viewDate = AppState.statsViewDate;
+    
     const grid = document.getElementById("activityGrid");
     if (!grid) return;
 
