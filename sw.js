@@ -208,3 +208,24 @@ self.addEventListener("notificationclick", (event) => {
     })
   );
 });
+
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'daily-briefing') {
+    event.waitUntil(checkAndNotify());
+  }
+});
+
+async function checkAndNotify() {
+  // Tutaj jest mały problem: SW nie ma dostępu do localStorage!
+  // To dlatego IndexedDB jest tak ważne, ale na razie możemy spróbować 
+  // wysłać uniwersalne przypomnienie.
+  
+  const registration = self.registration;
+  
+  // Przykładowe powiadomienie "na sztywno"
+  await registration.showNotification("Habit Hero", {
+    body: "Hej Hero! Sprawdź swoje zadania na dziś, żeby utrzymać passę!",
+    icon: "/assets/192x192.png",
+    tag: "daily-reminder" // zapobiega dublowaniu powiadomień
+  });
+}

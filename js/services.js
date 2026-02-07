@@ -1,83 +1,51 @@
 import { Utils, DataManager } from "./data.js";
 
+// NotificationService.js
 export const NotificationService = {
-  async sendNotification(title, message) {
-    // Sprawdzamy: 1. Zgodę systemową, 2. Preferencję użytkownika w aplikacji
-    const isMutedByUser =
-      localStorage.getItem("user_notifications_enabled") === "false";
+  // --- SILNIK (To co napisałeś) ---
+  async send(title, options = {}) {
+    const isMutedByUser = localStorage.getItem("user_notifications_enabled") === "false";
+    if (Notification.permission !== "granted" || isMutedByUser) return;
 
-    if (Notification.permission !== "granted" || isMutedByUser) {
-      console.log("📢 Notification blocked (System or User Toggle)");
-      return;
-    }
+    const registration = await navigator.serviceWorker.ready;
+    
+    const defaultOptions = {
+      icon: "/assets/192x192.png",
+      badge: "/assets/192x192.png", // Upewnij się, że ścieżka do badge jest poprawna
+      vibrate: [200, 100, 200],
+      tag: "habit-hero-alert", // Zapobiega spamowi (podmienia stare powiadomienie)
+      renotify: true,
+      ...options
+    };
 
-    try {
-      if ("serviceWorker" in navigator) {
-        const registration = await navigator.serviceWorker.ready;
-        await registration.showNotification(title, {
-          body: message,
-          icon: "./assets/192x192.png",
-          badge: "./assets/192x192.png",
-          vibrate: [200, 100, 200],
-          tag: "habit-hero-alert",
-          renotify: true,
-        });
-      } else {
-        new Notification(title, {
-          body: message,
-          icon: "./assets/192x192.png",
-        });
-      }
-    } catch (err) {
-      console.error("❌ Notification Error:", err);
-    }
+    return registration.showNotification(title, defaultOptions);
   },
 
-  // Funkcja do Twojego planu o 8:00 rano
-  async checkDailyBriefing(tasksCount) {
-    const today = new Date().toLocaleDateString();
-    const lastNotified = localStorage.getItem("last_briefing_date");
-
-    // Jeśli już dzisiaj wysłano powiadomienie - wychodzimy
-    if (lastNotified === today) return;
-
-    // Tutaj możesz dodać warunek godziny (np. check if hour >= 8)
-    if (tasksCount > 0) {
-      await this.sendNotification(
-        "Good Morning! 🦸‍♂️",
-        `You have ${tasksCount} tasks for today. Let's go!`
-      );
-      localStorage.setItem("last_briefing_date", today);
-    }
-  },
-
+  // --- LOGIKA (Kierowca) ---
   async runDailyCheck() {
     const now = new Date();
-    const currentHour = now.getHours();
+    // 1. Sprawdzamy godzinę (np. po 8 rano)
+    if (now.getHours() < 8) return;
 
-    // 1. Sprawdzamy czy jest już co najmniej 8:00
-    if (currentHour < 8) return;
+    // 2. Sprawdzamy czy już dziś nie było powiadomienia
+    const todayKey = now.toISOString().split('T')[0]; // Prosty format YYYY-MM-DD
+    if (localStorage.getItem("last_briefing_date") === todayKey) return;
 
-    // 2. Sprawdzamy czy już dziś nie wysłaliśmy briefingu
-    const todayKey = Utils.formatDateKey(now);
-    const lastBriefing = localStorage.getItem("last_briefing_date");
-    if (lastBriefing === todayKey) return;
+    // 3. Pobieramy dane (na razie z localStorage, dopóki nie wjedzie IndexedDB)
+    // UWAGA: SW tego nie widzi, to zadziała tylko gdy karta jest otwarta!
+    const savedTasks = JSON.parse(localStorage.getItem("habitHero_tasks") || "{}");
+    const tasksToday = savedTasks[todayKey] || {};
+    const undoneCount = Object.keys(tasksToday).filter(name => !tasksToday[name].done).length;
 
-    // 3. Liczymy zadania (używając DataManager, którego właśnie naprawiliśmy)
-    const tasks = DataManager.getTasks()[todayKey] || {};
-    const count = Object.keys(tasks).filter((key) => !tasks[key].done).length;
-
-    // 4. Jeśli są zadania i mamy zgodę (Soft Toggle) - Ślij!
-    const isEnabled =
-      localStorage.getItem("user_notifications_enabled") !== "false";
-    if (count > 0 && isEnabled) {
-      await this.sendNotification(
+    // 4. Jeśli są zadania - ogień!
+    if (undoneCount > 0) {
+      await this.send(
         "Good Morning! 🦸‍♂️",
-        `You have ${count} pending tasks for today. Time to level up!`
+        { body: `You have ${undoneCount} pending tasks for today. Time to level up!` }
       );
       localStorage.setItem("last_briefing_date", todayKey);
     }
-  },
+  }
 };
 
 export const PermissionsManager = {
@@ -156,9 +124,6 @@ export const PermissionsManager = {
   }
   */
 
-/*
-  LOGIC: Location Service  //////////////////////////////////////////////////////////////////
-*/
 export const LocationService = {
   // Wyszukiwanie po tekście
   search: async (query) => {
@@ -176,9 +141,7 @@ export const LocationService = {
     return await res.json();
   },
 };
-/*
-    LOGIC: Motivational Quotes
-  */
+
 export async function fetchDailyQuote() {
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
@@ -206,8 +169,6 @@ export async function fetchDailyQuote() {
     quoteAuthor.textContent = fallbackAuthor;
   }
 }
-
-document.addEventListener("DOMContentLoaded", fetchDailyQuote);
 
 export const OfflineService = {
   init() {
