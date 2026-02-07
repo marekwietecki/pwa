@@ -214,17 +214,24 @@ export const OfflineService = {
     if (!document.getElementById("offline-banner")) {
       const banner = document.createElement("div");
       banner.id = "offline-banner";
-      banner.textContent =
-        "Brak połączenia z internetem. Aplikacja działa w trybie offline!";
+      banner.textContent = "Brak połączenia z internetem. Aplikacja działa w trybie offline!";
       document.body.prepend(banner);
     }
 
-    window.addEventListener("online", () =>
-      document.body.classList.remove("offline")
-    );
-    window.addEventListener("offline", () =>
-      document.body.classList.add("offline")
-    );
-    if (!navigator.onLine) document.body.classList.add("offline");
+    const updateStatus = () => {
+      if (navigator.onLine) {
+        document.body.classList.remove("offline");
+      } else {
+        document.body.classList.add("offline");
+      }
+    };
+
+    window.addEventListener("online", updateStatus);
+    window.addEventListener("offline", updateStatus);
+
+    updateStatus();
+    
+    // Niektóre przeglądarki potrzebują chwili na start API sieciowego
+    setTimeout(updateStatus, 100); 
   },
 };

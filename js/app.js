@@ -1,7 +1,7 @@
 import { DataManager } from './data.js';
 import { elements, domElements } from './elements.js';
 import { initEventListeners } from './events.js';
-import { NotificationService, PermissionsManager } from './services.js';
+import { NotificationService, PermissionsManager, OfflineService } from './services.js';
 import { UI } from './ui.js';
 
 
@@ -17,6 +17,7 @@ const AppState = {
 
 document.addEventListener("DOMContentLoaded", () => {
   domElements();
+  OfflineService.init();
   initEventListeners(AppState);
   UI.applyRandomGradient();
   UI.setupMonthlyGrid();

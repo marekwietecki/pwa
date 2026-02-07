@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v5";
+const CACHE_VERSION = "v6";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -76,7 +76,7 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   // bezpiecznie jest samo get dla prostych pwa,
   // przy wysylaniu po odzyskaniu sieci lub offline editing notatek np.
-  if (request.method !== "GET") return;
+  //if (request.method !== "GET") return;
 
   const url = new URL(request.url);
   const path = url.pathname;
