@@ -55,6 +55,17 @@ body {
   min-height: 100vh;
   padding: 20px;
 }
+.taskItem svg, .lucide-icon, .task-type-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  stroke: #fff; 
+  color: #fff;
+  stroke-width: 2;
+  fill: none; 
+}
 .navbar {
   display: flex;
   flex-direction: row;
@@ -273,31 +284,34 @@ body {
 }
 .toDo, .calendarToDo {
   display: flex;
-  flex: 1 1 0;
+  /* flex: 1 1 0; */
   flex-direction: column;
   align-self: center;
   min-height: 0;
-  margin: 0;
-  width: 740px;
-  background-color: red;
+  width: 100%;
+  margin: 0 auto 16px;
+  max-width: 740px;
+  /* background-color: rebeccapurple; */
 }
+
+
 .toDoListWrapper, .calendarToDoListWrapper {
-  flex: 1 1 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   margin-top: 8px;
-  padding: 0px 8px;
-  -webkit-overflow-scrolling: touch;
+  padding: 0 20px;
+  margin-bottom: 56px;
+  /* box-sizing: border-box; */
 }
 #toDoList, #calendarToDoList {
+  width: 100%;
   flex: 1;
-  min-height: 0;
-  display: block;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-left: 0;
-  margin-left: 4vw;
-  margin-right: 4vw;
   margin-top: 0;
 }
 
@@ -315,7 +329,7 @@ body {
   padding-left: 24px;
   padding-right: 16px;
   margin-top: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   list-style: none;
   align-items: center;
   justify-content: space-between;
@@ -613,7 +627,7 @@ body {
 .typePickersWrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
 .typePickers {
@@ -1445,13 +1459,13 @@ input.error {
 .userStats {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  max-width: 600px;
+  max-width: 640px;
   width: 100%;
   margin: 56px auto 0;
+  gap: 32px;
   padding: 0 40px;
-  gap: 40px;
 }
 
 .permission-item {
@@ -1460,6 +1474,7 @@ input.error {
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 232px;
 }
 
 .switch {
@@ -1586,7 +1601,7 @@ h3 {
   align-items: flex-start;
   justify-content: flex-end;
   gap: 8px;
-  padding-top: 16px;
+  padding: 12px 0px 0px;
 }
 
 .levelIndicatorWrapper {
@@ -1616,8 +1631,12 @@ h3 {
 .totalXpWrapper {
   display: flex;
   flex-direction: row;
+  max-width: 232px;
+  width: 100%;
   gap: 4px;
   font-size: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
 }
 
 .heroLvlWrapper {
@@ -1688,8 +1707,8 @@ h3 {
     max-width: 660px;
   }
   .addTaskBtn {
-    bottom: 24px;
-    right: 24px;
+    bottom: 28px;
+    right: 28px;
   }
 }
 
@@ -1709,6 +1728,6 @@ h3 {
   .typePickersWrapper {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 10px;
   }
 }

@@ -13,83 +13,31 @@ export const GRADIENTS = [
 
 const parser = new DOMParser();
 
-// icon parsing
 const getIcon = (name) => {
   const iconString = ICONS[name];
-  if (!iconString) {
-    console.warn(`Icon "${name}" not found!`);
-    return document.createElement("span"); // Fallback
-  }
-  // Parsujemy jako image/svg+xml - bezpieczne i odporne na XSS
+  if (!iconString) return document.createElement("span");
+
+  const parser = new DOMParser();
+  // Ważne: parsowanie jako xml
   const doc = parser.parseFromString(iconString, "image/svg+xml");
-  return doc.documentElement;
+  const svg = doc.documentElement;
+
+  // Sprawdź czy nie ma błędu parsowania
+  if (svg.querySelector("parsererror")) {
+    console.error("SVG Parse Error", name);
+    return document.createElement("span");
+  }
+
+  // Importujemy do naszego dokumentu
+  const importedSvg = document.importNode(svg, true);
+
+  // Dodajemy klasy bazowe, żeby łatwiej było stylować w CSS
+  importedSvg.classList.add("lucide-icon");
+
+  return importedSvg;
 };
 
 export const UI = {
-  resetModal: (AppState) => {
-    if (elements.taskName) elements.taskName.value = "";
-    if (elements.taskDate) elements.taskDate.value = "";
-    if (elements.descriptionInput) elements.descriptionInput.value = "";
-    if (elements.goalDeadline) elements.goalDeadline.value = "";
-    if (elements.goalHabitSelect) elements.goalHabitSelect.selectedIndex = 0;
-    if (elements.locationInput) {
-      elements.locationInput.value = "";
-      elements.locationInput.classList.remove("success", "error");
-    }
-    if (elements.modalTitle) modalTitle.textContent = "New";
-
-    const btn = document.getElementById("confirmAddBtn");
-    if (btn) {
-      btn.textContent = "Create";
-      btn.removeAttribute("data-edit-id");
-      btn.removeAttribute("data-edit-type");
-    }
-
-    const sectionsToReset = [
-      { sel: ".typePickers", display: "flex" },
-      { sel: ".nameSection", display: "flex" },
-      { sel: "#habitIconWrapper", display: "flex" },
-      { sel: "#locationSection", display: "flex" },
-      { sel: "#habitSection .modalSubTitle", text: "Icon" },
-    ];
-
-    sectionsToReset.forEach((item) => {
-      const el = document.querySelector(item.sel);
-      if (el) {
-        if (item.display) el.style.display = item.display;
-        if (item.text) el.textContent = item.text;
-      }
-    });
-
-    // oryginalny tytuł sekcji daty
-    const dateTitle = document.querySelector("#dateSection .modalSubTitle");
-    if (dateTitle) dateTitle.textContent = "Date";
-
-    const url = window.location.href.toLowerCase();
-    if (url.includes("habit")) {
-      AppState.currentCreateType = "habit";
-    } else if (url.includes("hero")) {
-      AppState.currentCreateType = "goal";
-    } else {
-      AppState.currentCreateType = "task";
-    }
-
-    const typePickers = document.querySelectorAll(".typePicker");
-    typePickers.forEach((btn) => {
-      const btnType = btn.getAttribute("data-type");
-      btn.classList.toggle("active", btnType === AppState.currentCreateType);
-    });
-
-    // Odświeżenie pól pod konkretny typ
-    UI.toggleModalFields(AppState.currentCreateType);
-
-    // Odznaczanie checkboxów w pickerach dni
-    const allCheckboxes = document.querySelectorAll(
-      "#daysPicker input, #monthDaysGrid input"
-    );
-    allCheckboxes.forEach((cb) => (cb.checked = false));
-  },
-
   createDeadlineIcon: () => getIcon("deadline"),
   createLocationIcon: () => getIcon("location"),
   createRepeatIcon: () => getIcon("repeat"),
@@ -149,6 +97,73 @@ export const UI = {
     return container;
   },
 
+  resetModal: (AppState) => {
+    if (elements.taskName) elements.taskName.value = "";
+    if (elements.taskDate) elements.taskDate.value = "";
+    if (elements.descriptionInput) elements.descriptionInput.value = "";
+    if (elements.goalDeadline) elements.goalDeadline.value = "";
+    if (elements.goalHabitSelect) elements.goalHabitSelect.selectedIndex = 0;
+    if (elements.locationInput) {
+      elements.locationInput.value = "";
+      elements.locationInput.classList.remove("success", "error");
+    }
+
+    if (elements.modalTitle) modalTitle.textContent = "New";
+    const btn = document.getElementById("confirmAddBtn");
+    if (btn) {
+      btn.textContent = "Create";
+      btn.removeAttribute("data-edit-id");
+      btn.removeAttribute("data-edit-type");
+    }
+    /* 
+    to było dodane przez te edity chyba
+    const sectionsToReset = [
+      { sel: ".typePickers", display: "flex" },
+      { sel: ".nameSection", display: "flex" },
+      { sel: "#habitIconWrapper", display: "flex" },
+      { sel: "#locationSection", display: "flex" },
+      { sel: "#habitSection .modalSubTitle", text: "Icon" },
+    ];
+
+    sectionsToReset.forEach((item) => {
+      const el = document.querySelector(item.sel);
+      if (el) {
+        if (item.display) el.style.display = item.display;
+        if (item.text) el.textContent = item.text;
+      }
+    });
+    
+
+    // title reset
+    const dateTitle = document.querySelector("#dateSection .modalSubTitle");
+    if (dateTitle) dateTitle.textContent = "Date";
+
+    */
+
+    const url = window.location.href.toLowerCase();
+    if (url.includes("habit")) {
+      AppState.currentCreateType = "habit";
+    } else if (url.includes("hero")) {
+      AppState.currentCreateType = "goal";
+    } else {
+      AppState.currentCreateType = "task";
+    }
+
+    UI.toggleModalFields(AppState.currentCreateType);
+
+    const typePickers = document.querySelectorAll(".typePicker");
+    typePickers.forEach((btn) => {
+      const btnType = btn.getAttribute("data-type");
+      btn.classList.toggle("active", btnType === AppState.currentCreateType);
+    });
+
+    // checkbox reset
+    const allCheckboxes = document.querySelectorAll(
+      "#daysPicker input, #monthDaysGrid input"
+    );
+    allCheckboxes.forEach((cb) => (cb.checked = false));
+  },
+
   applyRandomGradient: () => {
     const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
     const selectedGradient = GRADIENTS[randomIndex];
@@ -164,16 +179,22 @@ export const UI = {
     const isGoal = type === "goal";
     const isTask = type === "task";
 
-    if (elements.dateSection)
-      elements.dateSection.style.display = isTask ? "flex" : "none";
-    if (elements.habitSection)
-      elements.habitSection.style.display = isHabit ? "flex" : "none";
-    if (elements.goalSection)
-      elements.goalSection.style.display = isGoal ? "flex" : "none";
+    const dSection = document.getElementById("dateSection");
+    const hSection = document.getElementById("habitSection");
+    const gSection = document.getElementById("goalSection");
+    const lSection = document.getElementById("locationSection");
 
-    if (elements.locationSection)
-      elements.locationSection.style.display =
-        isTask || isHabit ? "flex" : "none";
+    if (dSection) dSection.style.display = "none";
+    if (hSection) hSection.style.display = "none";
+    if (gSection) gSection.style.display = "none";
+
+    if (isTask && dSection) dSection.style.display = "flex";
+    if (isHabit && hSection) hSection.style.display = "flex";
+    if (isGoal && gSection) gSection.style.display = "flex";
+
+    if (lSection) {
+      lSection.style.display = isTask || isHabit ? "flex" : "none";
+    }
 
     if (elements.daysPicker) elements.daysPicker.style.display = "none";
     if (elements.monthlyDayPicker)
@@ -596,8 +617,8 @@ export const UI = {
     if (type === "goal") {
       const editGoalBtn = document.createElement("button");
       editGoalBtn.className = "edit-inline-btn";
-      editGoalBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`;
-
+      const pencilIcon = UI.createPencilIcon();
+      editGoalBtn.appendChild(pencilIcon);
       editGoalBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         UI.openEditGoalModal(data);
@@ -1018,10 +1039,13 @@ export const UI = {
   },
 
   renderActivityGrid: (habit, AppState) => {
-    if (!AppState) return console.error("Mordo, zapomniałeś o AppState w renderActivityGrid!");
-    
+    if (!AppState)
+      return console.error(
+        "Mordo, zapomniałeś o AppState w renderActivityGrid!"
+      );
+
     const viewDate = AppState.statsViewDate;
-    
+
     const grid = document.getElementById("activityGrid");
     if (!grid) return;
 
