@@ -106,81 +106,83 @@
       </nav>
     </header>
 
-    <div class="userStats">
-      <div class="userWrapper">
-        <div class="usernameWrapper">
-          <h3 id="displayUserName">User name</h3>
-          <input type="text" id="userNameInput" style="display: none" />
-          <button id="editUserName">
-            <svg
-              style="margin-top: 4px"
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#ddd"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-pencil-icon lucide-pencil"
-            >
-              <path
-                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-              />
-              <path d="m15 5 4 4" />
-            </svg>
-          </button>
-        </div>
-        <div class="permissions">
-          <!--<h3>App Permissions</h3>-->
-          <div class="permission-item">
-            <span>Enable Notifications</span>
-            <label class="switch">
-              <input type="checkbox" id="toggleNotifications" />
-              <span class="slider round"></span>
-            </label>
+    <main>
+      <!-- User -->
+      <div class="userStats">
+        <div class="userWrapper">
+          <div class="usernameWrapper">
+            <h3 id="displayUserName">User name</h3>
+            <input type="text" id="userNameInput" style="display: none" />
+            <button id="editUserName">
+              <svg
+                style="margin-top: 4px"
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#ddd"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-pencil-icon lucide-pencil"
+              >
+                <path
+                  d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                />
+                <path d="m15 5 4 4" />
+              </svg>
+            </button>
           </div>
-          <div class="permission-item">
-            <span>Location Access</span>
-            <label class="switch">
-              <input type="checkbox" id="toggleLocation" />
-              <span class="slider round"></span>
-            </label>
+          <div class="permissions">
+            <!--<h3>App Permissions</h3>-->
+            <div class="permission-item">
+              <label for="toggleNotifications">Enable Notifications</label>
+              <label class="switch">
+                <input type="checkbox" id="toggleNotifications" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="permission-item">
+              <label for="toggleLocation">Location Access</label>
+              <label class="switch">
+                <input type="checkbox" id="toggleLocation" />
+                <span class="slider round"></span>
+              </label>
+            </div>
           </div>
         </div>
-        
-      </div>
-      <div class="levelWrapper">
-        <div class="levelIndicatorWrapper">
-          <span id="currentLevel">0</span>
-          <div class="levelIndicator">
-            <div id="xp-progress-bar"></div>
+        <div class="levelWrapper">
+          <div class="levelIndicatorWrapper">
+            <span id="currentLevel">0</span>
+            <div class="levelIndicator">
+              <div id="xp-progress-bar"></div>
+            </div>
+            <span class="nextLevel" id="next-level-value">1</span>
           </div>
-          <span class="nextLevel" id="next-level-value">1</span>
-        </div>
-        <div class="nextLevelWrapper">
-          <div class="nextLevelXpNeeded" id="xp-next-level">100/100</div>
-        </div>
-        <div class="totalXpWrapper">
-          XP Gained in total:
-          <span id="total-xp-value">0</span>
-        </div>
-        <div class="heroLvlWrapper">
-          Hero Experience lvl: <span id="user-level-value">0</span>
+          <div class="nextLevelWrapper">
+            <div class="nextLevelXpNeeded" id="xp-next-level">100/100</div>
+          </div>
+          <div class="totalXpWrapper">
+            XP Gained in total:
+            <span id="total-xp-value">0</span>
+          </div>
+          <div class="heroLvlWrapper">
+            Hero Experience lvl: <span id="user-level-value">0</span>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="goalsContainer">
-      <h3 class="sectionTitle">Long-term Goals</h3>
-      <div id="emptyListMessageWrapper" style="display: none">
-        <span id="messageGoals" class="emptyListMessage"
-          >No goals yet! Add one and improve Your daily life.</span
-        >
+      <!-- GOALS -->
+      <div class="goalsContainer">
+        <h3 class="sectionTitle">Long-term Goals</h3>
+        <div id="emptyListMessageWrapper" style="display: none">
+          <span id="messageGoals" class="emptyListMessage"
+            >No goals yet! Add one and improve Your daily life.</span
+          >
+        </div>
+        <ul id="goalsList" class="toDoList"></ul>
       </div>
-      <ul id="goalsList" class="toDoList"></ul>
-    </div>
+    </main>
 
     <!-- MODAL -->
     <button id="addTaskBtn" class="addTaskBtn" aria-label="Add new task">

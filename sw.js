@@ -8,7 +8,7 @@ const APP_ASSETS = [
   "./habits.html",
   "./hero.html",
   "./style.css",
-  "./js/app.js",     
+  "./js/app.js",
   "./js/data.js",
   "./js/elements.js",
   "./js/events.js",

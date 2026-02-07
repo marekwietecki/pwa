@@ -15,9 +15,13 @@ export const Utils = {
 
   formatDateKey: (date) => {
     if (!date || !(date instanceof Date)) {
-        console.error("Mordziu, formatDateKey dostało lipną datę,", date, "| zamiast tego dałem dzisiejszą");
-        date = new Date(); 
-      }
+      console.error(
+        "Mordziu, formatDateKey dostało lipną datę,",
+        date,
+        "| zamiast tego dałem dzisiejszą"
+      );
+      date = new Date();
+    }
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");

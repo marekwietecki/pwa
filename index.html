@@ -135,26 +135,28 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
         </a>
       </nav>
     </header>
-
-    <!-- MOTIVATION -->
-    <div id="quote-container">
-      <p id="quote-text">Loading motivation...</p>
-      <small id="quote-author"></small>
-    </div>
-
-    <!-- TO DO -->
-    <section class="toDo">
-      <h3 id="taskDateTitle"></h3>
-      <div class="toDoListWrapper">
-        <div id="emptyListMessageWrapper" style="display: none">
-          <span id="messageToday" class="emptyListMessage"
-            >All tasks done, keep it up! 🎉</span
-          >
+    <main>
+      <!-- MOTIVATION -->
+      <section class="quote">
+        <div id="quote-container">
+          <p id="quote-text">Loading motivation...</p>
+          <small id="quote-author"></small>
         </div>
-        <ul id="toDoList"></ul>
-      </div>
-    </section>
+      </section>
 
+      <!-- TO DO -->
+      <section class="toDo">
+        <h3 id="taskDateTitle"></h3>
+        <div class="toDoListWrapper">
+          <div id="emptyListMessageWrapper" style="display: none">
+            <span id="messageToday" class="emptyListMessage"
+              >All tasks done, keep it up! 🎉</span
+            >
+          </div>
+          <ul id="toDoList"></ul>
+        </div>
+      </section>
+    </main>
     <!-- MODAL -->
     <button id="addTaskBtn" class="addTaskBtn" aria-label="Add new task">
       +
@@ -269,7 +271,7 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
           </div>
         </div>
 
-        <div id="dateSection" >
+        <div id="dateSection">
           <label class="modalSubTitle" for="taskDate">Date</label>
           <input type="date" id="taskDate" name="taskDate" />
         </div>

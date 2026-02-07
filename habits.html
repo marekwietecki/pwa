@@ -133,56 +133,56 @@
           </g>
         </svg>
         -->
+    <main>
+      <!-- HABITS -->
+      <section class="habitStats">
+        <!-- hero-stats -->
+        <div class="habit-carousel" id="habitCarousel"></div>
 
-    <!-- HABITS -->
-    <section class="habitStats">
-      <!-- hero-stats -->
-      <div class="habit-carousel" id="habitCarousel"></div>
-
-      <div id="habitDetails" class="habit-details-card" style="display: none">
-        <div class="stats-grid">
-          <h2 id="detailHabitName">Pick habit</h2>
-          <div class="crucialHabitStats">
-            <div class="stat-item">
-              <div class="streak-value">
-                <div class="detailFireIcon">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M6 18.1574C6 23.5933 10.701 28 16.5 28C22.299 28 27 23.5933 27 18.1574C27 12.0643 22.7721 7.41311 19.125 4C17.8059 4.92661 16.7558 6.25 15.9748 7.97017C15.1939 9.69034 14.6975 11.7601 14.4858 14.1795C13.4572 13.9806 12.5569 13.4997 11.7849 12.7368C11.0129 11.974 10.2528 10.8655 9.50462 9.41123C7.57472 12.1382 6 15.2532 6 18.1574Z"
-                      stroke="#F0512D"
-                      stroke-width="2.66667"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M21.8166 18.6526C21.4944 20.7518 19.8758 22.3986 17.8125 22.7263"
-                      stroke="#F0512D"
-                      stroke-width="2.66667"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
+        <div id="habitDetails" class="habit-details-card" style="display: none">
+          <div class="stats-grid">
+            <h2 id="detailHabitName">Pick habit</h2>
+            <div class="crucialHabitStats">
+              <div class="stat-item">
+                <div class="streak-value">
+                  <div class="detailFireIcon">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M6 18.1574C6 23.5933 10.701 28 16.5 28C22.299 28 27 23.5933 27 18.1574C27 12.0643 22.7721 7.41311 19.125 4C17.8059 4.92661 16.7558 6.25 15.9748 7.97017C15.1939 9.69034 14.6975 11.7601 14.4858 14.1795C13.4572 13.9806 12.5569 13.4997 11.7849 12.7368C11.0129 11.974 10.2528 10.8655 9.50462 9.41123C7.57472 12.1382 6 15.2532 6 18.1574Z"
+                        stroke="#F0512D"
+                        stroke-width="2.66667"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M21.8166 18.6526C21.4944 20.7518 19.8758 22.3986 17.8125 22.7263"
+                        stroke="#F0512D"
+                        stroke-width="2.66667"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <span id="detailStreak">0 times</span>
                 </div>
-                <span id="detailStreak">0 times</span>
+                <span class="stat-label">Current Streak</span>
               </div>
-              <span class="stat-label">Current Streak</span>
-            </div>
-            <div class="stat-item">
-              <div class="progress-value">
-                <div id="detailProgressCircle"></div>
-                <span id="completionPercent">0 %</span>
+              <div class="stat-item">
+                <div class="progress-value">
+                  <div id="detailProgressCircle"></div>
+                  <span id="completionPercent">0 %</span>
+                </div>
+                <span class="stat-label">Efectiveness</span>
               </div>
-              <span class="stat-label">Efectiveness</span>
-            </div>
-            <!--
+              <!--
             <div class="stat-item">
               <div class="xp-value">
                 <div class="xpIcon">
@@ -193,105 +193,113 @@
               </div>
               <span class="stat-label">XP gained</span>
             </div>
-            -->
-          </div>
-          <div class="stat-items-secondary">
-            <div class="stat-item-secondary">
-              <span class="stat-label-secondary">Frequency:</span>
-              <div
-                style="display: flex; flex-direction: row; align-items: center"
-              >
-                <button id="editHabitFrequency" class="editHabitDetail">
-                  <span id="frequencyData" class="stat-data">0</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-pencil-icon lucide-pencil"
-                  >
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-                    />
-                    <path d="m15 5 4 4" />
-                  </svg>
-                </button>
+            --></div>
+            <div class="stat-items-secondary">
+              <div class="stat-item-secondary">
+                <span class="stat-label-secondary">Frequency:</span>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                  "
+                >
+                  <button id="editHabitFrequency" class="editHabitDetail">
+                    <span id="frequencyData" class="stat-data">0</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-pencil-icon lucide-pencil"
+                    >
+                      <path
+                        d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                      />
+                      <path d="m15 5 4 4" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="stat-item-secondary">
+                <span class="stat-label-secondary">Start Date:</span>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                  "
+                >
+                  <button id="editHabitStartDate" class="editHabitDetail">
+                    <span id="startData" class="stat-data">0</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-pencil-icon lucide-pencil"
+                    >
+                      <path
+                        d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+                      />
+                      <path d="m15 5 4 4" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="stat-item-secondary">
-              <span class="stat-label-secondary">Start Date:</span>
-              <div
-                style="display: flex; flex-direction: row; align-items: center"
-              >
-                <button id="editHabitStartDate" class="editHabitDetail">
-                  <span id="startData" class="stat-data">0</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-pencil-icon lucide-pencil"
-                  >
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-                    />
-                    <path d="m15 5 4 4" />
-                  </svg>
-                </button>
+          </div>
+
+          <div class="activity-calendar">
+            <!-- <h3>Last month</h3> -->
+            <div class="activity-section">
+              <div class="mini-cal-header">
+                <div class="mini-cal-nav">
+                  <button id="prevStatMonth">‹</button>
+                  <h4>Month Year</h4>
+                  <button id="nextStatMonth">›</button>
+                </div>
+                <div class="activity-day-labels">
+                  <div>M</div>
+                  <div>T</div>
+                  <div>W</div>
+                  <div>T</div>
+                  <div>F</div>
+                  <div>S</div>
+                  <div>S</div>
+                </div>
+                <div id="activityGrid" class="activity-grid"></div>
+              </div>
+
+              <div class="month-stats-row">
+                <div class="stat-box">
+                  <span style="display: block; opacity: 0.6">Best Streak</span>
+                  <strong id="monthBestStreak">0 days</strong>
+                </div>
+                <div class="stat-box">
+                  <span style="display: block; opacity: 0.6">Completion</span>
+                  <strong id="monthPercentage">0%</strong>
+                </div>
+                <div class="stat-box">
+                  <span style="display: block; opacity: 0.6">Done</span>
+                  <strong id="monthCount">0 / 0</strong>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="activity-calendar">
-          <!-- <h3>Last month</h3> -->
-          <div class="activity-section">
-            <div class="mini-cal-header">
-              <div class="mini-cal-nav">
-                <button id="prevStatMonth">‹</button>
-                <h4>Month Year</h4>
-                <button id="nextStatMonth">›</button>
-              </div>
-              <div class="activity-day-labels">
-                <div>M</div>
-                <div>T</div>
-                <div>W</div>
-                <div>T</div>
-                <div>F</div>
-                <div>S</div>
-                <div>S</div>
-              </div>
-              <div id="activityGrid" class="activity-grid"></div>
-            </div>
-
-            <div class="month-stats-row">
-              <div class="stat-box">
-                <span style="display: block; opacity: 0.6">Best Streak</span>
-                <strong id="monthBestStreak">0 days</strong>
-              </div>
-              <div class="stat-box">
-                <span style="display: block; opacity: 0.6">Completion</span>
-                <strong id="monthPercentage">0%</strong>
-              </div>
-              <div class="stat-box">
-                <span style="display: block; opacity: 0.6">Done</span>
-                <strong id="monthCount">0 / 0</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
     <!-- MODAL -->
     <button id="addTaskBtn" class="addTaskBtn" aria-label="Add new task">

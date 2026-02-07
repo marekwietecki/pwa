@@ -1,16 +1,19 @@
-import { DataManager } from './data.js';
-import { elements, domElements } from './elements.js';
-import { initEventListeners } from './events.js';
-import { NotificationService, PermissionsManager, OfflineService } from './services.js';
-import { UI } from './ui.js';
-
+import { DataManager } from "./data.js";
+import { elements, domElements } from "./elements.js";
+import { initEventListeners } from "./events.js";
+import {
+  NotificationService,
+  PermissionsManager,
+  OfflineService,
+} from "./services.js";
+import { UI } from "./ui.js";
 
 const AppState = {
-  date: new Date(),               // Miesiąc w kalendarzu
-  selectedDate: new Date(),       // Wybrany dzień
-  currentCreateType: "task",      // task/habit/goal
-  statsViewDate: new Date(),      // Mini kalendarz statystyk
-  selectedHabitForStats: null     // Kliknięty nawyk
+  date: new Date(), // Miesiąc w kalendarzu
+  selectedDate: new Date(), // Wybrany dzień
+  currentCreateType: "task", // task/habit/goal
+  statsViewDate: new Date(), // Mini kalendarz statystyk
+  selectedHabitForStats: null, // Kliknięty nawyk
 };
 
 // Dalej w kodzie zamiast 'selectedDate' używasz 'AppState.selectedDate'

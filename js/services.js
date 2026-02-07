@@ -1,4 +1,4 @@
-import { Utils, DataManager } from './data.js';
+import { Utils, DataManager } from "./data.js";
 
 export const NotificationService = {
   async sendNotification(title, message) {
@@ -214,7 +214,8 @@ export const OfflineService = {
     if (!document.getElementById("offline-banner")) {
       const banner = document.createElement("div");
       banner.id = "offline-banner";
-      banner.textContent = "Brak połączenia z internetem. Aplikacja działa w trybie offline!";
+      banner.textContent =
+        "Brak połączenia z internetem. Aplikacja działa w trybie offline!";
       document.body.prepend(banner);
     }
 
@@ -230,8 +231,8 @@ export const OfflineService = {
     window.addEventListener("offline", updateStatus);
 
     updateStatus();
-    
+
     // Niektóre przeglądarki potrzebują chwili na start API sieciowego
-    setTimeout(updateStatus, 100); 
+    setTimeout(updateStatus, 100);
   },
 };
