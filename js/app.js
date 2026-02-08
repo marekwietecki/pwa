@@ -5,7 +5,7 @@ import {
   NotificationService,
   PermissionsManager,
   OfflineService,
-  fetchDailyQuote
+  fetchDailyQuote,
 } from "./services.js";
 import { UI } from "./ui.js";
 
@@ -19,31 +19,31 @@ const AppState = {
 
 // Dalej w kodzie zamiast 'selectedDate' używasz 'AppState.selectedDate'
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   domElements();
   OfflineService.init();
   initEventListeners(AppState);
   UI.applyRandomGradient();
   UI.setupMonthlyGrid();
   PermissionsManager.init();
-  UI.updateGoalHabitSelect();
-  const stats = DataManager.getUserStats();
+  await UI.fillHabitSelect();
+  const stats = await DataManager.getUserStats();
   const nameLabel = document.getElementById("displayUserName");
   if (nameLabel) {
     nameLabel.textContent = stats.userName;
   }
-  UI.updateXPBar();
+  await UI.updateXPBar();
 
   // index
   if (elements.toDoList && !elements.calendarGrid) {
     fetchDailyQuote();
-    UI.renderTasksForDay(AppState, false);
+    await UI.renderTasksForDay(AppState, false);
   }
   // calendar
   if (elements.calendarGrid) {
-    UI.renderCalendar(AppState);
-    UI.renderTasksForDay(AppState, true);
-    const todayCount = DataManager.countTasksForDate(new Date());
+    await UI.renderCalendar(AppState);
+    await UI.renderTasksForDay(AppState, true);
+    const todayCount = await DataManager.countTasksForDate(new Date());
     const now = new Date();
     if (now.getHours() >= 8 && todayCount > 0) {
       NotificationService.checkDailyBriefing(todayCount);
@@ -51,37 +51,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   // habits
   if (elements.habitSection) {
-    UI.renderHabits(AppState);
+    await UI.renderHabits(AppState);
   }
   // goals
   if (elements.goalsList) {
-    UI.renderGoals();
+    await UI.renderGoals();
   }
 });
 
-// ... Twój obecny kod (importy, AppState, DOMContentLoaded) ...
-
 // --- SEKRETY SERVICE WORKERA I PERIODIC SYNC ---
 async function registerSW() {
-  if ('serviceWorker' in navigator) {
+  if ("serviceWorker" in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js');
+      const registration = await navigator.serviceWorker.register("/sw.js");
       console.log("✅ SW zarejestrowany:", registration.scope);
 
       // Gdy SW jest gotowy, rejestrujemy Periodic Sync
-      if ('periodicSync' in registration) {
+      if ("periodicSync" in registration) {
         const status = await navigator.permissions.query({
-          name: 'periodic-background-sync',
+          name: "periodic-background-sync",
         });
 
-        if (status.state === 'granted') {
+        if (status.state === "granted") {
           try {
-            await registration.periodicSync.register('daily-briefing', {
+            await registration.periodicSync.register("daily-briefing", {
               minInterval: 12 * 60 * 60 * 1000, // Raz na 12h (nie spamujmy systemu)
             });
             console.log("✅ Periodic Sync: daily-briefing aktywny!");
           } catch (e) {
-            console.warn("⚠️ Periodic Sync: Błąd rejestracji (wymagana instalacja PWA).", e);
+            console.warn(
+              "⚠️ Periodic Sync: Błąd rejestracji (wymagana instalacja PWA).",
+              e
+            );
           }
         }
       }

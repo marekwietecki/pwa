@@ -17,7 +17,6 @@ const getIcon = (name) => {
   const iconString = ICONS[name];
   if (!iconString) return document.createElement("span");
 
-  const parser = new DOMParser();
   // Ważne: parsowanie jako xml
   const doc = parser.parseFromString(iconString, "image/svg+xml");
   const svg = doc.documentElement;
@@ -97,6 +96,33 @@ export const UI = {
     return container;
   },
 
+  fillHabitSelect: async () => {
+    const select = elements.goalHabitSelect;
+    if (!select) return;
+
+    while (select.firstChild) {
+      select.removeChild(select.firstChild);
+    }
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select linked habit (optional)";
+    select.appendChild(defaultOption);
+
+    try {
+      const habits = await DataManager.getHabits();
+
+      habits.forEach((habit) => {
+        const option = document.createElement("option");
+        option.value = habit.id;
+        option.textContent = habit.name;
+        select.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Błąd podczas ładowania nawyków do selecta:", error);
+    }
+  },
+
   resetModal: (AppState) => {
     if (elements.taskName) elements.taskName.value = "";
     if (elements.taskDate) elements.taskDate.value = "";
@@ -174,7 +200,7 @@ export const UI = {
     );
   },
 
-  toggleModalFields: (type) => {
+  toggleModalFields: async (type) => {
     const isHabit = type === "habit";
     const isGoal = type === "goal";
     const isTask = type === "task";
@@ -201,11 +227,11 @@ export const UI = {
       elements.monthlyDayPicker.style.display = "none";
 
     if (isGoal) {
-      UI.fillHabitSelect();
+      await UI.fillHabitSelect();
     }
   },
 
-  openEditHabitModal: (habit, AppState) => {
+  openEditHabitModal: async (habit, AppState) => {
     UI.resetModal(AppState);
 
     document.querySelector(".typePickers").style.display = "none";
@@ -241,19 +267,19 @@ export const UI = {
 
     const btn = document.getElementById("confirmAddBtn");
     btn.textContent = "Save Changes";
-
     btn.setAttribute("data-edit-id", habit.id);
+
+    //await UI.toggleModalFields("habit");
 
     elements.modalOverlay.classList.add("open");
   },
 
-  openEditGoalModal: (goal) => {
+  openEditGoalModal: async (goal) => {
     console.log("Próba edycji celu:", goal);
-
-    // 1. Reset na start
     UI.resetModal();
 
-    // 2. Łapiemy przycisk bezpośrednio z DOM (olewamy na chwilę obiekt elements)
+    await UI.fillHabitSelect();
+
     const btn = document.getElementById("confirmAddBtn");
     const title = document.getElementById("modalTitle");
 
@@ -264,14 +290,12 @@ export const UI = {
       return;
     }
 
-    // 3. Forsujemy zmiany (używamy style.display bezpośrednio)
     btn.textContent = "Save Changes";
     btn.setAttribute("data-edit-id", goal.id);
     btn.setAttribute("data-edit-type", "goal");
 
     if (title) title.textContent = "Edit Goal";
 
-    // 4. Ukrywamy zbędne rzeczy - agresywnie
     const toHide = [
       ".typePickers",
       "#habitSection",
@@ -283,53 +307,28 @@ export const UI = {
       if (el) el.style.setProperty("display", "none", "important");
     });
 
-    // 5. Pokazujemy sekcje celu
     const goalSec = document.getElementById("goalSection");
     const nameSec = document.querySelector(".nameSection");
     if (goalSec) goalSec.style.setProperty("display", "flex", "important");
     if (nameSec) nameSec.style.setProperty("display", "flex", "important");
 
-    // 6. Wpychamy dane do pól
     document.getElementById("taskName").value = goal.name || "";
     if (elements.descriptionInput)
       elements.descriptionInput.value = goal.description || "";
     if (elements.goalDeadline)
       elements.goalDeadline.value = goal.deadline || "";
 
-    // Ustawienie nawyku
     if (elements.goalHabitSelect) {
       elements.goalHabitSelect.value = goal.linkedHabitId
         ? String(goal.linkedHabitId)
         : "";
     }
 
-    // 7. Otwieramy modal
     elements.modalOverlay.classList.add("open");
     console.log("Modal powinien być otwarty w trybie EDIT");
   },
 
-  fillHabitSelect: () => {
-    const select = elements.goalHabitSelect;
-    if (!select) return;
-
-    const habits = DataManager.getHabits();
-
-    select.replaceChildren();
-
-    const defaultOpt = document.createElement("option");
-    defaultOpt.value = "";
-    defaultOpt.textContent = "No linked habit";
-    select.appendChild(defaultOpt);
-
-    habits.forEach((habit) => {
-      const opt = document.createElement("option");
-      opt.value = habit.id;
-      opt.textContent = habit.name;
-      select.appendChild(opt);
-    });
-  },
-
-  renderGoals: () => {
+  renderGoals: async () => {
     const list = document.getElementById("goalsList");
     if (!list) return;
 
@@ -337,7 +336,7 @@ export const UI = {
       list.removeChild(list.firstChild);
     }
 
-    const goals = DataManager.getGoals();
+    const goals = await DataManager.getGoals();
 
     if (elements.emptyListMessageWrapper) {
       if (goals.length === 0) {
@@ -381,7 +380,7 @@ export const UI = {
     }
   },
 
-  renderTasksForDay: (AppState, isCalendar = false) => {
+  renderTasksForDay: async (AppState, isCalendar = false) => {
     const prefix = isCalendar ? "calendar" : "";
     const listId = isCalendar ? "calendarToDoList" : "toDoList";
     const titleId = isCalendar ? "calendarTaskDateTitle" : "taskDateTitle";
@@ -414,7 +413,7 @@ export const UI = {
 
     //elements.toDoList.innerHTML = "";
 
-    const savedTasks = DataManager.getTasks();
+    const savedTasks = await DataManager.getTasksByDate();
     const savedHabits = DataManager.getHabits();
     const savedGoals = DataManager.getGoals();
 
@@ -430,44 +429,30 @@ export const UI = {
 
     const showCompleted = isCalendar;
 
-    // Sprawdzamy, czy savedTasks to na pewno obiekt
-    if (savedTasks && typeof savedTasks === "object") {
-      const tasksForDate = savedTasks[dateKey];
-
-      if (tasksForDate) {
-        console.log("DEBUG: Znaleziono zadania dla tej daty:", tasksForDate);
-
-        Object.entries(tasksForDate).forEach(([name, data]) => {
-          const type = "task";
-          const li = UI.createItem(name, data, dateKey, type, AppState);
-          if (data.done) {
-            if (showCompleted) {
-              li.classList.add("is-completed");
-              const cb = li.querySelector('input[type="checkbox"]');
-              if (cb) cb.checked = true;
-              doneNodes.push(li);
-            }
-          } else {
-            undoneNodes.push(li);
-          }
-        });
+    // TASKS
+    tasksForDate.forEach((task) => {
+      // task.id to teraz klucz główny z bazy
+      const li = UI.createItem(task.name, task, dateKey, "task", AppState);
+      if (task.done) {
+        if (showCompleted) {
+          li.classList.add("is-completed");
+          const cb = li.querySelector('input[type="checkbox"]');
+          if (cb) cb.checked = true;
+          doneNodes.push(li);
+        }
       } else {
-        console.warn(
-          "DEBUG: Klucz istnieje w bazie, ale savedTasks[dateKey] jest puste/undefined!"
-        );
+        undoneNodes.push(li);
       }
-    }
+    });
 
     // --- 2. NAWYKI (Habits) ---
     savedHabits.forEach((habit) => {
       const viewingDate = Utils.formatDateKey(targetDate);
       const createdDate = Utils.formatDateKey(new Date(habit.createdAt));
-
       if (viewingDate < createdDate) return;
 
       let isDueToday = false;
       const schedule = habit.schedule || [];
-
       if (habit.frequency === "daily") {
         isDueToday = true;
       } else if (habit.frequency === "weekly") {
@@ -559,29 +544,85 @@ export const UI = {
     );
   },
 
-  updateGoalHabitSelect: () => {
-    const select = document.getElementById("goalHabitSelect");
-    if (!select) return;
+  getItemMetadata: (data, type, allHabits) => {
+    const metaWrapper = document.createElement("div");
+    metaWrapper.className = "taskMetaWrapper";
 
-    while (select.firstChild) {
-      select.removeChild(select.firstChild);
+    if (data.location) {
+      const locSpan = document.createElement("span");
+      locSpan.className = "taskLocation";
+      const locationIcon = UI.createLocationIcon();
+      locSpan.appendChild(locationIcon);
+      const textNode = document.createTextNode(` ${data.location}`);
+      locSpan.appendChild(textNode);
+      metaWrapper.appendChild(locSpan);
     }
 
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "No linked habit";
-    select.appendChild(defaultOption);
+    if (type === "goal") {
+      if (data.deadline) {
+        const deadlineSpan = document.createElement("span");
+        deadlineSpan.style.marginTop = "4px";
+        deadlineSpan.className = "goalDeadline";
 
-    const habits = DataManager.getHabits();
-    console.log(DataManager.getHabits());
-    habits.forEach((habit) => {
-      const option = document.createElement("option");
-      option.value = habit.id;
-      option.textContent = habit.name;
-      select.appendChild(option);
-    });
+        const deadlineIcon = UI.createDeadlineIcon();
+        deadlineIcon.style.verticalAlign = "center";
+        deadlineIcon.style.marginRight = "6px";
+
+        const dateObj = new Date(data.deadline);
+        const dateText = document.createTextNode(
+          `Deadline: ${dateObj.toLocaleDateString()}`
+        );
+
+        deadlineSpan.appendChild(deadlineIcon);
+        deadlineSpan.appendChild(dateText);
+        metaWrapper.appendChild(deadlineSpan);
+      }
+
+      if (data.linkedHabitId) {
+        const habit = allHabits.find(
+          (h) => Number(h.id) === Number(data.linkedHabitId)
+        );
+        if (habit) {
+          const linkedSpan = document.createElement("span");
+          linkedSpan.className = "linkedHabitBadge";
+
+          const icon = UI.createRepeatIcon
+            ? UI.createRepeatIcon()
+            : document.createTextNode("🔄 ");
+          icon.classList.add("small-icon");
+
+          linkedSpan.appendChild(icon);
+          linkedSpan.appendChild(
+            document.createTextNode(` Linked: ${habit.name}`)
+          );
+          metaWrapper.appendChild(linkedSpan);
+        } else {
+          console.warn("Nie znaleziono nawyku o ID:", data.linkedHabitId);
+        }
+      }
+
+      if (data.description) {
+        const descDiv = document.createElement("div");
+        descDiv.className = "goalDescription";
+        descDiv.style.marginTop = "4px";
+
+        const descIcon = UI.createDescriptionIcon();
+        descIcon.style.marginRight = "6px";
+        descIcon.style.opacity = "0.7";
+        descIcon.style.verticalAlign = "middle";
+
+        const descText = document.createElement("span");
+        descText.textContent = data.description;
+
+        descDiv.appendChild(descIcon);
+        descDiv.appendChild(descText);
+        metaWrapper.appendChild(descDiv);
+      }
+    }
+
+    return metaWrapper;
   },
-
+  /*
   createItem: (name, data, dateKey, type, AppState) => {
     const li = document.createElement("li");
     li.className = `taskItem ${
@@ -627,87 +668,6 @@ export const UI = {
       taskLabel.appendChild(editGoalBtn);
     }
 
-    const metaWrapper = document.createElement("div");
-    metaWrapper.className = "taskMetaWrapper";
-
-    if (data.location) {
-      const locSpan = document.createElement("span");
-      locSpan.className = "taskLocation";
-
-      const locationIcon = UI.createLocationIcon();
-      locSpan.appendChild(locationIcon);
-
-      const textNode = document.createTextNode(` ${data.location}`);
-      locSpan.appendChild(textNode);
-
-      metaWrapper.appendChild(locSpan);
-    }
-
-    //console.log("Dane dla node'a:", type, data);
-    if (type === "goal") {
-      if (data.deadline) {
-        const deadlineSpan = document.createElement("span");
-        deadlineSpan.style.marginTop = "4px";
-
-        deadlineSpan.className = "goalDeadline";
-        const deadlineIcon = UI.createDeadlineIcon();
-        deadlineIcon.style.verticalAlign = "center";
-        deadlineIcon.style.marginRight = "6px";
-        const dateObj = new Date(data.deadline);
-        const dateText = document.createTextNode(
-          `Deadline: ${dateObj.toLocaleDateString()}`
-        );
-
-        deadlineSpan.appendChild(deadlineIcon);
-        deadlineSpan.appendChild(dateText);
-        metaWrapper.appendChild(deadlineSpan);
-      }
-
-      if (data.linkedHabitId) {
-        const habits = DataManager.getHabits();
-        console.log(DataManager.getHabits());
-        const habit = habits.find(
-          (h) => Number(h.id) === Number(data.linkedHabitId)
-        );
-        if (habit) {
-          const linkedSpan = document.createElement("span");
-          linkedSpan.className = "linkedHabitBadge";
-
-          const icon = UI.createRepeatIcon
-            ? UI.createRepeatIcon()
-            : document.createTextNode("🔄 ");
-          icon.classList.add("small-icon");
-
-          linkedSpan.appendChild(icon);
-          linkedSpan.appendChild(
-            document.createTextNode(` Linked: ${habit.name}`)
-          );
-
-          metaWrapper.appendChild(linkedSpan);
-        } else {
-          console.warn("Nie znaleziono nawyku o ID:", data.linkedHabitId);
-        }
-      }
-
-      if (data.description) {
-        const descDiv = document.createElement("div");
-        descDiv.className = "goalDescription";
-        descDiv.style.marginTop = "4px";
-
-        const descIcon = UI.createDescriptionIcon();
-        descIcon.style.marginRight = "6px";
-        descIcon.style.opacity = "0.7";
-        descIcon.style.verticalAlign = "middle";
-
-        const descText = document.createElement("span");
-        descText.textContent = data.description;
-
-        descDiv.appendChild(descIcon);
-        descDiv.appendChild(descText);
-        metaWrapper.appendChild(descDiv);
-      }
-    }
-
     taskContent.appendChild(taskLabel);
     taskContent.appendChild(metaWrapper);
 
@@ -722,7 +682,7 @@ export const UI = {
         taskActions.appendChild(circle);
       }
       */
-
+  /*
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.className = "taskCheckbox";
@@ -833,11 +793,66 @@ export const UI = {
 
     return li;
   },
+  */
 
-  renderCalendar: (AppState) => {
-    if (!elements.calendarGrid) return;
+  createItem: (name, data, dateKey, type, AppState, allHabits = []) => {
+    const li = document.createElement("li");
+    li.className = `taskItem is-${type}`;
+    li.dataset.id = data.id;
+    li.dataset.type = type;
+    li.dataset.dateKey = dateKey;
 
-    elements.calendarGrid.innerHTML = "";
+    const taskContent = document.createElement("div");
+    taskContent.className = "taskContent";
+
+    // Label i nazwa
+    const taskLabel = document.createElement("label");
+    taskLabel.className = "taskLabel";
+    taskLabel.appendChild(
+      type === "habit"
+        ? UI.createRepeatIcon()
+        : type === "goal"
+        ? UI.createGoalIcon()
+        : UI.createCheckIcon()
+    );
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "taskNodeName";
+    nameSpan.textContent = name;
+    taskLabel.appendChild(nameSpan);
+
+    taskContent.appendChild(taskLabel);
+    taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));
+
+    // Akcje (checkbox, moreBtn)
+    const taskActions = document.createElement("div");
+    taskActions.className = "taskActions";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "taskCheckbox";
+    checkbox.checked =
+      type === "task" ? !!data.done : !!(data.history && data.history[dateKey]);
+
+    const moreBtn = document.createElement("button");
+    moreBtn.className = "moreBtn";
+    moreBtn.appendChild(UI.createEllipsisIcon());
+
+    taskActions.appendChild(checkbox);
+    taskActions.appendChild(moreBtn);
+
+    li.appendChild(taskContent);
+    li.appendChild(taskActions);
+
+    // UWAGA: Nie dodajemy tu listenerów! Zrobimy to w events.js przez delegację.
+    return li;
+  },
+
+  renderCalendar: async (AppState) => {
+    const grid = elements.calendarGrid;
+    if (!grid) return;
+
+    while (grid.firstChild) grid.removeChild(grid.firstChild);
 
     elements.currentMonth.textContent = AppState.date.toLocaleDateString(
       "en-US",
@@ -864,7 +879,7 @@ export const UI = {
       elements.calendarGrid.appendChild(document.createElement("div"));
     }
 
-    const allGoals = DataManager.getGoals();
+    const allGoals = await DataManager.getGoals();
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
@@ -897,7 +912,6 @@ export const UI = {
         if (isAnyUnfinishedOverdue) {
           deadlineIconWrapper.classList.add("is-overdue");
         }
-
         deadlineIconWrapper.appendChild(UI.createGoalIcon());
         el.appendChild(deadlineIconWrapper);
       }
@@ -919,16 +933,17 @@ export const UI = {
         UI.renderTasksForDay(AppState, true);
       };
 
-      elements.calendarGrid.appendChild(el);
+      grid.appendChild(el);
     }
   },
 
-  renderHabits: (AppState) => {
+  renderHabits: async (AppState) => {
     const container = document.getElementById("habitCarousel");
     if (!container) return;
 
-    const habits = DataManager.getHabits();
-    container.innerHTML = "";
+    const habits = await DataManager.getHabits();
+
+    while (container.firstChild) container.removeChild(container.firstChild);
 
     if (habits.length === 0) {
       const noHabitsMsg = document.createElement("p");
@@ -970,7 +985,6 @@ export const UI = {
 
         container.appendChild(card);
 
-        // PRZENIESIONE TUTAJ - do środka try
         if (index === 0) {
           iconCircle.classList.add("active-habit-icon");
           name.classList.add("active-habit-label");
@@ -1038,7 +1052,8 @@ export const UI = {
     document.getElementById("startData").textContent = startDate;
 
     const circleContainer = document.getElementById("detailProgressCircle");
-    circleContainer.innerHTML = "";
+    while (circleContainer.firstChild)
+      circleContainer.removeChild(circleContainer.firstChild);
     circleContainer.appendChild(UI.createProgressCircle(progress));
     UI.renderActivityGrid(habit, AppState);
   },
@@ -1049,12 +1064,12 @@ export const UI = {
         "Mordo, zapomniałeś o AppState w renderActivityGrid!"
       );
 
-    const viewDate = AppState.statsViewDate;
+    //const viewDate = AppState.statsViewDate;
 
     const grid = document.getElementById("activityGrid");
     if (!grid) return;
 
-    grid.innerHTML = "";
+    while (grid.firstChild) grid.removeChild(grid.firstChild);
 
     const year = AppState.statsViewDate.getFullYear();
     const month = AppState.statsViewDate.getMonth();
@@ -1139,8 +1154,8 @@ export const UI = {
       countEl.textContent = `${completedThisMonth} / ${scheduledThisMonth}`;
   },
 
-  updateXPBar: () => {
-    const stats = DataManager.getUserStats();
+  updateXPBar: async () => {
+    const stats = await DataManager.getUserStats();
     const threshold = LevelManager.getXpThreshold(stats.level);
 
     const progressPercent = (stats.currentXp / threshold) * 100;

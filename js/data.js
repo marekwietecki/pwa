@@ -1,3 +1,4 @@
+import { DB } from "./db.js";
 export const STATS_KEY = "habit_hero_stats";
 
 export const defaultStats = {
@@ -16,9 +17,9 @@ export const Utils = {
   formatDateKey: (date) => {
     if (!date || !(date instanceof Date)) {
       console.error(
-        "Mordziu, formatDateKey dostało lipną datę,",
+        "ejejej formatDateKey dostało lipną datę,",
         date,
-        "| zamiast tego dałem dzisiejszą"
+        "| zamiast tego dzisiejsza"
       );
       date = new Date();
     }
@@ -45,69 +46,123 @@ export const Utils = {
 };
 
 export const DataManager = {
-  getTasks: () => JSON.parse(localStorage.getItem("tasksState")) || {},
+  // TASKS
+  async getTasks() {
+    return await DB.getAll("tasks");
+  },
+
+  async getTasksByDate(dateKey) {
+    const all = await this.getTasks();
+    return all.filter((t) => t.date === dateKey);
+  },
+
+  async addTask(name, date, location) {
+    const newTask = {
+      name,
+      date,
+      location,
+      done: false,
+      createdAt: new Date().toISOString(),
+    };
+    return await DB.put("tasks", newTask);
+  },
+
+  async toggleTaskDone(taskId, isDone) {
+    const db = await DB.open();
+    return new Promise((resolve) => {
+      const tx = db.transaction("tasks", "readwrite");
+      const store = tx.objectStore("tasks");
+      store.get(taskId).onsuccess = (e) => {
+        const task = e.target.result;
+        if (!task) return resolve(false);
+        task.done = isDone;
+        store.put(task).onsuccess = () => resolve(true);
+      };
+    });
+  },
+
+  // HABITS
+  async getHabits() {
+    return await DB.getAll("habits");
+  },
+
+  async addHabit(habitObj) {
+    if (!habitObj.id) habitObj.id = Date.now();
+    return await DB.put("habits", habitObj);
+  },
+
+  async toggleHabitDone(habitId, dateKey, isDone) {
+    const db = await DB.open();
+    return new Promise((resolve) => {
+      const tx = db.transaction("habits", "readwrite");
+      const store = tx.objectStore("habits");
+      store.get(habitId).onsuccess = (e) => {
+        const habit = e.target.result;
+        if (!habit) return resolve(false);
+        habit.history = habit.history || {};
+        if (isDone) habit.history[dateKey] = true;
+        else delete habit.history[dateKey];
+        store.put(habit).onsuccess = () => resolve(true);
+      };
+    });
+  },
+
+  async updateHabitDetails(habitId, newFrequency, newSchedule, newStartDate) {
+    const db = await DB.open();
+    return new Promise((resolve) => {
+      const tx = db.transaction("habits", "readwrite");
+      const store = tx.objectStore("habits");
+      store.get(habitId).onsuccess = (e) => {
+        const habit = e.target.result;
+        if (habit) {
+          habit.frequency = newFrequency;
+          habit.schedule = newSchedule;
+          habit.createdAt = new Date(newStartDate).toISOString();
+          store.put(habit).onsuccess = () => resolve(true);
+        } else resolve(false);
+      };
+    });
+  },
+
+  // GOALS
+  async getGoals() {
+    return await DB.getAll("goals");
+  },
+
+  async addGoal(goal) {
+    if (!goal.id) goal.id = Date.now();
+    return await DB.put("goals", goal);
+  },
+
+  async updateGoalDetails(goalId, newData) {
+    const db = await DB.open();
+    return new Promise((resolve) => {
+      const tx = db.transaction("goals", "readwrite");
+      const store = tx.objectStore("goals");
+      store.get(goalId).onsuccess = (e) => {
+        const goal = e.target.result;
+        if (goal) {
+          Object.assign(goal, newData);
+          store.put(goal).onsuccess = () => resolve(true);
+        } else resolve(false);
+      };
+    });
+  },
+
+  /*
   saveTasks: (tasks) =>
     localStorage.setItem("tasksState", JSON.stringify(tasks)),
 
-  //getHabits: () => JSON.parse(localStorage.getItem("habitsState")) || [],
-  getHabits: () => {
-    const data = JSON.parse(localStorage.getItem("habitsState")) || [];
-    if (Array.isArray(data)) return data;
-    if (data && data.habits) return data.habits;
-
-    return [];
-  },
   saveHabits: (habits) =>
     localStorage.setItem("habitsState", JSON.stringify(habits)),
 
-  addTask: (name, date, location) => {
-    const tasks = DataManager.getTasks();
-    if (!tasks[date]) tasks[date] = {};
-    tasks[date][name] = {
-      done: false,
-      location: location,
-      createdAt: new Date().toISOString(),
-    };
-    DataManager.saveTasks(tasks);
+  saveGoals: (goals) => {
+    localStorage.setItem("goalsState", JSON.stringify(goals));
   },
-
-  addHabit: (habitObj) => {
-    const habits = DataManager.getHabits();
-    habits.push(habitObj);
-    DataManager.saveHabits(habits);
-  },
-
-  toggleHabitDone: (habitId, dateKey, isDone) => {
-    const habits = DataManager.getHabits();
-    const habit = habits.find((h) => h.id === habitId);
-    if (habit) {
-      habit.history = habit.history || {};
-      if (isDone) {
-        habit.history[dateKey] = true;
-      } else {
-        delete habit.history[dateKey];
-      }
-      DataManager.saveHabits(habits);
-    }
-  },
-
-  updateHabitDetails: (habitId, newFrequency, newSchedule, newStartDate) => {
-    const habits = DataManager.getHabits();
-    const index = habits.findIndex((h) => h.id === habitId);
-
-    if (index !== -1) {
-      habits[index].frequency = newFrequency;
-      habits[index].schedule = newSchedule;
-      habits[index].createdAt = new Date(newStartDate).toISOString();
-
-      DataManager.saveHabits(habits);
-      console.log("Successfully updated habit in habitsState!");
-    } else {
-      console.error("Habit not found for ID:", habitId);
-    }
-  },
+ */
 
   calculateHabitProgress: (habit) => {
+    if (!habit) return 0;
     try {
       const now = new Date();
       now.setHours(0, 0, 0, 0);
@@ -120,7 +175,6 @@ export const DataManager = {
 
       let scheduledDaysCount = 0;
       let completedDaysCount = 0;
-
       let d = new Date(createdDate.getTime());
 
       while (d <= now) {
@@ -159,7 +213,7 @@ export const DataManager = {
   },
 
   calculateStreak: (habit) => {
-    if (!habit.history || Object.keys(habit.history).length === 0) return 0;
+    if (!habit || !habit.history) return 0;
 
     let streak = 0;
     let checkDate = new Date();
@@ -198,30 +252,15 @@ export const DataManager = {
     return streak;
   },
 
-  getGoals: () => {
-    return JSON.parse(localStorage.getItem("goalsState")) || [];
-  },
-
-  saveGoals: (goals) => {
-    localStorage.setItem("goalsState", JSON.stringify(goals));
-  },
-
-  addGoal: (goal) => {
-    const goals = DataManager.getGoals();
-    goals.push(goal);
-    DataManager.saveGoals(goals);
-  },
-
-  countTasksForDate: (date = new Date()) => {
+  async countTasksForDate(date = new Date()) {
     const dateKey = Utils.formatDateKey(date);
     const dayOfWeek = date.getDay();
     const dayOfMonth = date.getDate();
 
-    const tasks = DataManager.getTasks()[dateKey] || {};
-    const habits = DataManager.getHabits();
-    const goals = DataManager.getGoals();
+    const tasks = await this.getTasksByDate(dateKey);
+    const habits = await this.getHabits();
 
-    let count = Object.values(tasks).filter((t) => !t.done).length;
+    let count = tasks.filter((t) => !t.done).length;
 
     habits.forEach((h) => {
       let isDue =
@@ -233,40 +272,35 @@ export const DataManager = {
       if (isDue && !isDone) count++;
     });
 
-    //goals?
-    //count += goals.filter((g) => g.deadline === dateKey && !g.done).length;
+    // goals doesn't count for now
 
     return count;
   },
 
-  updateGoalDetails: (goalId, newData) => {
-    const goals = DataManager.getGoals();
-    const index = goals.findIndex((g) => g.id === goalId);
-
-    if (index !== -1) {
-      goals[index].name = newData.name;
-      goals[index].description = newData.description;
-      goals[index].deadline = newData.deadline;
-      goals[index].linkedHabitId = newData.linkedHabitId;
-
-      DataManager.saveGoals(goals);
-      console.log("Goal updated!");
-    }
+  async deleteTask(id) {
+    return await DB.delete("tasks", id);
+  },
+  async deleteHabit(id) {
+    return await DB.delete("habits", id);
+  },
+  async deleteGoal(id) {
+    return await DB.delete("goals", id);
   },
 
-  getUserStats: () => {
-    const stats = localStorage.getItem(STATS_KEY);
-    return stats ? JSON.parse(stats) : defaultStats;
+  async getUserStats() {
+    const stats = await DB.get("stats", STATS_KEY);
+    return stats || defaultStats;
   },
 
-  saveUserStats: (stats) => {
-    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  async saveUserStats(stats) {
+    stats.id = STATS_KEY;
+    await DB.put("stats", stats);
   },
 
-  updateUserName: (newName) => {
-    const stats = DataManager.getUserStats();
+  async updateUserName(newName) {
+    const stats = await this.getUserStats();
     stats.userName = newName;
-    DataManager.saveUserStats(stats);
+    await this.saveUserStats(stats);
   },
 };
 
@@ -316,8 +350,8 @@ export const LevelManager = {
     return xpGain;
   },
 
-  applyXP: (amount) => {
-    const stats = DataManager.getUserStats(); // { totalXp: 0, currentXp: 0, level: 1 }
+  async applyXP(amount) {
+    const stats = await DataManager.getUserStats(); // { totalXp: 0, currentXp: 0, level: 1 }
     stats.totalXp += amount;
     stats.currentXp += amount;
 
@@ -336,7 +370,8 @@ export const LevelManager = {
       stats.currentXp += LevelManager.getXpThreshold(stats.level);
     }
 
-    DataManager.saveUserStats(stats);
+    await DataManager.saveUserStats(stats);
+
     document.dispatchEvent(
       new CustomEvent("statsUpdated", {
         detail: { leveledUp: leveledUp },

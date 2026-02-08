@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v7";
+const CACHE_VERSION = "v8";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -216,16 +216,36 @@ self.addEventListener('periodicsync', (event) => {
 });
 
 async function checkAndNotify() {
-  // Tutaj jest mały problem: SW nie ma dostępu do localStorage!
-  // To dlatego IndexedDB jest tak ważne, ale na razie możemy spróbować 
-  // wysłać uniwersalne przypomnienie.
+  const now = new Date();
+  const hour = now.getHours();
   
-  const registration = self.registration;
+  // 1. Okno czasowe 8:00 - 10:00
+  if (hour < 8 || hour >= 10) return;
+
+  const todayKey = now.toISOString().split('T')[0];
   
-  // Przykładowe powiadomienie "na sztywno"
-  await registration.showNotification("Habit Hero", {
-    body: "Hi Hero! Complete your tasks for today to maintain your great streak!",
-    icon: "/assets/192x192.png",
-    tag: "daily-reminder" // zapobiega dublowaniu powiadomień
-  });
+  // 2. Otwieramy bazę bezpośrednio w SW
+  const dbRequest = indexedDB.open("HabitHeroDB", 2);
+  dbRequest.onerror = () => console.error("❌ SW: Nie udało się otworzyć bazy danych");
+  dbRequest.onsuccess = async (e) => {
+    const db = e.target.result;
+    const tx = db.transaction("tasks", "readonly");
+    const store = tx.objectStore("tasks");
+    const index = store.index("by_date");
+    
+    index.getAll(IDBKeyRange.only(todayKey)).onsuccess = (event) => {
+      const tasks = event.target.result;
+      const undoneCount = tasks.filter(t => !t.done).length;
+
+      if (undoneCount > 0) {
+        self.registration.showNotification("Habit Hero", {
+          body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
+          icon: "/assets/192x192.png",
+          badge: "/assets/192x192.png",
+          tag: "daily-briefing",
+          renotify: true
+        });
+      }
+    };
+  };
 }
