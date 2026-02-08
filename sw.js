@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v6";
+const CACHE_VERSION = "v7";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -224,7 +224,7 @@ async function checkAndNotify() {
   
   // Przykładowe powiadomienie "na sztywno"
   await registration.showNotification("Habit Hero", {
-    body: "Hej Hero! Sprawdź swoje zadania na dziś, żeby utrzymać passę!",
+    body: "Hi Hero! Complete your tasks for today to maintain your great streak!",
     icon: "/assets/192x192.png",
     tag: "daily-reminder" // zapobiega dublowaniu powiadomień
   });

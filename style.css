@@ -129,8 +129,8 @@ body {
 
 /* CALENDAR */ /* ------------------------------------------------------------------------ */
 .calendar {
-  margin-top: 2svh;
-  height: 48vh;
+  margin-top: 1.5svh;
+  max-height: 333px;
   background-color: #15161c;
   flex-shrink: 0;
 }
@@ -286,7 +286,7 @@ body {
 
 #taskDateTitle,
 #calendarTaskDateTitle {
-  padding-top: 4vh;
+  padding-top: 20px;
   padding-left: 4vw;
   margin: 0;
   flex-shrink: 0;
@@ -1136,7 +1136,7 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 20px 16px;
+  padding: 12px 16px 24px;
   margin-left: 20px;
   margin-right: 20px;
   scroll-snap-type: x mandatory;
@@ -1197,7 +1197,8 @@ input.error {
 
 .habit-name-label {
   font-size: 10px;
-  color: white;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -1205,10 +1206,15 @@ input.error {
   width: 100%;
 }
 
+.habit-name-label.active-habit-label {
+  color: rgba(255, 255, 255, 1);
+  font-weight: 600;
+}
+
 #detailHabitName {
   display: flex;
   margin: 0;
-  padding: 0 0 16px 16px;
+  padding: 0 0 8px 16px;
 }
 
 .crucialHabitStats {
@@ -1223,8 +1229,7 @@ input.error {
   flex-direction: column;
   justify-content: flex-end;
   gap: 6px;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 8px 0px;
 }
 
 .editHabitDetail {
@@ -1283,6 +1288,8 @@ input.error {
   font-size: 13px;
   max-width: 264px;
   width: 100%;
+  padding: 0px 12px;
+  opacity: 48%;
 }
 
 .stats-grid {
@@ -1310,7 +1317,7 @@ input.error {
   max-width: 600px;
   width: 100%;
   justify-self: center;
-  margin-top: 28px;
+  margin-top: 12px;
 }
 
 .progress-value {
@@ -1473,9 +1480,10 @@ input.error {
   align-items: center;
   max-width: 640px;
   width: 100%;
-  margin: 56px auto 0;
+
+  margin: 20px auto 0px;
   gap: 32px;
-  padding: 0 40px;
+  padding: 20px 40px;
 }
 
 .permission-item {
@@ -1628,7 +1636,7 @@ h3 {
 .levelWrapper {
   display: flex;
   flex-direction: column;
-  max-width: 232px;
+  max-width: 234px;
   width: 100%;
   align-items: flex-start;
   justify-content: flex-end;

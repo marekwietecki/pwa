@@ -959,7 +959,11 @@ export const UI = {
           document
             .querySelectorAll(".habit-card-icon")
             .forEach((c) => c.classList.remove("active-habit-icon"));
+          document
+            .querySelectorAll(".habit-name-label")
+            .forEach((l) => l.classList.remove("active-habit-label"));
           iconCircle.classList.add("active-habit-icon");
+          name.classList.add("active-habit-label");
           UI.showHabitDetails(habit, AppState);
           card.scrollIntoView({ behavior: "smooth", inline: "center" });
         };
@@ -969,6 +973,7 @@ export const UI = {
         // PRZENIESIONE TUTAJ - do środka try
         if (index === 0) {
           iconCircle.classList.add("active-habit-icon");
+          name.classList.add("active-habit-label");
           UI.showHabitDetails(habit, AppState);
         }
       } catch (error) {
