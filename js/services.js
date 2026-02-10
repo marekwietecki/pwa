@@ -61,6 +61,25 @@ export const PermissionsManager = {
   },
 };
 
+async function setupPeriodicSync(registration) {
+  try {
+    const status = await navigator.permissions.query({
+      name: 'periodic-background-sync',
+    });
+
+    if (status.state === 'granted') {
+      await registration.periodicSync.register('daily-briefing', {
+        minInterval: 2 * 60 * 60 * 1000, 
+      });
+      console.log('✅ Periodic Sync zarejestrowany!');
+    } else {
+      console.log('⚠️ Brak uprawnień do Periodic Sync (standard w niektórych przeglądarkach)');
+    }
+  } catch (err) {
+    console.log('ℹ️ Periodic Sync nie jest wspierany, briefingi będą działać tylko przy starcie apki.');
+  }
+}
+
 export const swManager = {
   register: async () => {
     if ("serviceWorker" in navigator) {
