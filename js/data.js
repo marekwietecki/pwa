@@ -391,7 +391,7 @@ export const LevelManager = {
     }; // to not mutate the original
 
     const amount = Number(xpAmount) || 0;
-    
+
     stats.totalXp += amount;
     stats.currentXp += amount;
 

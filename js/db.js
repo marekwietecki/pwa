@@ -91,11 +91,13 @@ export const DB = {
     });
   },
 
-  async put(storeName, item) {
+  async put(storeName, item, key) {
     const db = await this.open();
     return new Promise((resolve) => {
       const tx = db.transaction(storeName, "readwrite");
-      tx.objectStore(storeName).put(item).onsuccess = () => resolve(true);
+      const store = tx.objectStore(storeName);
+      const request = key ? store.put(item, key) : store.put(item);
+      request.onsuccess = () => resolve(true);
     });
   },
 

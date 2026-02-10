@@ -127,9 +127,12 @@ export const UI = {
   },
 
   detectModalDefaultType: () => {
-    const url = window.location.href.toLowerCase();
-    if (url.includes("habit")) return "habit";
-    if (url.includes("hero")) return "goal";
+    const path = window.location.hash || window.location.pathname;
+    const cleanPath = path.toLowerCase();
+
+    if (cleanPath.includes("goal")) return "goal";
+    if (cleanPath.endsWith("habits") || cleanPath.includes("#habit"))
+      return "habit";
     return "task";
   },
 
@@ -164,9 +167,11 @@ export const UI = {
     const nameSection = document.querySelector(".nameSection");
     const habitIcon = document.getElementById("habitIconWrapper");
 
-    [dSection, hSection, gSection, lSection, typePickers, habitIcon].forEach((el) => {
-      if (el) el.style.display = "none";
-    });
+    [dSection, hSection, gSection, lSection, typePickers, habitIcon].forEach(
+      (el) => {
+        if (el) el.style.display = "none";
+      }
+    );
 
     if (dateTitle) dateTitle.textContent = "Date";
     if (nameSection) nameSection.style.display = "flex";
@@ -217,11 +222,13 @@ export const UI = {
   resetModal: (AppState) => {
     UI.clearModalInputs();
 
-    AppState.currentCreateType = UI.detectModalDefaultType();
+    const defaultType = UI.detectModalDefaultType();
+    AppState.currentCreateType = defaultType;
 
     UI.toggleModalFields(AppState.currentCreateType, false);
 
     UI.refreshTypePickerButtons(AppState.currentCreateType);
+    console.log("Moja apka zresetowała modal na:", defaultType);
   },
 
   applyRandomGradient: () => {
@@ -599,7 +606,7 @@ export const UI = {
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
 
-    const uniqueId = `${type}-${data.id}-${dateKey || 'fixed'}`;
+    const uniqueId = `${type}-${data.id}-${dateKey || "fixed"}`;
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
     taskLabel.setAttribute("for", `check-${uniqueId}`);
@@ -824,7 +831,10 @@ export const UI = {
 
     const monthLabel = document.querySelector(".activity-section h4");
     if (monthLabel) {
-      monthLabel.textContent = AppState.statsViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      monthLabel.textContent = AppState.statsViewDate.toLocaleDateString(
+        "en-US",
+        { month: "long", year: "numeric" }
+      );
     }
 
     const firstDay = new Date(year, month, 1);
@@ -833,14 +843,14 @@ export const UI = {
       fragment.appendChild(document.createElement("div"));
     }
 
-    days.forEach(dayData => {
+    days.forEach((dayData) => {
       const el = document.createElement("div");
       el.className = "mini-day";
       el.textContent = dayData.day;
 
       if (dayData.isDone) el.classList.add("habit-done");
       if (!dayData.isScheduled) el.classList.add("inactive");
-      
+
       fragment.appendChild(el);
     });
 

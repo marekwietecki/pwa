@@ -333,6 +333,10 @@ main {
   margin-top: 0;
 }
 
+.longTermGoalsTitle {
+  padding-bottom: 12px;
+}
+
 #goalsList {
   list-style-type: none;
   padding-inline-start: 0;
