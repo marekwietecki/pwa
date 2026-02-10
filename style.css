@@ -58,15 +58,15 @@ body {
 .taskItem svg,
 .lucide-icon,
 .task-type-icon {
-  width: 20px;
-  height: 20px;
   display: inline-block;
   vertical-align: middle;
   flex-shrink: 0;
-  stroke: #fff;
-  color: #fff;
   stroke-width: 2;
   fill: none;
+}
+.deleteBtn:hover svg, 
+.moreBtn:hover svg {
+  opacity: 72%;
 }
 .navbar {
   display: flex;
@@ -319,7 +319,7 @@ main {
   min-height: 0;
   overflow: hidden;
   margin-top: 8px;
-  padding: 0 20px;
+  padding: 0;
   margin-bottom: 56px;
   /* box-sizing: border-box; */
 }
@@ -329,7 +329,7 @@ main {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-left: 0;
+  padding: 0 20px;
   margin-top: 0;
 }
 

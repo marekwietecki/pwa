@@ -77,7 +77,7 @@ export const Utils = {
       return streakValue === 1 ? "day" : "days";
     }
     return streakValue === 1 ? "time" : "times";
-  }
+  },
 };
 
 export const DataManager = {
@@ -89,14 +89,14 @@ export const DataManager = {
   getMonthlyStats: (habit, month, year) => {
     let stats = { scheduled: 0, completed: 0, currentStreak: 0, bestStreak: 0 };
     let days = [];
-    
+
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const createdDate = new Date(habit.createdAt).setHours(0, 0, 0, 0);
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const dateKey = Utils.formatDateKey(date);
-      
+
       const isScheduled = Utils.isHabitDue(habit, date);
       const isDone = habit.history && habit.history[dateKey] === true;
       const isPostCreated = date >= createdDate;
@@ -117,7 +117,7 @@ export const DataManager = {
       days.push({
         day,
         isDone,
-        isScheduled: finalIsScheduled
+        isScheduled: finalIsScheduled,
       });
     }
 
@@ -137,10 +137,6 @@ export const DataManager = {
 
   async getUndoneTasks(dateKey) {
     const unfinished = await DB.getAllFromIndex("tasks", "by_done", 0);
-
-    // Filtrujemy je tak, żeby pokazać:
-    // - te z dzisiaj (dateKey)
-    // - te z przeszłości (zaległe), których nie zrobiliśmy
     return unfinished.filter((t) => t.date <= dateKey);
   },
 
@@ -365,14 +361,20 @@ export const LevelManager = {
 
     if (type === "goal") {
       let xp = RULES.GOAL_BASE;
+
+      if (!data.createdAt || !data.deadline) return xp;
+
       const created = new Date(data.createdAt);
       const deadline = new Date(data.deadline);
       const today = new Date().setHours(0, 0, 0, 0);
 
+      if (isNaN(created) || isNaN(deadline)) return xp;
+
       const diffDays = Math.floor(
         Math.abs(deadline - created) / (1000 * 60 * 60 * 24)
       );
-      xp += Math.floor(diffDays / 30) * RULES.GOAL_MONTHLY_BONUS;
+      const monthlyBonus = Math.floor(diffDays / 30) * RULES.GOAL_MONTHLY_BONUS;
+      xp += monthlyBonus;
 
       if (today <= deadline) xp += RULES.GOAL_ON_TIME_BONUS;
       return xp;
@@ -381,9 +383,17 @@ export const LevelManager = {
   },
 
   processXpGain: (currentStats, xpAmount) => {
-    const stats = { ...currentStats }; // Kopia, żeby nie mutować oryginału (Pure Function)
-    stats.totalXp += xpAmount;
-    stats.currentXp += xpAmount;
+    const stats = {
+      ...currentStats,
+      totalXp: Number(currentStats.totalXp) || 0,
+      currentXp: Number(currentStats.currentXp) || 0,
+      level: Number(currentStats.level) || 1,
+    }; // to not mutate the original
+
+    const amount = Number(xpAmount) || 0;
+    
+    stats.totalXp += amount;
+    stats.currentXp += amount;
 
     let leveledUp = false;
 

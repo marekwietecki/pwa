@@ -19,6 +19,15 @@ const AppState = {
 
 document.addEventListener("DOMContentLoaded", async () => {
   domElements();
+  const notifyToggle = document.getElementById("toggleNotifications");
+  const locationToggle = document.getElementById("toggleLocation");
+  
+  if (notifyToggle) {
+    notifyToggle.checked = localStorage.getItem("user_notifications_enabled") === "true";
+  }
+  if (locationToggle) {
+    locationToggle.checked = localStorage.getItem("user_location_enabled") === "true";
+  }
   OfflineService.init();
   initEventListeners(AppState);
   swManager.register();

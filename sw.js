@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v8";
+const CACHE_VERSION = "v9";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -215,53 +215,59 @@ self.addEventListener("periodicsync", (event) => {
   }
 });
 
+// sw.js
 async function checkAndNotify() {
   const now = new Date();
   const hour = now.getHours();
-
-  if (hour < 8 || hour >= 10) return;
+  if (hour < 8 || hour >= 10) return; 
 
   const todayKey = now.toISOString().split("T")[0];
 
-  const dbRequest = indexedDB.open("HabitHeroDB", 2);
-  dbRequest.onerror = () =>
-    console.error("❌ SW: Nie udało się otworzyć bazy danych");
-  dbRequest.onsuccess = async (e) => {
-    const db = e.target.result;
-    const tx = db.transaction(["tasks", "metadata"], "readwrite");
-    const metaStore = tx.objectStore("metadata");
-    const taskStore = tx.objectStore("tasks");
-    const taskIndex = store.index("by_date");
+  return new Promise((resolve, reject) => {
+    const dbRequest = indexedDB.open("HabitHeroDB", 6);
 
-    const metaRequest = metaStore.get("last_briefing_date");
+    dbRequest.onerror = () => reject("SW: Błąd otwarcia DB");
 
-    metaRequest.onsuccess = () => {
-      if (metaRequest.result === todayKey) {
-        console.log("SW: Dzisiaj już był briefing.");
-        return resolve();
-      }
+    dbRequest.onsuccess = (e) => {
+      const db = e.target.result;
+      const tx = db.transaction(["tasks", "metadata"], "readwrite");
+      const metaStore = tx.objectStore("metadata");
+      const taskStore = tx.objectStore("tasks");
+      const taskIndex = taskStore.index("by_date");
 
-      const taskRequest = taskIndex.getAll(IDBKeyRange.only(todayKey));
+      const metaRequest = metaStore.get("last_briefing_date");
 
-      index.getAll(IDBKeyRange.only(todayKey)).onsuccess = (event) => {
-        const tasks = event.target.result;
-        const undoneCount = tasks.filter((t) => !t.done).length;
-
-        if (undoneCount > 0) {
-          metaStore.put(todayKey, "last_briefing_date");
-
-          self.registration.showNotification("Habit Hero", {
-            body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
-            icon: "/assets/192x192.png",
-            badge: "/assets/192x192.png",
-            tag: "daily-briefing",
-            renotify: true,
-          });
+      metaRequest.onsuccess = () => {
+        const lastDate = metaRequest.result?.value || metaRequest.result;
+        
+        if (lastDate === todayKey) {
+          console.log("SW: Dzisiaj już był briefing.");
+          return resolve();
         }
-        resolve();
+
+        const taskRequest = taskIndex.getAll(IDBKeyRange.only(todayKey));
+
+        taskRequest.onsuccess = () => {
+          const tasks = taskRequest.result;
+          const undoneCount = tasks.filter((t) => !t.done).length;
+
+          if (undoneCount > 0) {
+            metaStore.put({ id: "last_briefing_date", value: todayKey });
+
+            self.registration.showNotification("Habit Hero", {
+              body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
+              icon: "/assets/192x192.png",
+              badge: "/assets/192x192.png",
+              tag: "daily-briefing",
+              renotify: true,
+            });
+          }
+          resolve();
+        };
       };
+
+      tx.oncomplete = () => db.close();
+      tx.onerror = () => reject("SW: Transakcja padła");
     };
-    tx.oncomplete = () => console.log("SW: Transakcja zakończona sukcesem.");
-    tx.onerror = () => reject("SW: Błąd Transakcji.");
-  };
+  });
 }
