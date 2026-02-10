@@ -15,6 +15,9 @@
     <link rel="manifest" href="./manifest.webmanifest" />
   </head>
   <body>
+    <div id="offline-banner">
+      Brak połączenia z internetem. Aplikacja działa w trybie offline!
+    </div>
     <header class="navbar">
       <h1 class="logo">Habit Hero</h1>
       <nav class="tabNav">
@@ -476,16 +479,6 @@
     </div>
 
     <script type="module" src="./js/app.js"></script>
-
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("./sw.js", { type: "module" })
-            .then((reg) => console.log("SW register success", reg.scope))
-            .catch((err) => console.error("SW register failed", err));
-        });
-      }
-    </script>
+    
   </body>
 </html>

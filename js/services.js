@@ -1,130 +1,105 @@
 import { Utils, DataManager } from "./data.js";
 
-// NotificationService.js
 export const NotificationService = {
-  // --- SILNIK (To co napisałeś) ---
   async send(title, options = {}) {
-    const isMutedByUser = localStorage.getItem("user_notifications_enabled") === "false";
+    const isMutedByUser =
+      localStorage.getItem("user_notifications_enabled") === "false";
     if (Notification.permission !== "granted" || isMutedByUser) return;
 
     const registration = await navigator.serviceWorker.ready;
-    
+
     const defaultOptions = {
       icon: "/assets/192x192.png",
-      badge: "/assets/192x192.png", // Upewnij się, że ścieżka do badge jest poprawna
+      badge: "/assets/192x192.png",
       vibrate: [200, 100, 200],
-      tag: "habit-hero-alert", // Zapobiega spamowi (podmienia stare powiadomienie)
+      tag: "habit-hero-alert", // tag helps fighting with spam
       renotify: true,
-      ...options
+      ...options,
     };
 
     return registration.showNotification(title, defaultOptions);
   },
 
-  // --- LOGIKA (Kierowca) ---
   async runDailyCheck() {
     const now = new Date();
-    // 1. Sprawdzamy godzinę (np. po 8 rano)
     if (now.getHours() < 8) return;
 
-    // 2. Sprawdzamy czy już dziś nie było powiadomienia
-    const todayKey = now.toISOString().split('T')[0]; // Prosty format YYYY-MM-DD
-    if (localStorage.getItem("last_briefing_date") === todayKey) return;
+    const todayKey = Utils.formatDateKey(now);
+    const lastBriefing = await DataManager.getMetadata("last_briefing_date");
+    if (lastBriefing === todayKey) return;
 
-    // 3. Pobieramy dane (na razie z localStorage, dopóki nie wjedzie IndexedDB)
-    // UWAGA: SW tego nie widzi, to zadziała tylko gdy karta jest otwarta!
-    const savedTasks = JSON.parse(localStorage.getItem("habitHero_tasks") || "{}");
-    const tasksToday = savedTasks[todayKey] || {};
-    const undoneCount = Object.keys(tasksToday).filter(name => !tasksToday[name].done).length;
+    const undoneCount = await DataManager.countUndoneTasks(todayKey);
 
-    // 4. Jeśli są zadania - ogień!
     if (undoneCount > 0) {
-      await this.send(
-        "Good Morning! 🦸‍♂️",
-        { body: `You have ${undoneCount} pending tasks for today. Time to level up!` }
-      );
-      localStorage.setItem("last_briefing_date", todayKey);
+      await this.send("Good Morning! 🦸‍♂️", {
+        body: `You have ${undoneCount} pending tasks for today. Time to level up!`,
+      });
+      await DataManager.setMetadata("last_briefing_date", todayKey);
     }
-  }
+  },
 };
 
 export const PermissionsManager = {
-  init() {
-    const notifyToggle = document.getElementById("toggleNotifications");
-    const locationToggle = document.getElementById("toggleLocation");
-
-    // Bezpiecznik: jeśli nie ma toggle na danej podstronie
-    if (!notifyToggle || !locationToggle) return;
-
-    // --- LOGIKA POWIADOMIEŃ ---
-    const userWantsNotifications =
+  notificationsEnabled() {
+    const userWants =
       localStorage.getItem("user_notifications_enabled") !== "false";
-    const isSystemGranted = Notification.permission === "granted";
+    return Notification.permission === "granted" && userWants;
+  },
 
-    // Toggle włączony tylko gdy system pozwala I użytkownik nie wyciszył
-    notifyToggle.checked = isSystemGranted && userWantsNotifications;
-
-    notifyToggle.addEventListener("change", async () => {
-      if (notifyToggle.checked) {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          localStorage.setItem("user_notifications_enabled", "true");
-          NotificationService.sendNotification(
-            "Habit Hero",
-            "Notifications are active! 🚀"
-          );
-        } else {
-          notifyToggle.checked = false;
-          alert(
-            "Permission denied! Please enable notifications in your browser settings (lock icon in URL bar)."
-          );
-        }
-      } else {
-        localStorage.setItem("user_notifications_enabled", "false");
-        console.log("🔕 Notifications muted by user toggle.");
-      }
-    });
-
-    // --- LOGIKA LOKALIZACJI ---
-    if (navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        locationToggle.checked = result.state === "granted";
-
-        // Nasłuchiwanie zmian systemowych (np. user wyłączy w ustawieniach przeglądarki)
-        result.onchange = () => {
-          locationToggle.checked = result.state === "granted";
-        };
-      });
+  async requestNotifications() {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      localStorage.setItem("user_notifications_enabled", "true");
     }
+    return permission;
+  },
 
-    locationToggle.addEventListener("change", () => {
-      if (locationToggle.checked) {
-        navigator.geolocation.getCurrentPosition(
-          () => {
-            console.log("📍 Location access granted");
-            // Możesz tu wywołać UI.refreshLocation() jeśli masz taką funkcję
-          },
-          () => {
-            locationToggle.checked = false;
-            alert(
-              "Location access denied. Please enable it in browser settings."
-            );
-          }
-        );
-      }
+  async requestGeolocation() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
     });
   },
 };
-/*
-  const addTaskBtn = document.getElementById("addTaskBtn");
-  if (addTaskBtn) {
-    addTaskBtn.addEventListener("click", () => {
-      NotificationService.init();
-    });
-  }
-  */
+
+export const swManager = {
+  register: async () => {
+    if (!("serviceWorker" in navigator)) return;
+
+    try {
+      const reg = await navigator.serviceWorker.register("/sw.js");
+      console.log("✅ SW zarejestrowany");
+
+      if ("periodicSync" in reg) {
+        const status = await navigator.permissions.query({
+          name: "periodic-background-sync",
+        });
+
+        if (status.state === "granted") {
+          await reg.periodicSync.register("daily-briefing", {
+            minInterval: 12 * 60 * 60 * 1000,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("❌ SW Error:", e);
+    }
+  },
+};
 
 export const LocationService = {
+  formatAddress(address) {
+    if (!address) return "";
+    const street = address.road || address.pedestrian || address.cycleway || address.footway;
+    const house = address.house_number;
+    const city = address.city || address.town || address.village || address.hamlet;
+    const country = address.country;
+
+    if (street && house && city) return `${street} ${house}, ${city}`;
+    if (street && city) return `${street}, ${city}`;
+    if (city && country) return `${city}, ${country}`;
+    return country || "";
+  },
+  
   // Wyszukiwanie po tekście
   search: async (query) => {
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
@@ -140,46 +115,35 @@ export const LocationService = {
     const res = await fetch(url);
     return await res.json();
   },
+
+  getCurrentCoords() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000
+      });
+    });
+  }
 };
 
-export async function fetchDailyQuote() {
-  const quoteText = document.getElementById("quote-text");
-  const quoteAuthor = document.getElementById("quote-author");
-
-  if (!quoteText || !quoteAuthor) {
-    return;
-  }
-  const fallbackQuote = "Hero, your discipline is your biggest strength.";
-  const fallbackAuthor = "— Habit Hero Team";
-
-  const API_URL = "https://api.adviceslip.com/advice";
-
-  try {
-    const response = await fetch(API_URL);
-    if (!response.ok) throw new Error("Network issues");
-
-    const data = await response.json();
-
-    quoteText.textContent = `"${data.slip.advice}"`;
-    quoteAuthor.textContent = `— Daily Hero Advice`;
-  } catch (error) {
-    console.log("Offline/Error mode: Using fallback quote.");
-
-    quoteText.textContent = fallbackQuote;
-    quoteAuthor.textContent = fallbackAuthor;
-  }
-}
+export const QuoteService = {
+  getDailyAdvice: async () => {
+    const API_URL = "https://api.adviceslip.com/advice";
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      return { text: data.slip.advice, author: "Daily Hero Advice" };
+    } catch (error) {
+      return {
+        text: "Hero, your discipline is your strength.",
+        author: "Habit Hero Team",
+      };
+    }
+  },
+};
 
 export const OfflineService = {
   init() {
-    if (!document.getElementById("offline-banner")) {
-      const banner = document.createElement("div");
-      banner.id = "offline-banner";
-      banner.textContent =
-        "Brak połączenia z internetem. Aplikacja działa w trybie offline!";
-      document.body.prepend(banner);
-    }
-
     const updateStatus = () => {
       if (navigator.onLine) {
         document.body.classList.remove("offline");

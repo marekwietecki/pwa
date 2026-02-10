@@ -1,13 +1,13 @@
-import { Utils, DataManager } from "./data.js";
+import { Utils, DataManager, LevelManager } from "./data.js";
 import { elements } from "./elements.js";
-import { LocationService } from "./services.js";
+import { LocationService, NotificationService, PermissionsManager } from "./services.js";
 import { UI } from "./ui.js";
 
 export function initEventListeners(AppState) {
   // Modal Toggles
   elements.addTaskBtn?.addEventListener("click", async () => {
     UI.resetModal(AppState); // Najpierw ustawia typ i czyści pola
-    await UI.populateGoalHabitSelect();
+    await UI.fillModalHabitSelect();
     elements.modalOverlay.classList.add("open"); // Potem otwiera
   });
 
@@ -17,19 +17,13 @@ export function initEventListeners(AppState) {
   });
 
   // Editing habit
-  document
-    .getElementById("editHabitFrequency")
-    ?.addEventListener("click", () => {
-      if (AppState.selectedHabitForStats)
+  ["editHabitFrequency", "editHabitStartDate"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("click", () => {
+      if (AppState.selectedHabitForStats) {
         UI.openEditHabitModal(AppState.selectedHabitForStats, AppState);
+      }
     });
-
-  document
-    .getElementById("editHabitStartDate")
-    ?.addEventListener("click", () => {
-      if (AppState.selectedHabitForStats)
-        UI.openEditHabitModal(AppState.selectedHabitForStats, AppState);
-    });
+  });
 
   // Zamykanie krzyżykiem
   elements.closeModal?.addEventListener("click", () => {
@@ -67,22 +61,21 @@ export function initEventListeners(AppState) {
     await UI.renderCalendar(AppState);
   });
 
-  /*
   // Klikanie w konkretny dzień kalendarza (Delegacja zdarzeń)
-  elements.calendarGrid?.addEventListener("click", (e) => {
-    const dayEl = e.target.closest(".calendar-day");
-    
+  elements.calendarGrid?.addEventListener("click", async (e) => {
+    const dayEl = e.target.closest(".day");
+
     if (dayEl && dayEl.dataset.date) {
       AppState.selectedDate = new Date(dayEl.dataset.date);
-      
-      elements.calendarGrid.querySelectorAll(".calendar-day")
-        .forEach(el => el.classList.remove("selected"));
-      dayEl.classList.add("selected");
-      
-      UI.renderTasksForDay(AppState, true);
+
+      elements.calendarGrid
+        .querySelectorAll(".day")
+        .forEach((el) => el.classList.remove("active"));
+      dayEl.classList.add("active");
+
+      await UI.renderCalendarTasks(AppState);
     }
   });
-  */
 
   // modal type switch
   document.querySelectorAll(".typePicker").forEach((btn) => {
@@ -108,9 +101,11 @@ export function initEventListeners(AppState) {
     const id = parseInt(li.dataset.id);
     const type = li.dataset.type;
     const dateKey = li.dataset.dateKey;
-    const name = li.querySelector(".taskNodeName")?.textContent;
 
-    // 1. OBSŁUGA CHECKBOXA (ZROBIONE / NIEZROBIONE)
+    // object
+    const itemObject = await DataManager.getItemByTypeAndId(type, id);
+
+    // CHECKBOX
     if (target.classList.contains("taskCheckbox")) {
       const isChecked = target.checked;
 
@@ -120,46 +115,35 @@ export function initEventListeners(AppState) {
         } else if (type === "habit") {
           await DataManager.toggleHabitDone(id, dateKey, isChecked);
         } else if (type === "goal") {
-          await DataManager.updateGoalDetails(id, { done: isChecked });
+          await DataManager.toggleGoalDone(id, isChecked);
         }
 
-        // System XP
         const todayKey = Utils.formatDateKey(new Date());
         if (dateKey === todayKey || type === "goal") {
-          // Pobieramy dane obiektu do kalkulacji XP (uproszczone)
-          const xpValue = LevelManager.calculateXP(type, { name });
-          await LevelManager.applyXP(isChecked ? xpValue : -xpValue);
-          if (isChecked && navigator.vibrate) navigator.vibrate(50);
+          const itemData = itemObject || {
+            name: li.querySelector(".taskNodeName")?.textContent,
+          };
+          await handleCompletion(type, itemData, isChecked);
         }
 
         li.classList.toggle("is-completed", isChecked);
 
-        setTimeout(async () => {
-          const isCalendar = !!document.getElementById("calendarToDoList");
-          await UI.renderTasksForDay(AppState, isCalendar);
-          if (type === "goal") await UI.renderGoals();
-        }, 300);
+        // REFRESH UI
+        setTimeout(() => refreshCurrentView(AppState), 300);
       } catch (err) {
         console.error("Błąd podczas aktualizacji statusu:", err);
-        target.checked = !isChecked; // Rollback ui
+        target.checked = !isChecked;
       }
     }
 
+    // DELETE
     const moreBtn = target.closest(".moreBtn");
     if (moreBtn) {
       if (li.classList.contains("show-delete")) {
-        if (type === "task") await DataManager.deleteTask(id);
-        else if (type === "habit") await DataManager.deleteHabit(id);
-        else if (type === "goal") await DataManager.deleteGoal(id);
-
-        // Globalny refresh UI
-        const isCalendar = !!document.getElementById("calendarToDoList");
-        await UI.renderTasksForDay(AppState, isCalendar);
-        if (elements.habitSection) await UI.renderHabits(AppState);
-        if (elements.goalsList) await UI.renderGoals();
-        if (elements.calendarGrid) UI.renderCalendar(AppState);
+        await DataManager.deleteItemByType(type, id);
+        // GLOBAL REFRESH
+        await refreshCurrentView(AppState);
       } else {
-        // Pierwsze kliknięcie - pokaż "kosz"
         li.classList.add("show-delete");
         moreBtn.replaceChildren(UI.createDeleteIcon());
         setTimeout(() => {
@@ -171,15 +155,13 @@ export function initEventListeners(AppState) {
       }
     }
 
-    // 3. OBSŁUGA EDYCJI (Inline Pencil dla Goals)
+    // 3. EDYCJA GOAL
     if (target.closest(".edit-inline-btn") && type === "goal") {
-      const goals = await DataManager.getGoals();
-      const goal = goals.find((g) => g.id === id);
-      if (goal) UI.openEditGoalModal(goal);
+      if (itemObject) UI.openEditGoalModal(itemObject);
     }
   };
 
-  // Podpinamy jeden listener pod wszystkie możliwe listy
+  // Jeden listener pod wszystkie listy
   [
     elements.toDoList,
     elements.habitSection,
@@ -189,115 +171,73 @@ export function initEventListeners(AppState) {
     container?.addEventListener("click", handleListAction);
   });
 
-  // habit frequency listeners
-  elements.habitFrequency?.addEventListener("change", () => {
-    elements.daysPicker.style.display =
-      elements.habitFrequency.value === "weekly" ? "flex" : "none";
-  });
-  elements.habitFrequency?.addEventListener("change", () => {
+  // habit frequency
+  elements.habitFrequency?.addEventListener("change", (e) => {
+    const val = e.target.value;
+    elements.daysPicker.style.display = val === "weekly" ? "flex" : "none";
     elements.monthlyDayPicker.style.display =
-      elements.habitFrequency.value === "monthly" ? "block" : "none";
+      val === "monthly" ? "block" : "none";
   });
 
-  //Wyszukiwanie lokalizacji przyciskiem lupy
+  // Localization search (LOOP BTN)
   elements.searchLocation.addEventListener("click", async () => {
     const query = elements.locationInput.value.trim();
     if (!query) return;
 
-    const originalValue = query;
     const input = elements.locationInput;
     const btn = elements.searchLocation;
-    input.value = "Searching... 🔍";
-    input.disabled = true;
-    btn.disabled = true;
-    input.classList.remove("success", "error");
+
+    await UI.setInputLoading(input, btn, true, "Searching...🔍");
 
     try {
       const data = await LocationService.search(query);
+      if (!data.length) throw new Error("Location not found");
 
-      if (!data.length) {
-        input.value = originalValue;
-        elements.locationInput.classList.remove("success");
-        elements.locationInput.classList.add("error");
-        UI.showModalMessage("Location not found");
-        return;
-      }
-
-      const place = data[0];
-      const shortName = Utils.formatLocation(place.address);
-
-      elements.locationInput.value = shortName || place.display_name;
-      elements.locationInput.classList.remove("error");
-      elements.locationInput.classList.add("success");
+      input.value =
+        LocationService.formatAddress(data[0].address) || data[0].display_name;
+      UI.setInputLoading(input, btn, false, "success");
     } catch (e) {
       console.error("Search location error", e);
-      input.value = "";
-      input.classList.add("error");
-    } finally {
-      input.disabled = false;
-      btn.disabled = false;
+      input.value = input.dataset.oldValue;
+      UI.setInputLoading(input, btn, false, "error");
+      UI.showModalMessage(e.message);
     }
   });
 
-  // 2. Lokalizacja z GPS (przycisk pinezki)
-  elements.geoLocBtn.addEventListener("click", () => {
+  // Localization with GPS (PIN BTN)
+  elements.geoLocBtn.addEventListener("click", async () => {
     if (!navigator.geolocation)
       return UI.showModalMessage("Geolocation not supported");
 
     // --- START LOADING ---
     const btn = elements.geoLocBtn;
     const input = elements.locationInput;
-    const originalPlaceholder = input.placeholder;
 
-    btn.classList.add("loading");
-    btn.disabled = true;
-    input.value = "Locating... ⏳";
-    input.classList.remove("success", "error");
+    UI.setInputLoading(input, btn, true, "Locating... ⏳");
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
+    try {
+      const position = await LocationService.getCurrentCoords();
+      const { latitude, longitude } = position.coords;
 
-        try {
-          const data = await LocationService.reverse(latitude, longitude);
+      const data = await LocationService.reverse(latitude, longitude);
+      if (!data?.display_name) throw new Error("Address not found");
 
-          if (!data || !data.display_name) {
-            throw new Error("Location not found");
-          }
+      input.value =
+        LocationService.formatAddress(data.address) || data.display_name;
+      UI.setInputLoading(input, btn, false, "success");
+    } catch (err) {
+      // Obsługa błędów GPS i API w jednym miejscu
+      const gpsErrors = {
+        1: "Permission denied",
+        2: "Position unavailable",
+        3: "Timeout",
+      };
+      const msg =
+        gpsErrors[err.code] || err.message || "Could not get location.";
 
-          const shortName = Utils.formatLocation(data.address);
-          input.value = shortName || data.display_name;
-          input.classList.add("success");
-        } catch (e) {
-          console.error("Reverse geocoding failed", e);
-          input.classList.add("error");
-          UI.showModalMessage("Address not found, but we have your coords!");
-        } finally {
-          // --- END LOADING (Success/Error) ---
-          btn.classList.remove("loading");
-          btn.disabled = false;
-          input.placeholder = originalPlaceholder;
-        }
-      },
-      (err) => {
-        // --- END LOADING (Permission Denied/Timeout) ---
-        btn.classList.remove("loading");
-        btn.disabled = false;
-        input.disabled = false;
-        input.placeholder = originalPlaceholder;
-
-        const messages = {
-          1: "Permission denied. Enable location in settings.",
-          2: "Position unavailable. Check your GPS.",
-          3: "Timeout. Try again.",
-        };
-        UI.showModalMessage(messages[err.code] || "Could not get location.");
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000, // 10 sekund na odpowiedź GPS
-      }
-    );
+      UI.setInputLoading(input, btn, false, "error");
+      UI.showModalMessage(msg);
+    }
   });
 
   // live habit placeholder
@@ -316,214 +256,232 @@ export function initEventListeners(AppState) {
   });
 
   // Edycja Nazwy Użytkownika Inline
-  if (elements.editUserName) {
-    elements.editUserName.addEventListener("click", async () => {
-      const stats = await DataManager.getUserStats();
-      elements.userNameInput.value =
-        stats.userName || elements.displayUserName.textContent;
+  elements.editUserName?.addEventListener("click", async () => {
+    const stats = await DataManager.getUserStats();
+    elements.userNameInput.value =
+      stats.userName || elements.displayUserName.textContent;
+    UI.toggleUserNameEdit(true);
+  });
 
-      elements.displayUserName.style.display = "none";
-      elements.editUserName.style.display = "none";
-      elements.userNameInput.style.display = "inline-block";
+  elements.userNameInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") elements.userNameInput.blur();
+    if (e.key === "Escape") UI.toggleUserNameEdit(false);
+  });
 
-      elements.userNameInput.focus();
-      elements.userNameInput.select();
-    });
-  }
+  elements.userNameInput?.addEventListener("blur", async () => {
+    if (elements.userNameInput.style.display === "none") return;
 
-  if (elements.userNameInput) {
-    elements.userNameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") elements.userNameInput.blur();
-      if (e.key === "Escape") {
-        elements.displayUserName.style.display = "block";
-        elements.userNameInput.style.display = "none";
-        elements.editUserName.style.display = "inline-flex";
-      }
-    });
+    const newName = elements.userNameInput.value.trim() || "New Hero";
+    await DataManager.updateUserName(newName);
 
-    elements.userNameInput.addEventListener("blur", async () => {
-      // Logika zapisu
-      if (elements.userNameInput.style.display === "none") return;
+    elements.displayUserName.textContent = newName;
+    UI.toggleUserNameEdit(false);
 
-      const newName = elements.userNameInput.value.trim() || "New Hero";
-      await DataManager.updateUserName(newName);
+    if (navigator.vibrate) navigator.vibrate(30);
+  });
 
-      elements.displayUserName.textContent = newName;
-      elements.displayUserName.style.display = "block";
-      elements.userNameInput.style.display = "none";
-      elements.editUserName.style.display = "inline-flex";
-
-      if (navigator.vibrate) navigator.vibrate(30);
-    });
-  }
-
-  //adding logic
-  elements.confirmAddBtn.addEventListener("click", async () => {
-    const editId = elements.confirmAddBtn.getAttribute("data-edit-id");
-    const editType = elements.confirmAddBtn.getAttribute("data-edit-type");
-
-    console.log("Przycisk ma ID:", editId, "Typ:", editType);
-
-    if (editId) {
-      if (editType === "goal") {
-        const newData = {
-          name: elements.taskName.value.trim(),
-          description: elements.descriptionInput.value.trim(),
-          deadline: elements.goalDeadline.value,
-          linkedHabitId: elements.goalHabitSelect.value
-            ? parseInt(elements.goalHabitSelect.value)
-            : null,
-        };
-
-        if (!newData.name || !newData.deadline) {
-          return UI.showModalMessage("Name and Deadline are required!");
-        }
-
-        await DataManager.updateGoalDetails(parseInt(editId), newData);
-        if (elements.goalsList) UI.renderGoals();
-      } else {
-        const newFreq = document.getElementById("habitFrequency").value;
-        const newStartDate = document.getElementById("taskDate").value;
-        let newSchedule = [];
-
-        if (newFreq === "weekly") {
-          newSchedule = Array.from(
-            elements.daysPicker.querySelectorAll(
-              "input[type='checkbox']:checked"
-            )
-          ).map((cb) => parseInt(cb.value));
-        } else if (newFreq === "monthly") {
-          newSchedule = Array.from(
-            document
-              .getElementById("monthDaysGrid")
-              .querySelectorAll("input[type='checkbox']:checked")
-          ).map((cb) => parseInt(cb.value));
-        }
-
-        await DataManager.updateHabitDetails(
-          parseInt(editId),
-          newFreq,
-          newSchedule,
-          newStartDate
-        );
-
-        const habits = await DataManager.getHabits();
-
-        const updatedHabit = habits.find(
-          (h) => h.id === parseInt(editId)
-        );
-        if (updatedHabit) {
-          AppState.selectedHabitForStats = updatedHabit;
-          UI.showHabitDetails(updatedHabit, AppState);
-        }
-        UI.renderHabits(AppState);
-        UI.renderTasksForDay(AppState, true);
-      }
-      elements.modalOverlay.classList.remove("open");
-      await UI.resetModal(AppState);
-      return;
+  const getHabitSchedule = () => {
+    const freq = document.getElementById("habitFrequency").value;
+    if (freq === "weekly") {
+      return Array.from(
+        elements.daysPicker.querySelectorAll("input:checked")
+      ).map((cb) => parseInt(cb.value));
     }
+    if (freq === "monthly") {
+      return Array.from(
+        document
+          .getElementById("monthDaysGrid")
+          .querySelectorAll("input:checked")
+      ).map((cb) => parseInt(cb.value));
+    }
+    return [];
+  };
 
+  const handleSaveEdit = async (editId, editType, AppState) => {
+    const id = parseInt(editId);
+
+    if (editType === "goal") {
+      const newData = {
+        name: elements.taskName.value.trim(),
+        description: elements.descriptionInput.value.trim(),
+        deadline: elements.goalDeadline.value,
+        linkedHabitId: parseInt(elements.goalHabitSelect.value) || null,
+      };
+      if (!newData.name || !newData.deadline)
+        return UI.showModalMessage("Required fields missing!");
+
+      await DataManager.updateGoalDetails(id, newData);
+    } else {
+      // Logika edycji nawyku - czysto i czytelnie
+      const newFreq = document.getElementById("habitFrequency").value;
+      const newStartDate = document.getElementById("taskDate").value;
+      const newSchedule = getHabitSchedule();
+
+      await DataManager.updateHabitDetails(
+        id,
+        newFreq,
+        newSchedule,
+        newStartDate
+      );
+
+      // Zamiast find(), użyj swojego nowego DataManager.getItemByTypeAndId!
+      const updatedHabit = await DataManager.getItemByTypeAndId("habit", id);
+      if (updatedHabit) {
+        AppState.selectedHabitForStats = updatedHabit;
+        UI.showHabitDetails(updatedHabit, AppState);
+      }
+    }
+    await refreshCurrentView(AppState); // Użyj swojej nowej uniwersalnej funkcji!
+  };
+
+  const handleAddNew = async (AppState) => {
     let name = elements.taskName.value.trim();
-    if (!name) {
-      UI.showModalMessage("Provide a name! ✍️");
-      return;
-    }
-    name = name.charAt(0).toUpperCase() + name.slice(1);
+    if (!name) return UI.showModalMessage("Provide a name! ✍️");
 
+    name = name.charAt(0).toUpperCase() + name.slice(1);
     const type = AppState.currentCreateType;
     const location = elements.locationInput?.value.trim() || null;
+    try {
+      if (type === "task") {
+        const dateStr =
+          elements.taskDate.value || Utils.formatDateKey(AppState.selectedDate);
+        await DataManager.addTask(name, dateStr, location);
+      } else if (type === "habit") {
+        const frequency = elements.habitFrequency.value;
+        const schedule = getHabitSchedule();
+        const icon =
+          document.getElementById("habitIcon")?.value.trim() ||
+          name.charAt(0).toUpperCase();
 
-    // (Task)
-    if (type === "task") {
-      const dateStr =
-        elements.taskDate.value || Utils.formatDateKey(AppState.selectedDate);
-      await DataManager.addTask(name, dateStr, location);
+        await DataManager.addHabit({
+          name,
+          icon,
+          location,
+          frequency,
+          schedule,
+        });
+      } else if (type === "goal") {
+        const deadline = elements.goalDeadline?.value;
+        if (!deadline) {
+          UI.showModalMessage("Provide a deadline! 📅");
+          return false;
+        }
+
+        const goalData = {
+          name,
+          deadline,
+          description: elements.descriptionInput?.value.trim() || "",
+          linkedHabitId:
+            parseInt(document.getElementById("goalHabitSelect")?.value) || null,
+        };
+        await DataManager.addGoal(goalData);
+      }
+      return true;
+    } catch (err) {
+      console.error("Error adding new item:", err);
+      UI.showModalMessage("Something went wrong while saving.");
+      return false;
     }
+  };
 
-    // (Habit)
-    else if (type === "habit") {
-      const frequency = elements.habitFrequency.value;
+  elements.confirmAddBtn.addEventListener("click", async () => {
+    // (no Double Click allowed)
+    if (elements.confirmAddBtn.disabled) return;
+    elements.confirmAddBtn.disabled = true;
 
-      const iconInput = document.getElementById("habitIcon");
-      let finalIcon = iconInput ? iconInput.value.trim() : "";
+    try {
+      const editId = elements.confirmAddBtn.getAttribute("data-edit-id");
+      const editType = elements.confirmAddBtn.getAttribute("data-edit-type");
 
-      if (!finalIcon) {
-        finalIcon = name.charAt(0).toUpperCase();
+      if (editId) {
+        await handleSaveEdit(editId, editType, AppState);
+      } else {
+        const success = await handleAddNew(AppState);
+        if (!success) return;
       }
 
-      let schedule = [];
-
-      if (frequency === "weekly") {
-        schedule = Array.from(
-          elements.daysPicker.querySelectorAll("input[type='checkbox']:checked")
-        ).map((cb) => parseInt(cb.value));
-        if (schedule.length === 0)
-          return UI.showModalMessage("Select at least one day!");
-      } else if (frequency === "monthly") {
-        const monthlyGrid = document.getElementById("monthDaysGrid");
-        schedule = Array.from(
-          monthlyGrid.querySelectorAll("input[type='checkbox']:checked")
-        ).map((cb) => parseInt(cb.value));
-        if (schedule.length === 0)
-          return UI.showModalMessage("Enter days of the month!");
-      }
-
-      const habit = {
-        id: Date.now(),
-        name,
-        icon: finalIcon,
-        location: location,
-        frequency: frequency,
-        schedule: schedule,
-        createdAt: new Date().toISOString(),
-        history: {},
-      };
-      await DataManager.addHabit(habit);
-    } else if (type === "goal") {
-      const description = elements.descriptionInput?.value.trim() || "";
-      const deadline = elements.goalDeadline?.value || null;
-      const habitSelectEl = document.getElementById("goalHabitSelect");
-
-      if (!deadline) {
-        UI.showModalMessage("Provide a deadline for your goal! 📅");
-        if (elements.taskDate) elements.goalDeadline.focus();
-        return;
-      }
-
-      const goal = {
-        id: Date.now(),
-        name: name,
-        description: description,
-        deadline: deadline,
-        linkedHabitId:
-          habitSelectEl && habitSelectEl.value
-            ? parseInt(habitSelectEl.value)
-            : null,
-        createdAt: new Date().toISOString(),
-        done: false,
-      };
-
-      console.log("Dodaję Goal: ", goal);
-      await DataManager.addGoal(goal);
+      await refreshCurrentView(AppState);
+      elements.modalOverlay.classList.remove("open");
+      UI.resetModal(AppState);
+    } catch (err) {
+      console.error("Critical Save Error:", err);
+    } finally {
+      elements.confirmAddBtn.disabled = false; // back enabled
     }
+  });
 
-    // Odśwież kalendarz jeśli istnieje
+  const refreshCurrentView = async (AppState) => {
     if (elements.calendarGrid) await UI.renderCalendar(AppState);
 
     const isCalendarView = !!document.getElementById("calendarToDoList");
+    const isHeroView = !!document.getElementById("goalsList");
 
-    if (elements.toDoList && !elements.habitSection) {
-      await UI.renderTasksForDay(AppState, isCalendarView);
+    if (isCalendarView) {
+      await UI.renderCalendarTasks(AppState);
+    } else {
+      await UI.renderDailyTasks(AppState);
+      if (isHeroView) await UI.renderLongTermGoals(AppState);
     }
 
-    if (elements.habitSection) {
-      await UI.renderHabits(AppState);
+    if (elements.habitSection) await UI.renderHabits(AppState);
+  };
+
+  // NOTIFIACTIONS
+  const notifyToggle = document.getElementById("toggleNotifications");
+  notifyToggle?.addEventListener("change", async () => {
+    const isEnabled = notifyToggle.checked;
+    if (isEnabled) {
+      const permission = await PermissionsManager.requestNotifications();
+      if (permission !== "granted") {
+        notifyToggle.checked = false;
+        return UI.showModalMessage("Permission denied.");
+      }
+      NotificationService.send("Habit Hero", {
+        body: "Notifications are active! 🚀",
+      });
     }
-
-    if (elements.goalsList) await UI.renderGoals();
-
-    elements.modalOverlay.classList.remove("open");
-    await UI.resetModal(AppState);
+    localStorage.setItem("user_notifications_enabled", isEnabled);
   });
+
+  // LOCALISAITION
+  const locationToggle = document.getElementById("toggleLocation");
+  if (locationToggle) {
+    locationToggle.addEventListener("change", async () => {
+      if (locationToggle.checked) {
+        try {
+          await PermissionsManager.requestGeolocation();
+          console.log("📍 Location access granted");
+          localStorage.setItem("user_location_enabled", "true");
+        } catch (err) {
+          locationToggle.checked = false;
+          localStorage.setItem("user_location_enabled", "false");
+          UI.showModalMessage("Location access denied.");
+        }
+      } else {
+        localStorage.setItem("user_location_enabled", "false");
+      }
+    });
+  }
+
+  // xp engine
+  async function handleCompletion(type, item, isDone) {
+    let xpAmount = LevelManager.calculateXP(type, item);
+
+    if (!isDone) xpAmount = -xpAmount;
+
+    const currentStats = await DataManager.getUserStats();
+    const { stats: newStats, leveledUp } = LevelManager.processXpGain(
+      currentStats,
+      xpAmount
+    );
+
+    await DataManager.saveUserStats(newStats);
+
+    if (leveledUp && navigator.vibrate) navigator.vibrate([100, 50, 200]);
+    else if (isDone && navigator.vibrate) navigator.vibrate(50);
+
+    document.dispatchEvent(
+      new CustomEvent("statsUpdated", { detail: { leveledUp, newStats } })
+    );
+  }
 }

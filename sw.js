@@ -209,8 +209,8 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'daily-briefing') {
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "daily-briefing") {
     event.waitUntil(checkAndNotify());
   }
 });
@@ -218,34 +218,50 @@ self.addEventListener('periodicsync', (event) => {
 async function checkAndNotify() {
   const now = new Date();
   const hour = now.getHours();
-  
-  // 1. Okno czasowe 8:00 - 10:00
+
   if (hour < 8 || hour >= 10) return;
 
-  const todayKey = now.toISOString().split('T')[0];
-  
-  // 2. Otwieramy bazę bezpośrednio w SW
+  const todayKey = now.toISOString().split("T")[0];
+
   const dbRequest = indexedDB.open("HabitHeroDB", 2);
-  dbRequest.onerror = () => console.error("❌ SW: Nie udało się otworzyć bazy danych");
+  dbRequest.onerror = () =>
+    console.error("❌ SW: Nie udało się otworzyć bazy danych");
   dbRequest.onsuccess = async (e) => {
     const db = e.target.result;
-    const tx = db.transaction("tasks", "readonly");
-    const store = tx.objectStore("tasks");
-    const index = store.index("by_date");
-    
-    index.getAll(IDBKeyRange.only(todayKey)).onsuccess = (event) => {
-      const tasks = event.target.result;
-      const undoneCount = tasks.filter(t => !t.done).length;
+    const tx = db.transaction(["tasks", "metadata"], "readwrite");
+    const metaStore = tx.objectStore("metadata");
+    const taskStore = tx.objectStore("tasks");
+    const taskIndex = store.index("by_date");
 
-      if (undoneCount > 0) {
-        self.registration.showNotification("Habit Hero", {
-          body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
-          icon: "/assets/192x192.png",
-          badge: "/assets/192x192.png",
-          tag: "daily-briefing",
-          renotify: true
-        });
+    const metaRequest = metaStore.get("last_briefing_date");
+
+    metaRequest.onsuccess = () => {
+      if (metaRequest.result === todayKey) {
+        console.log("SW: Dzisiaj już był briefing.");
+        return resolve();
       }
+
+      const taskRequest = taskIndex.getAll(IDBKeyRange.only(todayKey));
+
+      index.getAll(IDBKeyRange.only(todayKey)).onsuccess = (event) => {
+        const tasks = event.target.result;
+        const undoneCount = tasks.filter((t) => !t.done).length;
+
+        if (undoneCount > 0) {
+          metaStore.put(todayKey, "last_briefing_date");
+
+          self.registration.showNotification("Habit Hero", {
+            body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
+            icon: "/assets/192x192.png",
+            badge: "/assets/192x192.png",
+            tag: "daily-briefing",
+            renotify: true,
+          });
+        }
+        resolve();
+      };
     };
+    tx.oncomplete = () => console.log("SW: Transakcja zakończona sukcesem.");
+    tx.onerror = () => reject("SW: Błąd Transakcji.");
   };
 }

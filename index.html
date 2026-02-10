@@ -45,6 +45,9 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
     <link rel="manifest" href="./manifest.webmanifest" />
   </head>
   <body>
+    <div id="offline-banner">
+      Brak połączenia z internetem. Aplikacja działa w trybie offline!
+    </div>
     <header class="navbar">
       <h1 class="logo">Habit Hero</h1>
       <nav class="tabNav">
@@ -146,7 +149,7 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
 
       <!-- TO DO -->
       <section class="toDo">
-        <h3 id="taskDateTitle"></h3>
+        <h3 id="taskDateTitle">Today's Tasks: </h3>
         <div class="toDoListWrapper">
           <div id="emptyListMessageWrapper" style="display: none">
             <span id="messageToday" class="emptyListMessage"
@@ -332,16 +335,6 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
     </div>
 
     <script type="module" src="./js/app.js"></script>
-
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("./sw.js", { type: "module" })
-            .then((reg) => console.log("SW register success", reg.scope))
-            .catch((err) => console.error("SW register failed", err));
-        });
-      }
-    </script>
+    
   </body>
 </html>

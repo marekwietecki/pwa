@@ -29,31 +29,119 @@ export const Utils = {
     return `${year}-${month}-${day}`;
   },
 
-  formatLocation: (address) => {
-    if (!address) return "";
-    const street =
-      address.road || address.pedestrian || address.cycleway || address.footway;
-    const house = address.house_number;
-    const city =
-      address.city || address.town || address.village || address.hamlet;
-    const country = address.country;
+  isHabitDue(habit, date) {
+    const dayOfWeek = date.getDay();
+    const dayOfMonth = date.getDate();
+    const schedule = habit.schedule || [];
 
-    if (street && house && city) return `${street} ${house}, ${city}`;
-    if (street && city) return `${street}, ${city}`;
-    if (city && country) return `${city}, ${country}`;
-    return country || "";
+    switch (habit.frequency) {
+      case "daily":
+      case "everyday":
+        return true;
+      case "weekly":
+        return schedule.includes(dayOfWeek);
+      case "monthly":
+        return schedule.includes(dayOfMonth);
+      default:
+        return false;
+    }
   },
+
+  getFrequencyText: (habit) => {
+    const freqMap = {
+      daily: "Everyday",
+      weekly: "Every",
+      monthly: "Every",
+    };
+
+    let text = freqMap[habit.frequency] || habit.frequency;
+    const schedule = habit.schedule || [];
+
+    if (schedule.length > 0) {
+      if (habit.frequency === "weekly") {
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const selectedDays = [...schedule]
+          .sort((a, b) => a - b)
+          .map((dayNum) => dayNames[dayNum]);
+        text += `: ${selectedDays.join(", ")}`;
+      } else if (habit.frequency === "monthly") {
+        const selectedDays = [...schedule].sort((a, b) => a - b);
+        text += `: ${selectedDays.join(", ")}`;
+      }
+    }
+    return text;
+  },
+
+  getStreakUnit: (frequency, streakValue) => {
+    if (frequency === "daily") {
+      return streakValue === 1 ? "day" : "days";
+    }
+    return streakValue === 1 ? "time" : "times";
+  }
 };
 
 export const DataManager = {
+  async getItemByTypeAndId(type, id) {
+    const stores = { task: "tasks", habit: "habits", goal: "goals" };
+    return await DB.get(stores[type], id);
+  },
+
+  getMonthlyStats: (habit, month, year) => {
+    let stats = { scheduled: 0, completed: 0, currentStreak: 0, bestStreak: 0 };
+    let days = [];
+    
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const createdDate = new Date(habit.createdAt).setHours(0, 0, 0, 0);
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dateKey = Utils.formatDateKey(date);
+      
+      const isScheduled = Utils.isHabitDue(habit, date);
+      const isDone = habit.history && habit.history[dateKey] === true;
+      const isPostCreated = date >= createdDate;
+
+      const finalIsScheduled = isScheduled && isPostCreated;
+
+      if (finalIsScheduled) {
+        stats.scheduled++;
+        if (isDone) {
+          stats.completed++;
+          stats.currentStreak++;
+          stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
+        } else {
+          stats.currentStreak = 0;
+        }
+      }
+
+      days.push({
+        day,
+        isDone,
+        isScheduled: finalIsScheduled
+      });
+    }
+
+    return { days, stats };
+  },
+
   // TASKS
   async getTasks() {
     return await DB.getAll("tasks");
   },
 
   async getTasksByDate(dateKey) {
-    const all = await this.getTasks();
-    return all.filter((t) => t.date === dateKey);
+    const tasks = await DB.getAllFromIndex("tasks", "by_date", dateKey);
+    //console.log(`DataManager zapytał indeks o ${dateKey}, baza zwróciła:`,tasks.length);
+    return tasks;
+  },
+
+  async getUndoneTasks(dateKey) {
+    const unfinished = await DB.getAllFromIndex("tasks", "by_done", 0);
+
+    // Filtrujemy je tak, żeby pokazać:
+    // - te z dzisiaj (dateKey)
+    // - te z przeszłości (zaległe), których nie zrobiliśmy
+    return unfinished.filter((t) => t.date <= dateKey);
   },
 
   async addTask(name, date, location) {
@@ -61,24 +149,18 @@ export const DataManager = {
       name,
       date,
       location,
-      done: false,
+      done: 0,
       createdAt: new Date().toISOString(),
     };
     return await DB.put("tasks", newTask);
   },
 
   async toggleTaskDone(taskId, isDone) {
-    const db = await DB.open();
-    return new Promise((resolve) => {
-      const tx = db.transaction("tasks", "readwrite");
-      const store = tx.objectStore("tasks");
-      store.get(taskId).onsuccess = (e) => {
-        const task = e.target.result;
-        if (!task) return resolve(false);
-        task.done = isDone;
-        store.put(task).onsuccess = () => resolve(true);
-      };
-    });
+    const task = await DB.get("tasks", taskId);
+    if (!task) return false;
+
+    task.done = isDone ? 1 : 0;
+    return await DB.put("tasks", task);
   },
 
   // HABITS
@@ -92,36 +174,25 @@ export const DataManager = {
   },
 
   async toggleHabitDone(habitId, dateKey, isDone) {
-    const db = await DB.open();
-    return new Promise((resolve) => {
-      const tx = db.transaction("habits", "readwrite");
-      const store = tx.objectStore("habits");
-      store.get(habitId).onsuccess = (e) => {
-        const habit = e.target.result;
-        if (!habit) return resolve(false);
-        habit.history = habit.history || {};
-        if (isDone) habit.history[dateKey] = true;
-        else delete habit.history[dateKey];
-        store.put(habit).onsuccess = () => resolve(true);
-      };
-    });
+    const habit = await DB.get("habits", habitId);
+    if (!habit) return false;
+
+    habit.history = habit.history || {};
+    if (isDone) habit.history[dateKey] = true;
+    else delete habit.history[dateKey];
+
+    return await DB.put("habits", habit);
   },
 
   async updateHabitDetails(habitId, newFrequency, newSchedule, newStartDate) {
-    const db = await DB.open();
-    return new Promise((resolve) => {
-      const tx = db.transaction("habits", "readwrite");
-      const store = tx.objectStore("habits");
-      store.get(habitId).onsuccess = (e) => {
-        const habit = e.target.result;
-        if (habit) {
-          habit.frequency = newFrequency;
-          habit.schedule = newSchedule;
-          habit.createdAt = new Date(newStartDate).toISOString();
-          store.put(habit).onsuccess = () => resolve(true);
-        } else resolve(false);
-      };
-    });
+    const habit = await DB.get("habits", habitId);
+    if (!habit) return false;
+
+    habit.frequency = newFrequency;
+    habit.schedule = newSchedule;
+    habit.createdAt = new Date(newStartDate).toISOString();
+
+    return await DB.put("habits", habit);
   },
 
   // GOALS
@@ -135,31 +206,29 @@ export const DataManager = {
   },
 
   async updateGoalDetails(goalId, newData) {
-    const db = await DB.open();
-    return new Promise((resolve) => {
-      const tx = db.transaction("goals", "readwrite");
-      const store = tx.objectStore("goals");
-      store.get(goalId).onsuccess = (e) => {
-        const goal = e.target.result;
-        if (goal) {
-          Object.assign(goal, newData);
-          store.put(goal).onsuccess = () => resolve(true);
-        } else resolve(false);
-      };
-    });
+    const goal = await DB.get("goals", goalId);
+    if (!goal) return false;
+
+    // Object.assign - kopiuje właściwości z newData do goal
+    Object.assign(goal, newData);
+    return await DB.put("goals", goal);
   },
 
-  /*
-  saveTasks: (tasks) =>
-    localStorage.setItem("tasksState", JSON.stringify(tasks)),
+  async toggleGoalDone(goalId, isDone) {
+    const goal = await DB.get("goals", goalId);
+    if (!goal) return false;
 
-  saveHabits: (habits) =>
-    localStorage.setItem("habitsState", JSON.stringify(habits)),
-
-  saveGoals: (goals) => {
-    localStorage.setItem("goalsState", JSON.stringify(goals));
+    goal.done = isDone;
+    return await DB.put("goals", goal);
   },
- */
+
+  async getMetadata(key) {
+    return await DB.get("metadata", key);
+  },
+
+  async setMetadata(key, value) {
+    return await DB.put("metadata", value, key);
+  },
 
   calculateHabitProgress: (habit) => {
     if (!habit) return 0;
@@ -179,19 +248,8 @@ export const DataManager = {
 
       while (d <= now) {
         const dateKey = Utils.formatDateKey(d);
-        const dayOfWeek = d.getDay();
-        const dayOfMonth = d.getDate();
 
-        let isScheduled = false;
-        if (habit.frequency === "everyday" || habit.frequency === "daily") {
-          isScheduled = true;
-        } else if (habit.frequency === "weekly") {
-          isScheduled = (habit.schedule || []).includes(dayOfWeek);
-        } else if (habit.frequency === "monthly") {
-          isScheduled = (habit.schedule || []).includes(dayOfMonth);
-        }
-
-        if (isScheduled) {
+        if (Utils.isHabitDue(habit, d)) {
           scheduledDaysCount++;
           if (habit.history && habit.history[dateKey] === true) {
             completedDaysCount++;
@@ -225,26 +283,12 @@ export const DataManager = {
 
     while (checkDate >= createdDate) {
       const dateKey = Utils.formatDateKey(checkDate);
-      const dayOfWeek = checkDate.getDay();
-      const dayOfMonth = checkDate.getDate();
 
-      let isScheduled = false;
-      if (habit.frequency === "daily") {
-        isScheduled = true;
-      } else if (habit.frequency === "weekly") {
-        isScheduled = habit.schedule.includes(dayOfWeek);
-      } else if (habit.frequency === "monthly") {
-        isScheduled = habit.schedule.includes(dayOfMonth);
-      }
-
-      if (isScheduled) {
+      if (Utils.isHabitDue(habit, checkDate)) {
         if (habit.history[dateKey] === true) {
           streak++;
         } else {
-          if (dateKey === todayKey) {
-          } else {
-            break;
-          }
+          if (dateKey !== Utils.formatDateKey(new Date())) break;
         }
       }
       checkDate.setDate(checkDate.getDate() - 1);
@@ -252,39 +296,35 @@ export const DataManager = {
     return streak;
   },
 
-  async countTasksForDate(date = new Date()) {
+  async countUndoneTasks(dateInput = new Date()) {
+    const date =
+      typeof dateInput === "string" ? new Date(dateInput) : dateInput;
     const dateKey = Utils.formatDateKey(date);
-    const dayOfWeek = date.getDay();
-    const dayOfMonth = date.getDate();
 
-    const tasks = await this.getTasksByDate(dateKey);
-    const habits = await this.getHabits();
+    const [tasksForDay, habits, goals] = await Promise.all([
+      this.getTasksByDate(dateKey),
+      this.getHabits(),
+      this.getGoals(),
+    ]);
 
-    let count = tasks.filter((t) => !t.done).length;
+    const undoneTasks = tasksForDay.filter((t) => !t.done).length;
 
-    habits.forEach((h) => {
-      let isDue =
-        h.frequency === "daily" ||
-        (h.frequency === "weekly" && h.schedule.includes(dayOfWeek)) ||
-        (h.frequency === "monthly" && h.schedule.includes(dayOfMonth));
+    const undoneHabits = habits.filter((habit) => {
+      const isDue = Utils.isHabitDue(habit, date);
+      const isDone = habit.history && habit.history[dateKey];
+      return isDue && !isDone;
+    }).length;
 
-      const isDone = h.history && h.history[dateKey];
-      if (isDue && !isDone) count++;
-    });
+    const undoneGoals = goals.filter((goal) => {
+      return goal.deadline?.startsWith(dateKey) && !goal.done;
+    }).length;
 
-    // goals doesn't count for now
-
-    return count;
+    return undoneTasks + undoneHabits + undoneGoals;
   },
 
-  async deleteTask(id) {
-    return await DB.delete("tasks", id);
-  },
-  async deleteHabit(id) {
-    return await DB.delete("habits", id);
-  },
-  async deleteGoal(id) {
-    return await DB.delete("goals", id);
+  async deleteItemByType(type, id) {
+    const stores = { task: "tasks", habit: "habits", goal: "goals" };
+    return await DB.delete(stores[type], id);
   },
 
   async getUserStats() {
@@ -306,54 +346,44 @@ export const DataManager = {
 
 export const LevelManager = {
   // lvl 1 = 100xp, lvl 2 = 200xp, ... lvl 100 = 10000|
-  getXpThreshold: (level) => {
-    const standardThreshold = level * 100;
-    return Math.min(standardThreshold, 10000);
+  RULES: {
+    TASK: 100,
+    GOAL_BASE: 1000,
+    GOAL_MONTHLY_BONUS: 1000,
+    GOAL_ON_TIME_BONUS: 1000,
+    HABIT_BASE: 100,
   },
+
+  getXpThreshold: (level) => Math.min(level * 100, 10000),
 
   calculateXP: (type, data) => {
-    let xpGain = 0;
+    const RULES = LevelManager.RULES;
 
-    switch (type) {
-      case "task":
-        // Standardowy task = 100 XP
-        xpGain = 100;
-        break;
+    if (type === "task") return RULES.TASK;
 
-      case "habit": // 100xp * streak
-        const streak = data.streak || 1;
-        xpGain = streak * 100;
-        break;
+    if (type === "habit") return (data.streak || 1) * RULES.HABIT_BASE;
 
-      case "goal":
-        let goalXP = 1000;
+    if (type === "goal") {
+      let xp = RULES.GOAL_BASE;
+      const created = new Date(data.createdAt);
+      const deadline = new Date(data.deadline);
+      const today = new Date().setHours(0, 0, 0, 0);
 
-        const created = new Date(goal.createdAt);
-        const deadline = new Date(goal.deadline);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+      const diffDays = Math.floor(
+        Math.abs(deadline - created) / (1000 * 60 * 60 * 24)
+      );
+      xp += Math.floor(diffDays / 30) * RULES.GOAL_MONTHLY_BONUS;
 
-        // every 30 days of goal duration +1000 XP
-        const diffTime = Math.abs(deadline - created);
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const monthlyBonuses = Math.floor(diffDays / 30);
-        goalXP += monthlyBonuses * 1000;
-
-        // if before deadline +1000 XP
-        if (today <= deadline) {
-          goalXP += 1000;
-        }
-
-        xpGain = goalXP;
-        break;
+      if (today <= deadline) xp += RULES.GOAL_ON_TIME_BONUS;
+      return xp;
     }
-    return xpGain;
+    return 0;
   },
 
-  async applyXP(amount) {
-    const stats = await DataManager.getUserStats(); // { totalXp: 0, currentXp: 0, level: 1 }
-    stats.totalXp += amount;
-    stats.currentXp += amount;
+  processXpGain: (currentStats, xpAmount) => {
+    const stats = { ...currentStats }; // Kopia, żeby nie mutować oryginału (Pure Function)
+    stats.totalXp += xpAmount;
+    stats.currentXp += xpAmount;
 
     let leveledUp = false;
 
@@ -361,8 +391,6 @@ export const LevelManager = {
       stats.currentXp -= LevelManager.getXpThreshold(stats.level);
       stats.level++;
       leveledUp = true;
-
-      if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
     }
 
     while (stats.currentXp < 0 && stats.level > 1) {
@@ -370,13 +398,6 @@ export const LevelManager = {
       stats.currentXp += LevelManager.getXpThreshold(stats.level);
     }
 
-    await DataManager.saveUserStats(stats);
-
-    document.dispatchEvent(
-      new CustomEvent("statsUpdated", {
-        detail: { leveledUp: leveledUp },
-      })
-    );
-    return leveledUp;
+    return { stats, leveledUp };
   },
 };

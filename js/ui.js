@@ -1,6 +1,7 @@
 import { Utils, DataManager, LevelManager } from "./data.js";
+import { QuoteService, PermissionsManager } from "./services.js";
 import { elements } from "./elements.js";
-import { ICONS } from "./icons.js";
+import { Icons } from "./icons.js";
 
 export const GRADIENTS = [
   "linear-gradient(90deg, #AD22B6, #FF00FF)",
@@ -11,41 +12,16 @@ export const GRADIENTS = [
   "linear-gradient(90deg, #f093fb, #f5576c)",
 ];
 
-const parser = new DOMParser();
-
-const getIcon = (name) => {
-  const iconString = ICONS[name];
-  if (!iconString) return document.createElement("span");
-
-  // Ważne: parsowanie jako xml
-  const doc = parser.parseFromString(iconString, "image/svg+xml");
-  const svg = doc.documentElement;
-
-  // Sprawdź czy nie ma błędu parsowania
-  if (svg.querySelector("parsererror")) {
-    console.error("SVG Parse Error", name);
-    return document.createElement("span");
-  }
-
-  // Importujemy do naszego dokumentu
-  const importedSvg = document.importNode(svg, true);
-
-  // Dodajemy klasy bazowe, żeby łatwiej było stylować w CSS
-  importedSvg.classList.add("lucide-icon");
-
-  return importedSvg;
-};
-
 export const UI = {
-  createDeadlineIcon: () => getIcon("deadline"),
-  createLocationIcon: () => getIcon("location"),
-  createRepeatIcon: () => getIcon("repeat"),
-  createCheckIcon: () => getIcon("check"),
-  createEllipsisIcon: () => getIcon("ellipsis"),
-  createDeleteIcon: () => getIcon("trash"),
-  createGoalIcon: () => getIcon("goal"),
-  createDescriptionIcon: () => getIcon("description"),
-  createPencilIcon: () => getIcon("pencil"),
+  createDeadlineIcon: () => Icons.createDeadlineIcon(),
+  createLocationIcon: () => Icons.createLocationIcon(),
+  createRepeatIcon: () => Icons.createRepeatIcon(),
+  createCheckIcon: () => Icons.createCheckIcon(),
+  createEllipsisIcon: () => Icons.createEllipsisIcon(),
+  createDeleteIcon: () => Icons.createDeleteIcon(),
+  createGoalIcon: () => Icons.createGoalIcon(),
+  createDescriptionIcon: () => Icons.createDescriptionIcon(),
+  createPencilIcon: () => Icons.createPencilIcon(),
 
   createProgressCircle: (percentage) => {
     const size = 32;
@@ -96,7 +72,34 @@ export const UI = {
     return container;
   },
 
-  fillHabitSelect: async () => {
+  updateUserHeader: async () => {
+    const stats = await DataManager.getUserStats();
+    const nameLabel = document.getElementById("displayUserName");
+    if (nameLabel) nameLabel.textContent = stats.userName;
+    await UI.updateXPBar();
+  },
+
+  renderCurrentPage: async (AppState) => {
+    if (elements.toDoList) {
+      await UI.renderQuote();
+      await UI.renderDailyTasks(AppState);
+      await UI.renderLongTermGoals(AppState);
+    }
+    if (elements.calendarGrid) {
+      await UI.renderCalendar(AppState);
+      await UI.renderCalendarTasks(AppState);
+    }
+    if (elements.habitSection) await UI.renderHabits(AppState);
+    if (elements.goalsList) {
+      await UI.setupSettingsToggles();
+      UI.applyRandomGradient();
+      await UI.renderLongTermGoals();
+    }
+  },
+
+  // MODAL
+
+  fillModalHabitSelect: async () => {
     const select = elements.goalHabitSelect;
     if (!select) return;
 
@@ -123,71 +126,99 @@ export const UI = {
     }
   },
 
-  resetModal: (AppState) => {
-    if (elements.taskName) elements.taskName.value = "";
-    if (elements.taskDate) elements.taskDate.value = "";
-    if (elements.descriptionInput) elements.descriptionInput.value = "";
-    if (elements.goalDeadline) elements.goalDeadline.value = "";
-    if (elements.goalHabitSelect) elements.goalHabitSelect.selectedIndex = 0;
-    if (elements.locationInput) {
-      elements.locationInput.value = "";
-      elements.locationInput.classList.remove("success", "error");
-    }
-
-    if (elements.modalTitle) modalTitle.textContent = "New";
-    const btn = document.getElementById("confirmAddBtn");
-    if (btn) {
-      btn.textContent = "Create";
-      btn.removeAttribute("data-edit-id");
-      btn.removeAttribute("data-edit-type");
-    }
-    /* 
-    to było dodane przez te edity chyba
-    const sectionsToReset = [
-      { sel: ".typePickers", display: "flex" },
-      { sel: ".nameSection", display: "flex" },
-      { sel: "#habitIconWrapper", display: "flex" },
-      { sel: "#locationSection", display: "flex" },
-      { sel: "#habitSection .modalSubTitle", text: "Icon" },
-    ];
-
-    sectionsToReset.forEach((item) => {
-      const el = document.querySelector(item.sel);
-      if (el) {
-        if (item.display) el.style.display = item.display;
-        if (item.text) el.textContent = item.text;
-      }
-    });
-    
-
-    // title reset
-    const dateTitle = document.querySelector("#dateSection .modalSubTitle");
-    if (dateTitle) dateTitle.textContent = "Date";
-
-    */
-
+  detectModalDefaultType: () => {
     const url = window.location.href.toLowerCase();
-    if (url.includes("habit")) {
-      AppState.currentCreateType = "habit";
-    } else if (url.includes("hero")) {
-      AppState.currentCreateType = "goal";
-    } else {
-      AppState.currentCreateType = "task";
+    if (url.includes("habit")) return "habit";
+    if (url.includes("hero")) return "goal";
+    return "task";
+  },
+
+  clearModalInputs: () => {
+    const inputs = [
+      elements.taskName,
+      elements.taskDate,
+      elements.descriptionInput,
+      elements.goalDeadline,
+      elements.locationInput,
+    ];
+    inputs.forEach((input) => {
+      if (input) input.value = "";
+    });
+
+    if (elements.goalHabitSelect) elements.goalHabitSelect.selectedIndex = 0;
+    if (elements.locationInput)
+      elements.locationInput.classList.remove("success", "error");
+
+    document
+      .querySelectorAll("#daysPicker input, #monthDaysGrid input")
+      .forEach((cb) => (cb.checked = false));
+  },
+
+  toggleModalFields: async (type, isEdit = false) => {
+    const dSection = document.getElementById("dateSection");
+    const hSection = document.getElementById("habitSection");
+    const gSection = document.getElementById("goalSection");
+    const lSection = document.getElementById("locationSection");
+    const typePickers = document.querySelector(".typePickers");
+    const dateTitle = document.querySelector("#dateSection .modalSubTitle");
+    const nameSection = document.querySelector(".nameSection");
+
+    [dSection, hSection, gSection, lSection, typePickers].forEach((el) => {
+      if (el) el.style.display = "none";
+    });
+
+    if (dateTitle) dateTitle.textContent = "Date";
+    if (nameSection) nameSection.style.display = "flex";
+
+    if (type === "task") {
+      if (dSection) dSection.style.display = "flex";
+      if (lSection) lSection.style.display = "flex";
     }
 
-    UI.toggleModalFields(AppState.currentCreateType);
+    if (type === "habit") {
+      if (hSection) hSection.style.display = "flex";
+      if (dSection) dSection.style.display = "flex";
+      if (dateTitle) dateTitle.textContent = "Start Date";
 
+      if (isEdit) {
+        if (nameSection) nameSection.style.display = "none";
+        if (lSection) lSection.style.display = "none";
+      } else {
+        if (nameSection) nameSection.style.display = "flex";
+        if (lSection) lSection.style.display = "flex";
+      }
+    }
+
+    if (type === "goal") {
+      if (gSection) gSection.style.display = "flex";
+      await UI.fillModalHabitSelect();
+    }
+
+    if (!isEdit && typePickers) {
+      typePickers.style.display = "flex";
+    }
+
+    if (elements.daysPicker) elements.daysPicker.style.display = "none";
+    if (elements.monthlyDayPicker)
+      elements.monthlyDayPicker.style.display = "none";
+  },
+
+  refreshTypePickerButtons: (currentType) => {
     const typePickers = document.querySelectorAll(".typePicker");
     typePickers.forEach((btn) => {
       const btnType = btn.getAttribute("data-type");
-      btn.classList.toggle("active", btnType === AppState.currentCreateType);
+      btn.classList.toggle("active", btnType === currentType);
     });
+  },
 
-    // checkbox reset
-    const allCheckboxes = document.querySelectorAll(
-      "#daysPicker input, #monthDaysGrid input"
-    );
-    allCheckboxes.forEach((cb) => (cb.checked = false));
+  resetModal: (AppState) => {
+    UI.clearModalInputs();
+
+    AppState.currentCreateType = UI.detectModalDefaultType();
+
+    UI.toggleModalFields(AppState.currentCreateType, false);
+
+    UI.refreshTypePickerButtons(AppState.currentCreateType);
   },
 
   applyRandomGradient: () => {
@@ -200,51 +231,31 @@ export const UI = {
     );
   },
 
-  toggleModalFields: async (type) => {
-    const isHabit = type === "habit";
-    const isGoal = type === "goal";
-    const isTask = type === "task";
+  setModalMode: (mode = "create") => {
+    const btn = document.getElementById("confirmAddBtn");
+    const title = elements.modalTitle;
 
-    const dSection = document.getElementById("dateSection");
-    const hSection = document.getElementById("habitSection");
-    const gSection = document.getElementById("goalSection");
-    const lSection = document.getElementById("locationSection");
-
-    if (dSection) dSection.style.display = "none";
-    if (hSection) hSection.style.display = "none";
-    if (gSection) gSection.style.display = "none";
-
-    if (isTask && dSection) dSection.style.display = "flex";
-    if (isHabit && hSection) hSection.style.display = "flex";
-    if (isGoal && gSection) gSection.style.display = "flex";
-
-    if (lSection) {
-      lSection.style.display = isTask || isHabit ? "flex" : "none";
-    }
-
-    if (elements.daysPicker) elements.daysPicker.style.display = "none";
-    if (elements.monthlyDayPicker)
-      elements.monthlyDayPicker.style.display = "none";
-
-    if (isGoal) {
-      await UI.fillHabitSelect();
+    if (mode === "create") {
+      if (title) title.textContent = "New";
+      if (btn) {
+        btn.textContent = "Create";
+        btn.removeAttribute("data-edit-id");
+        btn.removeAttribute("data-edit-type");
+      }
+    } else {
+      // EDIT MODE
+      if (title) title.textContent = "Edit";
+      if (btn) btn.textContent = "Save Changes";
     }
   },
 
   openEditHabitModal: async (habit, AppState) => {
     UI.resetModal(AppState);
 
-    document.querySelector(".typePickers").style.display = "none";
-    document.querySelector(".nameSection").style.display = "none";
-    document.getElementById("locationSection").style.display = "none";
-    document.getElementById("goalSection").style.display = "none";
-    document.getElementById("habitIconWrapper").style.display = "none";
+    UI.setModalMode("edit");
+    await UI.toggleModalFields("habit", true);
 
-    document.getElementById("habitSection").style.display = "flex";
-    document.getElementById("dateSection").style.display = "flex";
-    document.querySelector("#dateSection .modalSubTitle").textContent =
-      "Start Date";
-    document.getElementById("modalTitle").textContent = "Edit Habit";
+    document.getElementById("taskName").value = habit.name;
 
     const freqSelect = document.getElementById("habitFrequency");
     freqSelect.value = habit.frequency;
@@ -266,57 +277,32 @@ export const UI = {
     }
 
     const btn = document.getElementById("confirmAddBtn");
-    btn.textContent = "Save Changes";
     btn.setAttribute("data-edit-id", habit.id);
-
+    btn.setAttribute("data-edit-type", "habit");
     //await UI.toggleModalFields("habit");
+
+    if (elements.modalTitle) elements.modalTitle.textContent = "Edit Habit";
 
     elements.modalOverlay.classList.add("open");
   },
 
   openEditGoalModal: async (goal) => {
-    console.log("Próba edycji celu:", goal);
     UI.resetModal();
+    UI.setModalMode("edit");
+    await UI.toggleModalFields("goal", true);
 
-    await UI.fillHabitSelect();
+    if (elements.modalTitle) elements.modalTitle.textContent = "Edit Goal";
 
-    const btn = document.getElementById("confirmAddBtn");
-    const title = document.getElementById("modalTitle");
+    const nameInput = document.getElementById("taskName");
+    if (nameInput) nameInput.value = goal.name || "";
 
-    if (!btn) {
-      console.error(
-        "KATASTROFA: Nie znaleziono przycisku confirmAddBtn w HTML!"
-      );
-      return;
+    if (elements.descriptionInput) {
+      elements.descriptionInput.value = goal.description || "";
     }
 
-    btn.textContent = "Save Changes";
-    btn.setAttribute("data-edit-id", goal.id);
-    btn.setAttribute("data-edit-type", "goal");
-
-    if (title) title.textContent = "Edit Goal";
-
-    const toHide = [
-      ".typePickers",
-      "#habitSection",
-      "#locationSection",
-      "#dateSection",
-    ];
-    toHide.forEach((s) => {
-      const el = document.querySelector(s);
-      if (el) el.style.setProperty("display", "none", "important");
-    });
-
-    const goalSec = document.getElementById("goalSection");
-    const nameSec = document.querySelector(".nameSection");
-    if (goalSec) goalSec.style.setProperty("display", "flex", "important");
-    if (nameSec) nameSec.style.setProperty("display", "flex", "important");
-
-    document.getElementById("taskName").value = goal.name || "";
-    if (elements.descriptionInput)
-      elements.descriptionInput.value = goal.description || "";
-    if (elements.goalDeadline)
+    if (elements.goalDeadline) {
       elements.goalDeadline.value = goal.deadline || "";
+    }
 
     if (elements.goalHabitSelect) {
       elements.goalHabitSelect.value = goal.linkedHabitId
@@ -324,44 +310,50 @@ export const UI = {
         : "";
     }
 
+    const btn = document.getElementById("confirmAddBtn");
+    if (btn) {
+      btn.setAttribute("data-edit-id", goal.id);
+      btn.setAttribute("data-edit-type", "goal");
+    }
+
     elements.modalOverlay.classList.add("open");
-    console.log("Modal powinien być otwarty w trybie EDIT");
   },
 
-  renderGoals: async () => {
-    const list = document.getElementById("goalsList");
-    if (!list) return;
+  setupSettingsToggles: async () => {
+    const notifyToggle = document.getElementById("toggleNotifications");
+    const locationToggle = document.getElementById("toggleLocation");
 
-    while (list.firstChild) {
-      list.removeChild(list.firstChild);
+    if (notifyToggle) {
+      const isEnabled =
+        localStorage.getItem("user_notifications_enabled") === "true";
+      notifyToggle.checked = isEnabled;
     }
 
-    const goals = await DataManager.getGoals();
-
-    if (elements.emptyListMessageWrapper) {
-      if (goals.length === 0) {
-        elements.emptyListMessageWrapper.style.display = "flex";
-        if (elements.messageGoals)
-          elements.messageGoals.style.display = "block";
-      } else {
-        elements.emptyListMessageWrapper.style.display = "none";
-        if (elements.messageGoals) elements.messageGoals.style.display = "none";
-      }
+    if (locationToggle) {
+      const isEnabled =
+        localStorage.getItem("user_location_enabled") === "true";
+      locationToggle.checked = isEnabled;
     }
+  },
 
-    goals.forEach((goal) => {
-      const goalNode = UI.createItem(goal.name, goal, null, "goal");
-      list.appendChild(goalNode);
-    });
+  renderQuote: async () => {
+    const quoteText = document.getElementById("quote-text");
+    const quoteAuthor = document.getElementById("quote-author");
+
+    if (!quoteText || !quoteAuthor) return;
+
+    const quote = await QuoteService.getDailyAdvice();
+
+    quoteText.textContent = quote.text;
+    quoteAuthor.textContent = quote.author;
   },
 
   setupMonthlyGrid: () => {
     const grid = document.getElementById("monthDaysGrid");
     if (!grid) return;
 
-    while (grid.firstChild) {
-      grid.removeChild(grid.firstChild);
-    }
+    grid.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     for (let i = 1; i <= 31; i++) {
       const label = document.createElement("label");
@@ -375,173 +367,125 @@ export const UI = {
 
       label.appendChild(checkbox);
       label.appendChild(span);
-
-      grid.appendChild(label);
+      fragment.appendChild(label);
     }
+    grid.appendChild(fragment);
   },
 
-  renderTasksForDay: async (AppState, isCalendar = false) => {
-    const prefix = isCalendar ? "calendar" : "";
-    const listId = isCalendar ? "calendarToDoList" : "toDoList";
-    const titleId = isCalendar ? "calendarTaskDateTitle" : "taskDateTitle";
-    const wrapperId = isCalendar
-      ? "calendarEmptyListMessageWrapper"
-      : "emptyListMessageWrapper";
-    const msgTodayId = isCalendar ? "calendarMessageToday" : "messageToday";
-    const msgFutureId = isCalendar ? "calendarMessageFuture" : "messageFuture";
+  renderToContainer: (container, nodes) => {
+    if (!container) return;
+    container.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    nodes.forEach((node) => fragment.appendChild(node));
+    container.appendChild(fragment);
+  },
 
-    const listEl = document.getElementById(listId);
-    const titleEl = document.getElementById(titleId);
-    const wrapperEl = document.getElementById(wrapperId);
-    const msgTodayEl = document.getElementById(msgTodayId);
-    const msgFutureEl = document.getElementById(msgFutureId);
-
-    if (!listEl) return console.log("ej mordo nie ma listy!");
+  renderDailyTasks: async (AppState) => {
+    const listEl = document.getElementById("toDoList");
+    const wrapperEl = document.getElementById("emptyListMessageWrapper");
+    if (!listEl) return;
 
     const targetDate = AppState.selectedDate;
     const dateKey = Utils.formatDateKey(targetDate);
-    const dayOfWeek = targetDate.getDay();
-    const dayOfMonth = targetDate.getDate();
-    const todayKey = Utils.formatDateKey(new Date());
 
-    if (titleEl) {
-      titleEl.textContent =
-        dateKey === todayKey
-          ? "Today's Tasks:"
-          : `Tasks for ${targetDate.toDateString()}:`;
+    const undoneTasks = await DataManager.getUndoneTasks(dateKey);
+    const savedHabits = await DataManager.getHabits();
+
+    const undoneNodes = [];
+
+    // TASKS
+    undoneTasks.forEach((task) => {
+      const isOverdue = task.date < dateKey;
+      undoneNodes.push(
+        UI.createItem(task.name, task, dateKey, "task", AppState, isOverdue)
+      );
+    });
+
+    // HABITS
+    savedHabits.forEach((habit) => {
+      if (dateKey < Utils.formatDateKey(new Date(habit.createdAt))) return;
+
+      const isDue = Utils.isHabitDue(habit, targetDate);
+      const isDone = habit.history && habit.history[dateKey];
+
+      if (isDue && !isDone) {
+        undoneNodes.push(
+          UI.createItem(habit.name, habit, dateKey, "habit", AppState)
+        );
+      }
+    });
+
+    // if empty
+    if (wrapperEl) {
+      wrapperEl.style.display = undoneNodes.length === 0 ? "flex" : "none";
     }
 
-    //elements.toDoList.innerHTML = "";
+    UI.renderToContainer(listEl, undoneNodes);
+  },
 
-    const savedTasks = await DataManager.getTasksByDate();
-    const savedHabits = DataManager.getHabits();
-    const savedGoals = DataManager.getGoals();
+  renderLongTermGoals: async (AppState) => {
+    const goalsListEl = document.getElementById("goalsList");
+    if (!goalsListEl) return;
 
-    console.log("Rendering for key:", dateKey);
-    console.log("Tasks found:", savedTasks[dateKey]);
+    const savedGoals = await DataManager.getGoals();
+    const goalNodes = savedGoals
+      .filter((g) => !g.done)
+      .map((goal) => {
+        const li = UI.createItem(goal.name, goal, null, "goal", AppState);
+        return li;
+      });
+
+    UI.renderToContainer(goalsListEl, goalNodes);
+  },
+
+  renderCalendarTasks: async (AppState) => {
+    const listEl = document.getElementById("calendarToDoList");
+    const titleEl = document.getElementById("calendarTaskDateTitle");
+    if (!listEl) return;
+
+    const targetDate = AppState.selectedDate;
+    const dateKey = Utils.formatDateKey(targetDate);
+
+    if (titleEl)
+      titleEl.textContent = `Tasks for ${targetDate.toDateString()}:`;
+
+    const [tasks, habits, goals] = await Promise.all([
+      DataManager.getTasksByDate(dateKey),
+      DataManager.getHabits(),
+      DataManager.getGoals(),
+    ]);
 
     const undoneNodes = [];
     const doneNodes = [];
 
-    // --- 1. ZADANIA (Tasks) ---
-    console.log("DEBUG: Szukam klucza:", dateKey);
-    console.log("DEBUG: Cała baza zadań:", savedTasks);
-
-    const showCompleted = isCalendar;
+    const sortNode = (li, isDone) =>
+      isDone ? doneNodes.push(li) : undoneNodes.push(li);
 
     // TASKS
-    tasksForDate.forEach((task) => {
-      // task.id to teraz klucz główny z bazy
+    tasks.forEach((task) => {
       const li = UI.createItem(task.name, task, dateKey, "task", AppState);
-      if (task.done) {
-        if (showCompleted) {
-          li.classList.add("is-completed");
-          const cb = li.querySelector('input[type="checkbox"]');
-          if (cb) cb.checked = true;
-          doneNodes.push(li);
-        }
-      } else {
-        undoneNodes.push(li);
-      }
+      sortNode(li, task.done);
     });
 
-    // --- 2. NAWYKI (Habits) ---
-    savedHabits.forEach((habit) => {
-      const viewingDate = Utils.formatDateKey(targetDate);
-      const createdDate = Utils.formatDateKey(new Date(habit.createdAt));
-      if (viewingDate < createdDate) return;
-
-      let isDueToday = false;
-      const schedule = habit.schedule || [];
-      if (habit.frequency === "daily") {
-        isDueToday = true;
-      } else if (habit.frequency === "weekly") {
-        isDueToday = schedule.includes(dayOfWeek);
-      } else if (habit.frequency === "monthly") {
-        isDueToday = schedule.includes(dayOfMonth);
-      }
-
-      if (isDueToday) {
-        const isDone = habit.history && habit.history[dateKey];
+    // HABITS
+    habits.forEach((habit) => {
+      if (dateKey < Utils.formatDateKey(new Date(habit.createdAt))) return;
+      if (Utils.isHabitDue(habit, targetDate)) {
+        const isActuallyDone = habit.history && habit.history[dateKey];
         const li = UI.createItem(habit.name, habit, dateKey, "habit", AppState);
-
-        if (isDone) {
-          if (showCompleted) {
-            li.classList.add("is-completed");
-            const cb = li.querySelector('input[type="checkbox"]');
-            if (cb) cb.checked = true;
-            doneNodes.push(li);
-          }
-        } else {
-          undoneNodes.push(li);
-        }
+        sortNode(li, isActuallyDone);
       }
     });
 
-    // --- 3. CELE (Goals) ---
-    savedGoals.forEach((goal) => {
-      if (goal.deadline === dateKey) {
+    // GOALS
+    goals.forEach((goal) => {
+      if (goal.deadline && goal.deadline.startsWith(dateKey)) {
         const li = UI.createItem(goal.name, goal, dateKey, "goal", AppState);
-
-        if (goal.done) {
-          if (showCompleted) {
-            li.classList.add("is-completed");
-            const cb = li.querySelector('input[type="checkbox"]');
-            if (cb) cb.checked = true;
-            doneNodes.push(li);
-          }
-        } else {
-          undoneNodes.push(li);
-        }
+        sortNode(li, goal.done);
       }
     });
 
-    while (listEl.firstChild) {
-      listEl.removeChild(listEl.firstChild);
-    }
-
-    if (wrapperEl) {
-      wrapperEl.style.display = "none";
-      if (msgTodayEl) msgTodayEl.style.display = "none";
-      if (msgFutureEl) msgFutureEl.style.display = "none";
-    }
-
-    if (
-      undoneNodes.length === 0 &&
-      (doneNodes.length === 0 || !showCompleted)
-    ) {
-      if (wrapperEl) {
-        wrapperEl.style.display = "flex";
-        const isToday = dateKey === todayKey;
-
-        if (isToday && msgTodayEl) {
-          msgTodayEl.style.display = "block";
-        } else if (!isToday && msgFutureEl) {
-          msgFutureEl.style.display = "block";
-        }
-      }
-    }
-
-    console.log("--- DIAGNOSTYKA RENDEROWANIA ---");
-    console.log("Węzły do dodania:", undoneNodes.length + doneNodes.length);
-    console.log("Czy listEl istnieje?:", !!listEl);
-    if (listEl) console.log("ID elementu docelowego:", listEl.id);
-
-    // Łączymy listy
-    const listFragment = document.createDocumentFragment();
-    undoneNodes.forEach((node) => {
-      console.log(
-        "Dodaję do fragmentu:",
-        node.querySelector(".taskNodeName")?.textContent
-      );
-      listFragment.appendChild(node);
-    });
-    doneNodes.forEach((node) => listFragment.appendChild(node));
-    listEl.appendChild(listFragment);
-    console.log(
-      "DOM po appendChild - ile dzieci ma lista?:",
-      listEl.children.length
-    );
+    UI.renderToContainer(listEl, [...undoneNodes, ...doneNodes]);
   },
 
   getItemMetadata: (data, type, allHabits) => {
@@ -565,8 +509,10 @@ export const UI = {
         deadlineSpan.className = "goalDeadline";
 
         const deadlineIcon = UI.createDeadlineIcon();
-        deadlineIcon.style.verticalAlign = "center";
-        deadlineIcon.style.marginRight = "6px";
+        if (deadlineIcon) {
+          deadlineIcon.style.setProperty("vertical-align", "middle");
+          deadlineIcon.style.marginRight = "6px";
+        }
 
         const dateObj = new Date(data.deadline);
         const dateText = document.createTextNode(
@@ -607,14 +553,16 @@ export const UI = {
         descDiv.style.marginTop = "4px";
 
         const descIcon = UI.createDescriptionIcon();
-        descIcon.style.marginRight = "6px";
-        descIcon.style.opacity = "0.7";
-        descIcon.style.verticalAlign = "middle";
+        if (descIcon) {
+          descIcon.style.marginRight = "6px";
+          descIcon.style.opacity = "0.7";
+          descIcon.style.verticalAlign = "middle";
+          descDiv.appendChild(descIcon);
+        }
 
         const descText = document.createElement("span");
         descText.textContent = data.description;
 
-        descDiv.appendChild(descIcon);
         descDiv.appendChild(descText);
         metaWrapper.appendChild(descDiv);
       }
@@ -622,199 +570,42 @@ export const UI = {
 
     return metaWrapper;
   },
-  /*
-  createItem: (name, data, dateKey, type, AppState) => {
+
+  createItem: (
+    name,
+    data,
+    dateKey,
+    type,
+    AppState,
+    isOverdue = false,
+    allHabits = []
+  ) => {
     const li = document.createElement("li");
-    li.className = `taskItem ${
-      type === "habit" ? "is-habit" : type === "goal" ? "is-goal" : "is-task"
+    const isDone =
+      type === "task" || type === "goal"
+        ? !!data.done
+        : !!(data.history && data.history[dateKey]);
+
+    li.className = `taskItem is-${type} ${isOverdue ? "overdue" : ""} ${
+      isDone ? "is-completed" : ""
     }`;
+    li.dataset.id = data.id;
+    li.dataset.type = type;
+    if (dateKey) li.dataset.dateKey = dateKey;
 
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
 
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
-    const statusIcon =
+
+    const icon =
       type === "habit"
         ? UI.createRepeatIcon()
         : type === "goal"
         ? UI.createGoalIcon()
         : UI.createCheckIcon();
-    statusIcon.classList.add("task-type-icon");
-    taskLabel.appendChild(statusIcon);
-
-    if (type === "habit") {
-      const habitIconEmoji = document.createElement("span");
-      habitIconEmoji.className = "habit-mini-emoji";
-      habitIconEmoji.textContent = data.icon || name.charAt(0).toUpperCase();
-      taskLabel.appendChild(habitIconEmoji);
-    }
-
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "taskNodeName";
-    nameSpan.textContent = name;
-    taskLabel.appendChild(nameSpan);
-
-    if (type === "goal") {
-      const editGoalBtn = document.createElement("button");
-      editGoalBtn.className = "edit-inline-btn";
-      const pencilIcon = UI.createPencilIcon();
-      editGoalBtn.appendChild(pencilIcon);
-      editGoalBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        UI.openEditGoalModal(data);
-      });
-
-      taskLabel.appendChild(editGoalBtn);
-    }
-
-    taskContent.appendChild(taskLabel);
-    taskContent.appendChild(metaWrapper);
-
-    // 2. Kontener na akcje
-    const taskActions = document.createElement("div");
-    taskActions.className = "taskActions";
-
-    /* 
-      if (type === "habit" || type === "goal") {
-        const progress = DataManager.calculateHabitProgress(data);
-        const circle = UI.createProgressCircle(progress);
-        taskActions.appendChild(circle);
-      }
-      */
-  /*
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.className = "taskCheckbox";
-
-    // checkbox setting
-    const isActuallyDone =
-      type === "task" ? data.done : data.history && data.history[dateKey];
-    checkbox.checked = isActuallyDone;
-
-    const moreBtn = document.createElement("button");
-    moreBtn.className = "moreBtn";
-    const ellipsisIcon = UI.createEllipsisIcon();
-    const deleteIcon = UI.createDeleteIcon();
-    moreBtn.appendChild(ellipsisIcon);
-
-    moreBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-
-      const isReadyToDelete = li.classList.contains("show-delete");
-
-      if (isReadyToDelete) {
-        if (type === "task") {
-          const tasks = DataManager.getTasks();
-          if (tasks[dateKey]) {
-            delete tasks[dateKey][name];
-            if (Object.keys(tasks[dateKey]).length === 0) delete tasks[dateKey];
-            DataManager.saveTasks(tasks);
-          }
-        } else if (type === "habit") {
-          const habits = DataManager.getHabits();
-          const filtered = habits.filter((h) => h.id !== data.id);
-          DataManager.saveHabits(filtered);
-          if (elements.habitSection) UI.renderHabits();
-        } else if (type === "goal") {
-          const goals = DataManager.getGoals();
-          const filtered = goals.filter((g) => g.id !== data.id);
-          DataManager.saveGoals(filtered);
-          if (elements.goalsList) UI.renderGoals();
-          if (elements.calendarGrid) UI.renderCalendar();
-        }
-
-        const calendarEl = document.getElementById("calendarGrid");
-        const isCalendar =
-          calendarEl && window.getComputedStyle(calendarEl).display !== "none";
-        UI.renderTasksForDay(AppState, isCalendar);
-      } else {
-        li.classList.add("show-delete");
-        moreBtn.replaceChildren(deleteIcon);
-
-        setTimeout(() => {
-          if (li.classList.contains("show-delete")) {
-            li.classList.remove("show-delete");
-            moreBtn.replaceChildren(ellipsisIcon);
-          }
-        }, 2500);
-      }
-    });
-
-    taskActions.appendChild(checkbox);
-    taskActions.appendChild(moreBtn);
-
-    // 3. Składanie całości
-    li.appendChild(taskContent);
-    li.appendChild(taskActions);
-
-    // --- LISTENERY ---
-    checkbox.addEventListener("change", function () {
-      const isChecked = this.checked;
-      const todayKey = Utils.formatDateKey(new Date());
-      const isToday = dateKey === todayKey;
-
-      if (type === "task") {
-        const tasks = DataManager.getTasks();
-        if (tasks[dateKey] && tasks[dateKey][name]) {
-          tasks[dateKey][name].done = isChecked;
-          DataManager.saveTasks(tasks);
-        }
-      } else if (type === "habit") {
-        DataManager.toggleHabitDone(data.id, dateKey, isChecked);
-      } else if (type === "goal") {
-        const goals = DataManager.getGoals();
-        const goal = goals.find((g) => g.id === data.id);
-        if (goal) {
-          goal.done = isChecked;
-          DataManager.saveGoals(goals);
-        }
-      }
-
-      if (isToday) {
-        const xpValue = LevelManager.calculateXP(type, data);
-
-        LevelManager.applyXP(isChecked ? xpValue : -xpValue);
-
-        if (isChecked && navigator.vibrate) {
-          navigator.vibrate(50);
-        }
-      }
-
-      if (isChecked) li.classList.add("is-completed");
-      else li.classList.remove("is-completed");
-
-      setTimeout(() => {
-        const calendarListExists =
-          !!document.getElementById("calendarToDoList");
-        UI.renderTasksForDay(AppState, calendarListExists);
-      }, 300);
-    });
-
-    return li;
-  },
-  */
-
-  createItem: (name, data, dateKey, type, AppState, allHabits = []) => {
-    const li = document.createElement("li");
-    li.className = `taskItem is-${type}`;
-    li.dataset.id = data.id;
-    li.dataset.type = type;
-    li.dataset.dateKey = dateKey;
-
-    const taskContent = document.createElement("div");
-    taskContent.className = "taskContent";
-
-    // Label i nazwa
-    const taskLabel = document.createElement("label");
-    taskLabel.className = "taskLabel";
-    taskLabel.appendChild(
-      type === "habit"
-        ? UI.createRepeatIcon()
-        : type === "goal"
-        ? UI.createGoalIcon()
-        : UI.createCheckIcon()
-    );
+    taskLabel.appendChild(icon);
 
     const nameSpan = document.createElement("span");
     nameSpan.className = "taskNodeName";
@@ -824,15 +615,13 @@ export const UI = {
     taskContent.appendChild(taskLabel);
     taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));
 
-    // Akcje (checkbox, moreBtn)
     const taskActions = document.createElement("div");
     taskActions.className = "taskActions";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.className = "taskCheckbox";
-    checkbox.checked =
-      type === "task" ? !!data.done : !!(data.history && data.history[dateKey]);
+    checkbox.checked = isDone;
 
     const moreBtn = document.createElement("button");
     moreBtn.className = "moreBtn";
@@ -844,7 +633,6 @@ export const UI = {
     li.appendChild(taskContent);
     li.appendChild(taskActions);
 
-    // UWAGA: Nie dodajemy tu listenerów! Zrobimy to w events.js przez delegację.
     return li;
   },
 
@@ -852,7 +640,8 @@ export const UI = {
     const grid = elements.calendarGrid;
     if (!grid) return;
 
-    while (grid.firstChild) grid.removeChild(grid.firstChild);
+    grid.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     elements.currentMonth.textContent = AppState.date.toLocaleDateString(
       "en-US",
@@ -869,81 +658,60 @@ export const UI = {
       const el = document.createElement("div");
       el.textContent = d;
       el.className = "day-label";
-      elements.calendarGrid.appendChild(el);
+      fragment.appendChild(el);
     });
 
     const firstDay = new Date(year, month, 1);
     const startIndex = Utils.getMondayFirstDay(firstDay);
 
     for (let i = 0; i < startIndex; i++) {
-      elements.calendarGrid.appendChild(document.createElement("div"));
+      fragment.appendChild(document.createElement("div"));
     }
 
     const allGoals = await DataManager.getGoals();
-
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    for (let day = 1; day <= daysInMonth; day++) {
-      const el = document.createElement("div");
-      el.className = "day";
+    const todayStr = Utils.formatDateKey(new Date());
 
+    for (let day = 1; day <= daysInMonth; day++) {
       const currentLoopDate = new Date(year, month, day);
       const dateKey = Utils.formatDateKey(currentLoopDate);
 
-      const goalsForThisDay = allGoals.filter(
-        (goal) => goal.deadline === dateKey
-      );
-      const hasGoalDeadline = goalsForThisDay.length > 0;
+      const el = document.createElement("div");
+      el.className = "day";
+      el.dataset.date = dateKey;
 
       const dayNumber = document.createElement("span");
       dayNumber.textContent = day;
       el.appendChild(dayNumber);
 
-      if (hasGoalDeadline) {
-        const deadlineIconWrapper = document.createElement("div");
-        deadlineIconWrapper.className = "day-goal-wrapper";
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const isAnyUnfinishedOverdue = goalsForThisDay.some(
-          (goal) => !goal.done && currentLoopDate < today
-        );
-
-        if (isAnyUnfinishedOverdue) {
-          deadlineIconWrapper.classList.add("is-overdue");
+      const goalsForThisDay = allGoals.filter((g) => g.deadline === dateKey);
+      if (goalsForThisDay.length > 0) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "day-goal-wrapper";
+        if (goalsForThisDay.some((g) => !g.done && dateKey < todayStr)) {
+          wrapper.classList.add("is-overdue");
         }
-        deadlineIconWrapper.appendChild(UI.createGoalIcon());
-        el.appendChild(deadlineIconWrapper);
+        wrapper.appendChild(UI.createGoalIcon());
+        el.appendChild(wrapper);
       }
 
-      if (
-        AppState.selectedDate.getFullYear() === year &&
-        AppState.selectedDate.getMonth() === month &&
-        AppState.selectedDate.getDate() === day
-      ) {
+      if (Utils.formatDateKey(AppState.selectedDate) === dateKey) {
         el.classList.add("active");
       }
 
-      el.onclick = () => {
-        document
-          .querySelectorAll(".day")
-          .forEach((d) => d.classList.remove("active"));
-        el.classList.add("active");
-        AppState.selectedDate = new Date(year, month, day);
-        UI.renderTasksForDay(AppState, true);
-      };
-
-      grid.appendChild(el);
+      fragment.appendChild(el);
     }
+
+    grid.appendChild(fragment); // JEDNA OPERACJA NA DOM
   },
+
 
   renderHabits: async (AppState) => {
     const container = document.getElementById("habitCarousel");
     if (!container) return;
 
     const habits = await DataManager.getHabits();
-
-    while (container.firstChild) container.removeChild(container.firstChild);
+    container.innerHTML = "";
 
     if (habits.length === 0) {
       const noHabitsMsg = document.createElement("p");
@@ -954,97 +722,75 @@ export const UI = {
       return;
     }
 
+    const fragment = document.createDocumentFragment();
     habits.forEach((habit, index) => {
-      try {
-        const card = document.createElement("div");
-        card.className = "habit-card-mini";
+      const card = document.createElement("div");
+      card.className = "habit-card-mini";
+      card.dataset.id = habit.id;
 
-        const iconCircle = document.createElement("div");
-        iconCircle.className = "habit-card-icon";
-        iconCircle.textContent =
-          habit.icon || habit.name.charAt(0).toUpperCase();
-        card.appendChild(iconCircle);
+      const iconCircle = document.createElement("div");
+      iconCircle.className = "habit-card-icon";
+      iconCircle.textContent = habit.icon || habit.name.charAt(0).toUpperCase();
 
-        const name = document.createElement("p");
-        name.textContent = habit.name;
-        name.className = "habit-name-label";
-        card.appendChild(name);
+      const nameLabel = document.createElement("p");
+      nameLabel.textContent = habit.name;
+      nameLabel.className = "habit-name-label";
 
-        card.onclick = () => {
-          document
-            .querySelectorAll(".habit-card-icon")
-            .forEach((c) => c.classList.remove("active-habit-icon"));
-          document
-            .querySelectorAll(".habit-name-label")
-            .forEach((l) => l.classList.remove("active-habit-label"));
-          iconCircle.classList.add("active-habit-icon");
-          name.classList.add("active-habit-label");
-          UI.showHabitDetails(habit, AppState);
-          card.scrollIntoView({ behavior: "smooth", inline: "center" });
-        };
+      card.appendChild(iconCircle);
+      card.appendChild(nameLabel);
 
-        container.appendChild(card);
+      const isSelected =
+        AppState.selectedHabitForStats?.id === habit.id ||
+        (!AppState.selectedHabitForStats && index === 0);
 
-        if (index === 0) {
-          iconCircle.classList.add("active-habit-icon");
-          name.classList.add("active-habit-label");
+      if (isSelected) {
+        iconCircle.classList.add("active-habit-icon");
+        nameLabel.classList.add("active-habit-label");
+
+        if (!AppState.selectedHabitForStats) {
+          AppState.selectedHabitForStats = habit;
           UI.showHabitDetails(habit, AppState);
         }
-      } catch (error) {
-        console.error(`Błąd przy nawyku: ${habit.name}`, error);
       }
+
+      card.onclick = () => {
+        container
+          .querySelectorAll(".active-habit-icon")
+          .forEach((el) => el.classList.remove("active-habit-icon"));
+        container
+          .querySelectorAll(".active-habit-label")
+          .forEach((el) => el.classList.remove("active-habit-label"));
+
+        iconCircle.classList.add("active-habit-icon");
+        nameLabel.classList.add("active-habit-label");
+
+        AppState.selectedHabitForStats = habit;
+        UI.showHabitDetails(habit, AppState);
+        card.scrollIntoView({ behavior: "smooth", inline: "center" });
+      };
+
+      fragment.appendChild(card);
     });
+    container.appendChild(fragment);
   },
 
   showHabitDetails: (habit, AppState) => {
     AppState.selectedHabitForStats = habit;
 
     const progress = DataManager.calculateHabitProgress(habit);
-    const freqMap = {
-      daily: "Everyday",
-      weekly: "Every", //Days of the week
-      monthly: "Every", //Days of the month
-    };
-    let frequencyText = freqMap[habit.frequency] || habit.frequency;
-    if (
-      habit.frequency === "weekly" &&
-      habit.schedule &&
-      habit.schedule.length > 0
-    ) {
-      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const selectedDays = habit.schedule
-        .sort((a, b) => a - b)
-        .map((dayNum) => dayNames[dayNum]);
-      frequencyText += `: ${selectedDays.join(", ")}`;
-    }
-    if (
-      habit.frequency === "monthly" &&
-      habit.schedule &&
-      habit.schedule.length > 0
-    ) {
-      const selectedDays = habit.schedule.sort((a, b) => a - b);
-      frequencyText += `: ${selectedDays.join(", ")}`;
-    }
+    const streakValue = DataManager.calculateStreak(habit);
+
+    const frequencyText = Utils.getFrequencyText(habit);
     const startDate = habit.createdAt
       ? new Date(habit.createdAt).toLocaleDateString("en-US")
       : "Unknown";
+    const unit = Utils.getStreakUnit(habit.frequency, streakValue);
 
     document.getElementById("habitDetails").style.display = "block";
     document.getElementById("detailHabitName").textContent = habit.name;
-    const streakValue = DataManager.calculateStreak(habit);
-    const unit =
-      habit.frequency === "daily"
-        ? streakValue === 1
-          ? "day"
-          : "days"
-        : streakValue === 1
-        ? "time"
-        : "times";
-
     document.getElementById(
       "detailStreak"
     ).textContent = `${streakValue} ${unit}`;
-
     document.getElementById(
       "completionPercent"
     ).textContent = `${progress}\u00A0%`;
@@ -1052,146 +798,136 @@ export const UI = {
     document.getElementById("startData").textContent = startDate;
 
     const circleContainer = document.getElementById("detailProgressCircle");
-    while (circleContainer.firstChild)
-      circleContainer.removeChild(circleContainer.firstChild);
+    circleContainer.innerHTML = "";
     circleContainer.appendChild(UI.createProgressCircle(progress));
+
     UI.renderActivityGrid(habit, AppState);
   },
 
   renderActivityGrid: (habit, AppState) => {
-    if (!AppState)
-      return console.error(
-        "Mordo, zapomniałeś o AppState w renderActivityGrid!"
-      );
-
-    //const viewDate = AppState.statsViewDate;
-
     const grid = document.getElementById("activityGrid");
-    if (!grid) return;
+    if (!grid || !AppState) return;
 
-    while (grid.firstChild) grid.removeChild(grid.firstChild);
-
+    grid.innerHTML = "";
+    const fragment = document.createDocumentFragment();
     const year = AppState.statsViewDate.getFullYear();
     const month = AppState.statsViewDate.getMonth();
 
+    const { days, stats } = DataManager.getMonthlyStats(habit, month, year);
+
     const monthLabel = document.querySelector(".activity-section h4");
     if (monthLabel) {
-      monthLabel.textContent = AppState.statsViewDate.toLocaleDateString(
-        "en-US",
-        {
-          month: "long",
-          year: "numeric",
-        }
-      );
+      monthLabel.textContent = AppState.statsViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
     }
-
-    let scheduledThisMonth = 0;
-    let completedThisMonth = 0;
-    let currentStreak = 0;
-    let bestStreak = 0;
 
     const firstDay = new Date(year, month, 1);
     const startIndex = Utils.getMondayFirstDay(firstDay);
-
     for (let i = 0; i < startIndex; i++) {
-      grid.appendChild(document.createElement("div"));
+      fragment.appendChild(document.createElement("div"));
     }
 
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    for (let day = 1; day <= daysInMonth; day++) {
+    days.forEach(dayData => {
       const el = document.createElement("div");
       el.className = "mini-day";
-      el.textContent = day;
+      el.textContent = dayData.day;
 
-      const currentIterDate = new Date(year, month, day);
-      const dateKey = Utils.formatDateKey(currentIterDate);
-      const dayOfWeek = currentIterDate.getDay();
+      if (dayData.isDone) el.classList.add("habit-done");
+      if (!dayData.isScheduled) el.classList.add("inactive");
+      
+      fragment.appendChild(el);
+    });
 
-      const createdDate = new Date(habit.createdAt);
-      createdDate.setHours(0, 0, 0, 0);
+    grid.appendChild(fragment);
 
-      let isScheduled = false;
-      if (habit.frequency === "daily") {
-        isScheduled = true;
-      } else if (habit.frequency === "weekly") {
-        isScheduled = habit.schedule.includes(dayOfWeek);
-      } else if (habit.frequency === "monthly") {
-        isScheduled = habit.schedule.includes(day);
-      }
+    UI.updateActivityStats(stats);
+  },
 
-      const isDone = habit.history && habit.history[dateKey] === true;
-
-      if (isScheduled && currentIterDate >= createdDate) {
-        scheduledThisMonth++;
-        if (isDone) {
-          completedThisMonth++;
-          currentStreak++;
-          bestStreak = Math.max(bestStreak, currentStreak);
-          el.classList.add("habit-done");
-        } else {
-          currentStreak = 0; // Streak crash
-        }
-      } else {
-        el.classList.add("inactive");
-      }
-
-      grid.appendChild(el);
-    }
-
-    // ---  STATS UPDATE ---
+  updateActivityStats: (stats) => {
     const percentage =
-      scheduledThisMonth === 0
+      stats.scheduled === 0
         ? 0
-        : Math.round((completedThisMonth / scheduledThisMonth) * 100);
+        : Math.round((stats.completed / stats.scheduled) * 100);
 
     const streakEl = document.getElementById("monthBestStreak");
     const percentEl = document.getElementById("monthPercentage");
     const countEl = document.getElementById("monthCount");
 
-    if (streakEl) streakEl.textContent = `${bestStreak} days`;
+    if (streakEl) streakEl.textContent = `${stats.bestStreak} days`;
     if (percentEl) percentEl.textContent = `${percentage}%`;
     if (countEl)
-      countEl.textContent = `${completedThisMonth} / ${scheduledThisMonth}`;
+      countEl.textContent = `${stats.completed} / ${stats.scheduled}`;
   },
 
   updateXPBar: async () => {
     const stats = await DataManager.getUserStats();
     const threshold = LevelManager.getXpThreshold(stats.level);
-
     const progressPercent = (stats.currentXp / threshold) * 100;
 
-    const bar = document.getElementById("xp-progress-bar");
-    const lvlDisplay = document.getElementById("user-level-value");
-    const curLvlDisplay = document.getElementById("currentLevel");
-    const nextLvlDisplay = document.getElementById("next-level-value");
-    const xpRatio = document.getElementById("xp-next-level");
-    const totalXpDisplay = document.getElementById("total-xp-value");
+    document
+      .getElementById("xp-progress-bar")
+      ?.style.setProperty("width", `${progressPercent}%`);
 
-    if (bar) bar.style.width = `${progressPercent}%`;
-    if (lvlDisplay) lvlDisplay.textContent = stats.level;
-    if (curLvlDisplay) curLvlDisplay.textContent = stats.level;
-    if (nextLvlDisplay) nextLvlDisplay.textContent = stats.level + 1;
+    const elementsToUpdate = {
+      "user-level-value": stats.level,
+      currentLevel: stats.level,
+      "next-level-value": stats.level + 1,
+      "xp-next-level": `${Math.floor(stats.currentXp)} / ${threshold}`,
+      "total-xp-value": stats.totalXp.toLocaleString(),
+    };
 
-    if (xpRatio)
-      xpRatio.textContent = `${Math.floor(stats.currentXp)} / ${threshold}`;
-
-    if (totalXpDisplay) totalXpDisplay.textContent = stats.totalXp;
+    Object.entries(elementsToUpdate).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    });
   },
+
+  modalTimer: null,
 
   showModalMessage: (text, duration = 3000) => {
     const wrapper = document.getElementById("modalMessageWrapper");
     const msgSpan = document.getElementById("modalMessage");
-
     if (!wrapper || !msgSpan) return;
+
+    if (UI.modalTimer) clearTimeout(UI.modalTimer);
 
     msgSpan.textContent = text;
     wrapper.style.display = "flex";
-
     wrapper.classList.add("shake-animation");
 
-    setTimeout(() => {
+    UI.modalTimer = setTimeout(() => {
       wrapper.style.display = "none";
       wrapper.classList.remove("shake-animation");
+      UI.modalTimer = null;
     }, duration);
+  },
+
+  async setInputLoading(input, btn, isLoading, status = "") {
+    input.disabled = isLoading;
+    if (btn) btn.disabled = isLoading;
+
+    input.classList.remove("success", "error");
+    if (isLoading) {
+      input.dataset.oldValue = input.value;
+      input.value = status;
+    } else if (status === "error") {
+      input.classList.add("error");
+    } else if (status === "success") {
+      input.classList.add("success");
+    }
+  },
+
+  toggleUserNameEdit(isEditing) {
+    const isVisible = isEditing ? "inline-block" : "none";
+    const isHidden = isEditing ? "none" : "block";
+    const isBtnHidden = isEditing ? "none" : "inline-flex";
+
+    elements.displayUserName.style.display = isHidden;
+    elements.editUserName.style.display = isBtnHidden;
+    elements.userNameInput.style.display = isVisible;
+
+    if (isEditing) {
+      elements.userNameInput.focus();
+      elements.userNameInput.select();
+    }
   },
 };
