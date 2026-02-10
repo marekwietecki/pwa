@@ -5,7 +5,7 @@ export function domElements() {
     "calendarGrid",
     "currentMonth",
     "toDoList",
-    "calendarToDoList", // Pamiętaj o nowych ID z kalendarza!
+    "calendarToDoList",
     "taskDateTitle",
     "calendarTaskDateTitle",
     "modalOverlay",
@@ -29,6 +29,7 @@ export function domElements() {
     "calendarEmptyListMessageWrapper",
     "modalTitle",
     "goalHabitSelect",
+    "editUserName",
     "displayUserName",
     "userNameInput",
     "messageToday",

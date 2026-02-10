@@ -304,8 +304,15 @@ body {
   /* background-color: rebeccapurple; */
 }
 
+main {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
 .toDoListWrapper,
-.calendarToDoListWrapper {
+.calendarToDoListWrapper, .goalsContainer {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -317,7 +324,7 @@ body {
   /* box-sizing: border-box; */
 }
 #toDoList,
-#calendarToDoList {
+#calendarToDoList, #goalsList {
   width: 100%;
   flex: 1;
   overflow-y: auto;
@@ -895,9 +902,34 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: bold;
 }
 
+.goalDescription {
+  display: flex;
+  align-items: flex-start; 
+  margin-top: 4px;
+  width: 100%; 
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.goalDescription svg {
+  flex-shrink: 0; 
+  margin-top: 3px; 
+  margin-right: 8px;
+}
+
+.goalDescription span {
+  font-size: 10px;
+  line-height: 1.4;  
+  color: rgba(255, 255, 255, 0.6);
+  
+  white-space: normal;      /* lets browser wrap */
+  word-break: keep-all;    
+  overflow-wrap: break-word; /* if word is longer than screen it will be broken */
+}
+
+
 #monthDaysGrid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 kolumn, jak w kalendarzu */
+  grid-template-columns: repeat(7, 1fr); 
   gap: 8px;
   margin-top: 10px;
 }
@@ -1248,11 +1280,13 @@ input.error {
   color: #fff;
   padding: 4px 4px 4px 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Zmieniamy z center na flex-start, żeby ikonka nie "pływała" przy wielu liniach */
+  justify-content: flex-start; /* Lepiej wyrównać do lewej */
   transition: opacity 0.2s;
-  line-height: 0;
-  gap: 4px;
+  line-height: 1.4; /* KLUCZ: Usuwamy 0! Musi być odstęp między liniami */
+  gap: 4px; /* Trochę większy odstęp między ikonką a tekstem */
+  width: 100%; /* Upewnij się, że div zajmuje dostępną przestrzeń */
+  text-align: left; /* Wyrównanie tekstu */
 }
 .editHabitDetail:hover {
   opacity: 72%;
@@ -1489,6 +1523,7 @@ input.error {
   align-items: center;
   max-width: 640px;
   width: 100%;
+  flex-shrink: 0;
 
   margin: 20px auto 0px;
   gap: 32px;
@@ -1596,6 +1631,8 @@ h3 {
 
 #displayUserName {
   font-size: 28px;
+  cursor: pointer;
+
 }
 
 .user-name-wrapper {
@@ -1615,10 +1652,6 @@ h3 {
   outline: none;
   width: auto;
   max-width: 200px;
-}
-
-#displayUserName {
-  cursor: pointer;
 }
 
 #editUserName {
