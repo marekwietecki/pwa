@@ -63,25 +63,29 @@ export const PermissionsManager = {
 
 export const swManager = {
   register: async () => {
-    if (!("serviceWorker" in navigator)) return;
+    if ("serviceWorker" in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register("/sw.js");
 
-    try {
-      const reg = await navigator.serviceWorker.register("/sw.js");
-      console.log("✅ SW zarejestrowany");
-
-      if ("periodicSync" in reg) {
-        const status = await navigator.permissions.query({
-          name: "periodic-background-sync",
-        });
-
-        if (status.state === "granted") {
-          await reg.periodicSync.register("daily-briefing", {
-            minInterval: 12 * 60 * 60 * 1000,
+        // Czekamy, aż Service Worker będzie aktywny
+        if (registration.active) {
+          setupPeriodicSync(registration);
+        } else {
+          // Jeśli się instaluje, czekamy na zmianę stanu
+          registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "activated") {
+                setupPeriodicSync(registration);
+              }
+            });
           });
         }
+
+        console.log("SW Registered!");
+      } catch (err) {
+        console.error("SW Registration failed", err);
       }
-    } catch (e) {
-      console.error("❌ SW Error:", e);
     }
   },
 };
@@ -89,9 +93,11 @@ export const swManager = {
 export const LocationService = {
   formatAddress(address) {
     if (!address) return "";
-    const street = address.road || address.pedestrian || address.cycleway || address.footway;
+    const street =
+      address.road || address.pedestrian || address.cycleway || address.footway;
     const house = address.house_number;
-    const city = address.city || address.town || address.village || address.hamlet;
+    const city =
+      address.city || address.town || address.village || address.hamlet;
     const country = address.country;
 
     if (street && house && city) return `${street} ${house}, ${city}`;
@@ -99,7 +105,7 @@ export const LocationService = {
     if (city && country) return `${city}, ${country}`;
     return country || "";
   },
-  
+
   // Wyszukiwanie po tekście
   search: async (query) => {
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
@@ -120,10 +126,10 @@ export const LocationService = {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, {
         enableHighAccuracy: true,
-        timeout: 10000
+        timeout: 10000,
       });
     });
-  }
+  },
 };
 
 export const QuoteService = {

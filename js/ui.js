@@ -162,8 +162,9 @@ export const UI = {
     const typePickers = document.querySelector(".typePickers");
     const dateTitle = document.querySelector("#dateSection .modalSubTitle");
     const nameSection = document.querySelector(".nameSection");
+    const habitIcon = document.getElementById("habitIconWrapper");
 
-    [dSection, hSection, gSection, lSection, typePickers].forEach((el) => {
+    [dSection, hSection, gSection, lSection, typePickers, habitIcon].forEach((el) => {
       if (el) el.style.display = "none";
     });
 
@@ -177,12 +178,14 @@ export const UI = {
 
     if (type === "habit") {
       if (hSection) hSection.style.display = "flex";
-      if (dSection) dSection.style.display = "flex";
-      if (dateTitle) dateTitle.textContent = "Start Date";
+      if (habitIcon) habitIcon.style.display = "flex";
 
       if (isEdit) {
+        if (dSection) dSection.style.display = "flex";
+        if (dateTitle) dateTitle.textContent = "Start Date";
         if (nameSection) nameSection.style.display = "none";
         if (lSection) lSection.style.display = "none";
+        if (habitIcon) habitIcon.style.display = "none";
       } else {
         if (nameSection) nameSection.style.display = "flex";
         if (lSection) lSection.style.display = "flex";
@@ -596,8 +599,10 @@ export const UI = {
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
 
+    const uniqueId = `${type}-${data.id}-${dateKey || 'fixed'}`;
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
+    taskLabel.setAttribute("for", `check-${uniqueId}`);
 
     const icon =
       type === "habit"
@@ -620,11 +625,14 @@ export const UI = {
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.id = `check-${uniqueId}`;
     checkbox.className = "taskCheckbox";
     checkbox.checked = isDone;
+    checkbox.setAttribute("aria-label", `Mark ${name} as completed`);
 
     const moreBtn = document.createElement("button");
     moreBtn.className = "moreBtn";
+    moreBtn.setAttribute("aria-label", `More options for ${name}`);
     moreBtn.appendChild(UI.createEllipsisIcon());
 
     taskActions.appendChild(checkbox);
@@ -704,7 +712,6 @@ export const UI = {
 
     grid.appendChild(fragment); // JEDNA OPERACJA NA DOM
   },
-
 
   renderHabits: async (AppState) => {
     const container = document.getElementById("habitCarousel");

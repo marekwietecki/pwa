@@ -1144,7 +1144,7 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 12px 16px 24px;
+  padding: 16px 16px 20px;
   margin-left: 20px;
   margin-right: 20px;
   scroll-snap-type: x mandatory;
@@ -1171,12 +1171,13 @@ input.error {
   text-align: center;
   text-wrap: wrap;
   max-width: 136px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   scroll-snap-align: start;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
   gap: 8px;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .habit-card-icon.active-habit-icon {

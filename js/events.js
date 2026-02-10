@@ -353,12 +353,16 @@ export function initEventListeners(AppState) {
           document.getElementById("habitIcon")?.value.trim() ||
           name.charAt(0).toUpperCase();
 
+          const createdAt = new Date().setHours(0, 0, 0, 0);
+
         await DataManager.addHabit({
           name,
           icon,
           location,
           frequency,
           schedule,
+          createdAt,
+          history: {}
         });
       } else if (type === "goal") {
         const deadline = elements.goalDeadline?.value;
