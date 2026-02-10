@@ -33,7 +33,7 @@ Built with a **Vanilla JavaScript** architecture (no heavy frameworks) to ensure
 * **Frontend:** HTML5, CSS3 (Flexbox/Grid), JavaScript (ES6+).
 * **Maps & Location:** OpenStreetMap API (Nominatim).
 * **Motivation Engine:** External REST API (Adviceslip).
-* **Data Storage:** `localStorage` API (with a planned migration to `IndexedDB`).
+* **Data Storage:** `localStorage` for simple data and `IndexedDB` for more complex one.
 * **Hosting:** Netlify with automated SSL (HTTPS) certification.
 
 ---
@@ -55,6 +55,8 @@ A **Service Worker** is implemented to manage network traffic and provide robust
 * **Network First:** Used for motivational quotes – prioritizes fresh data while falling back to cache when offline.
 * **Stale-While-Revalidate:** Applied to core logic (JS/HTML) – ensures instant loading while updating resources in the background.
 * **Cache First:** Utilized for assets and CSS stylesheets to maximize rendering speed.
+* **Cache Only:** Web manifest file.
+
 
 
 
