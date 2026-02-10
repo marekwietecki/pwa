@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v9";
+const CACHE_VERSION = "v10";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -219,7 +219,7 @@ self.addEventListener("periodicsync", (event) => {
 async function checkAndNotify() {
   const now = new Date();
   const hour = now.getHours();
-  if (hour < 8 || hour >= 10) return; 
+  if (hour < 8 || hour >= 20) return; 
 
   const todayKey = now.toISOString().split("T")[0];
 
