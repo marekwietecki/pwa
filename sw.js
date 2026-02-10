@@ -252,7 +252,8 @@ async function checkAndNotify() {
           const undoneCount = tasks.filter((t) => !t.done).length;
 
           if (undoneCount > 0) {
-            metaStore.put({ id: "last_briefing_date", value: todayKey });
+            metaStore.put(todayKey, "last_briefing_date");
+            //metaStore.put({ id: "last_briefing_date", value: todayKey });
 
             self.registration.showNotification("Habit Hero", {
               body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
