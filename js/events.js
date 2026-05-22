@@ -455,7 +455,7 @@ export function initEventListeners(AppState) {
         notifyToggle.checked = false;
         return UI.showModalMessage("Permission denied.");
       }
-      NotificationService.send("Habit Hero", {
+      NotificationService.send("Habit Bubble", {
         body: "Notifications are active! 🚀",
       });
     }

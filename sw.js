@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v17";
+const CACHE_VERSION = "v18";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -257,7 +257,7 @@ async function checkAndNotify() {
             metaStore.put(todayKey, "last_briefing_date");
             //metaStore.put({ id: "last_briefing_date", value: todayKey });
 
-            self.registration.showNotification("Habit Hero", {
+            self.registration.showNotification("Habit Bubble", {
               body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
               icon: "/assets/192x192.png",
               badge: "/assets/192x192.png",

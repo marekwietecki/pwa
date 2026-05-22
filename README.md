@@ -1,6 +1,6 @@
-# 🏆 HabitHero - Gamified Task Manager PWA
+# 🏆 Habit Bubble - Gamified Task Manager PWA
 
-HabitHero is a Progressive Web App (PWA) that turns daily responsibilities into an RPG adventure. Earn experience points (XP), level up your character, and track your habits through an interactive calendar.
+Habit Bubble is a Progressive Web App (PWA) that turns daily responsibilities into an RPG adventure. Earn experience points (XP), level up your character, and track your habits through an interactive calendar.
 
 ---
 

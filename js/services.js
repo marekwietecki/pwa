@@ -161,7 +161,7 @@ export const QuoteService = {
     } catch (error) {
       return {
         text: "Hero, your discipline is your strength.",
-        author: "Habit Hero Team",
+        author: "Habit Bubble Team",
       };
     }
   },
