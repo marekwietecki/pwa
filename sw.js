@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v11";
+const CACHE_VERSION = "v17";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // tylko niezbędne do działania offline
@@ -16,8 +16,10 @@ const APP_ASSETS = [
   "./js/services.js",
   "./js/ui.js",
   "./manifest.webmanifest",
-  "./assets/192x192.png",
-  "./assets/512x512.png",
+  "./assets/logo.svg",
+  "./assets/logo-icon.svg",
+  "./assets/logo-192.png",
+  "./assets/logo-512.png",
 ];
 
 console.log("🔧 SW: Inicjalizacja - Cache Name:", CACHE_NAME);

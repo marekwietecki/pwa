@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-hidden="true">
+  <defs>
+    <radialGradient id="lg" cx="34%" cy="30%" r="68%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.95"/>
+      <stop offset="45%" stop-color="#fff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="md" cx="58%" cy="36%" r="68%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#fff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sm" cx="40%" cy="34%" r="68%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+      <stop offset="48%" stop-color="#fff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Large — upper right -->
+  <circle cx="68" cy="30" r="22" fill="url(#lg)" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+  <ellipse cx="62" cy="24" rx="7" ry="4.5" fill="rgba(255,255,255,0.45)" transform="rotate(-18 62 24)"/>
+
+  <!-- Medium — lower left -->
+  <circle cx="30" cy="72" r="18" fill="url(#md)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+  <ellipse cx="25" cy="67" rx="5.5" ry="3.5" fill="rgba(255,255,255,0.38)" transform="rotate(-12 25 67)"/>
+
+  <!-- Small — center -->
+  <circle cx="50" cy="52" r="14" fill="url(#sm)" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/>
+  <ellipse cx="46" cy="48" rx="4.5" ry="2.8" fill="rgba(255,255,255,0.42)" transform="rotate(-10 46 48)"/>
+</svg>

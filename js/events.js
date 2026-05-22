@@ -3,13 +3,28 @@ import { elements } from "./elements.js";
 import { LocationService, NotificationService, PermissionsManager } from "./services.js";
 import { UI } from "./ui.js";
 
+async function openAddTaskModal(AppState) {
+  if (!elements.modalOverlay) return;
+  UI.resetModal(AppState);
+  await UI.fillModalHabitSelect();
+  elements.modalOverlay.classList.add("open");
+}
+
 export function initEventListeners(AppState) {
-  // Modal Toggles
-  elements.addTaskBtn?.addEventListener("click", async () => {
-    UI.resetModal(AppState); // Najpierw ustawia typ i czyści pola
-    await UI.fillModalHabitSelect();
-    elements.modalOverlay.classList.add("open"); // Potem otwiera
-  });
+  const onAddTaskClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await openAddTaskModal(AppState);
+  };
+
+  if (elements.addTaskBtn) {
+    elements.addTaskBtn.addEventListener("click", onAddTaskClick);
+  } else {
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#addTaskBtn")) return;
+      onAddTaskClick(e);
+    });
+  }
 
   // XP change
   document.addEventListener("statsUpdated", () => {
