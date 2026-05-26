@@ -1,6 +1,7 @@
 import { DataManager } from "./data.js";
 import { elements, domElements } from "./elements.js";
 import { initEventListeners } from "./events.js";
+import { OnboardingService } from "./onboarding.js";
 import {
   NotificationService,
   PermissionsManager,
@@ -21,12 +22,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   domElements();
   const notifyToggle = document.getElementById("toggleNotifications");
   const locationToggle = document.getElementById("toggleLocation");
-  
+
   if (notifyToggle) {
-    notifyToggle.checked = localStorage.getItem("user_notifications_enabled") === "true";
+    notifyToggle.checked =
+      localStorage.getItem("user_notifications_enabled") === "true";
   }
   if (locationToggle) {
-    locationToggle.checked = localStorage.getItem("user_location_enabled") === "true";
+    locationToggle.checked =
+      localStorage.getItem("user_location_enabled") === "true";
   }
   OfflineService.init();
   initEventListeners(AppState);
@@ -38,8 +41,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await UI.renderCurrentPage(AppState);
 
+  await OnboardingService.checkAndStart();
+
   checkDailyNotifications();
 });
+
+window.testOnboarding = () => OnboardingService.forceRun();
 
 const checkDailyNotifications = async () => {
   const todayCount = await DataManager.countUndoneTasks(new Date());

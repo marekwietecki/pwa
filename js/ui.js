@@ -221,14 +221,8 @@ export const UI = {
 
   resetModal: (AppState) => {
     UI.clearModalInputs();
-
-    const defaultType = UI.detectModalDefaultType();
-    AppState.currentCreateType = defaultType;
-
     UI.toggleModalFields(AppState.currentCreateType, false);
-
     UI.refreshTypePickerButtons(AppState.currentCreateType);
-    console.log("Moja apka zresetowała modal na:", defaultType);
   },
 
   applyRandomGradient: () => {

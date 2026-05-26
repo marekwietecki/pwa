@@ -5,6 +5,12 @@ import { UI } from "./ui.js";
 
 async function openAddTaskModal(AppState) {
   if (!elements.modalOverlay) return;
+
+  const page = window.location.pathname;
+  if (page.includes("hero.html")) AppState.currentCreateType = "goal";
+  else if (page.includes("habits.html")) AppState.currentCreateType = "habit";
+  else AppState.currentCreateType = "task";
+
   UI.resetModal(AppState);
   await UI.fillModalHabitSelect();
   elements.modalOverlay.classList.add("open");
