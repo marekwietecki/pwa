@@ -605,6 +605,7 @@ export const UI = {
     taskLabel.className = "taskLabel";
     taskLabel.setAttribute("for", `check-${uniqueId}`);
 
+    // Twoja standardowa systemowa ikonka z powtarzaniem (Zostaje tak jak była)
     const icon =
       type === "habit"
         ? UI.createRepeatIcon()
@@ -613,10 +614,29 @@ export const UI = {
         : UI.createCheckIcon();
     taskLabel.appendChild(icon);
 
+    // Nazwa nawyku/zadania
     const nameSpan = document.createElement("span");
     nameSpan.className = "taskNodeName";
     nameSpan.textContent = name;
     taskLabel.appendChild(nameSpan);
+
+    // 🔥 TWÓJ KLUCZOWY ZAWODNIK: Spersonalizowana ikonka użytkownika za tekstem (Tylko dla nawyków!)
+    if (type === "habit") {
+      const userIcon = document.createElement("span");
+      userIcon.className = "habit-user-emoji-list";
+      
+      // Parsujemy ikonkę bezpośrednio z obiektu 'data'. Fallback na gwiazdkę jeśli brak.
+      userIcon.textContent = ` ${data.icon || "⭐️"}`;
+      
+      // Delikatne ostylowanie, żeby dobrze siadło w linii z tekstem i rzucało się w oczy
+      userIcon.style.fontSize = "16px";
+      userIcon.style.marginLeft = "2px"; 
+      userIcon.style.display = "inline-block";
+      userIcon.style.verticalAlign = "middle";
+
+      // Wrzucamy do labela zaraz za nameSpan
+      taskLabel.appendChild(userIcon);
+    }
 
     taskContent.appendChild(taskLabel);
     taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));

@@ -47,18 +47,12 @@ body.offline section {
   --glass-border-bright: rgba(255, 255, 255, 0.55);
   --glass-blur: blur(22px) saturate(165%);
   --glass-blur-strong: blur(36px) saturate(185%);
-  --shadow-delicate:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
-    0 2px 10px rgba(0, 0, 0, 0.05),
-    0 8px 24px rgba(0, 0, 0, 0.09);
-  --shadow-bubble:
-    0 1px 0 rgba(255, 255, 255, 0.32) inset,
-    0 4px 18px rgba(0, 0, 0, 0.07),
-    0 14px 36px rgba(0, 0, 0, 0.08);
-  --shadow-float:
-    0 2px 0 rgba(255, 255, 255, 0.18) inset,
-    0 8px 28px rgba(0, 0, 0, 0.1),
-    0 20px 48px rgba(0, 0, 0, 0.07);
+  --shadow-delicate: 0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 2px 10px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.09);
+  --shadow-bubble: 0 1px 0 rgba(255, 255, 255, 0.32) inset,
+    0 4px 18px rgba(0, 0, 0, 0.07), 0 14px 36px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 2px 0 rgba(255, 255, 255, 0.18) inset,
+    0 8px 28px rgba(0, 0, 0, 0.1), 0 20px 48px rgba(0, 0, 0, 0.07);
 }
 
 html,
@@ -71,9 +65,16 @@ body {
   position: relative;
   isolation: isolate;
   background-color: var(--bg-base);
-  background-image:
-    radial-gradient(ellipse 90% 55% at 15% -5%, rgba(255, 255, 255, 0.1) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 45% at 92% 105%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+  background-image: radial-gradient(
+      ellipse 90% 55% at 15% -5%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 70% 45% at 92% 105%,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 50%
+    );
   color: white;
   font-family: "Comfortaa", sans-serif;
   display: flex;
@@ -202,7 +203,7 @@ body::after {
   stroke-width: 2;
   fill: none;
 }
-.deleteBtn:hover svg, 
+.deleteBtn:hover svg,
 .moreBtn:hover svg {
   opacity: 72%;
 }
@@ -286,29 +287,28 @@ body::after {
   justify-content: center;
   text-decoration: none;
   color: #ffffff !important; /* Świecąca czysta biel dla aktywnej ikony */
-  
+
   /* Idealne proporcje kapsuły pływającej wewnątrz paska */
   width: 82%;
-  height: 75%; 
-  
+  height: 75%;
+
   /* Zwiększona przezroczystość (z 0.13 na 0.07) dla lżejszego wyglądu */
   background: rgba(255, 255, 255, 0.07) !important;
-  
+
   /* Maksymalne zaokrąglenie (kapsuła/bąbel) */
   border-radius: 30px;
-  
+
   /* Mocniejsze rozmycie warstwy pod bąblem */
   backdrop-filter: blur(12px) saturate(120%);
   -webkit-backdrop-filter: blur(12px) saturate(120%);
-  
+
   /* Bardzo cienka, elegancka obwódka imitująca luksusowe szkło */
   border: 1px solid rgba(255, 255, 255, 0.15);
-  
+
   /* Subtelny cień na zewnątrz i lekki połysk od góry (inset) */
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.15),
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
     inset 0 1px 0px rgba(255, 255, 255, 0.2);
-  
+
   /* Płynny, organiczny skok sprężyny iOS przy renderowaniu */
   animation: iosPopCubic 0.4s cubic-bezier(0.25, 1.1, 0.4, 1);
 }
@@ -321,12 +321,12 @@ body::after {
 }
 
 @keyframes iosPopCubic {
-  0% { 
-    transform: scale(0.88); 
+  0% {
+    transform: scale(0.88);
     background: rgba(255, 255, 255, 0);
   }
-  100% { 
-    transform: scale(1); 
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -463,10 +463,8 @@ body::after {
   color: #fff;
   background: var(--glass-bg-active);
   border-color: var(--glass-border-bright);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.45) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.35),
-    0 6px 20px rgba(0, 0, 0, 0.1),
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 20px rgba(0, 0, 0, 0.1),
     0 0 24px rgba(255, 255, 255, 0.1);
 }
 
@@ -556,7 +554,8 @@ main {
 }
 
 .toDoListWrapper,
-.calendarToDoListWrapper, .goalsContainer {
+.calendarToDoListWrapper,
+.goalsContainer {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -568,7 +567,8 @@ main {
   /* box-sizing: border-box; */
 }
 #toDoList,
-#calendarToDoList, #goalsList {
+#calendarToDoList,
+#goalsList {
   width: 100%;
   flex: 1;
   overflow-y: auto;
@@ -627,7 +627,7 @@ main {
 }
 
 .taskItem.overdue {
-  border: 1px solid #ff4d4d; 
+  border: 1px solid #ff4d4d;
 }
 
 .taskItem.overdue .item-title {
@@ -839,7 +839,7 @@ main {
   justify-content: center;
   padding: 16px;
   box-sizing: border-box;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.88);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -873,10 +873,7 @@ main {
   box-shadow: var(--shadow-float);
   transform: scale(0.96) translateY(12px);
   opacity: 0;
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
 }
 .modal-header {
   display: flex;
@@ -1203,32 +1200,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .goalDescription {
   display: flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   margin-top: 4px;
-  width: 100%; 
+  width: 100%;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .goalDescription svg {
-  flex-shrink: 0; 
-  margin-top: 3px; 
+  flex-shrink: 0;
+  margin-top: 3px;
   margin-right: 8px;
 }
 
 .goalDescription span {
   font-size: 10px;
-  line-height: 1.4;  
+  line-height: 1.4;
   color: rgba(255, 255, 255, 0.6);
-  
-  white-space: normal;      /* lets browser wrap */
-  word-break: keep-all;    
+
+  white-space: normal; /* lets browser wrap */
+  word-break: keep-all;
   overflow-wrap: break-word; /* if word is longer than screen it will be broken */
 }
 
-
 #monthDaysGrid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); 
+  grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   margin-top: 10px;
 }
@@ -1856,7 +1852,7 @@ input.error {
 }
 
 .permission-item label:not(.switch) {
-  cursor: pointer; 
+  cursor: pointer;
   flex: 1;
 }
 
@@ -1940,7 +1936,6 @@ h3 {
 #displayUserName {
   font-size: 28px;
   cursor: pointer;
-
 }
 
 .user-name-wrapper {
@@ -2059,14 +2054,17 @@ h3 {
 }
 
 @media (max-width: 740px) {
-  .logo-text {
+  .logo {
     display: none;
   }
-
+  /* .logo-text {
+    display: none;
+  }
   .logo-img {
     width: 32px;
-    height: 32px;
-  }
+    height: 32px; 
+    display: none;
+  } */
   .navIcon {
     width: 20px;
     height: 20px;
@@ -2087,6 +2085,11 @@ h3 {
     align-items: center;
     z-index: 200;
     gap: 8px;
+    display: flex;
+    justify-content: center; /* Centruje elementy w poziomie */
+    align-items: center;     /* Centruje elementy w pionie */
+    gap: 20px;               /* Ustala równe odstępy MIĘDZY elementami */
+    width: 100%;
   }
 
   /* Push main content up so it doesn't hide behind the floating bar */

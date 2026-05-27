@@ -71,6 +71,7 @@ export const OnboardingService = {
       },
     };
 
+    const totalSteps = Object.keys(steps).length;
     let currentStep = 1;
     // Domyślna bezpieczna ikonka na start
     let selectedIconId = "💧"; 
@@ -86,10 +87,43 @@ export const OnboardingService = {
       // 2. Build layout wrapper
       const card = document.createElement("div");
       card.className = "onboarding-card";
+      // Zapewniamy, że karta ma pozycjonowanie relative i schowane rogi, żeby pasek ładnie przylegał
+      card.style.position = "relative";
+      card.style.overflow = "hidden";
+
+      // 🔥 NOWOŚĆ: Pasek postępu (Progress Bar) na samej górze karty
+      const progressBarTrack = document.createElement("div");
+      progressBarTrack.className = "onboarding-progress-track";
+      progressBarTrack.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.05);
+      `;
+
+      const progressBarFill = document.createElement("div");
+      progressBarFill.className = "onboarding-progress-fill";
+      
+      // Obliczamy dynamicznie procent zapełnienia paska
+      const progressPercent = (stepNum / totalSteps) * 100;
+      
+      progressBarFill.style.cssText = `
+        height: 100%;
+        width: ${progressPercent}%;
+        background: var(--hero-gradient);
+        box-shadow: 0 0 12px var(--accent-color, rgba(255, 0, 255, 0.5));
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      `;
+
+      progressBarTrack.appendChild(progressBarFill);
+      card.appendChild(progressBarTrack);
 
       // Header title
       const title = document.createElement("h2");
       title.className = "onboarding-title";
+      title.style.marginTop = "15px"; // Mały margines, aby odsunąć tytuł od paska postępu
       title.textContent = steps[stepNum].title;
 
       // Body context
