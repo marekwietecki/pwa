@@ -9,8 +9,8 @@ export const NotificationService = {
     const registration = await navigator.serviceWorker.ready;
 
     const defaultOptions = {
-      icon: "/assets/192x192.png",
-      badge: "/assets/192x192.png",
+      icon: "/assets/logo-192.png",
+      badge: "/assets/logo-192.png",
       vibrate: [200, 100, 200],
       tag: "habit-hero-alert", // tag helps fighting with spam
       renotify: true,

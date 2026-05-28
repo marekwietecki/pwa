@@ -30,68 +30,82 @@ export const OnboardingService = {
       1: {
         title: "Welcome to Habit Bubble! 🫧",
         html: `
-          <div class="onboarding-step-content">
-            <p>You enter a game where your everyday discipline increases the level of your Hero. What should we call you in the hall of fame?</p>
-            <input type="text" id="onboardingName" placeholder="Enter your nickname..." class="modal-input">
-          </div>
-        `,
+            <div class="onboarding-step-content">
+              <p>You enter a game where your everyday discipline increases the level of your Hero. What should we call you in the hall of fame?</p>
+              <input type="text" id="onboardingName" placeholder="Enter your nickname..." class="modal-input">
+            </div>
+          `,
       },
       2: {
         title: "Senses of Habit Bubble 🔔",
         html: `
-          <div class="onboarding-step-content">
-            <p>To make your app fully working, send you morning briefings, and keep track of your location-based habits, please enable the system permissions below:</p>
-            <div style="display:flex; flex-direction:column; gap:12px; margin-top: 20px; width: 100%;">
-              <button id="btnAuthNotify" class="addTask" style="background:var(--hero-gradient); width:100%; margin:0; border-radius: 14px;">Enable Notifications</button>
-              <button id="btnAuthGeo" class="addTask" style="background: linear-gradient(90deg, #4facfe, #00f2fe); width:100%; margin:0; border-radius: 14px;">Allow Geolocation</button>
+            <div class="onboarding-step-content">
+              <p>To make your app fully working, send you morning briefings, and keep track of your location-based habits, please enable the system permissions below:</p>
+              <div style="display:flex; flex-direction:column; gap:12px; margin-top: 20px; width: 100%;">
+                <button id="btnAuthNotify" class="addTask" style="background:var(--hero-gradient); width:100%; margin:0; border-radius: 14px;">Enable Notifications</button>
+                <button id="btnAuthGeo" class="addTask" style="background: linear-gradient(90deg, #4facfe, #00f2fe); width:100%; margin:0; border-radius: 14px;">Allow Geolocation</button>
+              </div>
             </div>
-          </div>
-        `,
+          `,
       },
       3: {
         title: "Your First Mission! 🎯",
         html: `
-          <div class="onboarding-step-content">
-            <p>Let's build your very first daily habit right now to kickstart your journey. Type the name and choose a visual badge:</p>
-            <input type="text" id="onboardingHabit" placeholder="e.g., Drink water, Meditate, Exercise..." class="modal-input">
-            <div id="onboardingIconPicker" style="
-                display: flex;
-                gap: 12px;
-                width: 100%;
-                margin-top: 20px;
-                padding: 10px 5px;
-                overflow-x: auto;
-                justify-content: start;
-                scrollbar-width: thin;
-                scrollbar-color: rgba(255,255,255,0.2) transparent;
-                -webkit-overflow-scrolling: touch;">
+            <div class="onboarding-step-content">
+              <p>Let's build your very first daily habit right now to kickstart your journey. Type the name and choose a visual badge:</p>
+              <input type="text" id="onboardingHabit" placeholder="e.g., Drink water, Meditate, Exercise..." class="modal-input">
+              <div id="onboardingIconPicker" style="
+                  display: flex;
+                  gap: 12px;
+                  width: 100%;
+                  margin-top: 20px;
+                  padding: 10px 5px;
+                  overflow-x: auto;
+                  justify-content: start;
+                  scrollbar-width: thin;
+                  scrollbar-color: rgba(255,255,255,0.2) transparent;
+                  -webkit-overflow-scrolling: touch;">
+              </div>
             </div>
-          </div>
-        `,
+          `,
+      },
+      // 🔥 Krok 4 - Ekran końcowy / Podsumowanie przygody
+      4: {
+        title: "You Are Ready, Hero! ⚔️",
+        html: `
+            <div class="onboarding-step-content" style="text-align: center;">
+              <p style="font-size: 16px; margin-bottom: 16px;">Your character profile has been successfully initialized in the blockchain database.</p>
+              <div style="
+                background: rgba(255, 255, 255, 0.04); 
+                border: 1px solid rgba(255, 255, 255, 0.1); 
+                border-radius: 16px; 
+                padding: 16px; 
+                margin: 20px 0;
+                box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);">
+                <p style="margin: 0; font-weight: 600; color: #fff;">🎁 Beginner's Chest Unlocked!</p>
+                <p style="margin: 6px 0 0 0; font-size: 13px; color: rgba(255,255,255,0.6);">Your first habit is live. Track it daily to stack multiplier combos and earn bonus XP.</p>
+              </div>
+              <p style="font-size: 14px; color: var(--accent-color, #ff00ff); font-weight: 500; text-shadow: 0 0 10px rgba(255,0,255,0.2);">May the discipline be with you.</p>
+            </div>
+          `,
       },
     };
 
     const totalSteps = Object.keys(steps).length;
     let currentStep = 1;
-    // Domyślna bezpieczna ikonka na start
-    let selectedIconId = "💧"; 
+    let selectedIconId = "💧";
 
-    // Lista pięknych ikon do wyboru (Dopasowane do nawyków)
     const onboardingIcons = ["💧", "🧘", "🏃‍♂️", "📚", "🍏", "💪", "🛌", "🧠", "🎯", "🌟"];
 
-    // Beautiful and secure DOM-based rendering wizard
     const renderWizard = (stepNum) => {
-      // 1. Clear modal contents safely
       modal.textContent = "";
 
-      // 2. Build layout wrapper
       const card = document.createElement("div");
       card.className = "onboarding-card";
-      // Zapewniamy, że karta ma pozycjonowanie relative i schowane rogi, żeby pasek ładnie przylegał
       card.style.position = "relative";
       card.style.overflow = "hidden";
 
-      // 🔥 NOWOŚĆ: Pasek postępu (Progress Bar) na samej górze karty
+      // Pasek postępu
       const progressBarTrack = document.createElement("div");
       progressBarTrack.className = "onboarding-progress-track";
       progressBarTrack.style.cssText = `
@@ -105,10 +119,8 @@ export const OnboardingService = {
 
       const progressBarFill = document.createElement("div");
       progressBarFill.className = "onboarding-progress-fill";
-      
-      // Obliczamy dynamicznie procent zapełnienia paska
       const progressPercent = (stepNum / totalSteps) * 100;
-      
+
       progressBarFill.style.cssText = `
         height: 100%;
         width: ${progressPercent}%;
@@ -123,7 +135,7 @@ export const OnboardingService = {
       // Header title
       const title = document.createElement("h2");
       title.className = "onboarding-title";
-      title.style.marginTop = "15px"; // Mały margines, aby odsunąć tytuł od paska postępu
+      title.style.marginTop = "15px";
       title.textContent = steps[stepNum].title;
 
       // Body context
@@ -131,7 +143,6 @@ export const OnboardingService = {
       body.className = "onboarding-body";
       body.innerHTML = steps[stepNum].html;
 
-      // Helper function to style onboarding inputs beautifully
       const applyGlassmorphismStyle = (inputEl) => {
         if (!inputEl) return;
         inputEl.style.width = "100%";
@@ -158,15 +169,11 @@ export const OnboardingService = {
         });
       };
 
-      // Step 1: Input styling
       if (stepNum === 1) {
         applyGlassmorphismStyle(body.querySelector("#onboardingName"));
-      }
-      
-      // Step 3: Input styling & Dynamiczna generacja wyboru ikon
-      else if (stepNum === 3) {
+      } else if (stepNum === 3) {
         applyGlassmorphismStyle(body.querySelector("#onboardingHabit"));
-        
+
         const picker = body.querySelector("#onboardingIconPicker");
         if (picker) {
           onboardingIcons.forEach((emoji) => {
@@ -188,25 +195,23 @@ export const OnboardingService = {
                 user-select: none;
             `;
 
-            // Podświetlenie domyślnie wybranej ikonki
             if (emoji === selectedIconId) {
-                iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
-                iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-                iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+              iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+              iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
+              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
             }
 
-            // Obsługa kliknięcia (wybór nowej ikony)
             iconWrapper.addEventListener("click", () => {
-                picker.querySelectorAll(".onboarding-icon-item").forEach(item => {
-                    item.style.border = "2px solid transparent";
-                    item.style.background = "rgba(255,255,255,0.04)";
-                    item.style.boxShadow = "none";
-                });
+              picker.querySelectorAll(".onboarding-icon-item").forEach((item) => {
+                item.style.border = "2px solid transparent";
+                item.style.background = "rgba(255,255,255,0.04)";
+                item.style.boxShadow = "none";
+              });
 
-                selectedIconId = emoji;
-                iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
-                iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-                iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+              selectedIconId = emoji;
+              iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+              iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
+              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
             });
 
             picker.appendChild(iconWrapper);
@@ -224,7 +229,9 @@ export const OnboardingService = {
       nextBtn.style.width = "100%";
       nextBtn.style.margin = "0";
       nextBtn.style.borderRadius = "14px";
-      nextBtn.textContent = stepNum === 3 ? "Start the Adventure! 🚀" : "Next";
+      
+      // 🔥 POPRAWKA: Przycisk końcowy dostaje epicki tekst tylko na ostatnim (4) kroku
+      nextBtn.textContent = stepNum === 4 ? "Start the Adventure! 🚀" : "Next";
 
       footer.appendChild(nextBtn);
       card.appendChild(title);
@@ -232,7 +239,7 @@ export const OnboardingService = {
       card.appendChild(footer);
       modal.appendChild(card);
 
-      // System Permissions Click Handlers (Step 2)
+      // System Permissions (Step 2)
       if (stepNum === 2) {
         document.getElementById("btnAuthNotify").addEventListener("click", async (e) => {
           e.preventDefault();
@@ -289,14 +296,15 @@ export const OnboardingService = {
             return;
           }
 
-          // Zapisujemy nowy nawyk bezpośrednio w IndexedDB do tabeli 'habits'
+          // 🔥 POPRAWKA: Dodajemy zainicjalizowany pusty obiekt history: {} 
           await DB.put("habits", {
-            id: "habit_" + Date.now(),
+            id: Date.now(),
             name: habitInput,
-            icon: selectedIconId, // Przekazujemy emoji wybrane przez usera
+            icon: selectedIconId,
             frequency: "daily",
             streak: 0,
-            createdAt: new Date().toISOString()
+            history: {}, // To pozwala funkcji createItem bezbłędnie czytać i zapisywać historię
+            createdAt: new Date().toISOString(),
           });
         }
 

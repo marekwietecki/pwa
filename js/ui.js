@@ -12,7 +12,24 @@ export const GRADIENTS = [
   "linear-gradient(90deg, #f093fb, #f5576c)",
 ];
 
+// 🔥 Lista pięknych ikon współdzielona z onboardingiem
+export const ONBOARDING_ICONS = [
+  "💧",
+  "🧘",
+  "🏃‍♂️",
+  "📚",
+  "🍏",
+  "💪",
+  "🛌",
+  "🧠",
+  "🎯",
+  "🌟",
+];
+
 export const UI = {
+  // 🔥 Przechowuje aktualnie wybrane emoji w modalu głównym
+  selectedHabitIcon: "💧",
+
   createDeadlineIcon: () => Icons.createDeadlineIcon(),
   createLocationIcon: () => Icons.createLocationIcon(),
   createRepeatIcon: () => Icons.createRepeatIcon(),
@@ -157,6 +174,174 @@ export const UI = {
       .forEach((cb) => (cb.checked = false));
   },
 
+// 🔥 HYBRYDOWY PICKER: Z natychmiastowym gaszeniem gotowych ikon po kliknięciu w input customowy!
+setupHabitIconPicker: (activeEmoji) => {
+  const wrapper = document.getElementById("habitIconWrapper");
+  if (!wrapper) return;
+
+  wrapper.innerHTML = "";
+  
+  // 1. Nagłówek sekcji
+  const subTitle = document.createElement("div");
+  subTitle.className = "modalSubTitle";
+  subTitle.textContent = "Choose Habit Badge";
+  subTitle.style.width = "100%";
+  subTitle.style.marginBottom = "8px";
+  wrapper.appendChild(subTitle);
+
+  // 2. GŁÓWNY KONTENER JEDNOLINIJKOWY
+  const rowContainer = document.createElement("div");
+  rowContainer.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  `;
+
+  // 3. Kontener na kafelki z emoji
+  const pickerContainer = document.createElement("div");
+  pickerContainer.id = "mainHabitIconPicker";
+  pickerContainer.style.cssText = `
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    padding: 5px 0;
+    overflow-x: auto;
+    justify-content: start;
+    scrollbar-width: none;
+  `;
+  pickerContainer.style.setProperty("&::-webkit-scrollbar", "display: none");
+
+  UI.selectedHabitIcon = activeEmoji || "💧";
+  const isPreset = ONBOARDING_ICONS.includes(UI.selectedHabitIcon);
+
+  ONBOARDING_ICONS.forEach((emoji) => {
+    const iconWrapper = document.createElement("div");
+    iconWrapper.className = "main-icon-item";
+    iconWrapper.textContent = emoji;
+    iconWrapper.style.cssText = `
+        flex: 0 0 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.04);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 20px;
+        transition: all 0.25s ease;
+        user-select: none;
+    `;
+
+    if (isPreset && emoji === UI.selectedHabitIcon) {
+      iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+      iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
+      iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+    }
+
+    iconWrapper.addEventListener("click", () => {
+      pickerContainer.querySelectorAll(".main-icon-item").forEach((item) => {
+        item.style.border = "2px solid transparent";
+        item.style.background = "rgba(255,255,255,0.04)";
+        item.style.boxShadow = "none";
+      });
+
+      if (customInput) {
+        customInput.value = "";
+        customInput.placeholder = "+";
+      }
+
+      UI.selectedHabitIcon = emoji;
+      iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+      iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
+      iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+    });
+
+    pickerContainer.appendChild(iconWrapper);
+  });
+
+  rowContainer.appendChild(pickerContainer);
+
+  // 4. KWADRATOWY INPUT PO PRAWEJ Z NATYCHMIASTOWYM ODZNACZANIEM
+  const customInput = document.createElement("input");
+  customInput.type = "text";
+  customInput.id = "customHabitIconInput";
+  customInput.placeholder = "+";
+  customInput.maxLength = 2;
+  customInput.style.cssText = `
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 18px;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  `;
+
+  if (!isPreset && activeEmoji) {
+    customInput.value = activeEmoji;
+    customInput.style.border = "1px solid rgba(255, 0, 255, 0.5)";
+    customInput.style.background = "rgba(255, 255, 255, 0.07)";
+  }
+
+  customInput.addEventListener("input", (e) => {
+    const val = e.target.value.trim();
+    UI.selectedHabitIcon = val !== "" ? val : "💧";
+  });
+
+  // 🔥 FOCUS: Kliknięcie od razu gasi podświetlenia ikon z karuzeli po lewej!
+  customInput.addEventListener("focus", () => {
+    customInput.placeholder = ""; 
+    customInput.style.border = "1px solid rgba(255, 0, 255, 0.6)";
+    customInput.style.background = "rgba(255, 255, 255, 0.12)";
+    customInput.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.2)";
+    
+    // ⚡ TU DZIEJE SIĘ MAGIA: Natychmiastowe czyszczenie podświetleń z gotowych ikon
+    pickerContainer.querySelectorAll(".main-icon-item").forEach((item) => {
+      item.style.border = "2px solid transparent";
+      item.style.background = "rgba(255,255,255,0.04)";
+      item.style.boxShadow = "none";
+    });
+
+    // Jeśli w polu nic nie ma, jako bezpiecznik dajemy domyślny stan (kropelka)
+    if (customInput.value.trim() === "") {
+      UI.selectedHabitIcon = "💧";
+    }
+    
+    setTimeout(() => customInput.select(), 10);
+  });
+
+  // BLUR: Opuszczenie pola
+  customInput.addEventListener("blur", () => {
+    if (customInput.value === "") {
+      customInput.placeholder = "+";
+      customInput.style.border = "1px solid rgba(255, 255, 255, 0.1)";
+      customInput.style.background = "rgba(255, 255, 255, 0.03)";
+      customInput.style.boxShadow = "none";
+      
+      // Jeśli user kliknął w input, nic nie wpisał i kliknął w tło modala,
+      // przywracamy podświetlenie domyślnej kropelki na karuzeli, żeby nie było pustki!
+      const firstIcon = pickerContainer.querySelector(".main-icon-item");
+      if (firstIcon && firstIcon.textContent === "💧") {
+        firstIcon.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+        firstIcon.style.background = "rgba(255, 255, 255, 0.12)";
+        firstIcon.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+        UI.selectedHabitIcon = "💧";
+      }
+    }
+  });
+
+  rowContainer.appendChild(customInput);
+  wrapper.appendChild(rowContainer);
+},
+
   toggleModalFields: async (type, isEdit = false) => {
     const dSection = document.getElementById("dateSection");
     const hSection = document.getElementById("habitSection");
@@ -183,7 +368,10 @@ export const UI = {
 
     if (type === "habit") {
       if (hSection) hSection.style.display = "flex";
-      if (habitIcon) habitIcon.style.display = "flex";
+      if (habitIcon) {
+        habitIcon.style.display = "flex";
+        habitIcon.style.flexDirection = "column"; // Zapewnia ładne układanie tytułu i paska
+      }
 
       if (isEdit) {
         if (dSection) dSection.style.display = "flex";
@@ -223,6 +411,8 @@ export const UI = {
     UI.clearModalInputs();
     UI.toggleModalFields(AppState.currentCreateType, false);
     UI.refreshTypePickerButtons(AppState.currentCreateType);
+    // 🔥 NOWOŚĆ: Resetujemy wybór ikony na domyślną kropelkę przy tworzeniu nowego nawyku
+    UI.setupHabitIconPicker("💧");
   },
 
   applyRandomGradient: () => {
@@ -280,10 +470,12 @@ export const UI = {
       });
     }
 
+    // 🔥 NOWOŚĆ: Przy edycji przekazujemy aktualną ikonę nawyku, by od razu była podświetlona
+    UI.setupHabitIconPicker(habit.icon || "💧");
+
     const btn = document.getElementById("confirmAddBtn");
     btn.setAttribute("data-edit-id", habit.id);
     btn.setAttribute("data-edit-type", "habit");
-    //await UI.toggleModalFields("habit");
 
     if (elements.modalTitle) elements.modalTitle.textContent = "Edit Habit";
 
@@ -605,7 +797,6 @@ export const UI = {
     taskLabel.className = "taskLabel";
     taskLabel.setAttribute("for", `check-${uniqueId}`);
 
-    // Twoja standardowa systemowa ikonka z powtarzaniem (Zostaje tak jak była)
     const icon =
       type === "habit"
         ? UI.createRepeatIcon()
@@ -614,27 +805,22 @@ export const UI = {
         : UI.createCheckIcon();
     taskLabel.appendChild(icon);
 
-    // Nazwa nawyku/zadania
     const nameSpan = document.createElement("span");
     nameSpan.className = "taskNodeName";
     nameSpan.textContent = name;
     taskLabel.appendChild(nameSpan);
 
-    // 🔥 TWÓJ KLUCZOWY ZAWODNIK: Spersonalizowana ikonka użytkownika za tekstem (Tylko dla nawyków!)
     if (type === "habit") {
       const userIcon = document.createElement("span");
       userIcon.className = "habit-user-emoji-list";
-      
-      // Parsujemy ikonkę bezpośrednio z obiektu 'data'. Fallback na gwiazdkę jeśli brak.
+
       userIcon.textContent = ` ${data.icon || "⭐️"}`;
-      
-      // Delikatne ostylowanie, żeby dobrze siadło w linii z tekstem i rzucało się w oczy
+
       userIcon.style.fontSize = "16px";
-      userIcon.style.marginLeft = "2px"; 
+      userIcon.style.marginLeft = "2px";
       userIcon.style.display = "inline-block";
       userIcon.style.verticalAlign = "middle";
 
-      // Wrzucamy do labela zaraz za nameSpan
       taskLabel.appendChild(userIcon);
     }
 
@@ -731,7 +917,7 @@ export const UI = {
       fragment.appendChild(el);
     }
 
-    grid.appendChild(fragment); // JEDNA OPERACJA NA DOM
+    grid.appendChild(fragment);
   },
 
   renderHabits: async (AppState) => {

@@ -370,8 +370,7 @@ export function initEventListeners(AppState) {
       } else if (type === "habit") {
         const frequency = elements.habitFrequency.value;
         const schedule = getHabitSchedule();
-        const icon =
-          document.getElementById("habitIcon")?.value.trim() ||
+        const icon = UI.selectedHabitIcon||
           name.charAt(0).toUpperCase();
 
           const createdAt = new Date().setHours(0, 0, 0, 0);
