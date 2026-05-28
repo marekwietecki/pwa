@@ -22,13 +22,12 @@ export const OnboardingService = {
     const modal = document.getElementById("modalOverlay");
     if (!modal) return;
 
-    // 🔥 KEEP ORIGINAL: Save the default task form to restore it later
     const originalHTML = modal.innerHTML;
 
-    // Definition of steps with unified design tokens
+    // Definicja kroków z nową nazwą marki Habit Bubbl 🫧
     const steps = {
       1: {
-        title: "Welcome to Habit Bubble! 🫧",
+        title: "Welcome to Habit Bubbl! 🫧",
         html: `
             <div class="onboarding-step-content">
               <p>You enter a game where your everyday discipline increases the level of your Hero. What should we call you in the hall of fame?</p>
@@ -37,7 +36,7 @@ export const OnboardingService = {
           `,
       },
       2: {
-        title: "Senses of Habit Bubble 🔔",
+        title: "Senses of Habit Bubbl 🔔",
         html: `
             <div class="onboarding-step-content">
               <p>To make your app fully working, send you morning briefings, and keep track of your location-based habits, please enable the system permissions below:</p>
@@ -69,7 +68,6 @@ export const OnboardingService = {
             </div>
           `,
       },
-      // 🔥 Krok 4 - Ekran końcowy / Podsumowanie przygody
       4: {
         title: "You Are Ready, Hero! ⚔️",
         html: `
@@ -105,16 +103,18 @@ export const OnboardingService = {
       card.style.position = "relative";
       card.style.overflow = "hidden";
 
-      // Pasek postępu
       const progressBarTrack = document.createElement("div");
       progressBarTrack.className = "onboarding-progress-track";
       progressBarTrack.style.cssText = `
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 6px;
-        background: rgba(255, 255, 255, 0.05);
+        top: 10px;                  /* Przesunięty lekko w dół od krawędzi karty */
+        left: 16px;                 /* Boczne marginesy, żeby nie dotykał ścian */
+        right: 16px;
+        height: 12px;               /* Podwójna grubość */
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 100px;       /* 🔥 Pełne zaokrąglenie kontenera w styl kapsuły */
+        overflow: hidden;           /* 🔥 Kluczowe: Przycina progress bar w środku do kształtu zaokrąglenia! */
       `;
 
       const progressBarFill = document.createElement("div");
@@ -125,20 +125,23 @@ export const OnboardingService = {
         height: 100%;
         width: ${progressPercent}%;
         background: var(--hero-gradient);
-        box-shadow: 0 0 12px var(--accent-color, rgba(255, 0, 255, 0.5));
+        box-shadow: 0 0 15px var(--accent-color, rgba(255, 0, 255, 0.6));
         transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 0;           /* Brak własnego zaokrąglenia - kontener nadrzędny je wymusza */
       `;
 
       progressBarTrack.appendChild(progressBarFill);
       card.appendChild(progressBarTrack);
 
-      // Header title
+      // Tytuł kroku (czysto biały)
       const title = document.createElement("h2");
       title.className = "onboarding-title";
-      title.style.marginTop = "15px";
+      title.style.marginTop = "36px"; // Większy margines, żeby tytuł nie nachodził na grubą kapsułę
+      title.style.color = "#ffffff"; 
+      title.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
       title.textContent = steps[stepNum].title;
 
-      // Body context
+      // Reszta ciała modala
       const body = document.createElement("div");
       body.className = "onboarding-body";
       body.innerHTML = steps[stepNum].html;
@@ -219,7 +222,6 @@ export const OnboardingService = {
         }
       }
 
-      // Footer action area
       const footer = document.createElement("div");
       footer.className = "onboarding-footer";
 
@@ -229,9 +231,17 @@ export const OnboardingService = {
       nextBtn.style.width = "100%";
       nextBtn.style.margin = "0";
       nextBtn.style.borderRadius = "14px";
+      nextBtn.style.cursor = "pointer";
+      nextBtn.style.transition = "opacity 0.2s ease"; 
       
-      // 🔥 POPRAWKA: Przycisk końcowy dostaje epicki tekst tylko na ostatnim (4) kroku
       nextBtn.textContent = stepNum === 4 ? "Start the Adventure! 🚀" : "Next";
+
+      nextBtn.addEventListener("mouseenter", () => {
+        nextBtn.style.opacity = "0.72";
+      });
+      nextBtn.addEventListener("mouseleave", () => {
+        nextBtn.style.opacity = "1";
+      });
 
       footer.appendChild(nextBtn);
       card.appendChild(title);
@@ -239,7 +249,6 @@ export const OnboardingService = {
       card.appendChild(footer);
       modal.appendChild(card);
 
-      // System Permissions (Step 2)
       if (stepNum === 2) {
         document.getElementById("btnAuthNotify").addEventListener("click", async (e) => {
           e.preventDefault();
@@ -268,11 +277,9 @@ export const OnboardingService = {
         });
       }
 
-      // Main Navigation Logic
       nextBtn.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        // Step 1 Nickname
         if (stepNum === 1) {
           const nameInputEl = document.getElementById("onboardingName");
           const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
@@ -286,7 +293,6 @@ export const OnboardingService = {
           await UI.updateUserHeader();
         }
 
-        // Step 3 Validation & Save to IndexedDB
         if (stepNum === 3) {
           const habitInputEl = document.getElementById("onboardingHabit");
           const habitInput = habitInputEl ? habitInputEl.value.trim() : "";
@@ -296,14 +302,13 @@ export const OnboardingService = {
             return;
           }
 
-          // 🔥 POPRAWKA: Dodajemy zainicjalizowany pusty obiekt history: {} 
           await DB.put("habits", {
             id: Date.now(),
             name: habitInput,
             icon: selectedIconId,
             frequency: "daily",
             streak: 0,
-            history: {}, // To pozwala funkcji createItem bezbłędnie czytać i zapisywać historię
+            history: {},
             createdAt: new Date().toISOString(),
           });
         }
@@ -313,7 +318,6 @@ export const OnboardingService = {
         if (steps[currentStep]) {
           renderWizard(currentStep);
         } else {
-          // FINAL SUBMISSION & TEARDOWN
           localStorage.setItem("onboarding_done", "true");
           modal.textContent = "";
           modal.innerHTML = originalHTML;

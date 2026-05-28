@@ -44,6 +44,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   await OnboardingService.checkAndStart();
 
   checkDailyNotifications();
+
+  const splash = document.getElementById("app-splash-screen");
+if (splash) {
+  // Czekamy chwilę na stabilizację UI, po czym ściągamy kurtynę
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.transform = "scale(1.08)"; // Efekt rozmycia bańki
+    
+    // Zapisujemy w sesji, że user już widział splash screen
+    sessionStorage.setItem("splash_shown", "true");
+    
+    // Usuwamy element z DOM po zakończeniu animacji CSS
+    setTimeout(() => splash.remove(), 400);
+  }, 600); // 600ms na spokojne załadowanie danych z API na starcie
+}
 });
 
 window.testOnboarding = () => OnboardingService.forceRun();
