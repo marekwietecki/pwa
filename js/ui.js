@@ -587,6 +587,16 @@ export const UI = {
     const undoneTasks = await DataManager.getUndoneTasks(dateKey);
     const savedHabits = await DataManager.getHabits();
 
+    // 🔥 NOWOŚĆ: Sortowanie zadań (Najstarsze/Przeterminowane na górę)
+    undoneTasks.sort((a, b) => {
+      // 1. Najpierw porównujemy po dacie (np. "2026-05-27" < "2026-05-29")
+      if (a.date !== b.date) {
+        return a.date.localeCompare(b.date);
+      }
+      // 2. Jeśli daty są identyczne, sortujemy alfabetycznie po nazwie zadania
+      return a.name.localeCompare(b.name);
+    });
+
     const undoneNodes = [];
 
     // TASKS
@@ -598,7 +608,10 @@ export const UI = {
     });
 
     // HABITS
-    savedHabits.forEach((habit) => {
+    // (Sortowanie nawyków opcjonalnie alfabetycznie, żeby nie skakały losowo)
+    const sortedHabits = [...savedHabits].sort((a, b) => a.name.localeCompare(b.name));
+
+    sortedHabits.forEach((habit) => {
       if (dateKey < Utils.formatDateKey(new Date(habit.createdAt))) return;
 
       const isDue = Utils.isHabitDue(habit, targetDate);

@@ -54,8 +54,6 @@ h2 {
 }
 
 /* 3. Fredoka wjeżdża na pełnej - tylko dla tożsamości marki */
-.navbar .logo-text,
-#appLogo,
 .onboarding-title {
   font-family: "Fredoka", sans-serif !important;
   font-weight: 600; /* Gruby, soczysty bąbel */
@@ -111,6 +109,82 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+/* Install */
+.dynamic-card {
+  margin: 16px;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--glass-bg-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-bubble);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.pwa-install-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pwa-install-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.pwa-install-btn {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+
+  /* Kontrastowy, jasny tekst */
+  color: #ffffff !important;
+
+  /* Piękne tło pasujące do stylistyki glassmorphism w NeuroBubble */
+  background: var(--glass-bg-active, rgba(255, 255, 255, 0.2)) !important;
+
+  /* Obramowanie, które sprawi, że guzik odetnie się od tła */
+  border: 1px solid var(--glass-border-bright, rgba(255, 255, 255, 0.5)) !important;
+
+  padding: 10px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
+  animation: gentle-pulse 2s infinite ease-in-out;
+}
+
+.pwa-install-btn:hover {
+  transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+@keyframes gentle-pulse {
+  0% {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Styl dla cytatu, gdy już się podmieni */
+.quote-text {
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
 }
 
 /* Onboarding */
@@ -296,6 +370,7 @@ body::after {
 /* Bazowy styl dla każdego taba (nieaktywnego) */
 .tabNavItem {
   font-size: 9px;
+  font-weight: "400";
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -387,11 +462,6 @@ body::after {
 
 .logo-img:hover {
   opacity: 0.72;
-}
-
-.logo-text {
-  display: none;
-  white-space: nowrap;
 }
 
 /* CALENDAR */ /* ------------------------------------------------------------------------ */
@@ -601,7 +671,7 @@ main {
   overflow: hidden;
   margin-top: 8px;
   padding: 0;
-  margin-bottom: 56px;
+  margin-bottom: 16px;
   /* box-sizing: border-box; */
 }
 #toDoList,
@@ -1511,14 +1581,22 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 16px 16px 20px;
-  margin-left: 20px;
-  margin-right: 20px;
+  padding: 0px 16px 20px; 
   scroll-snap-type: x mandatory;
   max-width: 600px;
   align-items: center;
   justify-content: safe center;
-  margin: 0 auto;
+  
+  margin-left: auto;
+  margin-right: auto;
+  
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch; /* Płynny scroll na iOS */
+}
+
+/* Ukrywamy scrollbar dla Chrome/Safari/Opera */
+.habit-carousel::-webkit-scrollbar {
+  display: none;
 }
 
 .noHabitsMsg {
@@ -1537,23 +1615,24 @@ input.error {
   border-radius: 24px;
   text-align: center;
   text-wrap: wrap;
-  max-width: 136px;
+  max-width: 120px;
   scroll-snap-align: start;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--glass-border-soft);
+  /* border: 1px solid var(--glass-border-soft); */
   gap: 8px;
-  background: var(--glass-bg-subtle);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--shadow-delicate);
+  /* background: var(--glass-bg-subtle); */
+  /* backdrop-filter: var(--glass-blur); */
+  /* -webkit-backdrop-filter: var(--glass-blur); */
+  /* box-shadow: var(--shadow-delicate); */
 }
 
 .habit-card-icon.active-habit-icon {
-  background: var(--glass-bg-active);
+  /* background: var(--glass-bg-active); */
   border-color: var(--glass-border-bright);
   transform: translateY(-2px);
   box-shadow: var(--shadow-float);
+  opacity: 1;
 }
 
 .habit-card-icon {
@@ -1563,12 +1642,13 @@ input.error {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--glass-bg);
+  /* background: var(--glass-bg); */
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-bubble);
   transition: all 0.3s ease;
+  opacity: .56;
 }
 
 .habit-name-label {
@@ -1588,11 +1668,10 @@ input.error {
 }
 
 #detailHabitName {
-  max-width: 600px;
+  max-width: 280px;
   display: flex;
-  margin: 0;
-  padding: 0 0 12px 16px;
-}
+  margin: 0 auto 4px;
+} 
 
 .crucialHabitStats {
   display: flex;
@@ -1878,7 +1957,7 @@ input.error {
 }
 
 #toggleLabel {
-  margin-left: 2px;
+  margin-left: 4px;
 }
 
 .permission-item {
@@ -1976,9 +2055,15 @@ h3 {
   text-wrap: nowrap;
 }
 
+#displayUserName::before {
+  content: "@";
+  opacity: 0.6; /* Lekko przezroczysty, żeby nie dominował nad samym nickiem */
+  margin-right: 2px; /* Delikatny odstęp od pierwszej litery */
+  font-weight: 500; /* Może być delikatnie cieńszy/grubszy w zależności od potrzeb */
+  font-size: 20px;
+}
 #displayUserName {
   font-size: 28px;
-  cursor: pointer;
 }
 
 .user-name-wrapper {
@@ -2101,14 +2186,6 @@ h3 {
   .logo {
     display: none;
   }
-  /* .logo-text {
-    display: none;
-  }
-  .logo-img {
-    width: 32px;
-    height: 32px; 
-    display: none;
-  } */
   .navIcon {
     width: 20px;
     height: 20px;
@@ -2187,6 +2264,9 @@ h3 {
     bottom: calc(104px + env(safe-area-inset-bottom, 0px));
     right: 20px;
   }
+  .userStats {
+    margin: 0px auto;
+  }
 }
 
 @media (max-width: 600px) {
@@ -2201,8 +2281,13 @@ h3 {
     gap: 12px;
   }
   .habit-carousel {
-    margin-left: 8px;
-    margin-right: 8px;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 @media (max-width: 424px) {
@@ -2210,5 +2295,8 @@ h3 {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+  #quote-container {
+    height: 128px;
   }
 }

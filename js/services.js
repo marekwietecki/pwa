@@ -1,5 +1,115 @@
 import { Utils, DataManager } from "./data.js";
 
+const MOTIVATIONAL_QUOTES = [
+  // 🧠 Action & Breaking Procrastination
+  "Start before you're ready.",
+  "Do it now. 'Later' is the ultimate dream killer.",
+  "The 5-Minute Rule: tell yourself you'll only do it for 5 minutes.",
+  "You don't need motivation. You need to start.",
+  "The best time to act is right now.",
+  "Take the first step, and the rest of the path will appear.",
+  "Focus on the system, not just the goal.",
+  "The longer you think about starting, the more you delay success.",
+  "Do one micro-task for your project right this second.",
+  "Choose immediate action over a perfect plan.",
+  "Stop waiting for inspiration. Inspiration is born in action.",
+  "The hardest part is the first two minutes. Just sit down.",
+  "Small steps taken daily yield massive results.",
+  "Winners do what needs to be done, even when they don't feel like it.",
+  "Don't put off until tomorrow what you can finish today.",
+  "Start with your worst task. Eat that frog first thing in the morning.",
+  "Action breeds motivation, not the other way around.",
+  "Better to do it poorly than to do nothing while chasing perfection.",
+  "Your future self will thank you for what you do right now.",
+  "Don't look for excuses. Look for ways.",
+  "Action cures fear and doubt.",
+  "Think about the satisfaction you'll feel once this task is done.",
+  "Do it for yourself. No one else is going to do it for you.",
+  "Every great thing consists of micro-tasks. Break it down.",
+  "The secret of getting ahead is simply getting started.",
+
+  // 🫧 Habit Building & Discipline
+  "Discipline is choosing between what you want now and what you want most.",
+  "Habits shape your future. Choose wisely.",
+  "Be consistent, not perfect.",
+  "What you do every day matters more than what you do once in a while.",
+  "Never miss two days in a row with your habits.",
+  "Discipline equals freedom.",
+  "You are what you repeatedly do.",
+  "Automate good decisions through healthy habits.",
+  "Small habits, big changes.",
+  "Motivation gets you started. Habit keeps you going.",
+  "Don't sacrifice your long-term goals for temporary comfort.",
+  "Willpower is like a muscle. Train it daily.",
+  "Hard choices now, easy life later.",
+  "Your routine determines your success.",
+  "Don't wait for easier conditions. Build stronger resilience.",
+  "Victory is the sum of small, boring, daily decisions.",
+  "When motivation fades, let discipline take the lead.",
+  "Take care of your habits, and your habits will take care of you.",
+  "Every completed habit is a vote for your new identity.",
+  "Don't negotiate with your laziness.",
+  "Consistency beats intensity every single time.",
+  "Build habits so small you can't say no to them.",
+  "Your daily rituals are the architecture of your life.",
+  "Mastery is just the aggressive repetition of the basics.",
+  "Consistency builds self-confidence.",
+
+  // ⏱️ Time Management & Focus
+  "Focus on one thing. Multitasking is a myth.",
+  "Turn on airplane mode. Your time is valuable.",
+  "Protect your focus like it's your greatest treasure.",
+  "If it takes less than two minutes, do it immediately.",
+  "Learn to say 'no' to things that waste your time.",
+  "Time will pass anyway. The question is, how will you spend it?",
+  "Clean your desk and clear your desktop before you start working.",
+  "An hour of deep focus is worth more than a day of chaos.",
+  "Work smarter, not just harder.",
+  "Cutting out distractors is half the battle.",
+  "Plan your day the night before.",
+  "An hour without your phone in the morning can change your whole day.",
+  "Your attention is currency. Don't spend it on nonsense.",
+  "Block time in your calendar for what truly matters.",
+  "Handle your priorities before the world dictates its own.",
+  "Silence around you is silence in your mind.",
+  "Take a break before you hit absolute exhaustion.",
+  "Control your notifications, or they will control you.",
+  "A good plan today is better than a perfect plan tomorrow.",
+  "Focus is the elimination of everything unnecessary.",
+  "Stop collecting tasks. Start finishing them.",
+  "Time spent planning saves time during execution.",
+  "Minimize task-switching to protect your brainpower.",
+  "Be unavailable when you are working on your dreams.",
+  "The best productivity tool is the power button on your phone.",
+
+  // 🚀 Growth Mindset & Self-Improvement
+  "Failure is not the end. It's just feedback.",
+  "Only compare yourself to who you were yesterday.",
+  "Mistakes are proof that you are trying.",
+  "Don't be afraid of going slowly, be afraid of standing still.",
+  "Patience and hard work will crush any obstacle.",
+  "Investment in yourself pays the highest dividends.",
+  "Your limitations exist only in your mind.",
+  "Be proud of how far you've already come.",
+  "Every master was once a clueless beginner.",
+  "Demand more from yourself than anyone else expects from you.",
+  "Don't fear big goals. Fear small efforts.",
+  "Obstacles are those frightful things you see when you take your eyes off your goal.",
+  "Believe you can, and you're halfway there.",
+  "Don't look for applause. Look for progress.",
+  "Your mindset dictates your productivity.",
+  "Be grateful for difficulties—they are what harden you.",
+  "Success doesn't come to you. You have to go get it.",
+  "You can have results or excuses. Never both.",
+  "If hard work were easy, everyone would be a master.",
+  "Take care of your mind the way you take care of your body.",
+  "Goals without deadlines are just wishes.",
+  "Focus on the process of creating a better version of yourself.",
+  "The past is gone. You build the future right now.",
+  "The best revenge on your weaknesses is a massive success.",
+  "You can change your life at any second. Choose this one."
+];
+
 export const NotificationService = {
   async send(title, options = {}) {
     const isMutedByUser =
@@ -151,20 +261,88 @@ export const LocationService = {
   },
 };
 
+let deferredPrompt = null;
+
 export const QuoteService = {
   getDailyAdvice: async () => {
-    const API_URL = "https://api.adviceslip.com/advice";
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      return { text: data.slip.advice, author: "Daily Hero Advice" };
-    } catch (error) {
-      return {
-        text: "Hero, your discipline is your strength.",
-        author: "Habit Bubble Team",
-      };
-    }
+    const randomIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
+    const selectedQuote = MOTIVATIONAL_QUOTES[randomIndex];
+    return { 
+      text: selectedQuote, 
+      author: "NeuroBubble" 
+    };
   },
+};
+
+export const PwaService = {
+  initInstallHandler: () => {
+    const cardContainer = document.getElementById("hero-dynamic-card");
+    if (!cardContainer) return;
+
+    // 🔥 KLUCZOWA POPRAWKA: Na start zawsze renderujemy cytat, żeby nie było pustki!
+    PwaService.renderDailyQuote(cardContainer);
+
+    // Przechwytujemy prompt instalacji PWA od przeglądarki
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Jeśli jesteśmy w przeglądarce i można zainstalować apkę – wrzucamy przycisk
+      PwaService.renderInstallBanner(cardContainer);
+    });
+
+    // Jeśli aplikacja zostanie pomyślnie zainstalowana – wracamy do cytatu
+    window.addEventListener("appinstalled", () => {
+      deferredPrompt = null;
+      PwaService.renderDailyQuote(cardContainer);
+    });
+  },
+
+  renderInstallBanner: (container) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "pwa-install-container";
+
+    const title = document.createElement("span");
+    title.className = "pwa-install-title";
+    title.textContent = "Take NeuroBubble to your home screen for full experience 🫧";
+
+    const button = document.createElement("button");
+    button.id = "pwa-install-btn";
+    button.className = "pwa-install-btn";
+    button.textContent = "Install App";
+
+    button.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === "accepted") {
+        console.log("PWA Installation accepted by user");
+      }
+      deferredPrompt = null;
+    });
+
+    wrapper.appendChild(title);
+    wrapper.appendChild(button);
+    container.replaceChildren(wrapper);
+  },
+
+  renderDailyQuote: async (container) => {
+    try {
+      const advice = await QuoteService.getDailyAdvice();
+      
+      if (!advice || !advice.text) return;
+
+      const quoteParagraph = document.createElement("p");
+      quoteParagraph.className = "quote-text";
+      quoteParagraph.textContent = `"${advice.text}"`;
+
+      container.replaceChildren(quoteParagraph);
+    } catch (error) {
+      console.error("Error loading local quote:", error);
+    }
+  }
 };
 
 export const OfflineService = {
