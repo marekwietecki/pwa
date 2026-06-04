@@ -150,6 +150,7 @@ export const NotificationService = {
 };
 
 export const PermissionsManager = {
+  // --- NOTIFICATIONS ---
   notificationsEnabled() {
     const userWants =
       localStorage.getItem("user_notifications_enabled") !== "false";
@@ -164,9 +165,46 @@ export const PermissionsManager = {
     return permission;
   },
 
+  geolocationEnabled() {
+    const userWants = localStorage.getItem("user_location_enabled") === "true";
+    // W geolokacji nie sprawdzimy synchronicznie stanu uprawnień przeglądarki tak łatwo jak w Notification,
+    // dlatego opieramy się na fladze z localStorage, którą ustawiamy przy sukcesie.
+    return userWants;
+  },
+
+  // 2. Asynchroniczne żądanie dostępu i wywołanie powiadomienia push po sukcesie
   async requestGeolocation() {
     return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
+      if (!("geolocation" in navigator)) {
+        console.warn("📍 Geolocation API is not supported by this browser.");
+        reject(new Error("Not supported"));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Sukces: Zapisujemy stan w pamięci lokalnej
+          localStorage.setItem("user_location_enabled", "true");
+          console.log("📍 Geolocation active:", position.coords);
+
+          // 🔥 Odpalamy powiadomienie push, jeśli aplikacja ma do tego uprawnienia
+          if (Notification.permission === "granted") {
+            new Notification("NeuroBubble 🫧", {
+              body: "📍 Space-time synced! Your environment is now successfully linked.",
+              icon: "./assets/icons/icon-192x192.png", // upewnij się, że ścieżka do Twojej ikony PWA się zgadza
+              vibrate: [100, 50, 100]
+            });
+          }
+
+          resolve(position);
+        },
+        (error) => {
+          // Obsługa błędu lub odrzucenia przez użytkownika
+          localStorage.setItem("user_location_enabled", "false");
+          console.warn("📍 Geolocation denied or error:", error.message);
+          reject(error);
+        }
+      );
     });
   },
 };
@@ -279,7 +317,7 @@ export const PwaService = {
     const cardContainer = document.getElementById("hero-dynamic-card");
     if (!cardContainer) return;
 
-    // 🔥 KLUCZOWA POPRAWKA: Na start zawsze renderujemy cytat, żeby nie było pustki!
+    // Na start zawsze renderujemy cytat, żeby nie było pustki!
     PwaService.renderDailyQuote(cardContainer);
 
     // Przechwytujemy prompt instalacji PWA od przeglądarki
@@ -287,11 +325,9 @@ export const PwaService = {
       e.preventDefault();
       deferredPrompt = e;
       
-      // Jeśli jesteśmy w przeglądarce i można zainstalować apkę – wrzucamy przycisk
       PwaService.renderInstallBanner(cardContainer);
     });
 
-    // Jeśli aplikacja zostanie pomyślnie zainstalowana – wracamy do cytatu
     window.addEventListener("appinstalled", () => {
       deferredPrompt = null;
       PwaService.renderDailyQuote(cardContainer);
@@ -299,48 +335,51 @@ export const PwaService = {
   },
 
   renderInstallBanner: (container) => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "pwa-install-container";
+    try {
+      container.classList.add("has-banner");
 
-    const title = document.createElement("span");
-    title.className = "pwa-install-title";
-    title.textContent = "Take NeuroBubble to your home screen for full experience 🫧";
+      const wrapper = document.createElement("div");
+      wrapper.className = "pwa-install-container";
 
-    const button = document.createElement("button");
-    button.id = "pwa-install-btn";
-    button.className = "pwa-install-btn";
-    button.textContent = "Install App";
+      const title = document.createElement("span");
+      title.className = "pwa-install-title";
+      title.textContent = "Take NeuroBubble to your home screen for full experience 🫧";
 
-    button.addEventListener("click", async () => {
-      if (!deferredPrompt) return;
-      
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      if (outcome === "accepted") {
-        console.log("PWA Installation accepted by user");
-      }
-      deferredPrompt = null;
-    });
+      const button = document.createElement("button");
+      button.id = "pwa-install-btn";
+      button.className = "pwa-install-btn";
+      button.textContent = "Install App";
 
-    wrapper.appendChild(title);
-    wrapper.appendChild(button);
-    container.replaceChildren(wrapper);
+      button.addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Decyzja użytkownika o instalacji: ${outcome}`);
+        deferredPrompt = null;
+      });
+
+      wrapper.appendChild(title);
+      wrapper.appendChild(button);
+      container.replaceChildren(wrapper);
+    } catch (error) {
+      console.error("Błąd w renderInstallBanner:", error);
+    }
   },
 
-  renderDailyQuote: async (container) => {
+  renderDailyQuote: (container) => {
     try {
-      const advice = await QuoteService.getDailyAdvice();
-      
-      if (!advice || !advice.text) return;
+      container.classList.remove("has-banner");
+
+      const randomIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
+      const randomText = MOTIVATIONAL_QUOTES[randomIndex];
 
       const quoteParagraph = document.createElement("p");
       quoteParagraph.className = "quote-text";
-      quoteParagraph.textContent = `"${advice.text}"`;
+      quoteParagraph.textContent = `"${randomText}"`;
 
       container.replaceChildren(quoteParagraph);
     } catch (error) {
-      console.error("Error loading local quote:", error);
+      console.error("Błąd w renderDailyQuote:", error);
     }
   }
 };

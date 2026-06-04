@@ -112,16 +112,33 @@ body {
 }
 /* Install */
 .dynamic-card {
-  margin: 16px;
-  padding: 20px;
-  border-radius: 24px;
-  background: var(--glass-bg-subtle);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-bubble);
+  max-width: 600px;
+  margin: 0 auto 20px;
+  padding: 12px 20px;
   text-align: center;
-  transition: all 0.3s ease;
+  /* Resetujemy/usuwamy stąd background, border i box-shadow! */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: all 0.4s ease; /* Płynne przejście przy pojawianiu się ramki */
+}
+
+.quote-text {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75); /* Delikatny, nienachalny kolor */
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dynamic-card.has-banner {
+  background: rgba(255, 255, 255, 0.05); /* Twoje dotychczasowe tło glassmorphism */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px; /* Zaokrąglenie bombelka */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  padding: 16px 20px;
 }
 
 .pwa-install-container {
@@ -594,6 +611,22 @@ body::after {
   stroke: #ff4444;
 }
 
+.task-overdue-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #ff4a4a; /* Piękny, alarmujący cyber-czerwony */
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 4px; /* Odstęp od stojącej wyżej lokalizacji */
+  opacity: 0.9;
+}
+
+.overdue-calendar-icon {
+  flex-shrink: 0;
+  stroke: #ff4a4a; /* Zapewnia, że ikonka też dostanie czerwony kolor */
+}
+
 .emptyListMessage {
   text-align: center;
   font-size: 1.1rem;
@@ -716,6 +749,19 @@ main {
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-bubble);
 }
+
+.taskNodeName {
+  display: -webkit-box;           /* Przełączamy w tryb boxa WebKit */
+  -webkit-line-clamp: 2;          /* 🔥 Blokada na dokładnie 2 linijki */
+  -webkit-box-orient: vertical;   /* Układ pionowy dla boxa */
+  overflow: hidden;               /* Ukrywamy to, co wystaje poza 2 linie */
+  text-overflow: ellipsis;        /* 🔥 Dodajemy automatyczne "..." na końcu */
+  
+  word-break: break-word;         /* Bezpieczne łamanie długich słów */
+  flex: 1;
+  min-width: 0;
+}
+
 .taskItem.done {
   opacity: 0.5;
   text-decoration: line-through;
@@ -743,15 +789,20 @@ main {
 }
 
 .taskLabel {
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
-  align-items: center;
+  align-items: flex-start; 
   gap: 8px;
   margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.taskLabel svg {
+  margin-top: 3px; 
+  flex-shrink: 0;  /* Pilnuje, żeby ikonka nigdy się nie spłaszczyła */
 }
 
 /*
@@ -1107,6 +1158,8 @@ main {
   font-weight: 600;
   width: 184px; /* 32% */
 
+
+  
   white-space: nowrap; /* hidden text in one line*/
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1129,7 +1182,7 @@ main {
 
 #habitSection {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex: 1;
   gap: 40px;
 }
@@ -2277,7 +2330,6 @@ h3 {
     flex-direction: column;
   }
   #habitSection {
-    flex-direction: column;
     gap: 12px;
   }
   .habit-carousel {

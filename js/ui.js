@@ -189,28 +189,33 @@ export const UI = {
     subTitle.style.marginBottom = "8px";
     wrapper.appendChild(subTitle);
 
-    // 2. GŁÓWNY KONTENER JEDNOLINIJKOWY
+    // 2. GŁÓWNY KONTENER JEDNOLINIJKOWY (Dba o to, żeby suwak i plus stały obok siebie w jednej linii)
     const rowContainer = document.createElement("div");
     rowContainer.style.cssText = `
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-  `;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* Spycha suwak w lewo, a plusa maksymalnie w prawo */
+      gap: 12px;
+      width: 100%;
+    `;
 
-    // 3. Kontener na kafelki z emoji
+    // 3. Kontener na kafelki z emoji (Przywracamy poziomą taśmę/slider)
     const pickerContainer = document.createElement("div");
     pickerContainer.id = "mainHabitIconPicker";
     pickerContainer.style.cssText = `
-    display: flex;
-    gap: 12px;
-    flex: 1;
-    padding: 5px 0;
-    overflow-x: auto;
-    justify-content: start;
-    scrollbar-width: none;
-  `;
-    pickerContainer.style.setProperty("&::-webkit-scrollbar", "display: none");
+      display: flex;
+      gap: 12px;
+      flex: 1;               /* Zajmuje całą przestrzeń od lewej krawędzi aż do przycisku plus */
+      padding: 5px 0;
+      overflow-x: auto;      /* 🔥 Przywracamy przewijanie poziome */
+      justify-content: start;
+      scrollbar-width: none; /* Ukrywa scrollbar na Firefox */
+      min-width: 0;          /* 🔥 KLUCZOWE: pozwala kontenerowi zwężać się i aktywować scroll, zamiast wypychać plusa */
+    `;
+    // Ukrywamy scrollbar na Chrome/Safari
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = `#mainHabitIconPicker::-webkit-scrollbar { display: none; }`;
+    document.head.appendChild(styleSheet);
 
     UI.selectedHabitIcon = activeEmoji || "💧";
     const isPreset = ONBOARDING_ICONS.includes(UI.selectedHabitIcon);
@@ -220,7 +225,7 @@ export const UI = {
       iconWrapper.className = "main-icon-item";
       iconWrapper.textContent = emoji;
       iconWrapper.style.cssText = `
-        flex: 0 0 44px;
+        flex: 0 0 44px;      /* 🔥 Przywracamy sztywne 44px: ikonki NIE BĘDĄ rosnąć ani się kurczyć */
         height: 44px;
         display: flex;
         align-items: center;
@@ -232,8 +237,9 @@ export const UI = {
         font-size: 20px;
         transition: all 0.25s ease;
         user-select: none;
-    `;
-
+        box-sizing: border-box;
+      `;
+      
       if (isPreset && emoji === UI.selectedHabitIcon) {
         iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
         iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
@@ -408,10 +414,26 @@ export const UI = {
   },
 
   resetModal: (AppState) => {
+    if (!AppState) {
+      console.warn("⚠️ resetModal: Brak obiektu AppState!");
+      return;
+    }
+
+    // 1. Czyszczenie standardowych inputów tekstowych/selectów
     UI.clearModalInputs();
+
+    // 2. 🔥 NOWOŚĆ: Ręcznie resetujemy i czyścimy wszystkie checkboxy harmonogramów (dni tygodnia/miesiąca)
+    // Dzięki temu żaden stary harmonogram nie "zostanie" w pamięci modalu
+    const scheduleCheckboxes = document.querySelectorAll(
+      '#daysPicker input[type="checkbox"], #monthDaysGrid input[type="checkbox"]'
+    );
+    scheduleCheckboxes.forEach(cb => cb.checked = false);
+
+    // 3. Przełączanie widoczności pól na bazie aktualnego typu
     UI.toggleModalFields(AppState.currentCreateType, false);
     UI.refreshTypePickerButtons(AppState.currentCreateType);
-    // 🔥 NOWOŚĆ: Resetujemy wybór ikony na domyślną kropelkę przy tworzeniu nowego nawyku
+
+    // 4. Reset ikony na domyślną kropelkę
     UI.setupHabitIconPicker("💧");
   },
 
@@ -444,46 +466,68 @@ export const UI = {
   },
 
   openEditHabitModal: async (habit, AppState) => {
+    if (!AppState) return;
+    
+    AppState.currentCreateType = "habit"; 
     UI.resetModal(AppState);
-
     UI.setModalMode("edit");
     await UI.toggleModalFields("habit", true);
 
-    document.getElementById("taskName").value = habit.name;
+    document.getElementById("taskName").value = habit.name || "";
 
-    const freqSelect = document.getElementById("habitFrequency");
-    freqSelect.value = habit.frequency;
-
-    const startDate = new Date(habit.createdAt).toISOString().split("T")[0];
-    document.getElementById("taskDate").value = startDate;
-
-    freqSelect.dispatchEvent(new Event("change"));
-
-    if (habit.schedule) {
-      const container =
-        habit.frequency === "weekly"
-          ? elements.daysPicker
-          : document.getElementById("monthDaysGrid");
-      habit.schedule.forEach((val) => {
-        const cb = container.querySelector(`input[value="${val}"]`);
-        if (cb) cb.checked = true;
-      });
+    if (habit.createdAt) {
+      const startDate = new Date(habit.createdAt).toISOString().split("T")[0];
+      const dateInput = document.getElementById("taskDate");
+      if (dateInput) dateInput.value = startDate;
     }
 
-    // 🔥 NOWOŚĆ: Przy edycji przekazujemy aktualną ikonę nawyku, by od razu była podświetlona
+    const freqSelect = document.getElementById("habitFrequency");
+    if (freqSelect) {
+      // 1. Najpierw ustawiamy wartość częstotliwości (weekly/monthly)
+      freqSelect.value = habit.frequency || "daily";
+      
+      // 2. Natychmiast odpalamy event change, żeby UI wyrenderowało odpowiedni picker (dni tygodnia lub siatkę)
+      freqSelect.dispatchEvent(new Event("change"));
+    }
+
+    // 3. 🔥 DOPIERO TUTAJ, gdy UI przemieliło event 'change' i pokazało właściwy kontener,
+    // bezpiecznie aplikujemy zaznaczenia harmonogramu
+    if (habit.schedule && Array.isArray(habit.schedule)) {
+      const container = habit.frequency === "weekly" 
+        ? elements.daysPicker 
+        : document.getElementById("monthDaysGrid");
+        
+      if (container) {
+        // Dodatkowe bezpieczeństwo: na wszelki wypadki czyścimy tylko ten konkretny kontener przed nałożeniem
+        container.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+        habit.schedule.forEach((val) => {
+          const cb = container.querySelector(`input[value="${val}"]`);
+          if (cb) cb.checked = true;
+        });
+      }
+    }
+
     UI.setupHabitIconPicker(habit.icon || "💧");
 
     const btn = document.getElementById("confirmAddBtn");
-    btn.setAttribute("data-edit-id", habit.id);
-    btn.setAttribute("data-edit-type", "habit");
+    if (btn) {
+      btn.setAttribute("data-edit-id", habit.id);
+      btn.setAttribute("data-edit-type", "habit");
+    }
 
     if (elements.modalTitle) elements.modalTitle.textContent = "Edit Habit";
-
-    elements.modalOverlay.classList.add("open");
+    if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
-  openEditGoalModal: async (goal) => {
-    UI.resetModal();
+  openEditGoalModal: async (goal, AppState) => {
+    if (!AppState) return;
+
+    // 🔥 Aktualizujemy stan przed wywołaniem reszt logiki
+    AppState.currentCreateType = "goal";
+
+    // 🔥 Naprawione: Teraz poprawnie przekazujemy AppState do resetModal
+    UI.resetModal(AppState); 
     UI.setModalMode("edit");
     await UI.toggleModalFields("goal", true);
 
@@ -512,7 +556,7 @@ export const UI = {
       btn.setAttribute("data-edit-type", "goal");
     }
 
-    elements.modalOverlay.classList.add("open");
+    if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
   setupSettingsToggles: async () => {
@@ -826,19 +870,78 @@ export const UI = {
     if (type === "habit") {
       const userIcon = document.createElement("span");
       userIcon.className = "habit-user-emoji-list";
-
       userIcon.textContent = ` ${data.icon || "⭐️"}`;
-
       userIcon.style.fontSize = "16px";
       userIcon.style.marginLeft = "2px";
       userIcon.style.display = "inline-block";
       userIcon.style.verticalAlign = "middle";
-
       taskLabel.appendChild(userIcon);
     }
 
     taskContent.appendChild(taskLabel);
+    
+    // Wrzucamy standardowe metadane (np. lokalizację)
     taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));
+
+    if (isOverdue && type === "task" && data.date) {
+      const overdueBadge = document.createElement("div");
+      overdueBadge.className = "task-overdue-date-badge";
+
+      // Tworzymy ikonkę kalendarza SVG (czysty kod, pasuje do reszty Lucide Icons w aplikacji)
+      const calendarSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      calendarSvg.setAttribute("width", "12");
+      calendarSvg.setAttribute("height", "12");
+      calendarSvg.setAttribute("viewBox", "0 0 24 24");
+      calendarSvg.setAttribute("fill", "none");
+      calendarSvg.setAttribute("stroke", "currentColor");
+      calendarSvg.setAttribute("stroke-width", "2");
+      calendarSvg.setAttribute("stroke-linecap", "round");
+      calendarSvg.setAttribute("stroke-linejoin", "round");
+      
+      // 🔥 TUTAJ BYŁ PIES POGRZEBANY: Używamy setAttribute zamiast .className
+      calendarSvg.setAttribute("class", "lucide lucide-calendar overdue-calendar-icon");
+
+      // Ścieżki SVG dla klasycznego kalendarza
+      const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.setAttribute("width", "14");
+      rect.setAttribute("height", "14");
+      rect.setAttribute("x", "5");
+      rect.setAttribute("y", "6");
+      rect.setAttribute("rx", "1.5"); // Lekko mniejszy zaokrąglony róg, żeby pasował do skali
+      rect.setAttribute("ry", "1.5");
+      
+      const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line1.setAttribute("x1", "15");
+      line1.setAttribute("x2", "15");
+      line1.setAttribute("y1", "4");
+      line1.setAttribute("y2", "8");
+
+      const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line2.setAttribute("x1", "9");
+      line2.setAttribute("x2", "9");
+      line2.setAttribute("y1", "4");
+      line2.setAttribute("y2", "8");
+
+      const line3 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line3.setAttribute("x1", "5");
+      line3.setAttribute("x2", "19");
+      line3.setAttribute("y1", "11");
+      line3.setAttribute("y2", "11");
+
+      calendarSvg.appendChild(rect);
+      calendarSvg.appendChild(line1);
+      calendarSvg.appendChild(line2);
+      calendarSvg.appendChild(line3);
+
+      // Tworzymy span na samą zaległą datę
+      const dateText = document.createElement("span");
+      dateText.textContent = data.date; // format: RRRR-MM-DD
+
+      // Składamy komponent w całość
+      overdueBadge.appendChild(calendarSvg);
+      overdueBadge.appendChild(dateText);
+      taskContent.appendChild(overdueBadge);
+    }
 
     const taskActions = document.createElement("div");
     taskActions.className = "taskActions";

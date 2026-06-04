@@ -80,7 +80,7 @@ export const OnboardingService = {
                 padding: 16px; 
                 margin: 20px 0;
                 box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);">
-                <p style="margin: 0; font-weight: 600; color: #fff;">🎁 Beginner's Chest Unlocked!</p>
+                <p style="margin: 0; font-weight: 600; color: #fff;"><!--🎁 Beginner's Chest Unlocked!--> First level acheived! ✅</p>
                 <p style="margin: 6px 0 0 0; font-size: 13px; color: rgba(255,255,255,0.6);">Your first habit is live. Track it daily to stack multiplier combos and earn bonus XP.</p>
               </div>
               <p style="font-size: 14px; color: var(--accent-color, #ff00ff); font-weight: 500; text-shadow: 0 0 10px rgba(255,0,255,0.2);">May the discipline be with you.</p>
