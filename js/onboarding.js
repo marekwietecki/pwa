@@ -30,7 +30,7 @@ export const OnboardingService = {
         title: "Welcome to Habit Bubbl! 🫧",
         html: `
             <div class="onboarding-step-content">
-              <p>You enter a game where your everyday discipline increases the level of your Hero. What should we call you in the hall of fame?</p>
+              <p>You enter a game where your everyday discipline increases the level of your Hero. What should we call you?</p>
               <input type="text" id="onboardingName" placeholder="Enter your nickname..." class="modal-input">
             </div>
           `,
@@ -72,7 +72,7 @@ export const OnboardingService = {
         title: "You Are Ready, Hero! ⚔️",
         html: `
             <div class="onboarding-step-content" style="text-align: center;">
-              <p style="font-size: 16px; margin-bottom: 16px;">Your character profile has been successfully initialized in the blockchain database.</p>
+              <p style="font-size: 16px; margin-bottom: 16px;">Your character profile has been successfully initialized.</p>
               <div style="
                 background: rgba(255, 255, 255, 0.04); 
                 border: 1px solid rgba(255, 255, 255, 0.1); 
