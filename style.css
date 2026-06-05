@@ -1062,6 +1062,7 @@ main {
   box-shadow: var(--shadow-bubble);
   transition: all 0.3s ease;
   cursor: pointer;
+  flex-shrink: 0;
 }
 #closeModal:hover {
   opacity: 72%;
@@ -1537,7 +1538,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #fff;
   padding: 10px 16px;
   border-radius: 24px;
-  width: 224px;
+
+  min-width: 160px !important;       
+  max-width: 224px !important;    
+  width: 100% !important;
 
   white-space: nowrap; /* hidden text in one line*/
   overflow: hidden;
@@ -1573,6 +1577,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 
   border-radius: 50%;
   cursor: pointer;
@@ -1678,7 +1683,7 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 0px 16px 4px; 
+  padding: 0px 16px 16px; 
   scroll-snap-type: x mandatory;
   max-width: 600px;
   align-items: center;
@@ -1804,6 +1809,15 @@ input.error {
   opacity: 72%;
 }
 
+#frequencyData {
+  display: inline-block;
+  max-width: 125px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
 .stat-items-secondary {
   display: flex;
   flex-direction: row;
@@ -1872,7 +1886,7 @@ input.error {
   max-width: 600px;
   width: 100%;
   justify-self: center;
-  margin-top: 12px;
+  margin-top: 0px;
 }
 
 .progress-value {
@@ -2155,7 +2169,7 @@ h3 {
 #displayUserName {
   font-size: 28px;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 2px;
   flex: 1;
   min-width: 0;
@@ -2168,6 +2182,8 @@ h3 {
   font-weight: 500;
   font-size: 20px;
   flex-shrink: 0;
+  /* margin-bottom: 4px; */
+  align-items: center;
 }
 
 /* Tekst nicku ograniczamy osobno */
@@ -2199,10 +2215,7 @@ h3 {
 
 #editUserName {
   display: flex;
-  flex-direction: row;
-  max-width: 360px;
-  width: 100%;
-
+  width: auto; 
   background: transparent;
   cursor: pointer;
   border: none;
@@ -2267,11 +2280,36 @@ h3 {
 }
 
 .heroLvlWrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  font-size: 20px;
-  font-weight: 500;
+  /* 🔥 Tworzymy idealne, elastyczne kółeczko */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center;
+  
+  width: 44px !important;  /* Średnica kółka (możesz zwiększyć do 40px, jeśli chcesz większe) */
+  height: 44px !important;
+  border-radius: 50% !important; /* Idealny okrąg */
+  
+  /* Stylistyka: ciemne półprzezroczyste tło + neonowa ramka */
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 2px solid var(--accent-color, #ffffff) !important; 
+  
+  /* Delikatny gamingowy blask wokół kółka */
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.15), 
+              inset 0 0 5px rgba(0, 255, 204, 0.1) !important;
+  
+  /* Bezpieczeństwo */
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#user-level-value {
+  font-size: 20px !important; /* Idealnie dobrany rozmiar fontu do kółka 36px */
+  font-weight: 800 !important; /* Gruby, czytelny, cyfrowy font */
+  color: var(--accent-color, #ffffff) !important; /* Kolor poziomów pasujący do ramki */
+  line-height: 1 !important;
+  text-align: center !important;
+  letter-spacing: -0.5px !important; /* Zgęszczenie cyfr przy wyższych levelach (np. 10+) */
 }
 
 .goalsContainer {
@@ -2351,6 +2389,10 @@ h3 {
   .tabNavItem,
   .tabNavItemSelected {
     font-size: 9px;
+  }
+
+  .modal-title-hide-mobile {
+    display: none !important;
   }
 
   .calendar {

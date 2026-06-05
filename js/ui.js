@@ -114,6 +114,16 @@ export const UI = {
     }
   },
 
+  applyRandomGradient: () => {
+    const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
+    const selectedGradient = GRADIENTS[randomIndex];
+
+    document.documentElement.style.setProperty(
+      "--hero-gradient",
+      selectedGradient
+    );
+  },
+
   // MODAL
 
   fillModalHabitSelect: async () => {
@@ -174,7 +184,6 @@ export const UI = {
       .forEach((cb) => (cb.checked = false));
   },
 
-  // 🔥 HYBRYDOWY PICKER: Z natychmiastowym gaszeniem gotowych ikon po kliknięciu w input customowy!
   setupHabitIconPicker: (activeEmoji) => {
     const wrapper = document.getElementById("habitIconWrapper");
     if (!wrapper) return;
@@ -239,7 +248,7 @@ export const UI = {
         user-select: none;
         box-sizing: border-box;
       `;
-      
+
       if (isPreset && emoji === UI.selectedHabitIcon) {
         iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
         iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
@@ -437,22 +446,17 @@ export const UI = {
     UI.setupHabitIconPicker("💧");
   },
 
-  applyRandomGradient: () => {
-    const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
-    const selectedGradient = GRADIENTS[randomIndex];
-
-    document.documentElement.style.setProperty(
-      "--hero-gradient",
-      selectedGradient
-    );
-  },
-
-  setModalMode: (mode = "create") => {
+  setModalMode: (mode = "create", type = "") => {
     const btn = document.getElementById("confirmAddBtn");
     const title = elements.modalTitle;
 
+    const formattedType = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
+
     if (mode === "create") {
-      if (title) title.textContent = "New";
+      if (title) {
+        title.textContent = "New";
+        title.classList.add("modal-title-hide-mobile");
+      }
       if (btn) {
         btn.textContent = "Create";
         btn.removeAttribute("data-edit-id");
@@ -460,7 +464,10 @@ export const UI = {
       }
     } else {
       // EDIT MODE
-      if (title) title.textContent = "Edit";
+      if (title) {
+        title.textContent = formattedType ? `Edit ${formattedType}` : "Edit";
+        title.classList.remove("modal-title-hide-mobile");
+      }
       if (btn) btn.textContent = "Save Changes";
     }
   },
@@ -470,7 +477,8 @@ export const UI = {
     
     AppState.currentCreateType = "habit"; 
     UI.resetModal(AppState);
-    UI.setModalMode("edit");
+    
+    UI.setModalMode("edit", "habit"); 
     await UI.toggleModalFields("habit", true);
 
     document.getElementById("taskName").value = habit.name || "";
@@ -483,22 +491,16 @@ export const UI = {
 
     const freqSelect = document.getElementById("habitFrequency");
     if (freqSelect) {
-      // 1. Najpierw ustawiamy wartość częstotliwości (weekly/monthly)
       freqSelect.value = habit.frequency || "daily";
-      
-      // 2. Natychmiast odpalamy event change, żeby UI wyrenderowało odpowiedni picker (dni tygodnia lub siatkę)
       freqSelect.dispatchEvent(new Event("change"));
     }
 
-    // 3. 🔥 DOPIERO TUTAJ, gdy UI przemieliło event 'change' i pokazało właściwy kontener,
-    // bezpiecznie aplikujemy zaznaczenia harmonogramu
     if (habit.schedule && Array.isArray(habit.schedule)) {
       const container = habit.frequency === "weekly" 
         ? elements.daysPicker 
         : document.getElementById("monthDaysGrid");
         
       if (container) {
-        // Dodatkowe bezpieczeństwo: na wszelki wypadki czyścimy tylko ten konkretny kontener przed nałożeniem
         container.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
         habit.schedule.forEach((val) => {
@@ -516,22 +518,20 @@ export const UI = {
       btn.setAttribute("data-edit-type", "habit");
     }
 
-    if (elements.modalTitle) elements.modalTitle.textContent = "Edit Habit";
+
     if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
   openEditGoalModal: async (goal, AppState) => {
     if (!AppState) return;
 
-    // 🔥 Aktualizujemy stan przed wywołaniem reszt logiki
     AppState.currentCreateType = "goal";
 
-    // 🔥 Naprawione: Teraz poprawnie przekazujemy AppState do resetModal
     UI.resetModal(AppState); 
-    UI.setModalMode("edit");
+    
+    UI.setModalMode("edit", "goal"); 
     await UI.toggleModalFields("goal", true);
 
-    if (elements.modalTitle) elements.modalTitle.textContent = "Edit Goal";
 
     const nameInput = document.getElementById("taskName");
     if (nameInput) nameInput.value = goal.name || "";
@@ -1069,12 +1069,12 @@ export const UI = {
       iconCircle.className = "habit-card-icon";
       iconCircle.textContent = habit.icon || habit.name.charAt(0).toUpperCase();
 
-      const nameLabel = document.createElement("p");
-      nameLabel.textContent = habit.name;
-      nameLabel.className = "habit-name-label";
+      // const nameLabel = document.createElement("p");
+      // nameLabel.textContent = habit.name;
+      // nameLabel.className = "habit-name-label";
 
       card.appendChild(iconCircle);
-      card.appendChild(nameLabel);
+      // card.appendChild(nameLabel);
 
       const isSelected =
         AppState.selectedHabitForStats?.id === habit.id ||
@@ -1082,7 +1082,7 @@ export const UI = {
 
       if (isSelected) {
         iconCircle.classList.add("active-habit-icon");
-        nameLabel.classList.add("active-habit-label");
+        // nameLabel.classList.add("active-habit-label");
 
         if (!AppState.selectedHabitForStats) {
           AppState.selectedHabitForStats = habit;
@@ -1099,7 +1099,7 @@ export const UI = {
           .forEach((el) => el.classList.remove("active-habit-label"));
 
         iconCircle.classList.add("active-habit-icon");
-        nameLabel.classList.add("active-habit-label");
+        // nameLabel.classList.add("active-habit-label");
 
         AppState.selectedHabitForStats = habit;
         UI.showHabitDetails(habit, AppState);

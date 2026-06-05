@@ -12,7 +12,11 @@ async function openAddTaskModal(AppState) {
   else AppState.currentCreateType = "task";
 
   UI.resetModal(AppState);
+  
+  UI.setModalMode("create", AppState.currentCreateType);
+
   await UI.fillModalHabitSelect();
+  
   elements.modalOverlay.classList.add("open");
 }
 

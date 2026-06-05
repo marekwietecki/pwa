@@ -50,8 +50,8 @@ export const Utils = {
   getFrequencyText: (habit) => {
     const freqMap = {
       daily: "Everyday",
-      weekly: "Every",
-      monthly: "Every",
+      weekly: " ",
+      monthly: " ",
     };
 
     let text = freqMap[habit.frequency] || habit.frequency;
@@ -63,10 +63,10 @@ export const Utils = {
         const selectedDays = [...schedule]
           .sort((a, b) => a - b)
           .map((dayNum) => dayNames[dayNum]);
-        text += `: ${selectedDays.join(", ")}`;
+        text += `${selectedDays.join(", ")}`;
       } else if (habit.frequency === "monthly") {
         const selectedDays = [...schedule].sort((a, b) => a - b);
-        text += `: ${selectedDays.join(", ")}`;
+        text += `${selectedDays.join(", ")}`;
       }
     }
     return text;
