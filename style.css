@@ -132,7 +132,12 @@ body {
 }
 
 .dynamic-card.has-banner {
-  background: rgba(255, 255, 255, 0.05); /* Twoje dotychczasowe tło glassmorphism */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.05
+  ); /* Twoje dotychczasowe tło glassmorphism */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -342,7 +347,7 @@ body::after {
   top: 0;
   z-index: 100;
   flex-shrink: 0;
-  padding: 0 4%;
+  padding: 0 8px 0 4%; /*4%*/
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -351,95 +356,107 @@ body::after {
   transition: all 0.3s ease;
 }
 
+/* ==========================================================================
+   🫧 NEUROBUBBLE SLIDING TAB NAVIGATION (CLEAN WHITE VERSION)
+   ========================================================================== */
+
+/* Główny kontener paska nawigacji */
 .tabNav {
+  position: relative; /* 🔥 KLUCZOWE: baza pozycjonowania dla kropelki */
   display: flex;
   height: 80px;
   justify-content: space-between;
   width: 40%;
+  align-items: center; /* Centrowanie elementów w pionie */
 }
+
+.tabNav a,
+.tabNav a:visited,
+.tabNav a:link {
+  color: rgb(169, 169, 169);
+}
+
+/* Bazowe reguły dla linków wewnątrz nawigacji */
 .tabNav a {
-  text-decoration: none;
-  width: 64px;
-  font-weight: 600;
+  position: relative;
+  z-index: 2; /* 🔥 KLUCZOWE: Muszą być ponad kropelką, żeby były klikalne */
+  height: 80%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  align-self: center;
+  text-decoration: none;
+  font-size: 9px;
+  font-weight: 400;
   gap: 2px;
 }
 
+/* Logo w navbarze */
 .navbar .logo {
   width: auto;
   flex-direction: row;
   min-width: 36px;
 }
 
-.tabNav a {
-  height: 80%;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-}
-
-/* Bazowy styl dla każdego taba (nieaktywnego) */
+/* Styl dla każdego taba (nieaktywnego) */
 .tabNavItem {
-  font-size: 9px;
-  font-weight: "400";
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.35) !important; /* Delikatne, nieaktywne ikony */
-  text-decoration: none;
+  color: rgba(169, 169, 169); /* Delikatne, nieaktywne ikony */
   width: 100%;
   height: 100%;
   border-radius: 30px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 🔥 NOWA, ULTRA-PRZEZROCZYSTA I OKRĄGŁA BAŃKA iOS */
-.tabNavItemSelected {
-  font-size: 9px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
+/* Styl po naciśnięciu / gdy strona jest aktywna - IDEALNA CZYSTA BIEL */
+.tabNavItem.active {
   color: #ffffff !important; /* Świecąca czysta biel dla aktywnej ikony */
+}
 
-  /* Idealne proporcje kapsuły pływającej wewnątrz paska */
-  width: 82%;
+/* Powiększenie i rozświetlenie ikony SVG wewnątrz aktywnej bańki - DOKŁADNIE JAK MIAŁEŚ */
+.tabNavItem.active svg {
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 4px rgba(169, 169, 169));
+  transition: all 0.2s ease;
+}
+
+/* 🔥 NOWY, ULTRA-PŁYNNY BĄBEL 60FPS */
+.tabNavIndicator {
+  view-transition-name: bubble;
+  position: absolute;
+  z-index: 1; /* Pod ikonami */
+  top: 12.5%;
+  left: 0;
+  
+  /* Łączna szerokość paska to 40% ekranu, mamy 4 karty, czyli jedna karta ma 25% szerokości paska.
+     Twoje idealne proporcje bąbla to 82% szerokości taba.
+     25% * 0.82 = 20.5% szerokości całego kontenera .tabNav! */
+  width: 20.5%; 
   height: 75%;
-
-  /* Zwiększona przezroczystość (z 0.13 na 0.07) dla lżejszego wyglądu */
+  
+  /* Twoje autorskie style szklanego bąbla iOS */
   background: rgba(255, 255, 255, 0.07) !important;
-
-  /* Maksymalne zaokrąglenie (kapsuła/bąbel) */
   border-radius: 30px;
-
-  /* Mocniejsze rozmycie warstwy pod bąblem */
   backdrop-filter: blur(12px) saturate(120%);
   -webkit-backdrop-filter: blur(12px) saturate(120%);
-
-  /* Bardzo cienka, elegancka obwódka imitująca luksusowe szkło */
   border: 1px solid rgba(255, 255, 255, 0.15);
-
-  /* Subtelny cień na zewnątrz i lekki połysk od góry (inset) */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0px rgba(255, 255, 255, 0.2);
+              inset 0 1px 0px rgba(255, 255, 255, 0.2);
 
-  /* Płynny, organiczny skok sprężyny iOS przy renderowaniu */
-  animation: iosPopCubic 0.4s cubic-bezier(0.25, 1.1, 0.4, 1);
+  /* 🔥 WYMUSZENIE AKCELERACJI SPRZĘTOWEJ (GPU) DLA PEŁNEJ PŁYNNOŚCI */
+  will-change: transform;
+  
+  /* Zamiast left/width animujemy wyłącznie transform przy użyciu Twojego sprężystego cubic-bezier */
+  transition: transform 0.38s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
 }
 
-/* Powiększenie i rozświetlenie ikony wewnątrz aktywnej bańki */
-.tabNavItemSelected svg {
-  transform: scale(1.04);
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
-  transition: all 0.2s ease;
+/* Wymuszamy biały kolor dla ikony SVG oraz dla każdego elementu wewnątrz aktywnego taba, 
+   żeby zabić jakikolwiek fioletowy kolor z innych reguł */
+.tabNavItem.active svg,
+.tabNavItem.active * {
+  color: #ffffff !important;
+  fill: none; /* Jeśli Twoje SVG używają stroke, zostawiamy fill na none */
+  stroke: #ffffff !important; /* Wymuszenie białego konturu ikon Lucide */
 }
 
 @keyframes iosPopCubic {
@@ -704,13 +721,21 @@ main {
   overflow: hidden;
   margin-top: 8px;
   padding: 0;
-  margin-bottom: 0; 
+  margin-bottom: 0;
 
   /* 🔥 NOWOŚĆ: Dodajemy maskę gradientową na sam dół kontenera */
   /* Od góry (0%) do 85% wysokości element jest w 100% widoczny (nieprzezroczysty) */
   /* Od 85% do 100% (samego dołu) płynnie zanika do zera (pełna przezroczystość) */
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 72%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 72%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 #toDoList,
 #calendarToDoList,
@@ -721,7 +746,7 @@ main {
   -webkit-overflow-scrolling: touch;
   /* 🔥 DODAJEMY padding na dole, żeby ostatnie zadanie na liście dało się przewinąć 
      poza strefę zanikania i użytkownik mógł je bez problemu kliknąć */
-  padding: 0 20px 60px 20px; 
+  padding: 0 20px 60px 20px;
   margin: 0;
 }
 
@@ -758,13 +783,13 @@ main {
 }
 
 .taskNodeName {
-  display: -webkit-box;           /* Przełączamy w tryb boxa WebKit */
-  -webkit-line-clamp: 2;          /* 🔥 Blokada na dokładnie 2 linijki */
-  -webkit-box-orient: vertical;   /* Układ pionowy dla boxa */
-  overflow: hidden;               /* Ukrywamy to, co wystaje poza 2 linie */
-  text-overflow: ellipsis;        /* 🔥 Dodajemy automatyczne "..." na końcu */
-  
-  word-break: break-word;         /* Bezpieczne łamanie długich słów */
+  display: -webkit-box; /* Przełączamy w tryb boxa WebKit */
+  -webkit-line-clamp: 2; /* 🔥 Blokada na dokładnie 2 linijki */
+  -webkit-box-orient: vertical; /* Układ pionowy dla boxa */
+  overflow: hidden; /* Ukrywamy to, co wystaje poza 2 linie */
+  text-overflow: ellipsis; /* 🔥 Dodajemy automatyczne "..." na końcu */
+
+  word-break: break-word; /* Bezpieczne łamanie długich słów */
   flex: 1;
   min-width: 0;
 }
@@ -795,11 +820,16 @@ main {
   color: #b30000;
 }
 
+.taskContent {
+  align-items: center;
+  justify-content: center;
+}
+
 .taskLabel {
   display: flex;
-  align-items: flex-start; 
+  align-items: center;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 3px;
   font-size: 14px;
   font-weight: 600;
 
@@ -808,8 +838,8 @@ main {
 }
 
 .taskLabel svg {
-  margin-top: 3px; 
-  flex-shrink: 0;  /* Pilnuje, żeby ikonka nigdy się nie spłaszczyła */
+  margin-top: 3px;
+  flex-shrink: 0; /* Pilnuje, żeby ikonka nigdy się nie spłaszczyła */
 }
 
 /*
@@ -1166,8 +1196,6 @@ main {
   font-weight: 600;
   width: 184px; /* 32% */
 
-
-  
   white-space: nowrap; /* hidden text in one line*/
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1539,8 +1567,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 10px 16px;
   border-radius: 24px;
 
-  min-width: 160px !important;       
-  max-width: 224px !important;    
+  min-width: 160px !important;
+  max-width: 224px !important;
   width: 100% !important;
 
   white-space: nowrap; /* hidden text in one line*/
@@ -1645,18 +1673,18 @@ input.error {
   max-width: 600px;
   margin: 12px auto;
   padding: 12px 20px;
-  
+
   display: flex !important;
-  flex-direction: column !important; 
-  justify-content: center !important;  
-  align-items: center !important;      
-  min-height: 80px; 
-  
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 80px;
+
   text-align: center;
   background: transparent;
   border: none;
   box-shadow: none;
-  transition: all 0.4s ease; 
+  transition: all 0.4s ease;
 }
 
 .dynamic-card.has-banner {
@@ -1683,15 +1711,15 @@ input.error {
   display: flex;
   overflow-x: auto;
   gap: 15px;
-  padding: 0px 16px 16px; 
+  padding: 0px 16px 16px;
   scroll-snap-type: x mandatory;
   max-width: 600px;
   align-items: center;
   justify-content: safe center;
-  
+
   margin-left: auto;
   margin-right: auto;
-  
+
   scrollbar-width: none; /* Firefox */
   -webkit-overflow-scrolling: touch; /* Płynny scroll na iOS */
 }
@@ -1750,7 +1778,7 @@ input.error {
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-bubble);
   transition: all 0.3s ease;
-  opacity: .56;
+  opacity: 0.56;
 }
 
 .habit-name-label {
@@ -1773,7 +1801,7 @@ input.error {
   max-width: 280px;
   display: flex;
   margin: 0 auto 4px;
-} 
+}
 
 .crucialHabitStats {
   display: flex;
@@ -2215,7 +2243,7 @@ h3 {
 
 #editUserName {
   display: flex;
-  width: auto; 
+  width: auto;
   background: transparent;
   cursor: pointer;
   border: none;
@@ -2285,19 +2313,19 @@ h3 {
   align-items: center !important;
   justify-content: center !important;
   align-self: center;
-  
-  width: 44px !important;  /* Średnica kółka (możesz zwiększyć do 40px, jeśli chcesz większe) */
+
+  width: 44px !important; /* Średnica kółka (możesz zwiększyć do 40px, jeśli chcesz większe) */
   height: 44px !important;
   border-radius: 50% !important; /* Idealny okrąg */
-  
+
   /* Stylistyka: ciemne półprzezroczyste tło + neonowa ramka */
   background: rgba(255, 255, 255, 0.03) !important;
-  border: 2px solid var(--accent-color, #ffffff) !important; 
-  
+  border: 2px solid var(--accent-color, #ffffff) !important;
+
   /* Delikatny gamingowy blask wokół kółka */
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.15), 
-              inset 0 0 5px rgba(0, 255, 204, 0.1) !important;
-  
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.15),
+    inset 0 0 5px rgba(0, 255, 204, 0.1) !important;
+
   /* Bezpieczeństwo */
   flex-shrink: 0 !important;
   box-sizing: border-box !important;
@@ -2306,7 +2334,10 @@ h3 {
 #user-level-value {
   font-size: 20px !important; /* Idealnie dobrany rozmiar fontu do kółka 36px */
   font-weight: 800 !important; /* Gruby, czytelny, cyfrowy font */
-  color: var(--accent-color, #ffffff) !important; /* Kolor poziomów pasujący do ramki */
+  color: var(
+    --accent-color,
+    #ffffff
+  ) !important; /* Kolor poziomów pasujący do ramki */
   line-height: 1 !important;
   text-align: center !important;
   letter-spacing: -0.5px !important; /* Zgęszczenie cyfr przy wyższych levelach (np. 10+) */
@@ -2332,6 +2363,303 @@ h3 {
   padding-top: 4px;
 }
 
+/* ==========================================================================
+   🔥 EXTRA GAMING LEVEL UP ANIMATIONS & MODAL
+   ========================================================================== */
+
+/* Klasa, którą JS na chwilę wrzuci na kółko podczas awansu */
+.level-up-flash {
+  animation: circlePunchFlash 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    forwards;
+}
+
+@keyframes circlePunchFlash {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+  }
+  30% {
+    transform: scale(1.3); /* Kółko gwałtownie rośnie */
+    border-color: #00ffcc !important; /* Zamienia się w czysty neon */
+    background: rgba(0, 255, 204, 0.4) !important; /* Wypełnia się blaskiem */
+    box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+/* Szklany Banner / Toast z góry ekranu */
+.level-up-toast {
+  position: fixed;
+  top: -100px; /* Schowany nad ekranem */
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  width: 90%;
+  max-width: 400px;
+  background: rgba(10, 15, 28, 0.75); /* Głęboki, mroczny szklany podkład */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  border-radius: 20px;
+  padding: 16px 20px;
+  z-index: 99999; /* Zawsze na samym wierzchu */
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.1);
+  transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Stan aktywny - wjazd na ekran */
+.level-up-toast.show {
+  top: 24px; /* Zjeżdża na bezpieczną odległość od krawędzi */
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Wewnętrzny pulsacyjny blask tła modalu */
+.level-up-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 204, 0.15) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  animation: rotateGlow 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateGlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.level-up-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.level-up-icon {
+  font-size: 28px;
+  animation: bubblePop 1s ease infinite alternate;
+}
+
+@keyframes bubblePop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    transform: scale(1.15) rotate(5deg);
+  }
+}
+
+.level-up-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-up-subtitle {
+  font-size: 11px;
+  font-weight: 900;
+  color: #00ffcc;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+  margin-bottom: 2px;
+}
+
+.level-up-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Dynamiczne płynne przejście dla paska postępu (gwarantuje kinowy przelot) */
+.levelIndicator .progress-bar-fill {
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   🫧 ONBOARDING SLIDER COMPLEMENTARY STYLES
+   ========================================================================== */
+
+/* Ukrywanie przycisku dodawania zadań, gdy modal przewodnika jest otwarty — identycznie jak u Ciebie */
+.modal-overlay.open ~ .addTaskBtn {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Klon Twojego oryginalnego stylu #closeModal dla przewodnika */
+.infoWrapper {
+  transition: opacity 0.2s;
+}
+
+.infoWrapper:hover {
+  opacity: 72%;
+}
+
+.guide-close-circle {
+  background-color: rgba(0, 0, 0, 0);
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-bubble);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guide-close-circle:hover {
+  opacity: 72%; /* Dokładnie Twoje 72% hoveru! */
+}
+
+/* Mechanika Karuzeli Slajdów wewnątrz modal-sheet */
+.guide-modal-carousel {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  flex: 1;
+}
+
+.guide-slides-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  /* Śpiewające, równe przejście dopasowane czasowo do Twoich modalów (0.3s) */
+  transition: transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
+}
+
+.guide-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  /* Matchuje się z max-height Twojego modal-sheet */
+  max-height: calc(100vh - 180px);
+  max-height: calc(100dvh - 180px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+
+/* --- Detale estetyczne treści (sekcje, ikonki) --- */
+.guide-section h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-num {
+  background: rgba(255, 255, 255, 0.08);
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.guide-grid, .guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.guide-item-icon {
+  font-size: 20px;
+  min-width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.color-task { box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.15); }
+.color-habit { box-shadow: inset 0 0 8px rgba(255, 102, 0, 0.15); }
+
+.guide-item-text h4 { margin: 0 0 2px 0; font-size: 14px; font-weight: 500; color: white; }
+.guide-item-text p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.55); line-height: 1.4; }
+
+.guide-list-item { display: flex; gap: 12px; align-items: flex-start; }
+.guide-action-icon { font-size: 14px; background: rgba(255, 255, 255, 0.06); padding: 6px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); line-height: 1; }
+.guide-list-item p { margin: 0; font-size: 13px; line-height: 1.4; color: rgba(255, 255, 255, 0.75); }
+
+.guide-block-info { background: rgba(255, 255, 255, 0.02); border-left: 3px solid rgba(255, 255, 255, 0.2); padding: 14px 16px; border-radius: 0 16px 16px 0; border: 1px solid rgba(255, 255, 255, 0.04); border-left: 3px solid rgba(255, 255, 255, 0.2); }
+.guide-block-info p { margin: 0; font-size: 13px; line-height: 1.4; color: rgba(255, 255, 255, 0.6); }
+
+/* Stopka z kropkami iOS */
+.guide-modal-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guide-dots-container { display: flex; gap: 8px; align-items: center; }
+.guide-dot { width: 8px; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.25s ease; }
+.guide-dot.active { background: #ffffff; width: 18px; border-radius: 4px; box-shadow: 0 0 8px rgba(255, 255, 255, 0.4); }
+
+/* Przycisk akceptacji */
+.guide-primary-btn {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-bubble);
+}
+
+.guide-primary-btn:hover { transform: translateY(-1px); opacity: 90%; }
+.guide-primary-btn:active { transform: translateY(0); }
+
 @media (max-width: 740px) {
   .logo {
     display: none;
@@ -2352,7 +2680,7 @@ h3 {
     margin: 8px; /* nadpisujemy margin: 16px z desktopa */
     box-sizing: border-box;
     border-radius: 36px;
-    padding: 0 16px;
+    padding: 0px 4px;
     height: 64px;
     z-index: 200;
     display: flex;

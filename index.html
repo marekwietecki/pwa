@@ -114,7 +114,8 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
         />
       </a>
       <nav class="tabNav">
-        <a href="/index.html" class="tabNavItemSelected">
+        <div class="tabNavIndicator" id="tabIndicator"></div>
+        <a href="/index.html" class="tabNavItem active">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -402,6 +403,17 @@ CLS skok nieprzewidziany -> 0.1 to dobry próg
     >
       +
     </button>
+
+    <div id="levelUpToast" class="level-up-toast">
+      <div class="level-up-glow"></div>
+      <div class="level-up-content">
+        <div class="level-up-icon">🫧</div>
+        <div class="level-up-text">
+          <span class="level-up-subtitle">LEVEL UP!</span>
+          <span class="level-up-title">You just acheived higher level!</span>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="./js/app.js"></script>
   </body>

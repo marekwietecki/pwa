@@ -89,11 +89,11 @@ export const UI = {
     return container;
   },
 
-  updateUserHeader: async () => {
+  updateUserHeader: async (AppState) => {
     const stats = await DataManager.getUserStats();
     const nameLabel = document.getElementById("displayUserName");
     if (nameLabel) nameLabel.textContent = stats.userName;
-    await UI.updateXPBar();
+    await UI.updateXPBar(AppState);
   },
 
   renderCurrentPage: async (AppState) => {
@@ -436,7 +436,7 @@ export const UI = {
     const scheduleCheckboxes = document.querySelectorAll(
       '#daysPicker input[type="checkbox"], #monthDaysGrid input[type="checkbox"]'
     );
-    scheduleCheckboxes.forEach(cb => cb.checked = false);
+    scheduleCheckboxes.forEach((cb) => (cb.checked = false));
 
     // 3. Przełączanie widoczności pól na bazie aktualnego typu
     UI.toggleModalFields(AppState.currentCreateType, false);
@@ -450,7 +450,9 @@ export const UI = {
     const btn = document.getElementById("confirmAddBtn");
     const title = elements.modalTitle;
 
-    const formattedType = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
+    const formattedType = type
+      ? type.charAt(0).toUpperCase() + type.slice(1)
+      : "";
 
     if (mode === "create") {
       if (title) {
@@ -474,11 +476,11 @@ export const UI = {
 
   openEditHabitModal: async (habit, AppState) => {
     if (!AppState) return;
-    
-    AppState.currentCreateType = "habit"; 
+
+    AppState.currentCreateType = "habit";
     UI.resetModal(AppState);
-    
-    UI.setModalMode("edit", "habit"); 
+
+    UI.setModalMode("edit", "habit");
     await UI.toggleModalFields("habit", true);
 
     document.getElementById("taskName").value = habit.name || "";
@@ -496,12 +498,15 @@ export const UI = {
     }
 
     if (habit.schedule && Array.isArray(habit.schedule)) {
-      const container = habit.frequency === "weekly" 
-        ? elements.daysPicker 
-        : document.getElementById("monthDaysGrid");
-        
+      const container =
+        habit.frequency === "weekly"
+          ? elements.daysPicker
+          : document.getElementById("monthDaysGrid");
+
       if (container) {
-        container.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        container
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach((cb) => (cb.checked = false));
 
         habit.schedule.forEach((val) => {
           const cb = container.querySelector(`input[value="${val}"]`);
@@ -518,7 +523,6 @@ export const UI = {
       btn.setAttribute("data-edit-type", "habit");
     }
 
-
     if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
@@ -527,11 +531,10 @@ export const UI = {
 
     AppState.currentCreateType = "goal";
 
-    UI.resetModal(AppState); 
-    
-    UI.setModalMode("edit", "goal"); 
-    await UI.toggleModalFields("goal", true);
+    UI.resetModal(AppState);
 
+    UI.setModalMode("edit", "goal");
+    await UI.toggleModalFields("goal", true);
 
     const nameInput = document.getElementById("taskName");
     if (nameInput) nameInput.value = goal.name || "";
@@ -653,7 +656,9 @@ export const UI = {
 
     // HABITS
     // (Sortowanie nawyków opcjonalnie alfabetycznie, żeby nie skakały losowo)
-    const sortedHabits = [...savedHabits].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedHabits = [...savedHabits].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
 
     sortedHabits.forEach((habit) => {
       if (dateKey < Utils.formatDateKey(new Date(habit.createdAt))) return;
@@ -879,7 +884,7 @@ export const UI = {
     }
 
     taskContent.appendChild(taskLabel);
-    
+
     // Wrzucamy standardowe metadane (np. lokalizację)
     taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));
 
@@ -888,7 +893,10 @@ export const UI = {
       overdueBadge.className = "task-overdue-date-badge";
 
       // Tworzymy ikonkę kalendarza SVG (czysty kod, pasuje do reszty Lucide Icons w aplikacji)
-      const calendarSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const calendarSvg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+      );
       calendarSvg.setAttribute("width", "12");
       calendarSvg.setAttribute("height", "12");
       calendarSvg.setAttribute("viewBox", "0 0 24 24");
@@ -897,32 +905,47 @@ export const UI = {
       calendarSvg.setAttribute("stroke-width", "2");
       calendarSvg.setAttribute("stroke-linecap", "round");
       calendarSvg.setAttribute("stroke-linejoin", "round");
-      
+
       // 🔥 TUTAJ BYŁ PIES POGRZEBANY: Używamy setAttribute zamiast .className
-      calendarSvg.setAttribute("class", "lucide lucide-calendar overdue-calendar-icon");
+      calendarSvg.setAttribute(
+        "class",
+        "lucide lucide-calendar overdue-calendar-icon"
+      );
 
       // Ścieżki SVG dla klasycznego kalendarza
-      const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      const rect = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "rect"
+      );
       rect.setAttribute("width", "14");
       rect.setAttribute("height", "14");
       rect.setAttribute("x", "5");
       rect.setAttribute("y", "6");
       rect.setAttribute("rx", "1.5"); // Lekko mniejszy zaokrąglony róg, żeby pasował do skali
       rect.setAttribute("ry", "1.5");
-      
-      const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+
+      const line1 = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "line"
+      );
       line1.setAttribute("x1", "15");
       line1.setAttribute("x2", "15");
       line1.setAttribute("y1", "4");
       line1.setAttribute("y2", "8");
 
-      const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      const line2 = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "line"
+      );
       line2.setAttribute("x1", "9");
       line2.setAttribute("x2", "9");
       line2.setAttribute("y1", "4");
       line2.setAttribute("y2", "8");
 
-      const line3 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      const line3 = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "line"
+      );
       line3.setAttribute("x1", "5");
       line3.setAttribute("x2", "19");
       line3.setAttribute("y1", "11");
@@ -1198,29 +1221,6 @@ export const UI = {
       countEl.textContent = `${stats.completed} / ${stats.scheduled}`;
   },
 
-  updateXPBar: async () => {
-    const stats = await DataManager.getUserStats();
-    const threshold = LevelManager.getXpThreshold(stats.level);
-    const progressPercent = (stats.currentXp / threshold) * 100;
-
-    document
-      .getElementById("xp-progress-bar")
-      ?.style.setProperty("width", `${progressPercent}%`);
-
-    const elementsToUpdate = {
-      "user-level-value": stats.level,
-      currentLevel: stats.level,
-      "next-level-value": stats.level + 1,
-      "xp-next-level": `${Math.floor(stats.currentXp)} / ${threshold}`,
-      "total-xp-value": stats.totalXp.toLocaleString(),
-    };
-
-    Object.entries(elementsToUpdate).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = val;
-    });
-  },
-
   modalTimer: null,
 
   showModalMessage: (text, duration = 3000) => {
@@ -1270,4 +1270,287 @@ export const UI = {
       elements.userNameInput.select();
     }
   },
+
+  updateXPBar: async (AppState) => {
+    const stats = await DataManager.getUserStats();
+    const threshold = LevelManager.getXpThreshold(stats.level);
+    const progressPercent = (stats.currentXp / threshold) * 100;
+
+    // 🔥 KROK 1: Inicjalizujemy globalnego strażnika bezwzględnie w obiekcie UI (jeśli jeszcze nie istnieje)
+    if (UI.lastObservedLevelGlobal === undefined) {
+      const el = document.getElementById("user-level-value");
+      UI.lastObservedLevelGlobal = el
+        ? parseInt(el.textContent, 10) || stats.level
+        : stats.level;
+    }
+
+    // 🔥 LOGI DEWELOPERSKIE - SPRAWDZAMY GLOBALNEGO STRAŻNIKA W PAMIĘCI UI
+    console.log("=== 🫧 NEUROBUBBLE GLOBAL UI OBJECT CHECK ===");
+    console.log("Poziom aktualny z bazy:", stats.level);
+    console.log("Ostatni zapamiętany poziom w UI:", UI.lastObservedLevelGlobal);
+    console.log(
+      "Czy poziom z bazy jest większy?:",
+      stats.level > UI.lastObservedLevelGlobal
+    );
+
+    // 🔥 KROK 2: Pancerne porównanie. Jeśli poziom z bazy wzrósł w stosunku do tego, co UI pamięta globalnie
+    if (stats.level > UI.lastObservedLevelGlobal) {
+      console.log(
+        "🚀 BINGO! Wykryto awans w pamięci globalnej UI. Odpalam animację."
+      );
+
+      // Aktualizujemy strażnika natychmiast, żeby kolejne szybkie wywołania (te duble z logów) nie odpaliły animacji drugi raz!
+      UI.lastObservedLevelGlobal = stats.level;
+
+      // Odpalamy show!
+      UI.triggerLevelUpAnimation(stats.level);
+    } else {
+      console.log("📉 Brak awansu lub dubel wywołania.");
+
+      // Standardowa aktualizacja paska dla zwykłego przyrostu XP
+      const progressBar = document.getElementById("xp-progress-bar");
+      if (progressBar) {
+        progressBar.style.setProperty("width", `${progressPercent}%`);
+      }
+
+      const currentDisplayedLevelEl =
+        document.getElementById("user-level-value");
+      if (currentDisplayedLevelEl) {
+        currentDisplayedLevelEl.textContent = stats.level;
+      }
+
+      // Aktualizujemy na wypadek, gdyby poziom spadł lub ładował się na start
+      UI.lastObservedLevelGlobal = stats.level;
+    }
+
+    // Aktualizacja reszty statystyk tekstowych
+    const elementsToUpdate = {
+      currentLevel: stats.level,
+      "next-level-value": stats.level + 1,
+      "xp-next-level": `${Math.floor(stats.currentXp)} / ${threshold}`,
+      "total-xp-value": stats.totalXp.toLocaleString(),
+    };
+
+    Object.entries(elementsToUpdate).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    });
+  },
+
+  /**
+   * 🔥 EFEKTOWNA ANIMACJA LEVEL UP (TOP TOAST) - WERSJA PANCERNA
+   * @param {number} newLevelValue - Numer nowego poziomu
+   */
+  triggerLevelUpAnimation(newLevelValue) {
+    // Łapiemy elementy ŚWIEŻO z DOM w momencie wywołania funkcji
+    const progressBar = document.getElementById("xp-progress-bar");
+    const levelText = document.getElementById("user-level-value");
+    const levelCircle = document.querySelector(".heroLvlWrapper");
+    const toast = document.getElementById("levelUpToast");
+
+    // Jeśli nie ma nawet toasta w HTML, to nic nie zrobimy
+    if (!toast) {
+      console.error(
+        "⚠️ LevelUp Error: Nie znaleziono elementu #levelUpToast w HTML!"
+      );
+      return;
+    }
+
+    // --- SEKCJA ANIMACJI EKRANU GŁÓWNEGO (odpala się tylko gdy jesteśmy na ekranie głównym) ---
+    if (progressBar) {
+      // ETAP 1: Błyskawiczne nabicie paska doświadczenia do 100%
+      progressBar.style.width = "100%";
+
+      // ETAP 2: Po uderzeniu paska (350ms) odpalamy błysk kółka i podmieniamy cyfrę poziomu
+      setTimeout(() => {
+        if (levelCircle) levelCircle.classList.add("level-up-flash");
+        if (levelText) levelText.textContent = newLevelValue;
+
+        // Resetujemy pasek na 0% w tle
+        progressBar.style.transition = "none";
+        progressBar.style.width = "0%";
+
+        setTimeout(() => {
+          progressBar.style.transition = "";
+        }, 50);
+      }, 350);
+    } else {
+      // Jeśli jesteśmy na innej podstronie, po prostu cicho aktualizujemy cyfrę (jeśli element gdzieś tam jest)
+      if (levelText) levelText.textContent = newLevelValue;
+    }
+
+    // --- SEKCJA BANERU (odpala się ZAWSZE i wszędzie) ---
+    setTimeout(
+      () => {
+        const toastSubtitle = toast.querySelector(".level-up-subtitle");
+        if (toastSubtitle) {
+          toastSubtitle.textContent = `LEVEL UP: LEVEL ${newLevelValue} 🫧`;
+        }
+
+        // Wjeżdżamy z banerem z góry ekranu
+        toast.classList.add("show");
+
+        // ETAP 4: Automatyczne schowanie baneru po 4 sekundach wyświetlania
+        setTimeout(() => {
+          toast.classList.remove("show");
+
+          // Czyszczenie klasy błysku z kółka
+          setTimeout(() => {
+            if (levelCircle) levelCircle.classList.remove("level-up-flash");
+          }, 600);
+        }, 4000);
+      },
+      progressBar ? 550 : 50
+    ); // Jeśli nie ma paska, baner wjeżdża natychmiast (po 50ms)!
+  },
+
+  initTabNav() {
+    const navContainer = document.querySelector(".tabNav");
+    const indicator = document.getElementById("tabIndicator");
+    const navItems = document.querySelectorAll(".tabNavItem");
+
+    if (!navContainer || !indicator || navItems.length === 0) return;
+
+    const activeIndex = Array.from(navItems).findIndex((item) =>
+      item.classList.contains("active")
+    );
+    const safeIndex = activeIndex !== -1 ? activeIndex : 0;
+
+    const getTranslateX = (index) => {
+      const containerRect = navContainer.getBoundingClientRect();
+      const itemRect = navItems[index].getBoundingClientRect();
+      const itemCenter =
+        itemRect.left - containerRect.left + itemRect.width / 2;
+      return itemCenter - indicator.offsetWidth / 2;
+    };
+
+    const targetX = getTranslateX(safeIndex);
+
+    indicator.style.transition = "none";
+    indicator.style.transform = `translateX(${targetX}px)`;
+    indicator.style.opacity = "1";
+
+    navItems.forEach((item, index) => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+        const href = item.getAttribute("href");
+
+        if (document.startViewTransition) {
+          document.startViewTransition(() => {
+            window.location.href = href;
+          });
+        } else {
+          window.location.href = href;
+        }
+      });
+    });
+  },
+
+  /**
+   * 🫧 INICJALIZACJA OBSŁUGI WIELOEKRANOWEGO PRZEWODNIKA (PANCERNY FIX)
+   */
+  initGuideModal() {
+    const overlay = document.getElementById("guideModal");
+    const closeBtn = document.getElementById("closeGuideBtn");
+    const nextBtn = document.getElementById("understandGuideBtn");
+    const track = document.getElementById("guideSlidesTrack");
+
+    if (!overlay || !track || !nextBtn) return;
+
+    let currentSlide = 0;
+
+    // Funkcja nawigacji po slajdach
+    const goToSlide = (index) => {
+      // Łapiemy kropeczki dynamicznie na żywo
+      const dynamicDots = overlay.querySelectorAll(".guide-dot");
+      const totalSlides = dynamicDots.length || 3; // fallback na 3 slajdy jeśli pusto
+
+      if (index < 0 || index >= totalSlides) return;
+      currentSlide = index;
+
+      // Przesuwamy tor sprzętowo na GPU
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+      // Aktualizujemy kropeczki podstron
+      dynamicDots.forEach((dot) => dot.classList.remove("active"));
+      if (dynamicDots[currentSlide])
+        dynamicDots[currentSlide].classList.add("active");
+
+      // Podmiana etykiety przycisku akcji na finiszu
+      if (currentSlide === totalSlides - 1) {
+        nextBtn.innerHTML = "Wszystko jasne, lecimy! 🚀";
+      } else {
+        nextBtn.innerHTML = "Dalej ➡️";
+      }
+    };
+
+    // Usuwamy stare listenery (na wypadek podwójnego wywołania) i dodajemy nowy
+    nextBtn.replaceWith(nextBtn.cloneNode(true));
+    const freshNextBtn = document.getElementById("understandGuideBtn");
+
+    freshNextBtn.addEventListener("click", (e) => {
+      e.preventDefault(); // Blokujemy ewentualne przeładowanie/skoki strony
+
+      const dynamicDots = overlay.querySelectorAll(".guide-dot");
+      const totalSlides = dynamicDots.length || 3;
+
+      if (currentSlide < totalSlides - 1) {
+        goToSlide(currentSlide + 1);
+      } else {
+        // Zamykamy używając Twojej natywnej klasy .open
+        overlay.classList.remove("open");
+        setTimeout(() => goToSlide(0), 300); // Reset karuzeli w tle po zamknięciu
+      }
+    });
+
+    // Skakanie po kropkach bezpośrednio kliknięciem (szukamy kontenera i nasłuchujemy na żywo)
+    const dotsContainer = document.getElementById("guideDots");
+    if (dotsContainer) {
+      dotsContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("guide-dot")) {
+          const targetIndex = parseInt(e.target.getAttribute("data-index"));
+          goToSlide(targetIndex);
+        }
+      });
+    }
+
+    // Wymuszone zamknięcie (X, kliknięcie w tło, ESC)
+    const closeModalForce = () => {
+      overlay.classList.remove("open");
+      setTimeout(() => goToSlide(0), 300);
+    };
+
+    if (closeBtn) {
+      closeBtn.replaceWith(closeBtn.cloneNode(true));
+      document
+        .getElementById("closeGuideBtn")
+        .addEventListener("click", closeModalForce);
+    }
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModalForce();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) {
+        closeModalForce();
+      }
+    });
+  },
+
+  /**
+   * 🔓 OTWARCIE MODALA PRZEWODNIKA (Wykorzystuje Twoją klasę .open)
+   */
+  showGuide() {
+    const overlay = document.getElementById("guideModal");
+    if (overlay) {
+      overlay.classList.add("open");
+    } else {
+      console.error(
+        "⚠️ Guide Error: Nie znaleziono elementu #guideModal w DOM!"
+      );
+    }
+  },
 };
+
+window.UI = UI;

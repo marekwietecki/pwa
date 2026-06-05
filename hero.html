@@ -35,6 +35,7 @@
         />
       </a>
       <nav class="tabNav">
+        <div class="tabNavIndicator" id="tabIndicator"></div>
         <a href="/index.html" class="tabNavItem">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +103,7 @@
           </svg>
           Habits
         </a>
-        <a href="/hero.html" class="tabNavItemSelected">
+        <a href="/hero.html" class="tabNavItem active">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -222,6 +223,31 @@
           <div class="totalXpWrapper">
             Total XP gained:
             <span id="total-xp-value">0</span>
+          </div>
+        </div>
+        <div class="actionsWrapper">
+          <div
+            class="infoWrapper"
+            onclick="UI.showGuide()"
+            style="cursor: pointer"
+            title="Zobacz przewodnik"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-info-icon lucide-info guide-info-trigger"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
           </div>
         </div>
       </div>
@@ -414,6 +440,169 @@
     >
       +
     </button>
+
+    <div id="levelUpToast" class="level-up-toast">
+      <div class="level-up-glow"></div>
+      <div class="level-up-content">
+        <div class="level-up-icon">🫧</div>
+        <div class="level-up-text">
+          <span class="level-up-subtitle">LEVEL UP!</span>
+          <span class="level-up-title">You just acheived higher level!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🫧 MODAL ONBOARDINGOWY / PRZEWODNIK NEUROBUBBLE -->
+    <div id="guideModal" class="modal-overlay">
+      <div class="modal-sheet">
+        <!-- Twój oryginalny nagłówek modala -->
+        <div class="modal-header">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span
+              style="
+                font-size: 24px;
+                filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
+              "
+              >🫧</span
+            >
+            <h2
+              style="
+                font-size: 20px;
+                font-weight: 600;
+                margin: 0;
+                letter-spacing: -0.5px;
+                color: white;
+              "
+            >
+              How does HabitBubbl work?
+            </h2>
+          </div>
+          <!-- Twój okrągły, szklany przycisk zamykania -->
+          <button
+            id="closeGuideBtn"
+            class="guide-close-circle"
+            aria-label="Zamknij przewodnik"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="display: block; margin: 0 auto; color: white"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Karuzela slajdów dopasowana do wewnątrz szklanej karty -->
+        <div class="guide-modal-carousel">
+          <div class="guide-slides-track" id="guideSlidesTrack">
+            <!-- SLAJD 1: Rodzaje aktywności -->
+            <div class="guide-slide">
+              <section class="guide-section">
+                <h3><span class="guide-num">1</span> Rodzaje aktywności</h3>
+                <div class="guide-grid">
+                  <div class="guide-item">
+                    <div class="guide-item-icon color-task">✅</div>
+                    <div class="guide-item-text">
+                      <h4>Task</h4>
+                      <p>
+                        One-time action planned for specific day. Do it, tick it
+                        off and forget!
+                      </p>
+                    </div>
+                  </div>
+                  <div class="guide-item">
+                    <div class="guide-item-icon color-habit">🔥</div>
+                    <div class="guide-item-text">
+                      <h4>Habit</h4>
+                      <p>
+                        Repeatable activity, which You continuously complete.
+                        Keep the streak!
+                      </p>
+                    </div>
+                  </div>
+                  <div class="guide-item">
+                    <div class="guide-item-icon color-goal">🎯</div>
+                    <div class="guide-item-text">
+                      <h4>Goal</h4>
+                      <p>
+                        Long-term goal - specify it and strive for acheivement.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- SLAJD 2: Obsługa zadań -->
+            <div class="guide-slide">
+              <section class="guide-section">
+                <h3><span class="guide-num">2</span> Task management</h3>
+                <div class="guide-list">
+                  <div class="guide-list-item">
+                    <span class="guide-action-icon">➕</span>
+                    <p>
+                      <strong>Adding:</strong> Tap the plus on the right bottom
+                      of the screen. Choose the category, enter the name and
+                      other details.
+                    </p>
+                  </div>
+                  <div class="guide-list-item">
+                    <span class="guide-action-icon">✏️</span>
+                    <p>
+                      <strong>Edit:</strong> Przytrzymaj dłużej kartę zadania,
+                      aby zmienić szczegóły.
+                    </p>
+                  </div>
+                  <div class="guide-list-item">
+                    <span class="guide-action-icon">🗑️</span>
+                    <p>
+                      <strong>Delete:</strong> Tap the three dots and then tap
+                      the bin.
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- SLAJD 3: Wybór nawyku -->
+            <div class="guide-slide">
+              <section class="guide-section">
+                <h3><span class="guide-num">3</span> Wybór Nawyków</h3>
+                <div class="guide-block-info">
+                  <p>
+                    When creating a new habit You can pick from chosen icons (💧, 🧘, 📚) or input any other icon You want from your keyboard.
+                  </p>
+                  <p style="margin-top: 12px">
+                    Remember, to adapt frequenct – consistency will help You boost your level faster! 🫧
+                  </p>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stopka modala z kropeczkami i przyciskiem nawigacji -->
+        <div class="guide-modal-footer">
+          <div class="guide-dots-container" id="guideDots">
+            <span class="guide-dot active" data-index="0"></span>
+            <span class="guide-dot" data-index="1"></span>
+            <span class="guide-dot" data-index="2"></span>
+          </div>
+          <button id="understandGuideBtn" class="guide-primary-btn">
+            Next ➡️
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="./js/app.js"></script>
   </body>
