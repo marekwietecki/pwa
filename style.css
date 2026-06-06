@@ -357,116 +357,103 @@ body::after {
 }
 
 /* ==========================================================================
-   🫧 NEUROBUBBLE SLIDING TAB NAVIGATION (CLEAN WHITE VERSION)
+   🫧 NEUROBUBBLE SLIDING TAB NAVIGATION (ORGANIC POP VERSION)
    ========================================================================== */
 
-/* Główny kontener paska nawigacji */
-.tabNav {
-  position: relative; /* 🔥 KLUCZOWE: baza pozycjonowania dla kropelki */
-  display: flex;
-  height: 80px;
-  justify-content: space-between;
-  width: 40%;
-  align-items: center; /* Centrowanie elementów w pionie */
-}
-
-.tabNav a,
-.tabNav a:visited,
-.tabNav a:link {
-  color: rgb(169, 169, 169);
-}
-
-/* Bazowe reguły dla linków wewnątrz nawigacji */
-.tabNav a {
-  position: relative;
-  z-index: 2; /* 🔥 KLUCZOWE: Muszą być ponad kropelką, żeby były klikalne */
-  height: 80%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  text-decoration: none;
-  font-size: 9px;
-  font-weight: 400;
-  gap: 2px;
-}
-
-/* Logo w navbarze */
-.navbar .logo {
-  width: auto;
-  flex-direction: row;
-  min-width: 36px;
-}
-
-/* Styl dla każdego taba (nieaktywnego) */
-.tabNavItem {
-  color: rgba(169, 169, 169); /* Delikatne, nieaktywne ikony */
-  width: 100%;
-  height: 100%;
-  border-radius: 30px;
-}
-
-/* Styl po naciśnięciu / gdy strona jest aktywna - IDEALNA CZYSTA BIEL */
-.tabNavItem.active {
-  color: #ffffff !important; /* Świecąca czysta biel dla aktywnej ikony */
-}
-
-/* Powiększenie i rozświetlenie ikony SVG wewnątrz aktywnej bańki - DOKŁADNIE JAK MIAŁEŚ */
-.tabNavItem.active svg {
-  transform: scale(1.04);
-  filter: drop-shadow(0 0 4px rgba(169, 169, 169));
-  transition: all 0.2s ease;
-}
-
-/* 🔥 NOWY, ULTRA-PŁYNNY BĄBEL 60FPS */
+   .tabNav {
+    position: relative; 
+    display: flex;
+    height: 80px;
+    justify-content: space-between;
+    width: 40%;
+    align-items: center; 
+  }
+  
+  .tabNav a,
+  .tabNav a:visited,
+  .tabNav a:link {
+    color: rgb(169, 169, 169);
+  }
+  
+  .tabNav a {
+    position: relative;
+    z-index: 2; /* Ponad bąbelkiem */
+    height: 80%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 400;
+    gap: 2px;
+  }
+  
+  .tabNavItem {
+    color: rgba(169, 169, 169); 
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+  }
+  
+  .tabNavItem.active {
+    color: #ffffff !important; 
+  }
+  
+  .tabNavItem.active svg {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 4px rgba(169, 169, 169, 0.4));
+    transition: all 0.2s ease;
+  }
+  
+  /* 🔥 POPRAWKA BZURA: Bąbel bez klasy .animate stoi bez ruchu i czeka ukryty */
 .tabNavIndicator {
-  view-transition-name: bubble;
   position: absolute;
-  z-index: 1; /* Pod ikonami */
+  z-index: 1; 
   top: 12.5%;
   left: 0;
-  
-  /* Łączna szerokość paska to 40% ekranu, mamy 4 karty, czyli jedna karta ma 25% szerokości paska.
-     Twoje idealne proporcje bąbla to 82% szerokości taba.
-     25% * 0.82 = 20.5% szerokości całego kontenera .tabNav! */
   width: 20.5%; 
   height: 75%;
   
-  /* Twoje autorskie style szklanego bąbla iOS */
+  /* Szklany design */
   background: rgba(255, 255, 255, 0.07) !important;
   border-radius: 30px;
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
               inset 0 1px 0px rgba(255, 255, 255, 0.2);
 
-  /* 🔥 WYMUSZENIE AKCELERACJI SPRZĘTOWEJ (GPU) DLA PEŁNEJ PŁYNNOŚCI */
-  will-change: transform;
-  
-  /* Zamiast left/width animujemy wyłącznie transform przy użyciu Twojego sprężystego cubic-bezier */
-  transition: transform 0.38s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+  will-change: transform, opacity;
+  opacity: 0; /* Bazowo niewidoczny */
 }
 
-/* Wymuszamy biały kolor dla ikony SVG oraz dla każdego elementu wewnątrz aktywnego taba, 
-   żeby zabić jakikolwiek fioletowy kolor z innych reguł */
+/* 🔥 Klasa wstrzykiwana przez JS dopiero PO wyliczeniu pozycji */
+.tabNavIndicator.animate {
+  animation: bubbleOrganicPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 🔥 Animacja startuje bezpośrednio z gotowej zmiennej, bez ryzyka pozycji zero! */
+@keyframes bubbleOrganicPop {
+  0% {
+    transform: translateX(var(--target-x)) scale(0.6);
+    opacity: 0;
+    backdrop-filter: blur(0px) saturate(100%);
+    -webkit-backdrop-filter: blur(0px) saturate(100%);
+  }
+  100% {
+    transform: translateX(var(--target-x)) scale(1);
+    opacity: 1;
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+  }
+}
+
 .tabNavItem.active svg,
 .tabNavItem.active * {
   color: #ffffff !important;
-  fill: none; /* Jeśli Twoje SVG używają stroke, zostawiamy fill na none */
-  stroke: #ffffff !important; /* Wymuszenie białego konturu ikon Lucide */
-}
-
-@keyframes iosPopCubic {
-  0% {
-    transform: scale(0.88);
-    background: rgba(255, 255, 255, 0);
-  }
-  100% {
-    transform: scale(1);
-  }
+  fill: none; 
+  stroke: #ffffff !important; 
 }
 
 .tabNav a:hover {
@@ -1053,7 +1040,7 @@ main {
   max-height: calc(100vh - 32px);
   max-height: calc(100dvh - 32px);
   margin: 0;
-  padding: 24px 20px 20px;
+  padding: 24px;
   gap: 12px;
   display: flex;
   flex-direction: column;
@@ -2099,66 +2086,85 @@ input.error {
   margin-left: 4px;
 }
 
-.permission-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  width: 232px;
-}
 
-.permission-item:hover {
-  opacity: 72%;
-}
 
-.permission-item label:not(.switch) {
-  cursor: pointer;
-  flex: 1;
-}
+/* ==========================================================================
+   🟢 HERMETYCZNY iOS TOGGLE SWITCH - ULTRA FIX
+   ========================================================================== */
 
+/* Główny kontener - całkowicie odizolowany */
 .switch {
   position: relative;
-  display: inline-block;
-  width: 46px;
-  height: 24px;
+  display: inline-block !important;
+  width: 44px !important;  
+  height: 24px !important; 
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important; 
+  align-items: flex-end;
 }
 
+/* Ukrywamy oryginalny checkbox */
 .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.slider {
-  position: absolute;
+/* Tło gąbki/slidera (Stan nieaktywny) */
+.switch .slider {
+  position: absolute !important;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.1);
-  transition: 0.4s;
-  border-radius: 24px;
+  inset: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Szare/szklane tło pasywne */
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-sizing: border-box !important;
+  transition: all 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+}
+.slider.round {
+  max-width: 44px;
 }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
+/* ⚪️ KÓŁECZKO (Stan nieaktywny - po lewej) */
+.switch .slider::before {
+  position: absolute !important;
+  content: "" !important;
+  height: 18px !important;
+  width: 18px !important;
+  left: 2px !important;
+  top: 2px !important; /* Idealne centrowanie w pionie (24px - 18px - 2px borderu) */
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-input:checked + .slider {
-  background-color: #4cd964;
-} /* Kolor zielony sukcesu */
-input:checked + .slider:before {
-  transform: translateX(22px);
+/* 🟢 STAN AKTYWNY (CHECKED) - ORYGINALNY ZIELONY iOS SAKSEN */
+.switch input:checked + .slider {
+  background-color: #4cd964 !important; /* Wymuszamy piękny, soczysty zielony */
+  border-color: #4cd964 !important;
+  background-image: none !important; /* Kasujemy ewentualne inne tła */
+}
+
+/* 🚀 FIX PRZESUNIĘCIA: Kółeczko leci idealnie do prawej krawędzi bez ucinania!
+   Szerokość kontenera (42px) - szerokość kółka (18px) - marginesy (2px z lewej + 2px na border) = dokładnie 20px ruchu! */
+.switch input:checked + .slider::before {
+  transform: translateX(20px) !important; 
+}
+
+/* Zaokrąglenia kapsułki */
+.switch .slider.round {
+  border-radius: 24px !important;
+}
+
+.switch .slider.round::before {
+  border-radius: 50% !important;
 }
 
 #xp-progress-bar {
@@ -2186,22 +2192,29 @@ h3 {
 .usernameWrapper {
   display: flex;
   flex-direction: row;
-  max-width: 360px;
+  max-width: 224px;
   width: 100%;
   align-items: baseline;
   margin: 0px;
   gap: 8px;
-  text-wrap: nowrap;
+  /* Zapewnia, że żaden element w tym wierszu się nie zawinie */
+  white-space: nowrap; 
 }
 
 #displayUserName {
   font-size: 28px;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
+  font-weight: 600; /* zakładałem, że chcesz grubszy nick */
+  
+  /* 🔥 KLUCZOWA ZMIANA: Przechodzimy na blok, żeby zadziałało text-overflow */
+  display: block; 
   flex: 1;
-  min-width: 0;
+  min-width: 0; /* To już miałeś i jest super ważne dla flexboxa! */
   vertical-align: bottom;
+
+  /* 🔥 TRÓJCA ŚWIĘTA UCINANIA TEKSTU */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #displayUserName::before {
@@ -2209,10 +2222,16 @@ h3 {
   opacity: 0.6;
   font-weight: 500;
   font-size: 20px;
-  flex-shrink: 0;
-  /* margin-bottom: 4px; */
-  align-items: center;
+  
+  /* Margines po prawej zastąpi gap-a, ponieważ zmieniliśmy display na block */
+  margin: 0 4px 6px 0; 
+  
+  /* Sprawiamy, że małpka traktowana jest jako element tekstowy, 
+     dzięki czemu nie zostanie ucięta osobno i idealnie trzyma się baseline */
+  display: inline-block;
+  vertical-align: middle;
 }
+
 
 /* Tekst nicku ograniczamy osobno */
 #displayUserName span {
@@ -2341,6 +2360,105 @@ h3 {
   line-height: 1 !important;
   text-align: center !important;
   letter-spacing: -0.5px !important; /* Zgęszczenie cyfr przy wyższych levelach (np. 10+) */
+}
+
+/* Pozycjonowanie obok siebie kontenerów akcji */
+.actionsWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px; /* Odstęp między info a zębatką */
+}
+
+/* Styl bazowy dla wrapperów ikonek */
+.infoWrapper, .settingsWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.infoWrapper:hover, .settingsWrapper:hover {
+  opacity: 0.72;
+}
+
+/* 🔄 ANIMACJA OBRACANIA ZĘBATKI */
+.settingsWrapper .lucide-settings {
+  will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stan obrócony, gdy panel jest otwarty */
+.settingsWrapper.open .lucide-settings {
+  transform: rotate(180deg);
+  color: #ffffff; /* Podświetlenie zębatki na biało w stanie aktywnym */
+}
+
+/* 🫧 PANEL PERMISSIONS (Ukryty, czekający na wyjście) */
+.permissions {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  will-change: max-height, opacity, transform;
+  transition: max-height 0.4s ease-in-out,
+              opacity 0.3s ease,
+              transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Przestrzeń pod przyciskami, gdy się rozwinie */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 🔥 STAN OTWARTY - WYSZŁY PERMISSIONS */
+.permissions.open {
+  max-height: 120px; /* Bezpieczna maksymalna wysokość dla dwóch pozycji */
+  opacity: 1;
+  transform: translateY(12px) scale(1); /* Przesunięcie w dół pod przyciski */
+}
+
+.permission-item:hover {
+  opacity: 72%;
+}
+
+.permission-item label:not(.switch) {
+  cursor: pointer;
+  flex: 1;
+}
+/* Stylizacja elementów wewnątrz (baza pod szklany styl, jeśli potrzebujesz) */
+.permission-item {
+  display: flex;
+  align-items: center;
+  width: 232px;
+  /* gap: 12px; */
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  justify-content: space-between;
+}
+
+.permission-item label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  flex: 1;
+  cursor: pointer;
+}
+
+.permission-item svg {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.permission-icon-w-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permission-item label.switch {
+  flex: 0 0 auto;
 }
 
 .goalsContainer {

@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await OnboardingService.checkAndStart();
 
   UI.initGuideModal();
+  UI.initPermissionsToggle();
 
   checkDailyNotifications();
 

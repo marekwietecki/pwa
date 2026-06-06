@@ -1411,6 +1411,9 @@ export const UI = {
 
     if (!navContainer || !indicator || navItems.length === 0) return;
 
+    // Na wszelki wypadek czyścimy starą klasę animacji na samym starcie
+    indicator.classList.remove("animate");
+
     const activeIndex = Array.from(navItems).findIndex((item) =>
       item.classList.contains("active")
     );
@@ -1426,14 +1429,23 @@ export const UI = {
 
     const targetX = getTranslateX(safeIndex);
 
-    indicator.style.transition = "none";
-    indicator.style.transform = `translateX(${targetX}px)`;
-    indicator.style.opacity = "1";
+    // KROK 1: Najpierw bezpiecznie ustawiamy zmienną CSS w tle
+    indicator.style.setProperty("--target-x", `${targetX}px`);
 
-    navItems.forEach((item, index) => {
+    // KROK 2: Wymuszamy na przeglądarce odczekanie jednego cyklu renderowania (brak glitcha od lewej!)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        indicator.classList.add("animate");
+      });
+    });
+
+    // Obsługa kliknięć
+    navItems.forEach((item) => {
       item.addEventListener("click", (e) => {
         e.preventDefault();
         const href = item.getAttribute("href");
+
+        indicator.style.opacity = "0";
 
         if (document.startViewTransition) {
           document.startViewTransition(() => {
@@ -1445,7 +1457,6 @@ export const UI = {
       });
     });
   },
-
   /**
    * 🫧 INICJALIZACJA OBSŁUGI WIELOEKRANOWEGO PRZEWODNIKA (PANCERNY FIX)
    */
@@ -1550,6 +1561,24 @@ export const UI = {
         "⚠️ Guide Error: Nie znaleziono elementu #guideModal w DOM!"
       );
     }
+  },
+
+  /**
+   * 🔄 INICJALIZACJA MICRO-INTERACTION DLA UPRAWNIEŃ (OBRÓT + WLOT)
+   */
+  initPermissionsToggle() {
+    const toggleBtn = document.getElementById("settingsToggleBtn");
+    const panel = document.getElementById("permissionsPanel");
+
+    if (!toggleBtn || !panel) return;
+
+    toggleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      
+      // Przełączamy klasę .open na przycisku (obrót zębatki) i na panelu (wjazd tekstu)
+      toggleBtn.classList.toggle("open");
+      panel.classList.toggle("open");
+    });
   },
 };
 
