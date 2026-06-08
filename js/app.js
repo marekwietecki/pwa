@@ -59,11 +59,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       setTimeout(() => {
         splash.remove();
-        UI.initTabNav(); // ← tutaj, po usunięciu splash
+        UI.initTabNav(); 
       }, 400);
     }, 600);
   } else {
-    UI.initTabNav(); // ← gdy splash już był pokazany wcześniej (sesja)
+    UI.initTabNav(); 
   }
   PwaService.initInstallHandler();
 });

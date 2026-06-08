@@ -30,7 +30,8 @@ export const OnboardingService = {
         title: "Welcome to Habit Bubbl! 🫧",
         html: `
             <div class="onboarding-step-content">
-              <p>You enter a game where your everyday discipline increases the level of your Hero. What should we call you?</p>
+              <p>You enter a game where your everyday discipline increases the level of your Hero.</p> 
+              <p>What should we call you?</p>
               <input type="text" id="onboardingName" placeholder="Enter your nickname..." class="modal-input">
             </div>
           `,
@@ -51,7 +52,7 @@ export const OnboardingService = {
         title: "Your First Mission! 🎯",
         html: `
             <div class="onboarding-step-content">
-              <p>Let's build your very first daily habit right now to kickstart your journey. Type the name and choose a visual badge:</p>
+              <p>Let's build your very first daily habit right now to kickstart your journey.</p> <p>Type the name and choose a visual badge:</p>
               <input type="text" id="onboardingHabit" placeholder="e.g., Drink water, Meditate, Exercise..." class="modal-input">
               <div id="onboardingIconPicker" style="
                   display: flex;
@@ -83,7 +84,7 @@ export const OnboardingService = {
                 <p style="margin: 0; font-weight: 600; color: #fff;"><!--🎁 Beginner's Chest Unlocked!--> First level acheived! ✅</p>
                 <p style="margin: 6px 0 0 0; font-size: 13px; color: rgba(255,255,255,0.6);">Your first habit is live. Track it daily to stack multiplier combos and earn bonus XP.</p>
               </div>
-              <p style="font-size: 14px; color: var(--accent-color, #ff00ff); font-weight: 500; text-shadow: 0 0 10px rgba(255,0,255,0.2);">May the discipline be with you.</p>
+              <p style="font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; text-shadow: 0 0 10px rgba(255,255,255,0.5);">May the discipline be with you.</p>
             </div>
           `,
       },
@@ -93,7 +94,18 @@ export const OnboardingService = {
     let currentStep = 1;
     let selectedIconId = "💧";
 
-    const onboardingIcons = ["💧", "🧘", "🏃‍♂️", "📚", "🍏", "💪", "🛌", "🧠", "🎯", "🌟"];
+    const onboardingIcons = [
+      "💧",
+      "🧘",
+      "🏃‍♂️",
+      "📚",
+      "🍏",
+      "💪",
+      "🛌",
+      "🧠",
+      "🎯",
+      "🌟",
+    ];
 
     const renderWizard = (stepNum) => {
       modal.textContent = "";
@@ -137,7 +149,7 @@ export const OnboardingService = {
       const title = document.createElement("h2");
       title.className = "onboarding-title";
       title.style.marginTop = "36px"; // Większy margines, żeby tytuł nie nachodził na grubą kapsułę
-      title.style.color = "#ffffff"; 
+      title.style.color = "#ffffff";
       title.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
       title.textContent = steps[stepNum].title;
 
@@ -205,11 +217,13 @@ export const OnboardingService = {
             }
 
             iconWrapper.addEventListener("click", () => {
-              picker.querySelectorAll(".onboarding-icon-item").forEach((item) => {
-                item.style.border = "2px solid transparent";
-                item.style.background = "rgba(255,255,255,0.04)";
-                item.style.boxShadow = "none";
-              });
+              picker
+                .querySelectorAll(".onboarding-icon-item")
+                .forEach((item) => {
+                  item.style.border = "2px solid transparent";
+                  item.style.background = "rgba(255,255,255,0.04)";
+                  item.style.boxShadow = "none";
+                });
 
               selectedIconId = emoji;
               iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
@@ -232,8 +246,8 @@ export const OnboardingService = {
       nextBtn.style.margin = "0";
       nextBtn.style.borderRadius = "14px";
       nextBtn.style.cursor = "pointer";
-      nextBtn.style.transition = "opacity 0.2s ease"; 
-      
+      nextBtn.style.transition = "opacity 0.2s ease";
+
       nextBtn.textContent = stepNum === 4 ? "Start the Adventure! 🚀" : "Next";
 
       nextBtn.addEventListener("mouseenter", () => {
@@ -250,31 +264,35 @@ export const OnboardingService = {
       modal.appendChild(card);
 
       if (stepNum === 2) {
-        document.getElementById("btnAuthNotify").addEventListener("click", async (e) => {
-          e.preventDefault();
-          const permission = await Notification.requestPermission();
-          if (permission === "granted") {
-            localStorage.setItem("user_notifications_enabled", "true");
-            e.target.textContent = "✅ Notifications Active!";
-            e.target.style.opacity = "0.6";
-            e.target.disabled = true;
-          }
-        });
-
-        document.getElementById("btnAuthGeo").addEventListener("click", async (e) => {
-          e.preventDefault();
-          navigator.geolocation.getCurrentPosition(
-            () => {
-              localStorage.setItem("user_location_enabled", "true");
-              e.target.textContent = "✅ Geolocation Active!";
+        document
+          .getElementById("btnAuthNotify")
+          .addEventListener("click", async (e) => {
+            e.preventDefault();
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+              localStorage.setItem("user_notifications_enabled", "true");
+              e.target.textContent = "✅ Notifications Active!";
               e.target.style.opacity = "0.6";
               e.target.disabled = true;
-            },
-            () => {
-              alert("Location access was denied.");
             }
-          );
-        });
+          });
+
+        document
+          .getElementById("btnAuthGeo")
+          .addEventListener("click", async (e) => {
+            e.preventDefault();
+            navigator.geolocation.getCurrentPosition(
+              () => {
+                localStorage.setItem("user_location_enabled", "true");
+                e.target.textContent = "✅ Geolocation Active!";
+                e.target.style.opacity = "0.6";
+                e.target.disabled = true;
+              },
+              () => {
+                alert("Location access was denied.");
+              }
+            );
+          });
       }
 
       nextBtn.addEventListener("click", async (e) => {

@@ -153,6 +153,14 @@ export function initEventListeners(AppState) {
 
         li.classList.toggle("is-completed", isChecked);
 
+        //animation +xp
+        if (isChecked) {
+          // 1. PANCERNY HAPTIC FEEDBACK (Jedna linijka, która robi magię na telefonie)
+          if (navigator.vibrate) {
+            navigator.vibrate(24); // Krótkie, 24-milisekundowe kliknięcie – mega eleganckie i subtelne
+          }
+        }
+
         // REFRESH UI
         setTimeout(() => refreshCurrentView(AppState), 300);
       } catch (err) {

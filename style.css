@@ -325,7 +325,7 @@ body::after {
 .lucide-icon,
 .task-type-icon {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
   flex-shrink: 0;
   stroke-width: 2;
   fill: none;
@@ -360,69 +360,69 @@ body::after {
    🫧 NEUROBUBBLE SLIDING TAB NAVIGATION (ORGANIC POP VERSION)
    ========================================================================== */
 
-   .tabNav {
-    position: relative; 
-    display: flex;
-    height: 80px;
-    justify-content: space-between;
-    width: 40%;
-    align-items: center; 
-  }
-  
-  .tabNav a,
-  .tabNav a:visited,
-  .tabNav a:link {
-    color: rgb(169, 169, 169);
-  }
-  
-  .tabNav a {
-    position: relative;
-    z-index: 2; /* Ponad bąbelkiem */
-    height: 80%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    align-self: center;
-    text-decoration: none;
-    font-size: 9px;
-    font-weight: 400;
-    gap: 2px;
-  }
-  
-  .tabNavItem {
-    color: rgba(169, 169, 169); 
-    width: 100%;
-    height: 100%;
-    border-radius: 30px;
-  }
-  
-  .tabNavItem.active {
-    color: #ffffff !important; 
-  }
-  
-  .tabNavItem.active svg {
-    transform: scale(1.04);
-    filter: drop-shadow(0 0 4px rgba(169, 169, 169, 0.4));
-    transition: all 0.2s ease;
-  }
-  
-  /* 🔥 POPRAWKA BZURA: Bąbel bez klasy .animate stoi bez ruchu i czeka ukryty */
+.tabNav {
+  position: relative;
+  display: flex;
+  height: 80px;
+  justify-content: space-between;
+  width: 40%;
+  align-items: center;
+}
+
+.tabNav a,
+.tabNav a:visited,
+.tabNav a:link {
+  color: rgb(169, 169, 169);
+}
+
+.tabNav a {
+  position: relative;
+  z-index: 2; /* Ponad bąbelkiem */
+  height: 80%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  text-decoration: none;
+  font-size: 9px;
+  font-weight: 400;
+  gap: 2px;
+}
+
+.tabNavItem {
+  color: rgba(169, 169, 169);
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+}
+
+.tabNavItem.active {
+  color: #ffffff !important;
+}
+
+.tabNavItem.active svg {
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 4px rgba(169, 169, 169, 0.4));
+  transition: all 0.2s ease;
+}
+
+/* 🔥 POPRAWKA BZURA: Bąbel bez klasy .animate stoi bez ruchu i czeka ukryty */
 .tabNavIndicator {
   position: absolute;
-  z-index: 1; 
+  z-index: 1;
   top: 12.5%;
   left: 0;
-  width: 20.5%; 
+  width: 20.5%;
   height: 75%;
-  
+
   /* Szklany design */
   background: rgba(255, 255, 255, 0.07) !important;
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-              inset 0 1px 0px rgba(255, 255, 255, 0.2);
+    inset 0 1px 0px rgba(255, 255, 255, 0.2);
 
   will-change: transform, opacity;
   opacity: 0; /* Bazowo niewidoczny */
@@ -452,8 +452,8 @@ body::after {
 .tabNavItem.active svg,
 .tabNavItem.active * {
   color: #ffffff !important;
-  fill: none; 
-  stroke: #ffffff !important; 
+  fill: none;
+  stroke: #ffffff !important;
 }
 
 .tabNav a:hover {
@@ -1694,21 +1694,42 @@ input.error {
 }
 
 /* HABITS */ /* ------------------------------------------------------------------------ */
+/* Nowy wrapper — dodaj go w HTML wokół .habit-carousel */
+.habit-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  /* Zanikanie po bokach jak calendarToDoList ale poziomo */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 12%,
+    rgba(0, 0, 0, 1) 88%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 12%,
+    rgba(0, 0, 0, 1) 88%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
 .habit-carousel {
   display: flex;
   overflow-x: auto;
-  gap: 15px;
-  padding: 0px 16px 16px;
-  scroll-snap-type: x mandatory;
+  gap: 16px;
+  padding: 12px 32px 20px; /* więcej paddingu po bokach dla efektu zanikania */
   max-width: 600px;
+  scroll-snap-type: x mandatory;
   align-items: center;
-  justify-content: safe center;
-
-  margin-left: auto;
-  margin-right: auto;
-
-  scrollbar-width: none; /* Firefox */
-  -webkit-overflow-scrolling: touch; /* Płynny scroll na iOS */
+  justify-content: flex-start; /* ← safe center wylatuje */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Ukrywamy scrollbar dla Chrome/Safari/Opera */
@@ -1733,7 +1754,7 @@ input.error {
   text-align: center;
   text-wrap: wrap;
   max-width: 120px;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   /* border: 1px solid var(--glass-border-soft); */
@@ -1743,29 +1764,29 @@ input.error {
   /* -webkit-backdrop-filter: var(--glass-blur); */
   /* box-shadow: var(--shadow-delicate); */
 }
-
-.habit-card-icon.active-habit-icon {
-  /* background: var(--glass-bg-active); */
-  border-color: var(--glass-border-bright);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-float);
-  opacity: 1;
-}
-
 .habit-card-icon {
+  width: 44px;  
+  height: 44px;
+  border-radius: 50%;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  box-shadow: var(--shadow-bubble);
+  transition: all 0.3s ease;
+  opacity: 0.75; 
+  font-size: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  /* background: var(--glass-bg); */
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-bubble);
-  transition: all 0.3s ease;
-  opacity: 0.56;
+}
+
+.habit-card-icon.active-habit-icon {
+  border-color: rgba(255, 255, 255, 0.7);
+  border-width: 2px;
+  transform: translateY(-2px) scale(1.12);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.15), var(--shadow-float);
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .habit-name-label {
@@ -1881,7 +1902,7 @@ input.error {
   width: 100%;
   justify-self: center;
   justify-content: flex-start;
-  padding: 0px 12px; /* TRBL // Trzy wartości (Góra, Boki, Dół) // Dwie wartości (Góra/Dół, Boki)*/
+  padding: 0px 12px 12px; /* TRBL // Trzy wartości (Góra, Boki, Dół) // Dwie wartości (Góra/Dół, Boki)*/
 }
 
 .habit-percentage-label {
@@ -2086,8 +2107,6 @@ input.error {
   margin-left: 4px;
 }
 
-
-
 /* ==========================================================================
    🟢 HERMETYCZNY iOS TOGGLE SWITCH - ULTRA FIX
    ========================================================================== */
@@ -2096,12 +2115,12 @@ input.error {
 .switch {
   position: relative;
   display: inline-block !important;
-  width: 44px !important;  
-  height: 24px !important; 
+  width: 44px !important;
+  height: 24px !important;
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
-  flex-shrink: 0 !important; 
+  flex-shrink: 0 !important;
   align-items: flex-end;
 }
 
@@ -2121,7 +2140,12 @@ input.error {
   inset: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  background-color: rgba(255, 255, 255, 0.1) !important; /* Szare/szklane tło pasywne */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ) !important; /* Szare/szklane tło pasywne */
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   box-sizing: border-box !important;
   transition: all 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
@@ -2155,7 +2179,7 @@ input.error {
 /* 🚀 FIX PRZESUNIĘCIA: Kółeczko leci idealnie do prawej krawędzi bez ucinania!
    Szerokość kontenera (42px) - szerokość kółka (18px) - marginesy (2px z lewej + 2px na border) = dokładnie 20px ruchu! */
 .switch input:checked + .slider::before {
-  transform: translateX(20px) !important; 
+  transform: translateX(20px) !important;
 }
 
 /* Zaokrąglenia kapsułki */
@@ -2198,15 +2222,15 @@ h3 {
   margin: 0px;
   gap: 8px;
   /* Zapewnia, że żaden element w tym wierszu się nie zawinie */
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 #displayUserName {
   font-size: 28px;
   font-weight: 600; /* zakładałem, że chcesz grubszy nick */
-  
+
   /* 🔥 KLUCZOWA ZMIANA: Przechodzimy na blok, żeby zadziałało text-overflow */
-  display: block; 
+  display: block;
   flex: 1;
   min-width: 0; /* To już miałeś i jest super ważne dla flexboxa! */
   vertical-align: bottom;
@@ -2222,16 +2246,15 @@ h3 {
   opacity: 0.6;
   font-weight: 500;
   font-size: 20px;
-  
+
   /* Margines po prawej zastąpi gap-a, ponieważ zmieniliśmy display na block */
-  margin: 0 4px 6px 0; 
-  
+  margin: 0 4px 6px 0;
+
   /* Sprawiamy, że małpka traktowana jest jako element tekstowy, 
      dzięki czemu nie zostanie ucięta osobno i idealnie trzyma się baseline */
   display: inline-block;
   vertical-align: middle;
 }
-
 
 /* Tekst nicku ograniczamy osobno */
 #displayUserName span {
@@ -2372,14 +2395,16 @@ h3 {
 }
 
 /* Styl bazowy dla wrapperów ikonek */
-.infoWrapper, .settingsWrapper {
+.infoWrapper,
+.settingsWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s ease;
 }
 
-.infoWrapper:hover, .settingsWrapper:hover {
+.infoWrapper:hover,
+.settingsWrapper:hover {
   opacity: 0.72;
 }
 
@@ -2402,10 +2427,9 @@ h3 {
   opacity: 0;
   transform: translateY(-8px) scale(0.98);
   will-change: max-height, opacity, transform;
-  transition: max-height 0.4s ease-in-out,
-              opacity 0.3s ease,
-              transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
   /* Przestrzeń pod przyciskami, gdy się rozwinie */
   display: flex;
   flex-direction: column;
@@ -2611,6 +2635,49 @@ h3 {
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/*
+xp add animation
+*/
+
+/* Mikro-bąbelek XP - minimalistyczny, szary styl */
+.task-xp-badge {
+  position: absolute;
+  transform: translate(-50%, 0);
+  background: rgba(30, 41, 59, 0.9); /* Bardzo ciemny szary/grafit */
+  color: #f1f5f9; /* Jasnoszary tekst */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 30px; /* Twój bubble-radius */
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none; /* Żeby nie blokował kliknięć myszką */
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+  /* Odpalenie mikro-animacji uniesienia i zanikania */
+  animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes taskXpFloatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -20px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -35px) scale(0.9);
+  }
+}
+
 /* ==========================================================================
    🫧 ONBOARDING SLIDER COMPLEMENTARY STYLES
    ========================================================================== */
@@ -2708,7 +2775,8 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.guide-grid, .guide-list {
+.guide-grid,
+.guide-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -2736,18 +2804,60 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.color-task { box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.15); }
-.color-habit { box-shadow: inset 0 0 8px rgba(255, 102, 0, 0.15); }
+.color-task {
+  box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.15);
+}
+.color-habit {
+  box-shadow: inset 0 0 8px rgba(255, 102, 0, 0.15);
+}
 
-.guide-item-text h4 { margin: 0 0 2px 0; font-size: 14px; font-weight: 500; color: white; }
-.guide-item-text p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.55); line-height: 1.4; }
+.guide-item-text h4 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+.guide-item-text p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.4;
+}
 
-.guide-list-item { display: flex; gap: 12px; align-items: flex-start; }
-.guide-action-icon { font-size: 14px; background: rgba(255, 255, 255, 0.06); padding: 6px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); line-height: 1; }
-.guide-list-item p { margin: 0; font-size: 13px; line-height: 1.4; color: rgba(255, 255, 255, 0.75); }
+.guide-list-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.guide-action-icon {
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1;
+}
+.guide-list-item p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+}
 
-.guide-block-info { background: rgba(255, 255, 255, 0.02); border-left: 3px solid rgba(255, 255, 255, 0.2); padding: 14px 16px; border-radius: 0 16px 16px 0; border: 1px solid rgba(255, 255, 255, 0.04); border-left: 3px solid rgba(255, 255, 255, 0.2); }
-.guide-block-info p { margin: 0; font-size: 13px; line-height: 1.4; color: rgba(255, 255, 255, 0.6); }
+.guide-block-info {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+  padding: 14px 16px;
+  border-radius: 0 16px 16px 0;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+}
+.guide-block-info p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.6);
+}
 
 /* Stopka z kropkami iOS */
 .guide-modal-footer {
@@ -2757,9 +2867,25 @@ h3 {
   align-items: center;
 }
 
-.guide-dots-container { display: flex; gap: 8px; align-items: center; }
-.guide-dot { width: 8px; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.25s ease; }
-.guide-dot.active { background: #ffffff; width: 18px; border-radius: 4px; box-shadow: 0 0 8px rgba(255, 255, 255, 0.4); }
+.guide-dots-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.guide-dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.guide-dot.active {
+  background: #ffffff;
+  width: 18px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
 
 /* Przycisk akceptacji */
 .guide-primary-btn {
@@ -2775,8 +2901,13 @@ h3 {
   box-shadow: var(--shadow-bubble);
 }
 
-.guide-primary-btn:hover { transform: translateY(-1px); opacity: 90%; }
-.guide-primary-btn:active { transform: translateY(0); }
+.guide-primary-btn:hover {
+  transform: translateY(-1px);
+  opacity: 90%;
+}
+.guide-primary-btn:active {
+  transform: translateY(0);
+}
 
 @media (max-width: 740px) {
   .logo {
