@@ -221,14 +221,14 @@ self.addEventListener("periodicsync", (event) => {
 async function checkAndNotify() {
   const now = new Date();
   const hour = now.getHours();
-  if (hour < 8 || hour >= 20) return; 
+  if (hour < 8 || hour >= 20) return;
 
   const todayKey = now.toISOString().split("T")[0];
 
   return new Promise((resolve, reject) => {
     const dbRequest = indexedDB.open("HabitHeroDB", 6);
 
-    dbRequest.onerror = () => reject("SW: Błąd otwarcia DB");
+    dbRequest.onerror = () => reject("SW: Error while opening DB.");
 
     dbRequest.onsuccess = (e) => {
       const db = e.target.result;
@@ -241,9 +241,9 @@ async function checkAndNotify() {
 
       metaRequest.onsuccess = () => {
         const lastDate = metaRequest.result?.value || metaRequest.result;
-        
+
         if (lastDate === todayKey) {
-          console.log("SW: Dzisiaj już był briefing.");
+          console.log("SW: Briefing has already been done today.");
           return resolve();
         }
 
@@ -258,7 +258,7 @@ async function checkAndNotify() {
             //metaStore.put({ id: "last_briefing_date", value: todayKey });
 
             self.registration.showNotification("Habit Bubble", {
-              body: `Mordo, masz ${undoneCount} zadań na dziś! Lecimy!`,
+              body: `Hey, You have ${undoneCount} thing(s) to do today! Let's go!`,
               icon: "/assets/192x192.png",
               badge: "/assets/192x192.png",
               tag: "daily-briefing",
@@ -270,7 +270,7 @@ async function checkAndNotify() {
       };
 
       tx.oncomplete = () => db.close();
-      tx.onerror = () => reject("SW: Transakcja padła");
+      tx.onerror = () => reject("SW: Transaction error");
     };
   });
 }

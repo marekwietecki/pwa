@@ -81,7 +81,7 @@ export const OnboardingService = {
                 padding: 16px; 
                 margin: 20px 0;
                 box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);">
-                <p style="margin: 0; font-weight: 600; color: #fff;"><!--🎁 Beginner's Chest Unlocked!--> First level acheived! ✅</p>
+                <p style="margin: 0; font-weight: 600; color: #fff;"> First level achieved! ✅</p>
                 <p style="margin: 6px 0 0 0; font-size: 13px; color: rgba(255,255,255,0.6);">Your first habit is live. Track it daily to stack multiplier combos and earn bonus XP.</p>
               </div>
               <p style="font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; text-shadow: 0 0 10px rgba(255,255,255,0.5);">May the discipline be with you.</p>
@@ -110,23 +110,43 @@ export const OnboardingService = {
     const renderWizard = (stepNum) => {
       modal.textContent = "";
 
+      // 🔥 Obejmujemy całe tło ekranu kolorem aplikacji
+      modal.style.backgroundColor = "#121318";
+      modal.style.backdropFilter = "none"; // Na pełnym tle nie potrzebujemy rozmywać tego, co pod spodem
+
       const card = document.createElement("div");
       card.className = "onboarding-card";
-      card.style.position = "relative";
-      card.style.overflow = "hidden";
+
+      // 🔥 Stylizujemy kartę jako bąbelek w czystym stylu Glassmorphism
+      card.style.cssText = `
+          position: relative;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.03);         /* Ultra delikatne, białe podbicie szkła */
+          backdrop-filter: blur(20px);                     /* Silne rozmycie tła wewnątrz bąbelka */
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.08);    /* Cienka, lśniąca krawędź bąbelka */
+          border-radius: 24px;                             /* Ładne, mocne zaokrąglenie w stylu bąbelka */
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),      /* Głęboki cień na zewnątrz */
+                      inset 0 1px 0 rgba(255, 255, 255, 0.1); /* Wewnętrzny błysk na górnej krawędzi szkła */
+          padding: 24px;
+          width: 90%;
+          max-width: 420px;
+          margin: auto;                                    /* Wyśrodkowanie w modalu */
+        `;
 
       const progressBarTrack = document.createElement("div");
+      // ... reszta kodu bez zmian ...
       progressBarTrack.className = "onboarding-progress-track";
       progressBarTrack.style.cssText = `
         position: absolute;
-        top: 10px;                  /* Przesunięty lekko w dół od krawędzi karty */
-        left: 16px;                 /* Boczne marginesy, żeby nie dotykał ścian */
-        right: 16px;
-        height: 12px;               /* Podwójna grubość */
+        top: 24px;                  
+        left: 24px;                 
+        right: 24px;
+        height: 12px;               
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 100px;       /* 🔥 Pełne zaokrąglenie kontenera w styl kapsuły */
-        overflow: hidden;           /* 🔥 Kluczowe: Przycina progress bar w środku do kształtu zaokrąglenia! */
+        border-radius: 100px;       
+        overflow: hidden;           
       `;
 
       const progressBarFill = document.createElement("div");
@@ -139,16 +159,16 @@ export const OnboardingService = {
         background: var(--hero-gradient);
         box-shadow: 0 0 15px var(--accent-color, rgba(255, 0, 255, 0.6));
         transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border-radius: 0;           /* Brak własnego zaokrąglenia - kontener nadrzędny je wymusza */
+        border-radius: 0;           
       `;
 
       progressBarTrack.appendChild(progressBarFill);
       card.appendChild(progressBarTrack);
 
-      // Tytuł kroku (czysto biały)
+      // Tytuł kroku
       const title = document.createElement("h2");
       title.className = "onboarding-title";
-      title.style.marginTop = "36px"; // Większy margines, żeby tytuł nie nachodził na grubą kapsułę
+      title.style.marginTop = "36px";
       title.style.color = "#ffffff";
       title.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
       title.textContent = steps[stepNum].title;
@@ -158,6 +178,31 @@ export const OnboardingService = {
       body.className = "onboarding-body";
       body.innerHTML = steps[stepNum].html;
 
+      // 🔥 PRZENIESIONE WYŻEJ: Tworzenie stopki i przycisku Next (teraz checkInput bez problemu go znajdzie)
+      const footer = document.createElement("div");
+      footer.className = "onboarding-footer";
+
+      const nextBtn = document.createElement("button");
+      nextBtn.id = "onboardingNextBtn";
+      nextBtn.className = "addTask";
+      nextBtn.style.width = "100%";
+      nextBtn.style.margin = "0";
+      nextBtn.style.borderRadius = "14px";
+      nextBtn.style.cursor = "pointer";
+      nextBtn.style.transition = "opacity 0.2s ease";
+
+      nextBtn.textContent = stepNum === 4 ? "Start the Adventure! 🚀" : "Next";
+
+      nextBtn.addEventListener("mouseenter", () => {
+        nextBtn.style.opacity = "0.72";
+      });
+      nextBtn.addEventListener("mouseleave", () => {
+        nextBtn.style.opacity = "1";
+      });
+
+      footer.appendChild(nextBtn);
+
+      // Styl szklany dla inputów
       const applyGlassmorphismStyle = (inputEl) => {
         if (!inputEl) return;
         inputEl.style.width = "100%";
@@ -184,10 +229,47 @@ export const OnboardingService = {
         });
       };
 
+      // Logika kroków
       if (stepNum === 1) {
-        applyGlassmorphismStyle(body.querySelector("#onboardingName"));
+        const nameInput = body.querySelector("#onboardingName");
+        applyGlassmorphismStyle(nameInput);
+
+        const checkInput = () => {
+          if (nameInput.value.trim().length > 0) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = "1";
+            nextBtn.style.cursor = "pointer";
+            nextBtn.style.pointerEvents = "auto";
+          } else {
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = "0.35";
+            nextBtn.style.cursor = "not-allowed";
+            nextBtn.style.pointerEvents = "none";
+          }
+        };
+
+        checkInput();
+        nameInput.addEventListener("input", checkInput);
       } else if (stepNum === 3) {
-        applyGlassmorphismStyle(body.querySelector("#onboardingHabit"));
+        const habitInput = body.querySelector("#onboardingHabit");
+        applyGlassmorphismStyle(habitInput);
+
+        const checkInput = () => {
+          if (habitInput.value.trim().length > 0) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = "1";
+            nextBtn.style.cursor = "pointer";
+            nextBtn.style.pointerEvents = "auto";
+          } else {
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = "0.35";
+            nextBtn.style.cursor = "not-allowed";
+            nextBtn.style.pointerEvents = "none";
+          }
+        };
+
+        checkInput();
+        habitInput.addEventListener("input", checkInput);
 
         const picker = body.querySelector("#onboardingIconPicker");
         if (picker) {
@@ -236,33 +318,13 @@ export const OnboardingService = {
         }
       }
 
-      const footer = document.createElement("div");
-      footer.className = "onboarding-footer";
-
-      const nextBtn = document.createElement("button");
-      nextBtn.id = "onboardingNextBtn";
-      nextBtn.className = "addTask";
-      nextBtn.style.width = "100%";
-      nextBtn.style.margin = "0";
-      nextBtn.style.borderRadius = "14px";
-      nextBtn.style.cursor = "pointer";
-      nextBtn.style.transition = "opacity 0.2s ease";
-
-      nextBtn.textContent = stepNum === 4 ? "Start the Adventure! 🚀" : "Next";
-
-      nextBtn.addEventListener("mouseenter", () => {
-        nextBtn.style.opacity = "0.72";
-      });
-      nextBtn.addEventListener("mouseleave", () => {
-        nextBtn.style.opacity = "1";
-      });
-
-      footer.appendChild(nextBtn);
+      // Składanie elementów do kupy
       card.appendChild(title);
       card.appendChild(body);
-      card.appendChild(footer);
+      card.appendChild(footer); // footer ma już w sobie nextBtn
       modal.appendChild(card);
 
+      // Obsługa uprawnień w kroku 2
       if (stepNum === 2) {
         document
           .getElementById("btnAuthNotify")
@@ -295,16 +357,15 @@ export const OnboardingService = {
           });
       }
 
+      // Akcja po kliknięciu głównego przycisku
       nextBtn.addEventListener("click", async (e) => {
         e.preventDefault();
 
         if (stepNum === 1) {
           const nameInputEl = document.getElementById("onboardingName");
           const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
-          if (!nameInput) {
-            alert("Please choose a name, Warrior!");
-            return;
-          }
+          if (!nameInput) return;
+
           const currentStats = await DataManager.getUserStats();
           currentStats.userName = nameInput;
           await DataManager.saveUserStats(currentStats);
@@ -314,11 +375,7 @@ export const OnboardingService = {
         if (stepNum === 3) {
           const habitInputEl = document.getElementById("onboardingHabit");
           const habitInput = habitInputEl ? habitInputEl.value.trim() : "";
-
-          if (!habitInput) {
-            alert("Please define your first habit to proceed!");
-            return;
-          }
+          if (!habitInput) return;
 
           await DB.put("habits", {
             id: Date.now(),
