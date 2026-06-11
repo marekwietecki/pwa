@@ -1405,31 +1405,48 @@ export const UI = {
   },
 
   triggerTaskXpAnimation(event, xpValue, newBarPercentage) {
-    // 1. Aktualizacja paska postępu (jeśli istnieje na tym ekranie)
+    // 1. Aktualizacja paska postępu
     const progressBar = document.getElementById("xp-progress-bar");
     if (progressBar) {
       progressBar.style.width = `${newBarPercentage}%`;
     }
-  
-    // 2. Pobieramy pozycję elementu, który wywołał zdarzenie (np. kliknięty bąbel/checkbox)
+
+    // 2. Pobieramy element wywołujący
     const clickedElement = event.currentTarget || event.target;
-    if (!clickedElement) return;
-  
+    if (!clickedElement) {
+      console.warn("🫧 XP Animation: Brak klikniętego elementu w evencie!");
+      return;
+    }
+
     const rect = clickedElement.getBoundingClientRect();
-  
-    // 3. Dynamiczne tworzenie mikro-bąbelka XP
+
+    // Zabezpieczenie: Jeśli element ma szerokość 0 (bo np. właśnie zniknął z DOM)
+    if (rect.width === 0 && rect.height === 0) {
+      console.warn(
+        "🫧 XP Animation: Element zniknął z DOM przed pobraniem pozycji! Uruchom animację ułamek sekundy wcześniej."
+      );
+      return;
+    }
+
+    // 3. Tworzenie mikro-bąbelka XP
     const xpBadge = document.createElement("div");
     xpBadge.className = "task-xp-badge";
     xpBadge.textContent = `+${xpValue} XP 🫧`;
-  
-    // Pozycjonujemy bąbelek nad środkiem klikniętego elementu (uwzględniając scroll strony)
-    xpBadge.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
-    xpBadge.style.top = `${rect.top + window.scrollY - 15}px`;
-  
-    // Wstrzykujemy do body, żeby nie psuć layoutu kontenera taska
+
+    // Wyliczanie dokładnej pozycji
+    const targetLeft = rect.left + window.scrollX + rect.width / 2;
+    const targetTop = rect.top + window.scrollY - 15;
+
+    xpBadge.style.left = `${targetLeft}px`;
+    xpBadge.style.top = `${targetTop}px`;
+
+    console.log(
+      `🫧 XP Animation: Tworzę bąbelek na pozycji X: ${targetLeft}, Y: ${targetTop}`
+    );
+
     document.body.appendChild(xpBadge);
-  
-    // 4. Usuwamy element z DOM po zakończeniu animacji CSS (800ms)
+
+    // 4. Usuwamy element z DOM po zakończeniu animacji (800ms)
     setTimeout(() => {
       xpBadge.remove();
     }, 800);
@@ -1439,46 +1456,47 @@ export const UI = {
     const navContainer = document.querySelector(".tabNav");
     const indicator = document.getElementById("tabIndicator");
     const navItems = document.querySelectorAll(".tabNavItem");
-  
+
     if (!navContainer || !indicator || navItems.length === 0) return;
-  
+
     // Funkcja czysto pozycjonująca bąbel
     const updatePosition = () => {
       // Sprawdzamy, czy wskaźnik ma już szerokość (jeśli ukryty w CSS, daj mu domyślną wartość)
-      const indicatorWidth = indicator.offsetWidth || 40; 
-      
+      const indicatorWidth = indicator.offsetWidth || 40;
+
       const activeIndex = Array.from(navItems).findIndex((item) =>
         item.classList.contains("active")
       );
       const safeIndex = activeIndex !== -1 ? activeIndex : 0;
-  
+
       const containerRect = navContainer.getBoundingClientRect();
       const itemRect = navItems[safeIndex].getBoundingClientRect();
-      
+
       // Jeśli z jakiegoś powodu jesteśmy przed pełnym renderem i rect ma 0, przerywamy
       if (itemRect.width === 0) return;
-  
-      const itemCenter = itemRect.left - containerRect.left + itemRect.width / 2;
+
+      const itemCenter =
+        itemRect.left - containerRect.left + itemRect.width / 2;
       const targetX = itemCenter - indicatorWidth / 2;
-  
+
       indicator.style.setProperty("--target-x", `${targetX}px`);
     };
-  
+
     // 1. Zdejmij animację na start, żeby bąbel nie leciał z kosmosu (pozycja 0)
     indicator.classList.remove("animate");
-  
+
     // 2. Pierwsze pozycjonowanie robimy po pełnym załadowaniu drzewa i stylów
     updatePosition();
-  
+
     // 3. PANCERNE ZABEZPIECZENIE: Odpalamy po pełnym załadowaniu okna (czcionki, layout)
     window.addEventListener("load", () => {
       updatePosition();
       indicator.classList.add("animate");
     });
-  
+
     // 4. Mobilny ratunek – jeśli layout zmieni się przy obrocie ekranu lub zmianie viewportu
     window.addEventListener("resize", updatePosition);
-  
+
     // Jeśli window.load już minął (bo to SPA/PWA i komponent montuje się później)
     if (document.readyState === "complete") {
       updatePosition();
@@ -1488,15 +1506,15 @@ export const UI = {
         indicator.classList.add("animate");
       }, 50);
     }
-  
+
     // Obsługa kliknięć
     navItems.forEach((item) => {
       item.addEventListener("click", (e) => {
         e.preventDefault();
         const href = item.getAttribute("href");
-  
+
         indicator.style.opacity = "0";
-  
+
         if (document.startViewTransition) {
           document.startViewTransition(() => {
             window.location.href = href;
@@ -1624,7 +1642,7 @@ export const UI = {
 
     toggleBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      
+
       // Przełączamy klasę .open na przycisku (obrót zębatki) i na panelu (wjazd tekstu)
       toggleBtn.classList.toggle("open");
       panel.classList.toggle("open");

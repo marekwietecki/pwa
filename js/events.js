@@ -1,7 +1,14 @@
 import { Utils, DataManager, LevelManager } from "./data.js";
 import { elements } from "./elements.js";
-import { LocationService, NotificationService, PermissionsManager } from "./services.js";
+import {
+  LocationService,
+  NotificationService,
+  PermissionsManager,
+} from "./services.js";
 import { UI } from "./ui.js";
+
+const bubbleSound = new Audio("./assets/bubble_pop.wav");
+bubbleSound.volume = 0.4;
 
 async function openAddTaskModal(AppState) {
   if (!elements.modalOverlay) return;
@@ -12,11 +19,11 @@ async function openAddTaskModal(AppState) {
   else AppState.currentCreateType = "task";
 
   UI.resetModal(AppState);
-  
+
   UI.setModalMode("create", AppState.currentCreateType);
 
   await UI.fillModalHabitSelect();
-  
+
   elements.modalOverlay.classList.add("open");
 }
 
@@ -123,6 +130,15 @@ export function initEventListeners(AppState) {
     const li = target.closest(".taskItem");
     if (!li) return;
 
+    if (target.classList.contains("taskCheckbox") && target.checked) {
+      if (navigator.vibrate) {
+        navigator.vibrate(24);
+      }
+    }
+
+    bubbleSound.currentTime = 0;
+    bubbleSound.play().catch((err) => console.log("Audio block bypass:", err));
+
     const id = parseInt(li.dataset.id);
     const type = li.dataset.type;
     const dateKey = li.dataset.dateKey;
@@ -143,31 +159,49 @@ export function initEventListeners(AppState) {
           await DataManager.toggleGoalDone(id, isChecked);
         }
 
-        const todayKey = Utils.formatDateKey(new Date());
-        if (dateKey === todayKey || type === "goal") {
-          const itemData = itemObject || {
-            name: li.querySelector(".taskNodeName")?.textContent,
-          };
-          await handleCompletion(type, itemData, isChecked);
-        }
-
         li.classList.toggle("is-completed", isChecked);
 
-        //animation +xp
-        if (isChecked) {
-          // 1. PANCERNY HAPTIC FEEDBACK (Jedna linijka, która robi magię na telefonie)
-          if (navigator.vibrate) {
-            navigator.vibrate(24); // Krótkie, 24-milisekundowe kliknięcie – mega eleganckie i subtelne
+        // Wyciągamy deklarację przed bloki IF, żeby każdy miał do niej dostęp
+        const itemData = itemObject || {
+          name: li.querySelector(".taskNodeName")?.textContent,
+        };
+
+        // 1. Wywołanie silnika XP (Tylko JEDNO wspólne miejsce dla dzisiejszych zadań / celów)
+        const todayKey = Utils.formatDateKey(new Date());
+        if (dateKey === todayKey || type === "goal") {
+          // NALICZAMY XP W BAZIE
+          await handleCompletion(type, itemData, isChecked);
+
+          // 2. ANIMACJA + BĄBELEK XP (Odpala się tylko gdy zadanie jest zaznaczane jako zrobione)
+          if (isChecked) {
+            // Pobieramy wartość XP dla bąbelka
+            const xpValue = LevelManager.calculateXP(type, itemData);
+
+            // Pobieramy świeże statystyki zaraz po zapisie w handleCompletion
+            const freshStats = await DataManager.getUserStats();
+            const currentXpThreshold = LevelManager.getXpThreshold(
+              freshStats.level
+            );
+            const newBarPercentage =
+              (freshStats.currentXp / currentXpThreshold) * 100;
+
+            // Wywołujemy animację (Sprawdzanie modułu UI lub globalnej funkcji)
+            if (typeof triggerTaskXpAnimation !== "undefined") {
+              triggerTaskXpAnimation(e, xpValue, newBarPercentage);
+            } else if (typeof UI !== "undefined" && UI.triggerTaskXpAnimation) {
+              UI.triggerTaskXpAnimation(e, xpValue, newBarPercentage);
+            }
           }
         }
 
-        // REFRESH UI
+        // REFRESH UI - bezpieczne 300ms na wzniesienie się bąbelka
         setTimeout(() => refreshCurrentView(AppState), 300);
       } catch (err) {
+        // 🔥 PRZYWRÓCONY BLOK CATCH: Cofnięcie zaznaczenia w razie błędu bazy danych
         console.error("Błąd podczas aktualizacji statusu:", err);
         target.checked = !isChecked;
       }
-    }
+    } // 💥 Tutaj prawidłowo zamyka się warunek IF dla Checkboxa
 
     // DELETE
     const moreBtn = target.closest(".moreBtn");
@@ -188,7 +222,6 @@ export function initEventListeners(AppState) {
       }
     }
 
-    // 3. EDYCJA GOAL
     if (target.closest(".edit-inline-btn") && type === "goal") {
       if (itemObject) UI.openEditGoalModal(itemObject);
     }
@@ -382,10 +415,9 @@ export function initEventListeners(AppState) {
       } else if (type === "habit") {
         const frequency = elements.habitFrequency.value;
         const schedule = getHabitSchedule();
-        const icon = UI.selectedHabitIcon||
-          name.charAt(0).toUpperCase();
+        const icon = UI.selectedHabitIcon || name.charAt(0).toUpperCase();
 
-          const createdAt = new Date().setHours(0, 0, 0, 0);
+        const createdAt = new Date().setHours(0, 0, 0, 0);
 
         await DataManager.addHabit({
           name,
@@ -394,7 +426,7 @@ export function initEventListeners(AppState) {
           frequency,
           schedule,
           createdAt,
-          history: {}
+          history: {},
         });
       } else if (type === "goal") {
         const deadline = elements.goalDeadline?.value;
