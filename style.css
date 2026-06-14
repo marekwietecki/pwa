@@ -61,9 +61,32 @@ h2 {
   letter-spacing: 0.5px;
 }
 
+#btnAuthNotify:hover,
+#btnbtnAuthGeo:hover {
+  opacity: 0.72;
+}
+
+#btnbtnAuthGeo:active,
+#btnAuthNotify:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 /* Liquid glass tokens & delicate shadows */
 :root {
-  --hero-gradient: linear-gradient(90deg, #ad22b6, #ff00ff);
+  --color-indigo: #8737b3;
+  --color-blue: #2196f3;
+  --color-orange: #ff5722;
+  --color-success: #4caf50;
+  --color-danger: #f44336;
+
+  --hero-gradient: linear-gradient(
+    90deg,
+    var(--color-indigo),
+    var(--color-blue)
+  );
+
   --bg-base: #17181f;
   --glass-bg-whisper: rgba(255, 255, 255, 0.07);
   --glass-bg-subtle: rgba(255, 255, 255, 0.11);
@@ -104,7 +127,6 @@ body {
       transparent 50%
     );
   color: white;
-  font-family: "Comfortaa", sans-serif;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -187,6 +209,11 @@ body {
   transform: scale(1.04);
   background: rgba(255, 255, 255, 0.3) !important;
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+.pwa-install-btn:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 @keyframes gentle-pulse {
   0% {
@@ -334,6 +361,13 @@ body::after {
 .moreBtn:hover svg {
   opacity: 72%;
 }
+.deleteBtn:active svg,
+.moreBtn:active svg {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 .navbar {
   display: flex;
   flex-direction: row;
@@ -460,6 +494,12 @@ body::after {
   opacity: 0.72;
 }
 
+.tabNav a:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -483,6 +523,12 @@ body::after {
 
 .logo-img:hover {
   opacity: 0.72;
+}
+
+.logo-img:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 /* CALENDAR */ /* ------------------------------------------------------------------------ */
@@ -533,7 +579,8 @@ body::after {
   box-shadow: var(--shadow-bubble);
   transition: all 0.2s ease;
 }
-.monthArrow:hover {
+.monthArrow:hover,
+.monthArrow:active {
   background: var(--glass-bg);
   border-color: var(--glass-border-bright);
   box-shadow: var(--shadow-float);
@@ -582,7 +629,7 @@ body::after {
   cursor: pointer;
   transition: all 0.25s ease;
 }
-.day:hover {
+.day:hover .day:active {
   background: var(--glass-bg-subtle);
   border-color: var(--glass-border);
   box-shadow: var(--shadow-bubble);
@@ -612,14 +659,14 @@ body::after {
 }
 
 .day-goal-wrapper.is-overdue svg {
-  stroke: #ff4444;
+  stroke: var(--color-danger);
 }
 
 .task-overdue-date-badge {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  color: #ff4a4a; /* Piękny, alarmujący cyber-czerwony */
+  color: var(--color-danger);
   font-size: 10px;
   font-weight: 500;
   margin-top: 4px; /* Odstęp od stojącej wyżej lokalizacji */
@@ -628,7 +675,9 @@ body::after {
 
 .overdue-calendar-icon {
   flex-shrink: 0;
-  stroke: #ff4a4a; /* Zapewnia, że ikonka też dostanie czerwony kolor */
+  stroke: var(
+    --color-danger
+  ); /* Zapewnia, że ikonka też dostanie czerwony kolor */
 }
 
 .emptyListMessage {
@@ -796,15 +845,15 @@ main {
 }
 
 .taskItem.is-completed .taskCheckbox {
-  accent-color: #3dadff;
+  accent-color: var(--color-blue);
 }
 
 .taskItem.overdue {
-  border: 1px solid #ff4d4d;
+  border: 1px solid var(--color-danger);
 }
 
 .taskItem.overdue .item-title {
-  color: #b30000;
+  color: var(--color-danger);
 }
 
 .taskContent {
@@ -905,7 +954,7 @@ main {
 .deleteTaskBtn {
   display: none;
   animation: fadeIn 0.2s ease forwards;
-  background-color: rgba(255, 255, 255, 0) 000;
+  background: transparent;
 }
 
 .show-delete .deleteTaskBtn {
@@ -960,7 +1009,8 @@ main {
   background: rgba(255, 255, 255, 0.6);
   border-radius: 4px;
 }
-.taskListWrapper::-webkit-scrollbar-thumb:hover {
+.taskListWrapper::-webkit-scrollbar-thumb:hover,
+.taskListWrapper::-webkit-scrollbar-thumb:active {
   background: rgba(255, 255, 255, 0.8);
 }
 /* Firefox */
@@ -989,7 +1039,8 @@ main {
   box-shadow: var(--shadow-bubble);
   transition: all 0.3s ease;
 }
-.addTaskBtn:hover {
+.addTaskBtn:hover,
+.addTaskBtn:active {
   background: var(--glass-bg-strong);
   border-color: var(--glass-border-bright);
   box-shadow: var(--shadow-float);
@@ -1010,6 +1061,12 @@ main {
 
 .edit-inline-btn:hover {
   opacity: 72%;
+}
+
+.edit-inline-btn:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 /* MODAL — floating glass bubble (centered, fully rounded) */
@@ -1084,6 +1141,12 @@ main {
 #closeModal:hover {
   opacity: 72%;
 }
+#closeModal:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 .modal-overlay.open {
   display: flex;
   opacity: 1;
@@ -1137,7 +1200,7 @@ main {
 .typePicker {
   cursor: pointer;
   box-shadow: none;
-  color: #dedede;
+  color: #ced2de;
   font-weight: 600;
   font-size: 16px;
   padding: 6px 12px;
@@ -1153,12 +1216,19 @@ main {
 .typePicker:hover {
   opacity: 72%;
 }
+.typePicker:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 .typePicker.active {
   color: #fff;
   text-decoration: underline;
   cursor: auto;
 }
-.typePicker.active:hover {
+.typePicker.active:hover,
+.typePicker.active:active {
   opacity: 100%;
 }
 
@@ -1271,7 +1341,8 @@ main {
   transform: scale(1.1); /* Lekkie powiększenie zaznaczonego dnia */
 }
 
-#daysPicker label:hover {
+#daysPicker label:hover,
+#daysPicker label:active {
   background: var(--glass-bg);
   border-color: var(--glass-border-bright);
   box-shadow: var(--shadow-bubble);
@@ -1426,7 +1497,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #monthDaysGrid input:checked + span {
-  background: #4caf50; /* Twój zielony kolor */
+  background: var(--color-success); /* Twój zielony kolor */
   color: white;
 }
 
@@ -1607,6 +1678,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 #searchLocation:hover {
   opacity: 72%;
 }
+#searchLocation:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 #useMyLocation::placeholder {
   color: rgba(255, 255, 255, 0.56);
   opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
@@ -1614,6 +1691,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 #useMyLocation:hover {
   opacity: 72%;
+}
+
+#useMyLocation:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 /* Animacja obracania */
@@ -1642,11 +1725,10 @@ button:disabled {
 }
 
 input.success {
-  border: 1px solid #4caf50;
+  border: 1px solid var(--color-success);
 }
-
 input.error {
-  border: 1px solid #ff4f4f;
+  border: 1px solid var(--color-danger);
 }
 
 .addTask {
@@ -1765,15 +1847,15 @@ input.error {
   /* box-shadow: var(--shadow-delicate); */
 }
 .habit-card-icon {
-  width: 44px;  
+  width: 44px;
   height: 44px;
   border-radius: 50%;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255, 255, 255, 0.2); 
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: var(--shadow-bubble);
   transition: all 0.3s ease;
-  opacity: 0.75; 
+  opacity: 0.75;
   font-size: 20px;
   display: flex;
   justify-content: center;
@@ -1845,6 +1927,12 @@ input.error {
   opacity: 72%;
 }
 
+.editHabitDetail:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
 #frequencyData {
   display: inline-block;
   max-width: 125px;
@@ -1908,7 +1996,7 @@ input.error {
 .habit-percentage-label {
   font-size: 14px;
   font-weight: bold;
-  color: #614caf;
+  color: var(--color-indigo);
   margin-top: 5px;
 }
 
@@ -1933,7 +2021,7 @@ input.error {
   gap: 8px;
   font-size: 24px;
   font-weight: bold;
-  color: #3dadff;
+  color: var(--color-blue);
 }
 
 .streak-value {
@@ -1943,7 +2031,7 @@ input.error {
   justify-content: flex-start;
   font-size: 24px;
   font-weight: bold;
-  color: #f0512d;
+  color: var(--color-orange);
 }
 
 .xp-value {
@@ -1953,7 +2041,7 @@ input.error {
   justify-content: flex-start;
   font-size: 24px;
   font-weight: bold;
-  color: #2df047;
+  color: var(--color-success);
 }
 
 .detailFireIcon {
@@ -2014,7 +2102,7 @@ input.error {
 }
 
 .mini-day.habit-done {
-  background: #3dadff;
+  background: var(--color-blue);
   color: white;
   font-weight: bold;
 }
@@ -2076,7 +2164,8 @@ input.error {
   box-shadow: var(--shadow-bubble);
   transition: all 0.2s ease;
 }
-.mini-cal-nav button:hover {
+.mini-cal-nav button:hover,
+.mini-cal-nav button:active {
   background: var(--glass-bg);
   border-color: var(--glass-border-bright);
   box-shadow: var(--shadow-float);
@@ -2084,17 +2173,19 @@ input.error {
 
 /* HERO */ /* ------------------------------------------------------------------------ */
 
+/* ==========================================================================
+   🫧 NEW VERTICAL LIQUID PROFILE CONTAINER
+   ========================================================================== */
+
 .userStats {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-between; /* Rozpycha: Dane w lewo, Poziom w prawo */
   align-items: center;
-  max-width: 640px;
+  max-width: 600px;
   width: 100%;
-  flex-shrink: 0;
   margin: 20px auto 0px;
-  gap: 32px;
-  padding: 20px 40px;
+  padding: 24px 32px;
   border-radius: 28px;
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
@@ -2124,34 +2215,201 @@ input.error {
   align-items: flex-end;
 }
 
-/* Ukrywamy oryginalny checkbox */
-.switch input {
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
+.userWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px; /* Przestrzeń między nickiem a ikonami menu */
 }
 
-/* Tło gąbki/slidera (Stan nieaktywny) */
-.switch .slider {
-  position: absolute !important;
-  cursor: pointer;
-  inset: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ) !important; /* Szare/szklane tło pasywne */
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-sizing: border-box !important;
-  transition: all 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+.actionsWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
-.slider.round {
-  max-width: 44px;
+
+/* KONTENER POZIOMU (PIONOWY) */
+.levelWrapperVertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 80px; /* Kompaktowa szerokość pionowa */
+}
+
+/* Fiolka na ciecz */
+.liquid-container {
+  position: relative;
+  width: 32px;
+  height: 100px; /* Wysokość naszej próbówki/bąbla */
+  border-radius: 20px; /* Kapsułkowy, bąbelkowy kształt */
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--glass-border-bright);
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.4), var(--shadow-delicate);
+  overflow: hidden; /* Ścina ciecz i bąbelki do wnętrza fiolki */
+
+  /* 🔥 KLUCZOWE: Te 3 linijki blokują jakikolwiek wyciek owali na zewnątrz */
+  overflow: hidden !important; 
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+/* CIECZ XP: Zmiana działania z szerokości na wysokość (od dołu do góry) */
+#xp-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%; /* Zarządzane przez JS (np. element.style.height = '40%') */
+  background: var(--hero-gradient); /* Twój gradient postępu */
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height;
+}
+
+/* Animowana fala na powierzchni płynu */
+.liquid-wave {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 200%;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,100 350,20 500,60 C650,100 850,20 1000,60 C1150,100 1300,20 1450,60 L1450,120 L0,120 Z' fill='rgba(255,255,255,0.35)'%3E%3C/path%3E%3C/svg%3E");
+  background-size: 50% 100%;
+  animation: waveMovingSmooth 3s linear infinite;
+}
+
+@keyframes waveMovingSmooth {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* 🫧 STRUMIEŃ BĄBELKÓW W PŁYNIE */
+.bubble-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.b-particle {
+  position: absolute;
+  bottom: -10px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatUpBubble 3s infinite linear;
+}
+
+/* Różne pozycje, wielkości i opóźnienia bąbelków dla naturalnego efektu */
+.b-particle:nth-child(1) {
+  left: 20%;
+  width: 4px;
+  height: 4px;
+  animation-duration: 2.5s;
+  animation-delay: 0.2s;
+}
+.b-particle:nth-child(2) {
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  animation-duration: 3.5s;
+  animation-delay: 0.8s;
+}
+.b-particle:nth-child(3) {
+  left: 75%;
+  width: 3px;
+  height: 3px;
+  animation-duration: 2.2s;
+  animation-delay: 1.5s;
+}
+.b-particle:nth-child(4) {
+  left: 35%;
+  width: 5px;
+  height: 5px;
+  animation-duration: 4s;
+  animation-delay: 0s;
+}
+
+@keyframes floatUpBubble {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-110px) scale(1.3);
+    opacity: 0;
+  }
+}
+
+/* Kompaktowe statystyki pod fiolką */
+.vertical-xp-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  gap: 2px;
+  text-align: center;
+}
+
+.vertical-xp-stats .total-gained {
+  font-size: 9px;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* RESPONSYWNOŚĆ MOBILE FIX */
+@media (max-width: 600px) {
+  .userStats {
+    flex-direction: row !important; /* Blokujemy wymuszone kolumny z poprzedniego css! */
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Ukrywamy oryginalny checkbox */
+  .switch input {
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Tło gąbki/slidera (Stan nieaktywny) */
+  .switch .slider {
+    position: absolute !important;
+    cursor: pointer;
+    inset: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.1
+    ) !important; /* Szare/szklane tło pasywne */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-sizing: border-box !important;
+    transition: all 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+  }
+  .slider.round {
+    max-width: 44px;
+  }
 }
 
 /* ⚪️ KÓŁECZKO (Stan nieaktywny - po lewej) */
@@ -2189,22 +2447,6 @@ input.error {
 
 .switch .slider.round::before {
   border-radius: 50% !important;
-}
-
-#xp-progress-bar {
-  height: 100%;
-  width: 0%;
-  background: var(--hero-gradient);
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.userWrapper {
-  display: flex;
-  flex-direction: column;
-  max-width: 360px;
-  width: auto;
-  align-items: flex-start;
-  gap: 8px;
 }
 
 button,
@@ -2272,7 +2514,7 @@ h3 {
 
 #userNameInput {
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--accent-color, #ad22b6);
+  border: 1px solid var(--color-indigo);
   color: white;
   font-size: 1.17em; /* Taka sama wielkość jak H3 */
   font-weight: bold;
@@ -2299,6 +2541,12 @@ h3 {
 
 #editUserName:hover {
   opacity: 72%;
+}
+
+#editUserName:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 .levelWrapper {
@@ -2376,22 +2624,10 @@ h3 {
 #user-level-value {
   font-size: 20px !important; /* Idealnie dobrany rozmiar fontu do kółka 36px */
   font-weight: 800 !important; /* Gruby, czytelny, cyfrowy font */
-  color: var(
-    --accent-color,
-    #ffffff
-  ) !important; /* Kolor poziomów pasujący do ramki */
+  color: #fff !important; /* Kolor poziomów pasujący do ramki */
   line-height: 1 !important;
   text-align: center !important;
   letter-spacing: -0.5px !important; /* Zgęszczenie cyfr przy wyższych levelach (np. 10+) */
-}
-
-/* Pozycjonowanie obok siebie kontenerów akcji */
-.actionsWrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 16px; /* Odstęp między info a zębatką */
 }
 
 /* Styl bazowy dla wrapperów ikonek */
@@ -2406,6 +2642,13 @@ h3 {
 .infoWrapper:hover,
 .settingsWrapper:hover {
   opacity: 0.72;
+}
+
+.infoWrapper:active,
+.settingsWrapper:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 /* 🔄 ANIMACJA OBRACANIA ZĘBATKI */
@@ -2446,6 +2689,12 @@ h3 {
 
 .permission-item:hover {
   opacity: 72%;
+}
+
+.permission-item:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 .permission-item label:not(.switch) {
@@ -2576,6 +2825,7 @@ h3 {
     rgba(0, 255, 204, 0.15) 0%,
     rgba(0, 0, 0, 0) 60%
   );
+  will-change: transform; /* Wymuszenie akceleracji sprzętowej GPU */
   animation: rotateGlow 6s linear infinite;
   pointer-events: none;
 }
@@ -2649,13 +2899,13 @@ xp add animation
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 4px 12px;
   border-radius: 30px; /* Twój bubble-radius */
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 600;
   pointer-events: none; /* Żeby nie blokował kliknięć myszką */
   z-index: 9999;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  
+
   /* Odpalenie mikro-animacji uniesienia i zanikania */
   animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -2694,7 +2944,8 @@ xp add animation
   transition: opacity 0.2s;
 }
 
-.infoWrapper:hover {
+.infoWrapper:hover,
+.infoWrapper:active {
   opacity: 72%;
 }
 
@@ -2717,7 +2968,13 @@ xp add animation
 }
 
 .guide-close-circle:hover {
-  opacity: 72%; /* Dokładnie Twoje 72% hoveru! */
+  opacity: 0.72;
+}
+
+.guide-close-circle:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 /* Mechanika Karuzeli Slajdów wewnątrz modal-sheet */
@@ -2890,7 +3147,7 @@ xp add animation
 
 /* Przycisk akceptacji */
 .guide-primary-btn {
-  background: #ffffff;
+  background: var(--hero-gradient); /*#ffffff;*/
   color: #000000;
   border: none;
   padding: 10px 20px;
@@ -2904,10 +3161,12 @@ xp add animation
 
 .guide-primary-btn:hover {
   transform: translateY(-1px);
-  opacity: 90%;
+  opacity: 0.72;
 }
 .guide-primary-btn:active {
-  transform: translateY(0);
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
 }
 
 @media (max-width: 740px) {

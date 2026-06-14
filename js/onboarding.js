@@ -42,8 +42,8 @@ export const OnboardingService = {
             <div class="onboarding-step-content">
               <p>To make your app fully working, send you morning briefings, and keep track of your location-based habits, please enable the system permissions below:</p>
               <div style="display:flex; flex-direction:column; gap:12px; margin-top: 20px; width: 100%;">
-                <button id="btnAuthNotify" class="addTask" style="background:var(--hero-gradient); width:100%; margin:0; border-radius: 14px;">Enable Notifications</button>
-                <button id="btnAuthGeo" class="addTask" style="background: linear-gradient(90deg, #4facfe, #00f2fe); width:100%; margin:0; border-radius: 14px;">Allow Geolocation</button>
+                <button id="btnAuthNotify" class="addTask" style="background:var(--hero-gradient); color: #ffffff; cursor: pointer; transition: opacity 0.3s ease; width:100%; margin:0; border-radius: 14px;">Enable Notifications</button>
+                <button id="btnAuthGeo" class="addTask" style="background: var(--hero-gradient); color: #ffffff; cursor: pointer; transition: opacity 0.3s ease; width:100%; margin:0; border-radius: 14px;">Allow Geolocation</button>
               </div>
             </div>
           `,

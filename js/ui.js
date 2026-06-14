@@ -1310,7 +1310,7 @@ export const UI = {
       // Standardowa aktualizacja paska dla zwykłego przyrostu XP
       const progressBar = document.getElementById("xp-progress-bar");
       if (progressBar) {
-        progressBar.style.setProperty("width", `${progressPercent}%`);
+        progressBar.style.setProperty("height", `${progressPercent}%`);
       }
 
       const currentDisplayedLevelEl =
