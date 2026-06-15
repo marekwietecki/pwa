@@ -155,8 +155,31 @@
       <!-- HABITS -->
       <section class="habitStats">
         <!-- hero-stats -->
-        <div class="habit-carousel-wrapper">
-          <div class="habit-carousel" id="habitCarousel"></div>
+        <div class="habit-dropdown-container">
+          <div class="habit-dropdown-trigger" id="habitDropdownTrigger">
+            <div class="habit-dropdown-current">
+              <span id="currentHabitIcon" class="habit-item-icon">🫧</span>
+              <span id="currentHabitName" class="habit-item-name"
+                >Pick habit</span
+              >
+            </div>
+            <svg
+              class="dropdown-chevron"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+
+          <div class="habit-dropdown-list" id="habitDropdownList"></div>
         </div>
 
         <div id="habitDetails" class="habit-details-card" style="display: none">

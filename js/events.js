@@ -136,9 +136,6 @@ export function initEventListeners(AppState) {
       }
     }
 
-    bubbleSound.currentTime = 0;
-    bubbleSound.play().catch((err) => console.log("Audio block bypass:", err));
-
     const id = parseInt(li.dataset.id);
     const type = li.dataset.type;
     const dateKey = li.dataset.dateKey;
@@ -172,7 +169,7 @@ export function initEventListeners(AppState) {
           // NALICZAMY XP W BAZIE
           await handleCompletion(type, itemData, isChecked);
 
-          // 2. ANIMACJA + BĄBELEK XP (Odpala się tylko gdy zadanie jest zaznaczane jako zrobione)
+          // 2. ANIMACJA + BĄBELEK XP i dzwięk (Odpala się tylko gdy zadanie jest zaznaczane jako zrobione)
           if (isChecked) {
             // Pobieramy wartość XP dla bąbelka
             const xpValue = LevelManager.calculateXP(type, itemData);
@@ -185,12 +182,16 @@ export function initEventListeners(AppState) {
             const newBarPercentage =
               (freshStats.currentXp / currentXpThreshold) * 100;
 
-            // Wywołujemy animację (Sprawdzanie modułu UI lub globalnej funkcji)
+            // Wywołujemy animację i dzwięk (Sprawdzanie modułu UI lub globalnej funkcji)
             if (typeof triggerTaskXpAnimation !== "undefined") {
               triggerTaskXpAnimation(e, xpValue, newBarPercentage);
             } else if (typeof UI !== "undefined" && UI.triggerTaskXpAnimation) {
               UI.triggerTaskXpAnimation(e, xpValue, newBarPercentage);
             }
+            bubbleSound.currentTime = 0;
+            bubbleSound
+              .play()
+              .catch((err) => console.log("Audio block bypass:", err));
           }
         }
 

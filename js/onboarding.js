@@ -53,7 +53,7 @@ export const OnboardingService = {
         html: `
             <div class="onboarding-step-content">
               <p>Let's build your very first daily habit right now to kickstart your journey.</p> <p>Type the name and choose a visual badge:</p>
-              <input type="text" id="onboardingHabit" placeholder="e.g., Drink water, Meditate, Exercise..." class="modal-input">
+              <input type="text" id="onboardingHabit" placeholder="e.g., Drink water, Sleep 8h, Exercise..." class="modal-input">
               <div id="onboardingIconPicker" style="
                   display: flex;
                   gap: 12px;
@@ -95,16 +95,20 @@ export const OnboardingService = {
     let selectedIconId = "💧";
 
     const onboardingIcons = [
-      "💧",
-      "🧘",
-      "🏃‍♂️",
-      "📚",
-      "🍏",
+      "💧", 
+      "🛌", 
       "💪",
-      "🛌",
+      "🍏", 
+      "🏃‍♂️", 
+      "📚", 
+      "💵",
+      "🚭", 
+      "📱", 
+      "🐶", 
       "🧠",
-      "🎯",
-      "🌟",
+      "🧘",
+      "🎯", 
+      "🌟"  
     ];
 
     const renderWizard = (stepNum) => {
@@ -218,9 +222,9 @@ export const OnboardingService = {
         inputEl.style.transition = "all 0.3s ease";
 
         inputEl.addEventListener("focus", () => {
-          inputEl.style.border = "1px solid rgba(255, 0, 255, 0.6)";
+          inputEl.style.border = "1px solid rgba(255, 255, 255, 0.6)";
           inputEl.style.background = "rgba(255, 255, 255, 0.09)";
-          inputEl.style.boxShadow = "0 0 15px rgba(255, 0, 255, 0.2)";
+          inputEl.style.boxShadow = "0 0 15px rgba(255, 255, 255, 0.2)";
         });
         inputEl.addEventListener("blur", () => {
           inputEl.style.border = "1px solid rgba(255, 255, 255, 0.15)";
@@ -293,9 +297,9 @@ export const OnboardingService = {
             `;
 
             if (emoji === selectedIconId) {
-              iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+              iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
               iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
             }
 
             iconWrapper.addEventListener("click", () => {
@@ -308,9 +312,9 @@ export const OnboardingService = {
                 });
 
               selectedIconId = emoji;
-              iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+              iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
               iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
             });
 
             picker.appendChild(iconWrapper);

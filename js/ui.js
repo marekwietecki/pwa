@@ -14,17 +14,21 @@ export const GRADIENTS = [
 
 // 🔥 Lista pięknych ikon współdzielona z onboardingiem
 export const ONBOARDING_ICONS = [
-  "💧",
-  "🧘",
-  "🏃‍♂️",
-  "📚",
-  "🍏",
-  "💪",
-  "🛌",
-  "🧠",
-  "🎯",
-  "🌟",
-];
+    "💧", 
+    "🛌", 
+    "💪",
+    "🍏", 
+    "🏃‍♂️", 
+    "📚", 
+    "💵",
+    "🚭", 
+    "📱", 
+    "🐶", 
+    "🧠",
+    "🧘",
+    "🎯", 
+    "🌟"  
+  ];
 
 export const UI = {
   // 🔥 Przechowuje aktualnie wybrane emoji w modalu głównym
@@ -250,9 +254,9 @@ export const UI = {
       `;
 
       if (isPreset && emoji === UI.selectedHabitIcon) {
-        iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+        iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
         iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
       }
 
       iconWrapper.addEventListener("click", () => {
@@ -268,9 +272,9 @@ export const UI = {
         }
 
         UI.selectedHabitIcon = emoji;
-        iconWrapper.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+        iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
         iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
       });
 
       pickerContainer.appendChild(iconWrapper);
@@ -302,7 +306,7 @@ export const UI = {
 
     if (!isPreset && activeEmoji) {
       customInput.value = activeEmoji;
-      customInput.style.border = "1px solid rgba(255, 0, 255, 0.5)";
+      customInput.style.border = "1px solid rgba(255, 255, 255, 0.5)";
       customInput.style.background = "rgba(255, 255, 255, 0.07)";
     }
 
@@ -314,9 +318,9 @@ export const UI = {
     // 🔥 FOCUS: Kliknięcie od razu gasi podświetlenia ikon z karuzeli po lewej!
     customInput.addEventListener("focus", () => {
       customInput.placeholder = "";
-      customInput.style.border = "1px solid rgba(255, 0, 255, 0.6)";
+      customInput.style.border = "1px solid rgba(255, 255, 255, 0.6)";
       customInput.style.background = "rgba(255, 255, 255, 0.12)";
-      customInput.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.2)";
+      customInput.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.2)";
 
       // ⚡ TU DZIEJE SIĘ MAGIA: Natychmiastowe czyszczenie podświetleń z gotowych ikon
       pickerContainer.querySelectorAll(".main-icon-item").forEach((item) => {
@@ -345,9 +349,9 @@ export const UI = {
         // przywracamy podświetlenie domyślnej kropelki na karuzeli, żeby nie było pustki!
         const firstIcon = pickerContainer.querySelector(".main-icon-item");
         if (firstIcon && firstIcon.textContent === "💧") {
-          firstIcon.style.border = "2px solid rgba(255, 0, 255, 0.6)";
+          firstIcon.style.border = "2px solid rgba(255, 255, 255, 0.6)";
           firstIcon.style.background = "rgba(255, 255, 255, 0.12)";
-          firstIcon.style.boxShadow = "0 0 10px rgba(255, 0, 255, 0.3)";
+          firstIcon.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
           UI.selectedHabitIcon = "💧";
         }
       }
@@ -1067,45 +1071,54 @@ export const UI = {
   },
 
   renderHabits: async (AppState) => {
-    const container = document.getElementById("habitCarousel");
-    if (!container) return;
+    const listContainer = document.getElementById("habitDropdownList");
+    const trigger = document.getElementById("habitDropdownTrigger");
+    const dropdownContainer = trigger?.parentElement;
+    
+    if (!listContainer || !trigger || !dropdownContainer) return;
 
     const habits = await DataManager.getHabits();
-    container.innerHTML = "";
+    listContainer.innerHTML = "";
+
+    // 1. Obsługa otwierania/zamykania dropdownu (Toggle)
+    trigger.onclick = (e) => {
+      e.stopPropagation(); // Żeby kliknięcie w przycisk nie odpalało innych eventów
+      dropdownContainer.classList.toggle("open");
+    };
+
+    // Zamykanie listy, jeśli użytkownik kliknie gdziekolwiek indziej na ekranie
+    document.addEventListener("click", () => {
+      dropdownContainer.classList.remove("open");
+    });
 
     if (habits.length === 0) {
-      const noHabitsMsg = document.createElement("p");
-      noHabitsMsg.textContent =
-        "No habits added yet! Add one to see its statistics.";
-      noHabitsMsg.className = "noHabitsMsg";
-      container.appendChild(noHabitsMsg);
+      listContainer.innerHTML = `<p class="noHabitsMsg" style="padding: 16px;">No habits added yet!</p>`;
       return;
     }
 
     const fragment = document.createDocumentFragment();
     habits.forEach((habit, index) => {
-      const card = document.createElement("div");
-      card.className = "habit-card-mini";
-      card.dataset.id = habit.id;
+      // 2. Budujemy pozycje (opcje) na liście rozwijanej
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
+      item.dataset.id = habit.id;
 
-      const iconCircle = document.createElement("div");
-      iconCircle.className = "habit-card-icon";
-      iconCircle.textContent = habit.icon || habit.name.charAt(0).toUpperCase();
+      item.innerHTML = `
+        <span class="habit-item-icon">${habit.icon || '🫧'}</span>
+        <span class="habit-item-name">${habit.name}</span>
+      `;
 
-      // const nameLabel = document.createElement("p");
-      // nameLabel.textContent = habit.name;
-      // nameLabel.className = "habit-name-label";
-
-      card.appendChild(iconCircle);
-      // card.appendChild(nameLabel);
-
+      // Sprawdzamy, czy ten nawyk jest aktualnie zaznaczony
       const isSelected =
         AppState.selectedHabitForStats?.id === habit.id ||
         (!AppState.selectedHabitForStats && index === 0);
 
       if (isSelected) {
-        iconCircle.classList.add("active-habit-icon");
-        // nameLabel.classList.add("active-habit-label");
+        item.classList.add("selected");
+        
+        // Wstrzykujemy dane domyślnego nawyku do widocznego paska głównego
+        document.getElementById("currentHabitIcon").textContent = habit.icon || '🫧';
+        document.getElementById("currentHabitName").textContent = habit.name;
 
         if (!AppState.selectedHabitForStats) {
           AppState.selectedHabitForStats = habit;
@@ -1113,25 +1126,29 @@ export const UI = {
         }
       }
 
-      card.onclick = () => {
-        container
-          .querySelectorAll(".active-habit-icon")
-          .forEach((el) => el.classList.remove("active-habit-icon"));
-        container
-          .querySelectorAll(".active-habit-label")
-          .forEach((el) => el.classList.remove("active-habit-label"));
+      // 3. Kliknięcie w element na liście rozwijanej
+      item.onclick = (e) => {
+        e.stopPropagation();
 
-        iconCircle.classList.add("active-habit-icon");
-        // nameLabel.classList.add("active-habit-label");
+        // Podmieniamy wizualne zaznaczenie klasy na liście
+        listContainer.querySelectorAll(".dropdown-item.selected").forEach((el) => el.classList.remove("selected"));
+        item.classList.add("selected");
 
+        // Aktualizujemy główny pasek (Belkę dropdownu)
+        document.getElementById("currentHabitIcon").textContent = habit.icon || '🫧';
+        document.getElementById("currentHabitName").textContent = habit.name;
+
+        // Ładujemy statystyki poniżej
         AppState.selectedHabitForStats = habit;
         UI.showHabitDetails(habit, AppState);
-        card.scrollIntoView({ behavior: "smooth", inline: "center" });
+
+        // Chowamy listę po wyborze
+        dropdownContainer.classList.remove("open");
       };
 
-      fragment.appendChild(card);
+      fragment.appendChild(item);
     });
-    container.appendChild(fragment);
+    listContainer.appendChild(fragment);
   },
 
   showHabitDetails: (habit, AppState) => {
