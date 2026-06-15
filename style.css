@@ -25,6 +25,48 @@ body.offline section {
   transition: margin-top 0.3s ease;
   margin-top: 0px; /* wysokość paska */
 }
+/* ==========================================================================
+   🫧 ULTRA SMOOTH PERFECTION - ACCELERATED BY GPU
+   ========================================================================== */
+
+/* Kontener główny podstron */
+.page-container {
+  opacity: 1;
+  transform: scale(1);
+  will-change: opacity, transform; /* 1. Informujemy GPU, żeby przygotowało warstwę */
+  /* 2. Zmieniamy funkcję przejścia na bardziej fizyczną, kinową */
+  transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+    transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Stan podczas przełączania karty - minimalne, eleganckie odejście w głąb */
+.page-container.is-switching {
+  opacity: 0;
+  transform: scale(0.985);
+}
+
+/* Animacja kaskadowego wlatywania kafelków (Staggered Fade-In) */
+@keyframes bubbleFadeIn {
+  0% {
+    opacity: 0;
+    /* 3. Używamy translate3d zamiast translateY – to wymusza pełny rendering 3D na GPU! */
+    transform: translate3d(0, 16px, 0) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Klasa aplikowana do każdego generowanego zadania/nawyku/celu */
+.taskItem {
+  opacity: 0;
+  will-change: transform, opacity; /* 4. Każdy bąbelek staje się osobną warstwą sprzętową */
+
+  /* 5. Autorska krzywa bąbelkowa - ma mikro-odbicie (overshoot) na końcu, 
+     które daje niesamowicie organiczny, sprężysty feeling przy wpadaniu */
+  animation: bubbleFadeIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
 
 /* BODY */ /* ------------------------------------------------------------------------ */
 *,
@@ -356,6 +398,78 @@ body::after {
   flex-shrink: 0;
   stroke-width: 2;
   fill: none;
+}
+/* ==========================================================================
+   🫧 HOLD TO DELETE - PROGRESS RING (DOPASOWANY DO ŚMIETNIKA)
+   ========================================================================== */
+
+/* Kontener na śmietnik, żeby kółko na nim leżało */
+.deleteBtn {
+  position: relative !important; /* Ważne! */
+  overflow: visible !important;
+  color: var(--color-danger);
+}
+
+/* Ukryty domyślnie okrąg postępu SVG */
+.delete-progress-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Wyśrodkowanie + obrót o -90 stopni, żeby rysowało się od góry */
+  transform: translate(-50%, -50%) rotate(-90deg);
+  width: 32px;
+  height: 32px;
+  pointer-events: none; /* Kliknięcia przechodzą do przycisku */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.delete-progress-bg {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.delete-progress-bar {
+  stroke: var(
+    --color-danger
+  ); /* Śmietnik jest czerwony, więc kółko postępu robimy białe */
+  /* Obwód koła o promieniu r=14 wynosi dokładnie 2 * PI * 14 = 87.96 */
+  stroke-dasharray: 88;
+  stroke-dashoffset: 88;
+  transition: stroke-dashoffset 3s linear, stroke-width 0.2s;
+}
+
+/* STAN AKTYWNEGO TRZYMANIA ŚMIETNIKA */
+.deleteBtn.is-holding {
+  transform: scale(0.92) !important; /* Przycisk się zapada */
+  transition: transform 0.1s ease;
+}
+
+.deleteBtn.is-holding .delete-progress-svg {
+  opacity: 1;
+}
+
+/* Gdy trzymamy, odpalamy animację rysowania linii w 2 sekundy */
+.deleteBtn.is-holding .delete-progress-bar {
+  stroke-dashoffset: 0;
+}
+
+/* Efekt "Explode" po udanym usunięciu */
+.deleteBtn.delete-success {
+  animation: bubblePopX 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bubblePopX {
+  0% {
+    transform: scale(0.92);
+  }
+  50% {
+    transform: scale(1.3);
+    background: #ff3b30;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
 }
 .deleteBtn:hover svg,
 .moreBtn:hover svg {
@@ -1784,130 +1898,131 @@ input.error {
    🫧 HABIT BUBBLE DROPDOWN (SELECT) SYSTEM
    ========================================================================== */
 
-   .habitStats {
-    max-width: 360px;
-    margin: 24px auto 0;
-    width: 100%;
-    padding: 0 20px;
-  }
-  
-  .habit-dropdown-container {
-    position: relative; /* Ważne, żeby lista pozycjonowała się względem bąbla */
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
-  /* Główny przycisk (Trigger) */
-  .habit-dropdown-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 12px 18px;
-    border-radius: 20px; /* Twój bubble-radius */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .habit-dropdown-trigger:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .habit-dropdown-trigger:active {
-    transform: scale(0.98);
-  }
-  
-  .habit-dropdown-current {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  /* Animacja obracania strzałki */
-  .dropdown-chevron {
-    color: rgba(255, 255, 255, 0.4);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    will-change: transform;
-  }
-  
-  /* Klasa nadawana przez JS, gdy lista jest otwarta */
-  .habit-dropdown-container.open .dropdown-chevron {
-    transform: rotate(180deg);
-    color: var(--color-accent, #00ffcc);
-  }
-  
-  /* 🪐 ROZWIJANA LISTA (Pływający Szklany Panel) */
-  .habit-dropdown-list {
-    position: absolute;
-    top: calc(100% + 8px); /* Pojawia się tuż pod przyciskiem */
-    left: 0;
-    width: 100%;
-    background: rgba(15, 22, 42, 0.85); /* Głębokie, ciemne szkło */
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 255, 204, 0.05);
-    z-index: 99; /* Nad wszystkim, nie przesuwa layoutu */
-    
-    /* Mechanika ukrywania/pokazywania */
-    max-height: 0;
-    overflow-y: auto;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-8px) scale(0.98);
-    transition: max-height 0.3s ease, opacity 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  /* Stan otwarty listy */
-  .habit-dropdown-container.open .habit-dropdown-list {
-    max-height: 250px; /* Maksymalna wysokość, potem pojawi się ładny scroll */
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-  }
-  
-  /* Elementy wewnątrz rozwijanej listy */
-  .dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 18px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-  
-  .dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.04);
-  }
-  
-  /* Obecnie podświetlony na liście nawyk */
-  .dropdown-item.selected {
-    background: rgba(0, 255, 204, 0.06);
-    color: var(--color-accent, #00ffcc);
-  }
-  
-  /* Wierszowe ikonki i fonty */
-  .habit-item-icon {
-    font-size: 18px;
-  }
-  
-  .habit-item-name {
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #ffffff;
-  }
+.habitStats {
+  max-width: 360px;
+  margin: 24px auto 0;
+  width: 100%;
+  padding: 0 20px;
+}
 
-  .habit-item-name::first-letter {
-    text-transform: uppercase;
-  }
-  
-  .dropdown-item.selected .habit-item-name {
-    color: var(--color-accent, #00ffcc);
-  }
+.habit-dropdown-container {
+  position: relative; /* Ważne, żeby lista pozycjonowała się względem bąbla */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Główny przycisk (Trigger) */
+.habit-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 18px;
+  border-radius: 20px; /* Twój bubble-radius */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.habit-dropdown-trigger:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.habit-dropdown-trigger:active {
+  transform: scale(0.98);
+}
+
+.habit-dropdown-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Animacja obracania strzałki */
+.dropdown-chevron {
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+/* Klasa nadawana przez JS, gdy lista jest otwarta */
+.habit-dropdown-container.open .dropdown-chevron {
+  transform: rotate(180deg);
+  color: var(--color-accent, #00ffcc);
+}
+
+/* 🪐 ROZWIJANA LISTA (Pływający Szklany Panel) */
+.habit-dropdown-list {
+  position: absolute;
+  top: calc(100% + 8px); /* Pojawia się tuż pod przyciskiem */
+  left: 0;
+  width: 100%;
+  background: rgba(15, 22, 42, 0.85); /* Głębokie, ciemne szkło */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 255, 204, 0.05);
+  z-index: 99; /* Nad wszystkim, nie przesuwa layoutu */
+
+  /* Mechanika ukrywania/pokazywania */
+  max-height: 0;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.98);
+  transition: max-height 0.3s ease, opacity 0.2s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stan otwarty listy */
+.habit-dropdown-container.open .habit-dropdown-list {
+  max-height: 250px; /* Maksymalna wysokość, potem pojawi się ładny scroll */
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* Elementy wewnątrz rozwijanej listy */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Obecnie podświetlony na liście nawyk */
+.dropdown-item.selected {
+  background: rgba(0, 255, 204, 0.06);
+  color: var(--color-accent, #00ffcc);
+}
+
+/* Wierszowe ikonki i fonty */
+.habit-item-icon {
+  font-size: 18px;
+}
+
+.habit-item-name {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.habit-item-name::first-letter {
+  text-transform: uppercase;
+}
+
+.dropdown-item.selected .habit-item-name {
+  color: var(--color-accent, #00ffcc);
+}
 
 .noHabitsMsg {
   padding: 20px;
@@ -2273,10 +2388,10 @@ input.error {
   flex-direction: row;
   justify-content: space-between; /* Rozpycha: Dane w lewo, Poziom w prawo */
   align-items: center;
-  max-width: 600px;
+  max-width: 480px;
   width: 100%;
   margin: 20px auto 0px;
-  padding: 24px 32px;
+  padding: 32px;
   border-radius: 28px;
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
@@ -2469,7 +2584,6 @@ input.error {
     flex-direction: row !important; /* Blokujemy wymuszone kolumny z poprzedniego css! */
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
   }
 
   /* Ukrywamy oryginalny checkbox */
@@ -2556,6 +2670,20 @@ h3 {
   gap: 8px;
   /* Zapewnia, że żaden element w tym wierszu się nie zawinie */
   white-space: nowrap;
+}
+
+@media (max-width: 396px) {
+  .userWrapper {
+    max-width: 184px;
+  }
+  .usernameWrapper {
+    max-width: 184px;
+  }
+}
+@media (max-width: 360px) {
+  .usernameWrapper {
+    max-width: 160px;
+  }
 }
 
 #displayUserName {

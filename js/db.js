@@ -93,19 +93,51 @@ export const DB = {
 
   async put(storeName, item, key) {
     const db = await this.open();
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, "readwrite");
       const store = tx.objectStore(storeName);
       const request = key ? store.put(item, key) : store.put(item);
-      request.onsuccess = () => resolve(true);
+
+      request.onerror = () => {
+        console.error(`[DB] Błąd put() na "${storeName}":`, request.error);
+        reject(request.error);
+      };
+
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => {
+        console.error(`[DB] Błąd transakcji put na "${storeName}":`, tx.error);
+        reject(tx.error);
+      };
+      tx.onabort = () => {
+        console.error(`[DB] Transakcja put na "${storeName}" przerwana:`, tx.error);
+        reject(tx.error);
+      };
     });
   },
 
   async delete(storeName, id) {
     const db = await this.open();
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, "readwrite");
-      tx.objectStore(storeName).delete(id).onsuccess = () => resolve(true);
+      const request = tx.objectStore(storeName).delete(id);
+
+      request.onsuccess = () => {
+        console.log(`[DB] Usunięto rekord id=${id} ze store "${storeName}"`);
+      };
+      request.onerror = () => {
+        console.error(`[DB] Błąd delete() na "${storeName}" id=${id}:`, request.error);
+        reject(request.error);
+      };
+
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => {
+        console.error(`[DB] Błąd transakcji delete na "${storeName}":`, tx.error);
+        reject(tx.error);
+      };
+      tx.onabort = () => {
+        console.error(`[DB] Transakcja delete na "${storeName}" przerwana:`, tx.error);
+        reject(tx.error);
+      };
     });
   },
 };

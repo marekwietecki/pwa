@@ -189,7 +189,7 @@ export const PermissionsManager = {
 
           // 🔥 Odpalamy powiadomienie push, jeśli aplikacja ma do tego uprawnienia
           if (Notification.permission === "granted") {
-            new Notification("NeuroBubble 🫧", {
+            new Notification("Habit Bubbl 🫧", {
               body: "📍 Space-time synced! Your environment is now successfully linked.",
               icon: "./assets/icons/icon-192x192.png", // upewnij się, że ścieżka do Twojej ikony PWA się zgadza
               vibrate: [100, 50, 100]
@@ -307,7 +307,7 @@ export const QuoteService = {
     const selectedQuote = MOTIVATIONAL_QUOTES[randomIndex];
     return { 
       text: selectedQuote, 
-      author: "NeuroBubble" 
+      author: "Habit Bubbl" 
     };
   },
 };
@@ -343,7 +343,7 @@ export const PwaService = {
 
       const title = document.createElement("span");
       title.className = "pwa-install-title";
-      title.textContent = "Take NeuroBubble to your home screen for full experience 🫧";
+      title.textContent = "Take Habit Bubbl to your home screen for full experience 🫧";
 
       const button = document.createElement("button");
       button.id = "pwa-install-btn";

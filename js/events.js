@@ -204,22 +204,43 @@ export function initEventListeners(AppState) {
       }
     } // 💥 Tutaj prawidłowo zamyka się warunek IF dla Checkboxa
 
-    // DELETE
+    // DELETE (Zaktualizowana sekcja w handleListAction)
+    // ==========================================
     const moreBtn = target.closest(".moreBtn");
     if (moreBtn) {
-      if (li.classList.contains("show-delete")) {
-        await DataManager.deleteItemByType(type, id);
-        // GLOBAL REFRESH
-        await refreshCurrentView(AppState);
-      } else {
-        li.classList.add("show-delete");
-        moreBtn.replaceChildren(UI.createDeleteIcon());
-        setTimeout(() => {
-          if (li.classList.contains("show-delete")) {
-            li.classList.remove("show-delete");
-            moreBtn.replaceChildren(UI.createEllipsisIcon());
+      e.stopPropagation();
+
+      // Wyciągamy poprawne dane z li zanim cokolwiek zmienimy
+      const currentId = parseInt(li.dataset.id);
+      const currentType = li.dataset.type;
+
+      if (typeof UI !== "undefined" && UI.renderDeleteWithFriction) {
+        // Przekazujemy czyste dane i czekamy na pełne wykonanie holda
+        UI.renderDeleteWithFriction(
+          moreBtn,
+          { id: currentId, type: currentType },
+          AppState,
+          async () => {
+            // 🔥 KLUCZ: To wykonuje się dokładnie w momencie zamknięcia kółka (2s)
+            try {
+              // 1. Strzał bezpośrednio do IndexedDB i czekamy na potwierdzenie zapisu!
+              await DataManager.deleteItemByType(currentType, currentId);
+              console.log(
+                `[IndexedDB] Permanentnie usunięto: ${currentType} o ID: ${currentId}`
+              );
+
+              // 2. DOPIERO PO POTWIERDZENIU Z BAZY odświeżamy cały widok aplikacji
+              if (typeof refreshCurrentView === "function") {
+                await refreshCurrentView(AppState);
+              }
+            } catch (err) {
+              console.error(
+                "Błąd krytyczny podczas usuwania z IndexedDB:",
+                err
+              );
+            }
           }
-        }, 2500);
+        );
       }
     }
 
@@ -374,9 +395,10 @@ export function initEventListeners(AppState) {
         deadline: elements.goalDeadline.value,
         linkedHabitId: parseInt(elements.goalHabitSelect.value) || null,
       };
-      if (!newData.name || !newData.deadline)
-        return UI.showModalMessage("Required fields missing!");
-
+      if (!newData.name || !newData.deadline) {
+        UI.showModalMessage("Required fields missing!");
+        throw new Error("Validation failed");
+      }
       await DataManager.updateGoalDetails(id, newData);
     } else {
       // Logika edycji nawyku - czysto i czytelnie
@@ -466,7 +488,10 @@ export function initEventListeners(AppState) {
         await handleSaveEdit(editId, editType, AppState);
       } else {
         const success = await handleAddNew(AppState);
-        if (!success) return;
+        if (!success) {
+          elements.confirmAddBtn.disabled = false; // Odblokuj przycisk, żeby mógł poprawić błąd!
+          return;
+        }
       }
 
       await refreshCurrentView(AppState);

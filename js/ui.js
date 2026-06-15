@@ -14,21 +14,21 @@ export const GRADIENTS = [
 
 // 🔥 Lista pięknych ikon współdzielona z onboardingiem
 export const ONBOARDING_ICONS = [
-    "💧", 
-    "🛌", 
-    "💪",
-    "🍏", 
-    "🏃‍♂️", 
-    "📚", 
-    "💵",
-    "🚭", 
-    "📱", 
-    "🐶", 
-    "🧠",
-    "🧘",
-    "🎯", 
-    "🌟"  
-  ];
+  "💧",
+  "🛌",
+  "💪",
+  "🍏",
+  "🏃‍♂️",
+  "📚",
+  "💵",
+  "🚭",
+  "📱",
+  "🐶",
+  "🧠",
+  "🧘",
+  "🎯",
+  "🌟",
+];
 
 export const UI = {
   // 🔥 Przechowuje aktualnie wybrane emoji w modalu głównym
@@ -99,8 +99,17 @@ export const UI = {
     if (nameLabel) nameLabel.textContent = stats.userName;
     await UI.updateXPBar(AppState);
   },
-
   renderCurrentPage: async (AppState) => {
+    const mainContent =
+      document.querySelector(".page-container") ||
+      document.querySelector("main");
+
+    if (mainContent) {
+      mainContent.classList.add("is-switching");
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+
+    // Renderowanie podstron...
     if (elements.toDoList) {
       await UI.renderQuote();
       await UI.renderDailyTasks(AppState);
@@ -115,6 +124,12 @@ export const UI = {
       await UI.setupSettingsToggles();
       UI.applyRandomGradient();
       await UI.renderLongTermGoals();
+    }
+
+    if (mainContent) {
+      setTimeout(() => {
+        mainContent.classList.remove("is-switching");
+      }, 30);
     }
   },
 
@@ -638,28 +653,36 @@ export const UI = {
     const undoneTasks = await DataManager.getUndoneTasks(dateKey);
     const savedHabits = await DataManager.getHabits();
 
-    // 🔥 NOWOŚĆ: Sortowanie zadań (Najstarsze/Przeterminowane na górę)
+    // Sortowanie zadań (Najstarsze/Przeterminowane na górę)
     undoneTasks.sort((a, b) => {
-      // 1. Najpierw porównujemy po dacie (np. "2026-05-27" < "2026-05-29")
-      if (a.date !== b.date) {
-        return a.date.localeCompare(b.date);
-      }
-      // 2. Jeśli daty są identyczne, sortujemy alfabetycznie po nazwie zadania
+      if (a.date !== b.date) return a.date.localeCompare(b.date);
       return a.name.localeCompare(b.name);
     });
 
     const undoneNodes = [];
+    // 🔥 Licznik, który zapewni ciągłość fali między zadaniami a nawykami
+    let globalIndex = 0;
 
     // TASKS
     undoneTasks.forEach((task) => {
       const isOverdue = task.date < dateKey;
-      undoneNodes.push(
-        UI.createItem(task.name, task, dateKey, "task", AppState, isOverdue)
+      const li = UI.createItem(
+        task.name,
+        task,
+        dateKey,
+        "task",
+        AppState,
+        isOverdue
       );
+
+      // 🔥 NAKŁADAMY DELAY: Pierwsze zadanie 0s, drugie 0.04s, trzecie 0.08s...
+      li.style.animationDelay = `${globalIndex * 0.04}s`;
+      globalIndex++;
+
+      undoneNodes.push(li);
     });
 
     // HABITS
-    // (Sortowanie nawyków opcjonalnie alfabetycznie, żeby nie skakały losowo)
     const sortedHabits = [...savedHabits].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
@@ -671,9 +694,13 @@ export const UI = {
       const isDone = habit.history && habit.history[dateKey];
 
       if (isDue && !isDone) {
-        undoneNodes.push(
-          UI.createItem(habit.name, habit, dateKey, "habit", AppState)
-        );
+        const li = UI.createItem(habit.name, habit, dateKey, "habit", AppState);
+
+        // 🔥 KONTYNUACJA FALI: Nawyki lecą z opóźnieniem zaraz po zadaniach
+        li.style.animationDelay = `${globalIndex * 0.04}s`;
+        globalIndex++;
+
+        undoneNodes.push(li);
       }
     });
 
@@ -692,8 +719,13 @@ export const UI = {
     const savedGoals = await DataManager.getGoals();
     const goalNodes = savedGoals
       .filter((g) => !g.done)
-      .map((goal) => {
+      .map((goal, index) => {
+        // 🔥 Pobieramy index z metody map
         const li = UI.createItem(goal.name, goal, null, "goal", AppState);
+
+        // 🔥 NAKŁADAMY DELAY dla celów
+        li.style.animationDelay = `${index * 0.04}s`;
+
         return li;
       });
 
@@ -747,7 +779,14 @@ export const UI = {
       }
     });
 
-    UI.renderToContainer(listEl, [...undoneNodes, ...doneNodes]);
+    // 🔥 ŁĄCZYMY TABLICE I NAKŁADAMY DELAY NA CAŁOŚĆ:
+    // Chcemy, żeby zrobione zadania na samym dole też ładnie wleciały w kaskadzie
+    const finalNodes = [...undoneNodes, ...doneNodes];
+    finalNodes.forEach((li, index) => {
+      li.style.animationDelay = `${index * 0.04}s`;
+    });
+
+    UI.renderToContainer(listEl, finalNodes);
   },
 
   getItemMetadata: (data, type, allHabits) => {
@@ -831,6 +870,98 @@ export const UI = {
     }
 
     return metaWrapper;
+  },
+
+  renderDeleteWithFriction: function (
+    moreBtn,
+    data,
+    AppState,
+    onConfirmDelete
+  ) {
+    const isAlreadyTrash = moreBtn.classList.contains("deleteBtn");
+    const li = moreBtn.closest("li");
+    if (!li) return;
+
+    if (!isAlreadyTrash) {
+      // PIERWSZE KLIKNIĘCIE: Zamiana w czerwony bąbel
+      moreBtn.classList.add("deleteBtn");
+      moreBtn.innerHTML = "";
+
+      // Wstrzykujemy ikonę śmietnika
+      moreBtn.insertAdjacentHTML(
+        "beforeend",
+        `
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+      `
+      );
+
+      // Wstrzykujemy kółko postępu
+      moreBtn.insertAdjacentHTML(
+        "beforeend",
+        `
+        <svg class="delete-progress-svg" width="32" height="32" viewBox="0 0 32 32">
+          <circle class="delete-progress-bg" cx="16" cy="16" r="14" fill="none" stroke-width="2"/>
+          <circle class="delete-progress-bar" cx="16" cy="16" r="14" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      `
+      );
+
+      // MECHANIKA LICZNIKA
+      let holdTimeout;
+
+      const startHold = (e) => {
+        if (e.type === "mousedown" && e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        moreBtn.classList.add("is-holding");
+
+        holdTimeout = setTimeout(async () => {
+          moreBtn.classList.remove("is-holding");
+
+          if (typeof navigator.vibrate === "function") navigator.vibrate(60);
+
+          // Jeśli to był aktywny habit w statystykach, zerujemy go w pamięci RAM aplikacji
+          if (
+            AppState &&
+            AppState.selectedHabitForStats?.id === data.id &&
+            data.type === "habit"
+          ) {
+            AppState.selectedHabitForStats = null;
+          }
+
+          // 1. Odpalamy animację bąbelkowego znikania
+          li.style.transition = "all 0.2s ease-out";
+          li.style.transform = "scale(0.7)";
+          li.style.opacity = "0";
+
+          // 2. 🔥 NAJPIERW wykonujemy twardy zapis w bazie IndexedDB (czekamy na niego!)
+          if (typeof onConfirmDelete === "function") {
+            await onConfirmDelete();
+          }
+
+          // 3. DOPIERO NA KOŃCU czyścimy DOM, kiedy baza jest czysta
+          setTimeout(() => {
+            li.remove();
+          }, 200);
+        }, 3000);
+      };
+
+      const cancelHold = (e) => {
+        if (holdTimeout) {
+          clearTimeout(holdTimeout);
+          moreBtn.classList.remove("is-holding");
+        }
+      };
+
+      // Eventy wejściowe
+      moreBtn.addEventListener("mousedown", startHold);
+      moreBtn.addEventListener("mouseup", cancelHold);
+      moreBtn.addEventListener("mouseleave", cancelHold);
+      moreBtn.addEventListener("touchstart", startHold, { passive: false });
+      moreBtn.addEventListener("touchend", cancelHold);
+      moreBtn.addEventListener("touchcancel", cancelHold);
+    }
   },
 
   createItem: (
@@ -985,6 +1116,10 @@ export const UI = {
     moreBtn.setAttribute("aria-label", `More options for ${name}`);
     moreBtn.appendChild(UI.createEllipsisIcon());
 
+    // Usuwanie (hold-to-delete) jest obsługiwane wyłącznie przez delegowany
+    // listener w handleListAction (events.js) — nie podpinamy tu onclick,
+    // żeby uniknąć podwójnej, konfliktowej rejestracji.
+
     taskActions.appendChild(checkbox);
     taskActions.appendChild(moreBtn);
 
@@ -1074,7 +1209,7 @@ export const UI = {
     const listContainer = document.getElementById("habitDropdownList");
     const trigger = document.getElementById("habitDropdownTrigger");
     const dropdownContainer = trigger?.parentElement;
-    
+
     if (!listContainer || !trigger || !dropdownContainer) return;
 
     const habits = await DataManager.getHabits();
@@ -1104,7 +1239,7 @@ export const UI = {
       item.dataset.id = habit.id;
 
       item.innerHTML = `
-        <span class="habit-item-icon">${habit.icon || '🫧'}</span>
+        <span class="habit-item-icon">${habit.icon || "🫧"}</span>
         <span class="habit-item-name">${habit.name}</span>
       `;
 
@@ -1115,9 +1250,10 @@ export const UI = {
 
       if (isSelected) {
         item.classList.add("selected");
-        
+
         // Wstrzykujemy dane domyślnego nawyku do widocznego paska głównego
-        document.getElementById("currentHabitIcon").textContent = habit.icon || '🫧';
+        document.getElementById("currentHabitIcon").textContent =
+          habit.icon || "🫧";
         document.getElementById("currentHabitName").textContent = habit.name;
 
         if (!AppState.selectedHabitForStats) {
@@ -1131,11 +1267,14 @@ export const UI = {
         e.stopPropagation();
 
         // Podmieniamy wizualne zaznaczenie klasy na liście
-        listContainer.querySelectorAll(".dropdown-item.selected").forEach((el) => el.classList.remove("selected"));
+        listContainer
+          .querySelectorAll(".dropdown-item.selected")
+          .forEach((el) => el.classList.remove("selected"));
         item.classList.add("selected");
 
         // Aktualizujemy główny pasek (Belkę dropdownu)
-        document.getElementById("currentHabitIcon").textContent = habit.icon || '🫧';
+        document.getElementById("currentHabitIcon").textContent =
+          habit.icon || "🫧";
         document.getElementById("currentHabitName").textContent = habit.name;
 
         // Ładujemy statystyki poniżej
