@@ -107,7 +107,7 @@ const MOTIVATIONAL_QUOTES = [
   "Focus on the process of creating a better version of yourself.",
   "The past is gone. You build the future right now.",
   "The best revenge on your weaknesses is a massive success.",
-  "You can change your life at any second. Choose this one."
+  "You can change your life at any second. Choose this one.",
 ];
 
 export const NotificationService = {
@@ -122,7 +122,7 @@ export const NotificationService = {
       icon: "/assets/logo-192.png",
       badge: "/assets/logo-192.png",
       vibrate: [200, 100, 200],
-      tag: "habit-hero-alert", // tag helps fighting with spam
+      tag: "habit-hero-alert", // Grupuje powiadomienia pod jednym tagiem
       renotify: true,
       ...options,
     };
@@ -130,21 +130,44 @@ export const NotificationService = {
     return registration.showNotification(title, defaultOptions);
   },
 
+  /**
+   * Główny dispatcher sprawdzający czas i odpalający odpowiednie alerty
+   */
   async runDailyCheck() {
     const now = new Date();
-    if (now.getHours() < 8) return;
-
+    const currentHour = now.getHours();
     const todayKey = Utils.formatDateKey(now);
-    const lastBriefing = await DataManager.getMetadata("last_briefing_date");
-    if (lastBriefing === todayKey) return;
 
-    const undoneCount = await DataManager.countUndoneTasks(todayKey);
+    // 1. PORANNY SCREENING (między 08:00 a 10:00)
+    if (currentHour >= 8 && currentHour < 10) {
+      const lastBriefing = await DataManager.getMetadata("last_briefing_date");
+      if (lastBriefing !== todayKey) {
+        const undoneCount = await DataManager.countUndoneTasks(todayKey);
 
-    if (undoneCount > 0) {
-      await this.send("Good Morning! 🦸‍♂️", {
-        body: `You have ${undoneCount} pending tasks for today. Time to level up!`,
-      });
-      await DataManager.setMetadata("last_briefing_date", todayKey);
+        if (undoneCount > 0) {
+          await this.send("Good Morning, Hero! 🦸‍♂️", {
+            body: `You have ${undoneCount} pending tasks for today. Let's stack some multiplier combos!`,
+          });
+          await DataManager.setMetadata("last_briefing_date", todayKey);
+        }
+      }
+    }
+
+    // 2. POPOŁUDNIOWA PRZYPOMINAJKA (od 17:00 wzwyż)
+    if (currentHour >= 17) {
+      const lastReminder = await DataManager.getMetadata("last_reminder_date");
+      if (lastReminder !== todayKey) {
+        const undoneCount = await DataManager.countUndoneTasks(todayKey);
+
+        // Strzelamy tylko, jeśli cokolwiek zostało do zrobienia
+        if (undoneCount > 0) {
+          await this.send("Don't let the tasks wait! 🕠", {
+            body: `Quick check: ${undoneCount} task(s) are still waiting to be burst today. Imrove your level!`,
+            tag: "habit-hero-reminder", // Inny tag, żeby poranny i wieczorny alert nie nadpisywały się nawzajem, jeśli oba wiszą
+          });
+          await DataManager.setMetadata("last_reminder_date", todayKey);
+        }
+      }
     }
   },
 };
@@ -192,7 +215,7 @@ export const PermissionsManager = {
             new Notification("Habit Bubbl 🫧", {
               body: "📍 Space-time synced! Your environment is now successfully linked.",
               icon: "./assets/icons/icon-192x192.png", // upewnij się, że ścieżka do Twojej ikony PWA się zgadza
-              vibrate: [100, 50, 100]
+              vibrate: [100, 50, 100],
             });
           }
 
@@ -212,19 +235,23 @@ export const PermissionsManager = {
 async function setupPeriodicSync(registration) {
   try {
     const status = await navigator.permissions.query({
-      name: 'periodic-background-sync',
+      name: "periodic-background-sync",
     });
 
-    if (status.state === 'granted') {
-      await registration.periodicSync.register('daily-briefing', {
-        minInterval: 2 * 60 * 60 * 1000, 
+    if (status.state === "granted") {
+      await registration.periodicSync.register("daily-briefing", {
+        minInterval: 2 * 60 * 60 * 1000,
       });
-      console.log('✅ Periodic Sync zarejestrowany!');
+      console.log("✅ Periodic Sync zarejestrowany!");
     } else {
-      console.log('⚠️ Brak uprawnień do Periodic Sync (standard w niektórych przeglądarkach)');
+      console.log(
+        "⚠️ Brak uprawnień do Periodic Sync (standard w niektórych przeglądarkach)"
+      );
     }
   } catch (err) {
-    console.log('ℹ️ Periodic Sync nie jest wspierany, briefingi będą działać tylko przy starcie apki.');
+    console.log(
+      "ℹ️ Periodic Sync nie jest wspierany, briefingi będą działać tylko przy starcie apki."
+    );
   }
 }
 
@@ -305,9 +332,9 @@ export const QuoteService = {
   getDailyAdvice: async () => {
     const randomIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
     const selectedQuote = MOTIVATIONAL_QUOTES[randomIndex];
-    return { 
-      text: selectedQuote, 
-      author: "Habit Bubbl" 
+    return {
+      text: selectedQuote,
+      author: "Habit Bubbl",
     };
   },
 };
@@ -324,7 +351,7 @@ export const PwaService = {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      
+
       PwaService.renderInstallBanner(cardContainer);
     });
 
@@ -343,7 +370,8 @@ export const PwaService = {
 
       const title = document.createElement("span");
       title.className = "pwa-install-title";
-      title.textContent = "Take Habit Bubbl to your home screen for full experience 🫧";
+      title.textContent =
+        "Take Habit Bubbl to your home screen for full experience 🫧";
 
       const button = document.createElement("button");
       button.id = "pwa-install-btn";
@@ -370,7 +398,9 @@ export const PwaService = {
     try {
       container.classList.remove("has-banner");
 
-      const randomIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
+      const randomIndex = Math.floor(
+        Math.random() * MOTIVATIONAL_QUOTES.length
+      );
       const randomText = MOTIVATIONAL_QUOTES[randomIndex];
 
       const quoteParagraph = document.createElement("p");
@@ -381,7 +411,7 @@ export const PwaService = {
     } catch (error) {
       console.error("Błąd w renderDailyQuote:", error);
     }
-  }
+  },
 };
 
 export const OfflineService = {

@@ -408,6 +408,7 @@ body::after {
   position: relative !important; /* Ważne! */
   overflow: visible !important;
   color: var(--color-danger);
+  stroke: var(--color-danger);
 }
 
 /* Ukryty domyślnie okrąg postępu SVG */
@@ -1905,6 +1906,12 @@ input.error {
   padding: 0 20px;
 }
 
+@media (max-width: 540px) {
+  .habitStats {
+    margin: 0 auto 0;
+  }
+}
+
 .habit-dropdown-container {
   position: relative; /* Ważne, żeby lista pozycjonowała się względem bąbla */
   width: 100%;
@@ -2005,6 +2012,87 @@ input.error {
   color: var(--color-accent, #00ffcc);
 }
 
+/* ==========================================================================
+   🫧 BUBBLE TOOLTIP STYLES - GLASSMORPHISM EDITION
+   ========================================================================== */
+
+   .tooltip-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .info-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-muted, #a0a0a0);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .info-btn:hover {
+    color: var(--accent-color, #4a90e2);
+    transform: scale(1.1);
+  }
+  
+  /* Szklany bąbelek z tekstem */
+  .tooltip-box {
+    position: absolute;
+    bottom: calc(100% + 10px); /* Nad napisem */
+    left: 50%;
+    transform: translate3d(-50%, 8px, 0) scale(0.92); /* GPU friendly */
+    width: 220px;
+    
+    /* ✨ LEKKI GLASSMORPHISM */
+    background: rgba(255, 255, 255, 0.65); /* Mocno zredukowane krycie bazy */
+    backdrop-filter: blur(12px);          /* Rozmycie tła za bąbelkiem */
+    -webkit-backdrop-filter: blur(12px);   /* Wsparcie dla Safari (iOS / iPhone 11) */
+    
+    color: #2c3e50;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06); /* Lżejszy, bardziej rozproszony cień */
+    font-size: 12px;
+    line-height: 1.4;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+    transition: 
+      opacity 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+    /* ✨ Szklana krawędź odbijająca światło */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  
+  /* Strzałka pod bąbelkiem dostosowana do szkła */
+  .tooltip-box::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    /* ✨ Strzałka dziedziczy ten sam kolor i przezroczystość co szklana baza */
+    border-color: rgba(255, 255, 255, 0.65) transparent transparent transparent;
+    
+    /* Opcjonalnie: mikro przesunięcie, żeby zniwelować ułomności renderowania subpixelowego */
+    margin-top: -0.5px; 
+  }
+  
+  /* Klasa aktywności - płynne "napęcznienie" bąbelka */
+  .tooltip-box.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
 /* Wierszowe ikonki i fonty */
 .habit-item-icon {
   font-size: 18px;

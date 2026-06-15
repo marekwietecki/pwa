@@ -203,6 +203,80 @@ export const UI = {
       .forEach((cb) => (cb.checked = false));
   },
 
+  createEmojiPicker: ({
+    container,
+    icons,
+    activeIcon,
+    itemFlex,
+    fontSize,
+    onSelect,
+  }) => {
+    if (!container) return;
+    container.innerHTML = "";
+
+    // Globalne zapewnienie ukrycia scrollbara bez dotykania innych stylów kontenera
+    if (!document.getElementById("bubble-picker-scrollbar-style")) {
+      const styleSheet = document.createElement("style");
+      styleSheet.id = "bubble-picker-scrollbar-style";
+      styleSheet.textContent = `
+        #mainHabitIconPicker::-webkit-scrollbar, 
+        #onboardingIconPicker::-webkit-scrollbar { display: none; }
+      `;
+      document.head.appendChild(styleSheet);
+    }
+
+    icons.forEach((emoji) => {
+      const iconWrapper = document.createElement("div");
+      iconWrapper.className = "bubble-picker-item";
+      iconWrapper.textContent = emoji;
+
+      // Używamy przekazanych wymiarów (np. 44px dla UI, 48px dla Onboardingu)
+      const size = itemFlex || "44px";
+      const fSize = fontSize || "20px";
+
+      iconWrapper.style.cssText = `
+        flex: 0 0 ${size};
+        width: ${size};
+        height: ${size};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.04);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: ${fSize};
+        transition: all 0.25s ease;
+        user-select: none;
+        box-sizing: border-box;
+      `;
+
+      if (emoji === activeIcon) {
+        iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
+        iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
+        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
+      }
+
+      iconWrapper.addEventListener("click", () => {
+        container.querySelectorAll(".bubble-picker-item").forEach((item) => {
+          item.style.border = "2px solid transparent";
+          item.style.background = "rgba(255,255,255,0.04)";
+          item.style.boxShadow = "none";
+        });
+
+        iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
+        iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
+        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
+
+        if (typeof onSelect === "function") {
+          onSelect(emoji);
+        }
+      });
+
+      container.appendChild(iconWrapper);
+    });
+  },
+
   setupHabitIconPicker: (activeEmoji) => {
     const wrapper = document.getElementById("habitIconWrapper");
     if (!wrapper) return;
@@ -217,12 +291,12 @@ export const UI = {
     subTitle.style.marginBottom = "8px";
     wrapper.appendChild(subTitle);
 
-    // 2. GŁÓWNY KONTENER JEDNOLINIJKOWY (Dba o to, żeby suwak i plus stały obok siebie w jednej linii)
+    // 2. GŁÓWNY KONTENER JEDNOLINIJKOWY
     const rowContainer = document.createElement("div");
     rowContainer.style.cssText = `
       display: flex;
       align-items: center;
-      justify-content: space-between; /* Spycha suwak w lewo, a plusa maksymalnie w prawo */
+      justify-content: space-between;
       gap: 12px;
       width: 100%;
     `;
@@ -233,91 +307,55 @@ export const UI = {
     pickerContainer.style.cssText = `
       display: flex;
       gap: 12px;
-      flex: 1;               /* Zajmuje całą przestrzeń od lewej krawędzi aż do przycisku plus */
+      flex: 1;
       padding: 5px 0;
-      overflow-x: auto;      /* 🔥 Przywracamy przewijanie poziome */
+      overflow-x: auto;
       justify-content: start;
-      scrollbar-width: none; /* Ukrywa scrollbar na Firefox */
-      min-width: 0;          /* 🔥 KLUCZOWE: pozwala kontenerowi zwężać się i aktywować scroll, zamiast wypychać plusa */
+      scrollbar-width: none;
+      min-width: 0;
     `;
-    // Ukrywamy scrollbar na Chrome/Safari
-    const styleSheet = document.createElement("style");
-    styleSheet.textContent = `#mainHabitIconPicker::-webkit-scrollbar { display: none; }`;
-    document.head.appendChild(styleSheet);
 
     UI.selectedHabitIcon = activeEmoji || "💧";
     const isPreset = ONBOARDING_ICONS.includes(UI.selectedHabitIcon);
 
-    ONBOARDING_ICONS.forEach((emoji) => {
-      const iconWrapper = document.createElement("div");
-      iconWrapper.className = "main-icon-item";
-      iconWrapper.textContent = emoji;
-      iconWrapper.style.cssText = `
-        flex: 0 0 44px;      /* 🔥 Przywracamy sztywne 44px: ikonki NIE BĘDĄ rosnąć ani się kurczyć */
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.04);
-        border: 2px solid transparent;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 20px;
-        transition: all 0.25s ease;
-        user-select: none;
-        box-sizing: border-box;
-      `;
-
-      if (isPreset && emoji === UI.selectedHabitIcon) {
-        iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
-        iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
-      }
-
-      iconWrapper.addEventListener("click", () => {
-        pickerContainer.querySelectorAll(".main-icon-item").forEach((item) => {
-          item.style.border = "2px solid transparent";
-          item.style.background = "rgba(255,255,255,0.04)";
-          item.style.boxShadow = "none";
-        });
-
+    UI.createEmojiPicker({
+      container: pickerContainer,
+      icons: ONBOARDING_ICONS,
+      activeIcon: isPreset ? UI.selectedHabitIcon : null,
+      itemFlex: "44px",
+      fontSize: "20px",
+      onSelect: (emoji) => {
         if (customInput) {
           customInput.value = "";
           customInput.placeholder = "+";
         }
-
         UI.selectedHabitIcon = emoji;
-        iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
-        iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-        iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
-      });
-
-      pickerContainer.appendChild(iconWrapper);
+      },
     });
 
     rowContainer.appendChild(pickerContainer);
 
-    // 4. KWADRATOWY INPUT PO PRAWEJ Z NATYCHMIASTOWYM ODZNACZANIEM
+    // 4. KWADRATOWY INPUT PO PRAWEJ
     const customInput = document.createElement("input");
     customInput.type = "text";
     customInput.id = "customHabitIconInput";
     customInput.placeholder = "+";
     customInput.maxLength = 2;
     customInput.style.cssText = `
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 18px;
-    text-align: center;
-    outline: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  `;
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 18px;
+      text-align: center;
+      outline: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    `;
 
     if (!isPreset && activeEmoji) {
       customInput.value = activeEmoji;
@@ -330,29 +368,27 @@ export const UI = {
       UI.selectedHabitIcon = val !== "" ? val : "💧";
     });
 
-    // 🔥 FOCUS: Kliknięcie od razu gasi podświetlenia ikon z karuzeli po lewej!
     customInput.addEventListener("focus", () => {
       customInput.placeholder = "";
       customInput.style.border = "1px solid rgba(255, 255, 255, 0.6)";
       customInput.style.background = "rgba(255, 255, 255, 0.12)";
       customInput.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.2)";
 
-      // ⚡ TU DZIEJE SIĘ MAGIA: Natychmiastowe czyszczenie podświetleń z gotowych ikon
-      pickerContainer.querySelectorAll(".main-icon-item").forEach((item) => {
-        item.style.border = "2px solid transparent";
-        item.style.background = "rgba(255,255,255,0.04)";
-        item.style.boxShadow = "none";
-      });
+      // Gaszenie podświetleń z karuzeli poprzez nową wspólną klasę
+      pickerContainer
+        .querySelectorAll(".bubble-picker-item")
+        .forEach((item) => {
+          item.style.border = "2px solid transparent";
+          item.style.background = "rgba(255,255,255,0.04)";
+          item.style.boxShadow = "none";
+        });
 
-      // Jeśli w polu nic nie ma, jako bezpiecznik dajemy domyślny stan (kropelka)
       if (customInput.value.trim() === "") {
         UI.selectedHabitIcon = "💧";
       }
-
       setTimeout(() => customInput.select(), 10);
     });
 
-    // BLUR: Opuszczenie pola
     customInput.addEventListener("blur", () => {
       if (customInput.value === "") {
         customInput.placeholder = "+";
@@ -360,9 +396,7 @@ export const UI = {
         customInput.style.background = "rgba(255, 255, 255, 0.03)";
         customInput.style.boxShadow = "none";
 
-        // Jeśli user kliknął w input, nic nie wpisał i kliknął w tło modala,
-        // przywracamy podświetlenie domyślnej kropelki na karuzeli, żeby nie było pustki!
-        const firstIcon = pickerContainer.querySelector(".main-icon-item");
+        const firstIcon = pickerContainer.querySelector(".bubble-picker-item");
         if (firstIcon && firstIcon.textContent === "💧") {
           firstIcon.style.border = "2px solid rgba(255, 255, 255, 0.6)";
           firstIcon.style.background = "rgba(255, 255, 255, 0.12)";
@@ -1290,6 +1324,78 @@ export const UI = {
     listContainer.appendChild(fragment);
   },
 
+  showToast: (message, type = "info") => {
+    // Sprawdzamy, czy istnieje już kontener na toasty, jeśli nie - tworzymy go
+    let container = document.getElementById("bubble-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "bubble-toast-container";
+      container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 90%;
+        max-width: 380px;
+        pointer-events: none;
+      `;
+      document.body.appendChild(container);
+    }
+
+    // Tworzenie pojedynczego bąbelka powiadomienia
+    const toast = document.createElement("div");
+    toast.style.cssText = `
+      pointer-events: auto;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 14px 20px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transform: translateY(-40px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Dynamiczny powrót bąbelka */
+    `;
+
+    // Dobieranie ikonki w zależności od kontekstu
+    const icon = type === "error" ? "⚠️ " : "❌ ";
+    toast.textContent = icon + message;
+
+    container.appendChild(toast);
+
+    // Odpalenie animacji wsuniecia (w następnym ticku silnika renderowania)
+    setTimeout(() => {
+      toast.style.transform = "translateY(0)";
+      toast.style.opacity = "1";
+    }, 10);
+
+    // Funkcja usuwająca powiadomienie
+    const dismissToast = () => {
+      toast.style.transform = "translateY(-20px)";
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 400);
+    };
+
+    // Automatyczne ukrywanie po 4 sekundach
+    const autoDismiss = setTimeout(dismissToast, 4000);
+
+    // Opcjonalnie: kliknięcie w toast zamyka go natychmiast
+    toast.addEventListener("click", () => {
+      clearTimeout(autoDismiss);
+      dismissToast();
+    });
+  },
+
   showHabitDetails: (habit, AppState) => {
     AppState.selectedHabitForStats = habit;
 
@@ -1771,6 +1877,67 @@ export const UI = {
         closeModalForce();
       }
     });
+
+    // 👉 SWIPE: przesuwanie palcem po slajdach (mobile)
+    let touchStartX = 0;
+    let touchCurrentX = 0;
+    let isSwiping = false;
+    const SWIPE_THRESHOLD = 50; // min px, żeby uznać gest za swipe
+
+    track.addEventListener(
+      "touchstart",
+      (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchCurrentX = touchStartX;
+        isSwiping = true;
+        // Wyłączamy transition na czas przeciągania, żeby ślizgało się 1:1 z palcem
+        track.style.transition = "none";
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      "touchmove",
+      (e) => {
+        if (!isSwiping) return;
+        touchCurrentX = e.touches[0].clientX;
+        const deltaX = touchCurrentX - touchStartX;
+
+        // Bazowa pozycja aktualnego slajdu + delta przeciągania (w %)
+        const trackWidth = track.offsetWidth || 1;
+        const deltaPercent = (deltaX / trackWidth) * 100;
+        const basePercent = -currentSlide * 100;
+
+        track.style.transform = `translateX(${basePercent + deltaPercent}%)`;
+      },
+      { passive: true }
+    );
+
+    const handleTouchEnd = () => {
+      if (!isSwiping) return;
+      isSwiping = false;
+
+      // Przywracamy płynną animację
+      track.style.transition = "";
+
+      const deltaX = touchCurrentX - touchStartX;
+      const dynamicDots = overlay.querySelectorAll(".guide-dot");
+      const totalSlides = dynamicDots.length || 3;
+
+      if (deltaX <= -SWIPE_THRESHOLD && currentSlide < totalSlides - 1) {
+        // Swipe w lewo -> następny slajd
+        goToSlide(currentSlide + 1);
+      } else if (deltaX >= SWIPE_THRESHOLD && currentSlide > 0) {
+        // Swipe w prawo -> poprzedni slajd
+        goToSlide(currentSlide - 1);
+      } else {
+        // Niewystarczający ruch -> wracamy do aktualnego slajdu
+        goToSlide(currentSlide);
+      }
+    };
+
+    track.addEventListener("touchend", handleTouchEnd, { passive: true });
+    track.addEventListener("touchcancel", handleTouchEnd, { passive: true });
   },
 
   /**

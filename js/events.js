@@ -214,30 +214,29 @@ export function initEventListeners(AppState) {
       const currentId = parseInt(li.dataset.id);
       const currentType = li.dataset.type;
 
+      const itemName = li.querySelector(".taskNodeName")?.textContent || "Item";
+
       if (typeof UI !== "undefined" && UI.renderDeleteWithFriction) {
-        // Przekazujemy czyste dane i czekamy na pełne wykonanie holda
         UI.renderDeleteWithFriction(
           moreBtn,
           { id: currentId, type: currentType },
           AppState,
           async () => {
-            // 🔥 KLUCZ: To wykonuje się dokładnie w momencie zamknięcia kółka (2s)
             try {
-              // 1. Strzał bezpośrednio do IndexedDB i czekamy na potwierdzenie zapisu!
+              // 1. Usunięcie z bazy IndexedDB
               await DataManager.deleteItemByType(currentType, currentId);
-              console.log(
-                `[IndexedDB] Permanentnie usunięto: ${currentType} o ID: ${currentId}`
-              );
+              console.log(`[IndexedDB] Permanentnie usunięto: ${currentType} o ID: ${currentId}`);
+              
+              // 🔥 DYNAMICZNY TOAST: Pierwsza litera typu duża (habit -> Habit, task -> Task)
+              const displayType = currentType.charAt(0).toUpperCase() + currentType.slice(1);
+              UI.showToast(`${displayType} "${itemName}" has been permanently deleted.`, "info");
 
-              // 2. DOPIERO PO POTWIERDZENIU Z BAZY odświeżamy cały widok aplikacji
+              // 2. Odświeżenie widoku aplikacji
               if (typeof refreshCurrentView === "function") {
                 await refreshCurrentView(AppState);
               }
             } catch (err) {
-              console.error(
-                "Błąd krytyczny podczas usuwania z IndexedDB:",
-                err
-              );
+              console.error("Błąd krytyczny podczas usuwania z IndexedDB:", err);
             }
           }
         );
@@ -519,6 +518,55 @@ export function initEventListeners(AppState) {
 
     if (elements.habitSection) await UI.renderHabits(AppState);
   };
+
+  // ==========================================
+  // BUBBLE TOOLTIPS HANDLER (Streak & Effectiveness)
+  // ==========================================
+  const tooltipsConfig = [
+    { btnId: "streakInfoBtn", boxId: "streakTooltip" },
+    { btnId: "effectivenessInfoBtn", boxId: "effectivenessTooltip" },
+  ];
+
+  // Mapujemy konfigurację i podpinamy listenery
+  tooltipsConfig.forEach(({ btnId, boxId }) => {
+    const btn = document.getElementById(btnId);
+    const box = document.getElementById(boxId);
+
+    if (btn && box) {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        // Zamykamy INNE otwarte tooltipy przed otwarciem tego, żeby nie nachodziły na siebie
+        document.querySelectorAll(".tooltip-box").forEach((el) => {
+          if (el !== box) el.classList.remove("is-active");
+        });
+
+        // Przełączamy stan obecnego bąbelka
+        box.classList.toggle("is-active");
+
+        if (box.classList.contains("is-active") && navigator.vibrate) {
+          navigator.vibrate(15); // Lekki bąbelkowy haptic pop
+        }
+      });
+    }
+  });
+
+  // Globalne zamykanie (kliknięcie poza tooltipami lub klawisz Escape)
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".tooltip-container")) {
+      document
+        .querySelectorAll(".tooltip-box")
+        .forEach((el) => el.classList.remove("is-active"));
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document
+        .querySelectorAll(".tooltip-box")
+        .forEach((el) => el.classList.remove("is-active"));
+    }
+  });
 
   // NOTIFIACTIONS
   const notifyToggle = document.getElementById("toggleNotifications");

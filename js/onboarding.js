@@ -54,18 +54,7 @@ export const OnboardingService = {
             <div class="onboarding-step-content">
               <p>Let's build your very first daily habit right now to kickstart your journey.</p> <p>Type the name and choose a visual badge:</p>
               <input type="text" id="onboardingHabit" placeholder="e.g., Drink water, Sleep 8h, Exercise..." class="modal-input">
-              <div id="onboardingIconPicker" style="
-                  display: flex;
-                  gap: 12px;
-                  width: 100%;
-                  margin-top: 20px;
-                  padding: 10px 5px;
-                  overflow-x: auto;
-                  justify-content: start;
-                  scrollbar-width: thin;
-                  scrollbar-color: rgba(255,255,255,0.2) transparent;
-                  -webkit-overflow-scrolling: touch;">
-              </div>
+              <div id="onboardingIconPicker"></div>
             </div>
           `,
       },
@@ -84,7 +73,7 @@ export const OnboardingService = {
                 <p style="margin: 0; font-weight: 600; color: #fff;"> First level achieved! ✅</p>
                 <p style="margin: 6px 0 0 0; font-size: 13px; color: rgba(255,255,255,0.6);">Your first habit is live. Track it daily to stack multiplier combos and earn bonus XP.</p>
               </div>
-              <p style="font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; text-shadow: 0 0 10px rgba(255,255,255,0.5);">May the discipline be with you.</p>
+              <p style="font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; text-shadow: 0 0 10px rgba(255,255,255,0.2);">May the discipline be with you.</p>
             </div>
           `,
       },
@@ -95,51 +84,48 @@ export const OnboardingService = {
     let selectedIconId = "💧";
 
     const onboardingIcons = [
-      "💧", 
-      "🛌", 
+      "💧",
+      "🛌",
       "💪",
-      "🍏", 
-      "🏃‍♂️", 
-      "📚", 
+      "🍏",
+      "🏃‍♂️",
+      "📚",
       "💵",
-      "🚭", 
-      "📱", 
-      "🐶", 
+      "🚭",
+      "📱",
+      "🐶",
       "🧠",
       "🧘",
-      "🎯", 
-      "🌟"  
+      "🎯",
+      "🌟",
     ];
 
     const renderWizard = (stepNum) => {
       modal.textContent = "";
 
-      // 🔥 Obejmujemy całe tło ekranu kolorem aplikacji
       modal.style.backgroundColor = "#121318";
-      modal.style.backdropFilter = "none"; // Na pełnym tle nie potrzebujemy rozmywać tego, co pod spodem
+      modal.style.backdropFilter = "none";
 
       const card = document.createElement("div");
       card.className = "onboarding-card";
 
-      // 🔥 Stylizujemy kartę jako bąbelek w czystym stylu Glassmorphism
       card.style.cssText = `
           position: relative;
           overflow: hidden;
-          background: rgba(255, 255, 255, 0.03);         /* Ultra delikatne, białe podbicie szkła */
-          backdrop-filter: blur(20px);                     /* Silne rozmycie tła wewnątrz bąbelka */
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.08);    /* Cienka, lśniąca krawędź bąbelka */
-          border-radius: 24px;                             /* Ładne, mocne zaokrąglenie w stylu bąbelka */
-          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),      /* Głęboki cień na zewnątrz */
-                      inset 0 1px 0 rgba(255, 255, 255, 0.1); /* Wewnętrzny błysk na górnej krawędzi szkła */
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 24px;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.1);
           padding: 24px;
           width: 90%;
           max-width: 420px;
-          margin: auto;                                    /* Wyśrodkowanie w modalu */
+          margin: auto;
         `;
 
       const progressBarTrack = document.createElement("div");
-      // ... reszta kodu bez zmian ...
       progressBarTrack.className = "onboarding-progress-track";
       progressBarTrack.style.cssText = `
         position: absolute;
@@ -169,7 +155,6 @@ export const OnboardingService = {
       progressBarTrack.appendChild(progressBarFill);
       card.appendChild(progressBarTrack);
 
-      // Tytuł kroku
       const title = document.createElement("h2");
       title.className = "onboarding-title";
       title.style.marginTop = "36px";
@@ -177,12 +162,10 @@ export const OnboardingService = {
       title.style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
       title.textContent = steps[stepNum].title;
 
-      // Reszta ciała modala
       const body = document.createElement("div");
       body.className = "onboarding-body";
       body.innerHTML = steps[stepNum].html;
 
-      // 🔥 PRZENIESIONE WYŻEJ: Tworzenie stopki i przycisku Next (teraz checkInput bez problemu go znajdzie)
       const footer = document.createElement("div");
       footer.className = "onboarding-footer";
 
@@ -206,7 +189,6 @@ export const OnboardingService = {
 
       footer.appendChild(nextBtn);
 
-      // Styl szklany dla inputów
       const applyGlassmorphismStyle = (inputEl) => {
         if (!inputEl) return;
         inputEl.style.width = "100%";
@@ -233,7 +215,6 @@ export const OnboardingService = {
         });
       };
 
-      // Logika kroków
       if (stepNum === 1) {
         const nameInput = body.querySelector("#onboardingName");
         applyGlassmorphismStyle(nameInput);
@@ -276,59 +257,38 @@ export const OnboardingService = {
         habitInput.addEventListener("input", checkInput);
 
         const picker = body.querySelector("#onboardingIconPicker");
+
         if (picker) {
-          onboardingIcons.forEach((emoji) => {
-            const iconWrapper = document.createElement("div");
-            iconWrapper.className = "onboarding-icon-item";
-            iconWrapper.textContent = emoji;
-            iconWrapper.style.cssText = `
-                flex: 0 0 48px;
-                height: 48px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(255,255,255,0.04);
-                border: 2px solid transparent;
-                border-radius: 12px;
-                cursor: pointer;
-                font-size: 22px;
-                transition: all 0.25s ease;
-                user-select: none;
-            `;
+          picker.style.cssText = `
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 20px;
+            padding: 10px 5px;
+            overflow-x: auto;
+            justify-content: start;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+          `;
 
-            if (emoji === selectedIconId) {
-              iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
-              iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
-            }
-
-            iconWrapper.addEventListener("click", () => {
-              picker
-                .querySelectorAll(".onboarding-icon-item")
-                .forEach((item) => {
-                  item.style.border = "2px solid transparent";
-                  item.style.background = "rgba(255,255,255,0.04)";
-                  item.style.boxShadow = "none";
-                });
-
+          UI.createEmojiPicker({
+            container: picker,
+            icons: onboardingIcons,
+            activeIcon: selectedIconId,
+            itemFlex: "48px",
+            fontSize: "22px",
+            onSelect: (emoji) => {
               selectedIconId = emoji;
-              iconWrapper.style.border = "2px solid rgba(255, 255, 255, 0.6)";
-              iconWrapper.style.background = "rgba(255, 255, 255, 0.12)";
-              iconWrapper.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
-            });
-
-            picker.appendChild(iconWrapper);
+            },
           });
         }
       }
 
-      // Składanie elementów do kupy
       card.appendChild(title);
       card.appendChild(body);
-      card.appendChild(footer); // footer ma już w sobie nextBtn
+      card.appendChild(footer);
       modal.appendChild(card);
 
-      // Obsługa uprawnień w kroku 2
       if (stepNum === 2) {
         document
           .getElementById("btnAuthNotify")
@@ -355,13 +315,13 @@ export const OnboardingService = {
                 e.target.disabled = true;
               },
               () => {
-                alert("Location access was denied.");
+                // 🔥 PODMIANA ALERU NA NIEBLOKUJĄCY TOAST W STYLU GLASSMORPHISM
+                UI.showToast("Location access was denied.", "error");
               }
             );
           });
       }
 
-      // Akcja po kliknięciu głównego przycisku
       nextBtn.addEventListener("click", async (e) => {
         e.preventDefault();
 
