@@ -59,11 +59,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       setTimeout(() => {
         splash.remove();
-        UI.initTabNav(); 
+        UI.initTabNav();
       }, 400);
     }, 600);
   } else {
-    UI.initTabNav(); 
+    UI.initTabNav();
   }
   PwaService.initInstallHandler();
 });

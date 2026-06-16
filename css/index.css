@@ -1,0 +1,398 @@
+/* ====================================================
+   INDEX — tasks list, dynamic card, delete friction, XP animations (index.html only)
+   ==================================================== */
+
+/* TASKS */ /* ------------------------------------------------------------------------ */
+#quote-container {
+  padding: 12px 20px;
+  height: 112px;
+  font-style: italic;
+  color: #555;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#taskDateTitle,
+#calendarTaskDateTitle {
+  padding-top: 4px;
+  padding-left: 4vw;
+  margin: 0;
+  flex-shrink: 0;
+}
+.toDo,
+.calendarToDo {
+  display: flex;
+  /* flex: 1 1 0; */
+  flex-direction: column;
+  align-self: center;
+  min-height: 0;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 740px;
+  /* background-color: rebeccapurple; */
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.toDoListWrapper,
+.calendarToDoListWrapper,
+.goalsContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 8px;
+  padding: 0;
+  margin-bottom: 0;
+
+  /* 🔥 NOWOŚĆ: Dodajemy maskę gradientową na sam dół kontenera */
+  /* Od góry (0%) do 85% wysokości element jest w 100% widoczny (nieprzezroczysty) */
+  /* Od 85% do 100% (samego dołu) płynnie zanika do zera (pełna przezroczystość) */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 72%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 72%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+#toDoList,
+#calendarToDoList,
+#goalsList {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* 🔥 DODAJEMY padding na dole, żeby ostatnie zadanie na liście dało się przewinąć 
+     poza strefę zanikania i użytkownik mógł je bez problemu kliknąć */
+  padding: 0 20px 60px 20px;
+  margin: 0;
+}
+
+.longTermGoalsTitle {
+  padding-bottom: 12px;
+}
+
+#goalsList {
+  list-style-type: none;
+  padding-inline-start: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.taskItem {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 22px;
+  padding-right: 14px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  list-style: none;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 32px;
+  display: flex;
+  flex-direction: row;
+  transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+  background: var(--glass-bg-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-bubble);
+}
+
+.taskNodeName {
+  display: -webkit-box; /* Przełączamy w tryb boxa WebKit */
+  -webkit-line-clamp: 2; /* 🔥 Blokada na dokładnie 2 linijki */
+  -webkit-box-orient: vertical; /* Układ pionowy dla boxa */
+  overflow: hidden; /* Ukrywamy to, co wystaje poza 2 linie */
+  text-overflow: ellipsis; /* 🔥 Dodajemy automatyczne "..." na końcu */
+
+  word-break: break-word; /* Bezpieczne łamanie długich słów */
+  flex: 1;
+  min-width: 0;
+}
+
+.taskNodeName::first-letter {
+  text-transform: uppercase;
+}
+
+.taskItem.done {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+.taskItem.is-completed {
+  opacity: 0.5 !important;
+  transition: all 0.3s ease;
+}
+
+.taskItem.is-completed .taskLabel {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.taskItem.is-completed .taskCheckbox {
+  accent-color: var(--color-blue);
+}
+
+.taskItem.overdue {
+  border: 1px solid var(--color-danger);
+}
+
+.taskItem.overdue .item-title {
+  color: var(--color-danger);
+}
+
+.taskContent {
+  align-items: center;
+  justify-content: center;
+}
+
+.taskLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 600;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.taskLabel svg {
+  /* margin-top: 3px; */
+  flex-shrink: 0; /* Pilnuje, żeby ikonka nigdy się nie spłaszczyła */
+}
+
+/*
+.taskLabel:hover {
+  opacity: 64%;
+}
+*/
+
+.task-type-icon {
+  flex-shrink: 0; /* Ikona się nie skurczy mi */
+  opacity: 0.7;
+}
+
+.taskMetaWrapper {
+  font-size: 0.85em;
+  opacity: 0.6;
+  margin-top: 4px;
+  max-width: 360px;
+}
+.rowWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.taskMetaWrapper {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.taskLocation {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.taskLocation svg {
+  margin-right: 4px;
+}
+
+.taskActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.taskCheckbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 20px;
+}
+
+/* 3. Zmniejszenie przycisku moreBtn oraz ikonki wielokropka, by wysokość taska była idealna */
+.moreBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px !important;       /* Mniejsza, zgrabna klikalna przestrzeń */
+  height: 28px !important;
+  /*   padding: 8px  */
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+
+  border: none;
+  position: relative;          /* Kluczowe pod pozycjonowanie paska góra/dół */
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.moreBtn svg {
+  width: 14px !important;      /* Wymuszamy małą ikonę zarówno dla (...) jak i dla kosza */
+  height: 14px !important;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+/* Stan kosza - czerwony, zgrabny bąbel błędu */
+.moreBtn.deleteBtn {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.moreBtn.deleteBtn svg {
+  opacity: 1;
+  stroke: #ef4444;            /* Piękna krwista czerwień zamiast białego */
+}
+
+/* 2. Konstrukcja mikroskopijnego paska ładowania NAD przyciskiem (Micro-interactions) */
+.delete-progress-line-track {
+  position: absolute;
+  top: -6px;                  /* Wyrzucenie paska 6 pikseli nad kciuk usera */
+  left: -2px;
+  right: -2px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.delete-progress-bar-line {
+  height: 100%;
+  width: 0%;
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  border-radius: 100px;
+  transition: width 0.1s linear;
+}
+
+/* Kiedy użytkownik aktywnie zaciska kciuk na ikonce */
+.moreBtn.is-holding .delete-progress-line-track {
+  opacity: 1;
+}
+
+.moreBtn.is-holding .delete-progress-bar-line {
+  width: 100%;
+  transition: width 3s linear; /* Ładowanie paska idealnie zsynchronizowane z 3s timeoutem z JS */
+}
+
+.show-delete .moreBtn {
+  color: #ff4e4e;
+  background: transparent;
+}
+
+.deleteTaskBtn {
+  display: none;
+  animation: fadeIn 0.2s ease forwards;
+  background: transparent;
+}
+
+.show-delete .deleteTaskBtn {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.progress-ring-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 8px;
+  font-weight: bold;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 8px;
+  font-weight: bold;
+}
+
+/* Light Scrollbar Chrome, Safari, Edge */
+.taskListWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.taskListWrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+.taskListWrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+}
+.taskListWrapper::-webkit-scrollbar-thumb:hover,
+.taskListWrapper::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.8);
+}
+/* Firefox */
+.taskListWrapper {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.6) rgba(255, 255, 255, 0.05);
+}
+
+.edit-inline-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted, #888);
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+
+.edit-inline-btn:hover {
+  opacity: 72%;
+}
+
+.edit-inline-btn:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}

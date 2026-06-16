@@ -1,0 +1,840 @@
+/* ====================================================
+   HERO — profile, XP vial, toggles, permissions, guide modal (hero.html only)
+   ==================================================== */
+
+/* HERO */ /* ------------------------------------------------------------------------ */
+
+/* ==========================================================================
+   🫧 NEW VERTICAL LIQUID PROFILE CONTAINER
+   ========================================================================== */
+
+.userStats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Rozpycha: Dane w lewo, Poziom w prawo */
+  align-items: center;
+  max-width: 480px;
+  width: 100%;
+  margin: 20px auto 0px;
+  padding: 32px;
+  border-radius: 28px;
+  background: var(--glass-bg-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-float);
+}
+
+#toggleLabel {
+  margin-left: 4px;
+}
+
+/* ==========================================================================
+     🟢 HERMETYCZNY iOS TOGGLE SWITCH - ULTRA FIX
+     ========================================================================== */
+
+/* Główny kontener - całkowicie odizolowany */
+.switch {
+  position: relative;
+  display: inline-block !important;
+  width: 44px !important;
+  height: 24px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  align-items: flex-end;
+}
+
+.userWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px; /* Przestrzeń między nickiem a ikonami menu */
+}
+
+.actionsWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+/* KONTENER POZIOMU (PIONOWY) */
+.levelWrapperVertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 80px;
+}
+
+@media (max-width: 400px) {
+  .levelWrapperVertical {
+    width: 48px;
+  }
+}
+
+/* Fiolka na ciecz */
+.liquid-container {
+  position: relative;
+  width: 32px;
+  height: 100px; /* Wysokość naszej próbówki/bąbla */
+  border-radius: 20px; /* Kapsułkowy, bąbelkowy kształt */
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--glass-border-bright);
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.4), var(--shadow-delicate);
+  overflow: hidden; /* Ścina ciecz i bąbelki do wnętrza fiolki */
+
+  /* 🔥 KLUCZOWE: Te 3 linijki blokują jakikolwiek wyciek owali na zewnątrz */
+  overflow: hidden !important;
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+/* CIECZ XP: Zmiana działania z szerokości na wysokość (od dołu do góry) */
+#xp-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%; /* Zarządzane przez JS (np. element.style.height = '40%') */
+  background: var(--hero-gradient); /* Twój gradient postępu */
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height;
+}
+
+/* Animowana fala na powierzchni płynu */
+.liquid-wave {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 200%;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,100 350,20 500,60 C650,100 850,20 1000,60 C1150,100 1300,20 1450,60 L1450,120 L0,120 Z' fill='rgba(255,255,255,0.35)'%3E%3C/path%3E%3C/svg%3E");
+  background-size: 50% 100%;
+  animation: waveMovingSmooth 3s linear infinite;
+}
+
+@keyframes waveMovingSmooth {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* 🫧 STRUMIEŃ BĄBELKÓW W PŁYNIE */
+.bubble-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.b-particle {
+  position: absolute;
+  bottom: -10px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatUpBubble 3s infinite linear;
+}
+
+/* Różne pozycje, wielkości i opóźnienia bąbelków dla naturalnego efektu */
+.b-particle:nth-child(1) {
+  left: 20%;
+  width: 4px;
+  height: 4px;
+  animation-duration: 2.5s;
+  animation-delay: 0.2s;
+}
+.b-particle:nth-child(2) {
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  animation-duration: 3.5s;
+  animation-delay: 0.8s;
+}
+.b-particle:nth-child(3) {
+  left: 75%;
+  width: 3px;
+  height: 3px;
+  animation-duration: 2.2s;
+  animation-delay: 1.5s;
+}
+.b-particle:nth-child(4) {
+  left: 35%;
+  width: 5px;
+  height: 5px;
+  animation-duration: 4s;
+  animation-delay: 0s;
+}
+
+@keyframes floatUpBubble {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-110px) scale(1.3);
+    opacity: 0;
+  }
+}
+
+/* Kompaktowe statystyki pod fiolką */
+.vertical-xp-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  gap: 2px;
+  text-align: center;
+}
+
+.vertical-xp-stats .total-gained {
+  font-size: 9px;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+     🟢 HERMETYCZNY iOS TOGGLE SWITCH - ULTRA FIX (Wersja Globalna + Mobile)
+     ========================================================================== */
+
+/* Ukrywamy oryginalny domyślny checkbox (Zawsze, nie tylko na mobile) */
+.switch input {
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: absolute;
+}
+
+/* Tło gąbki/slidera - STAN BAZOWY (Działa na Desktop i Mobile) */
+.switch .slider {
+  position: absolute !important;
+  cursor: pointer;
+  inset: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ) !important; /* Szklane tło pasywne */
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-sizing: border-box !important;
+  transition: all 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+}
+
+/* Zaokrąglenia kapsułki */
+.switch .slider.round {
+  border-radius: 24px !important;
+}
+
+.switch .slider.round::before {
+  border-radius: 50% !important;
+}
+
+/* ⚪️ KÓŁECZKO (Stan nieaktywny - po lewej) */
+.switch .slider::before {
+  position: absolute !important;
+  content: "" !important;
+  height: 18px !important;
+  width: 18px !important;
+  left: 2px !important;
+  top: 2px !important; /* Centrowanie w pionie wewnątrz wysokości 24px */
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 🟢 STAN AKTYWNY (CHECKED) */
+.switch input:checked + .slider {
+  background-color: #4cd964 !important; /* Soczysty zielony iOS */
+  border-color: #4cd964 !important;
+  background-image: none !important;
+}
+
+/* Przesunięcie kółka do prawej krawędzi */
+.switch input:checked + .slider::before {
+  transform: translateX(20px) !important;
+}
+
+/* Ewentualne specyficzne poprawki tylko dla bardzo małych ekranów */
+@media (max-width: 600px) {
+  .userStats {
+    flex-direction: row !important; /* Blokujemy wymuszone kolumny */
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* ⚪️ KÓŁECZKO (Stan nieaktywny - po lewej) */
+.switch .slider::before {
+  position: absolute !important;
+  content: "" !important;
+  height: 18px !important;
+  width: 18px !important;
+  left: 2px !important;
+  top: 2px !important; /* Idealne centrowanie w pionie (24px - 18px - 2px borderu) */
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 🟢 STAN AKTYWNY (CHECKED) - ORYGINALNY ZIELONY iOS SAKSEN */
+.switch input:checked + .slider {
+  background-color: #4cd964 !important; /* Wymuszamy piękny, soczysty zielony */
+  border-color: #4cd964 !important;
+  background-image: none !important; /* Kasujemy ewentualne inne tła */
+}
+
+/* 🚀 FIX PRZESUNIĘCIA: Kółeczko leci idealnie do prawej krawędzi bez ucinania!
+     Szerokość kontenera (42px) - szerokość kółka (18px) - marginesy (2px z lewej + 2px na border) = dokładnie 20px ruchu! */
+.switch input:checked + .slider::before {
+  transform: translateX(20px) !important;
+}
+
+/* Zaokrąglenia kapsułki */
+.switch .slider.round {
+  border-radius: 24px !important;
+}
+
+.switch .slider.round::before {
+  border-radius: 50% !important;
+}
+
+button,
+h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.usernameWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 224px;
+  width: 100%;
+  align-items: baseline;
+  margin: 0px;
+  gap: 8px;
+  /* Zapewnia, że żaden element w tym wierszu się nie zawinie */
+  white-space: nowrap;
+}
+
+@media (max-width: 396px) {
+  .userWrapper {
+    max-width: 184px;
+  }
+  .usernameWrapper {
+    max-width: 184px;
+  }
+}
+@media (max-width: 360px) {
+  .usernameWrapper {
+    max-width: 160px;
+  }
+}
+
+#displayUserName {
+  font-size: 24px;
+  font-weight: 600; /* zakładałem, że chcesz grubszy nick */
+
+  /* 🔥 KLUCZOWA ZMIANA: Przechodzimy na blok, żeby zadziałało text-overflow */
+  display: block;
+  flex: 1;
+  min-width: 0; /* To już miałeś i jest super ważne dla flexboxa! */
+  vertical-align: bottom;
+
+  /* 🔥 TRÓJCA ŚWIĘTA UCINANIA TEKSTU */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#displayUserName::before {
+  content: "@";
+  opacity: 0.6;
+  font-weight: 500;
+  font-size: 20px;
+
+  /* Margines po prawej zastąpi gap-a, ponieważ zmieniliśmy display na block */
+  margin: 0 4px 6px 0;
+
+  /* Sprawiamy, że małpka traktowana jest jako element tekstowy, 
+       dzięki czemu nie zostanie ucięta osobno i idealnie trzyma się baseline */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Tekst nicku ograniczamy osobno */
+#displayUserName span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.user-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#userNameInput {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-indigo);
+  color: white;
+  font-size: 1.17em; /* Taka sama wielkość jak H3 */
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 2px 6px;
+  outline: none;
+  width: auto;
+  max-width: 200px;
+}
+
+#editUserName {
+  display: flex;
+  width: auto;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  align-items: center;
+  justify-content: flex-start;
+  transition: opacity 0.2s;
+  line-height: 24px;
+  gap: 4px;
+}
+
+#editUserName:hover {
+  opacity: 72%;
+}
+
+#editUserName:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
+.levelWrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 234px;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0px 0px;
+}
+
+.levelIndicatorWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+
+.levelIndicator {
+  height: 12px;
+  width: 200px;
+  border-radius: 12px;
+  background: var(--glass-bg-whisper);
+  border: 1px solid var(--glass-border-soft);
+  box-shadow: var(--shadow-delicate);
+  overflow: hidden;
+  position: relative;
+}
+
+.nextLevelWrapper {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.totalXpWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 232px;
+  width: 100%;
+  gap: 4px;
+  font-size: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+.heroLvlWrapper {
+  /* 🔥 Tworzymy idealne, elastyczne kółeczko */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center;
+
+  width: 44px !important; /* Średnica kółka (możesz zwiększyć do 40px, jeśli chcesz większe) */
+  height: 44px !important;
+  border-radius: 50% !important; /* Idealny okrąg */
+
+  /* Stylistyka: ciemne półprzezroczyste tło + neonowa ramka */
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 2px solid var(--accent-color, #ffffff) !important;
+
+  /* Delikatny gamingowy blask wokół kółka */
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.15),
+    inset 0 0 5px rgba(0, 255, 204, 0.1) !important;
+
+  /* Bezpieczeństwo */
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#user-level-value {
+  font-size: 20px !important; /* Idealnie dobrany rozmiar fontu do kółka 36px */
+  font-weight: 800 !important; /* Gruby, czytelny, cyfrowy font */
+  color: #fff !important; /* Kolor poziomów pasujący do ramki */
+  line-height: 1 !important;
+  text-align: center !important;
+  letter-spacing: -0.5px !important; /* Zgęszczenie cyfr przy wyższych levelach (np. 10+) */
+}
+
+/* Styl bazowy dla wrapperów ikonek */
+.infoWrapper,
+.settingsWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.infoWrapper:hover,
+.settingsWrapper:hover {
+  opacity: 0.72;
+}
+
+.infoWrapper:active,
+.settingsWrapper:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
+/* 🔄 ANIMACJA OBRACANIA ZĘBATKI */
+.settingsWrapper .lucide-settings {
+  will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stan obrócony, gdy panel jest otwarty */
+.settingsWrapper.open .lucide-settings {
+  transform: rotate(180deg);
+  color: #ffffff; /* Podświetlenie zębatki na biało w stanie aktywnym */
+}
+
+/* 🫧 PANEL PERMISSIONS (Ukryty, czekający na wyjście) */
+.permissions {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  will-change: max-height, opacity, transform;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Przestrzeń pod przyciskami, gdy się rozwinie */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 🔥 STAN OTWARTY - WYSZŁY PERMISSIONS */
+.permissions.open {
+  max-height: 120px; /* Bezpieczna maksymalna wysokość dla dwóch pozycji */
+  opacity: 1;
+  transform: translateY(12px) scale(1); /* Przesunięcie w dół pod przyciski */
+  padding-bottom: 20px;
+}
+
+.permission-item:hover {
+  opacity: 72%;
+}
+
+.permission-item:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}
+
+.permission-item label:not(.switch) {
+  cursor: pointer;
+  flex: 1;
+}
+/* Stylizacja elementów wewnątrz (baza pod szklany styl, jeśli potrzebujesz) */
+.permission-item {
+  display: flex;
+  align-items: center;
+  width: 232px;
+  /* gap: 12px; */
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  justify-content: space-between;
+}
+
+@media (max-width: 480px) {
+  .permission-item {
+    width: 184px;
+  }
+}
+
+@media (max-width: 360px) {
+  .permission-item {
+    width: 176px;
+  }
+}
+
+.permission-item label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  flex: 1;
+  cursor: pointer;
+}
+
+.permission-item svg {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.permission-icon-w-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permission-item label.switch {
+  flex: 0 0 auto;
+}
+
+.goalsContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+  margin-top: 32px;
+}
+
+.linkedHabitBadge .small-icon {
+  width: 10px !important;
+  height: 10px !important;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.linkedHabitBadge {
+  padding-top: 4px;
+}
+
+.guide-slides-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  /* Śpiewające, równe przejście dopasowane czasowo do Twoich modalów (0.3s) */
+  transition: transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
+}
+
+.guide-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  /* Matchuje się z max-height Twojego modal-sheet */
+  max-height: calc(100vh - 180px);
+  max-height: calc(100dvh - 180px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+
+/* --- Detale estetyczne treści (sekcje, ikonki) --- */
+.guide-section h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-num {
+  background: rgba(255, 255, 255, 0.08);
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.guide-grid,
+.guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.guide-item-icon {
+  font-size: 20px;
+  min-width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.color-task {
+  box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.15);
+}
+.color-habit {
+  box-shadow: inset 0 0 8px rgba(255, 102, 0, 0.15);
+}
+
+.guide-item-text h4 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+.guide-item-text p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.4;
+}
+
+.guide-list-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.guide-action-icon {
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1;
+}
+.guide-list-item p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.guide-block-info {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+  padding: 14px 16px;
+  border-radius: 0 16px 16px 0;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+}
+.guide-block-info p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Stopka z kropkami iOS */
+.guide-modal-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guide-dots-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.guide-dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.guide-dot.active {
+  background: #ffffff;
+  width: 18px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+/* Przycisk akceptacji */
+.guide-primary-btn {
+  background: var(--hero-gradient); /*#ffffff;*/
+  color: #000000;
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-bubble);
+}
+
+.guide-primary-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.72;
+}
+.guide-primary-btn:active {
+  transform: scale(0.96);
+  opacity: 0.72;
+  transition: transform 0.1s ease;
+}

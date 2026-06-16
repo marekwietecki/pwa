@@ -1,0 +1,181 @@
+/* ====================================================
+   CALENDAR — calendar grid (calendar.html only)
+   ==================================================== */
+
+/* CALENDAR */ /* ------------------------------------------------------------------------ */
+.calendar {
+  margin-bottom: 1.5svh;
+  background-color: transparent;
+  flex-shrink: 0;
+  height: 360px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1%;
+  height: 48px;
+}
+#currentMonth {
+  width: 176px;
+  margin-left: 12px;
+  margin-right: 12px;
+  text-align: center;
+  align-items: center;
+  line-height: 40px;
+  border-radius: 50px;
+  height: 40px;
+  /* liquid glass effect */
+  background: var(--glass-bg-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-bubble);
+  transition: all 0.3s ease;
+}
+.monthArrow {
+  border-radius: 50px;
+  height: 40px;
+  width: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+
+  /* liquid glass effect */
+  background: var(--glass-bg-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-bubble);
+  transition: all 0.2s ease;
+}
+.monthArrow:hover,
+.monthArrow:active {
+  background: var(--glass-bg);
+  border-color: var(--glass-border-bright);
+  box-shadow: var(--shadow-float);
+}
+.calendar-grid-wrapper {
+  max-width: 560px;
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 40px);
+  gap: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
+  justify-items: center;
+}
+.day,
+.day-label {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  font-size: 12px;
+  opacity: 0.6;
+  line-height: 12px;
+  position: relative;
+  margin-bottom: 6px;
+}
+.day {
+  aspect-ratio: 1;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  border-radius: 50px;
+  background: var(--glass-bg-whisper);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-soft);
+  box-shadow: var(--shadow-delicate);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.day:hover .day:active {
+  background: var(--glass-bg-subtle);
+  border-color: var(--glass-border);
+  box-shadow: var(--shadow-bubble);
+}
+.day.active {
+  opacity: 100%;
+  color: #fff;
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-bright);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 20px rgba(0, 0, 0, 0.1),
+    0 0 24px rgba(255, 255, 255, 0.1);
+}
+
+.day-goal-wrapper {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+}
+
+.day-goal-wrapper svg {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.day-goal-wrapper.is-overdue svg {
+  stroke: var(--color-danger);
+}
+
+.task-overdue-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--color-danger);
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 4px; /* Odstęp od stojącej wyżej lokalizacji */
+  opacity: 0.9;
+}
+
+.overdue-calendar-icon {
+  flex-shrink: 0;
+  stroke: var(
+    --color-danger
+  ); /* Zapewnia, że ikonka też dostanie czerwony kolor */
+}
+
+.emptyListMessage {
+  text-align: center;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.45);
+  animation: fadeInCenter 0.4s ease-out;
+}
+
+@keyframes fadeInCenter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#emptyListMessageWrapper,
+#calendarEmptyListMessageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}

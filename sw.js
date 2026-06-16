@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v18";
+const CACHE_VERSION = "v22";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // Główne dokumenty HTML
@@ -7,7 +7,13 @@ const APP_ASSETS = [
   "./calendar.html",
   "./habits.html",
   "./hero.html",
-  "./style.css",
+
+  // Style css
+  "./css/global.css",
+  "./css/index.css",
+  "./css/calendar.css",
+  "./css/habits.css",
+  "./css/hero.css",
 
   // Architektura JS aplikacji
   "./js/app.js",
@@ -19,6 +25,19 @@ const APP_ASSETS = [
   "./js/onboarding.js",
   "./js/services.js",
   "./js/ui.js",
+  "./js/ui-calendar.js",
+  "./js/ui-global.js",
+  "./js/ui-habits.js",
+  "./js/ui-hero.js",
+  "./js/ui-index.js",
+
+  // fonts
+  "./assets/fonts/fredoka-v12-latin-600.woff2",
+  "./assets/fonts/fredoka-v12-latin-700.woff2",
+  "./assets/fonts/poppins-v21-latin-regular.woff2",
+  "./assets/fonts/poppins-v21-latin-500.woff2",
+  "./assets/fonts/poppins-v21-latin-600.woff2",
+  "./assets/fonts/poppins-v21-latin-700.woff2",
 
   // PWA manifest
   "./manifest.webmanifest",
@@ -34,7 +53,7 @@ const APP_ASSETS = [
   "./assets/logo-icon.svg",
   "./assets/logo-192.png",
   "./assets/logo-512.png",
-  "./assets/logo-habit-bubble.png",
+  "./assets/logo-habit-bubbles.png",
   "./assets/logo-transparent.png",
 
   // Pliki dźwiękowe dla dopaminowego UX

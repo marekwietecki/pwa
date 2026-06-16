@@ -244,7 +244,7 @@ export function initEventListeners(AppState) {
     }
 
     if (target.closest(".edit-inline-btn") && type === "goal") {
-      if (itemObject) UI.openEditGoalModal(itemObject);
+      if (itemObject) UI.openEditGoalModal(itemObject, AppState);
     }
   };
 
@@ -510,13 +510,13 @@ export function initEventListeners(AppState) {
     const isHeroView = !!document.getElementById("goalsList");
 
     if (isCalendarView) {
-      await UI.renderCalendarTasks(AppState);
+      await UI.renderCalendarTasks?.(AppState);
     } else {
-      await UI.renderDailyTasks(AppState);
-      if (isHeroView) await UI.renderLongTermGoals(AppState);
+      await UI.renderDailyTasks?.(AppState);
+      if (isHeroView) await UI.renderLongTermGoals?.(AppState);
     }
 
-    if (elements.habitSection) await UI.renderHabits(AppState);
+    if (elements.habitSection) await UI.renderHabits?.(AppState);
   };
 
   // ==========================================
