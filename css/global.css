@@ -1,3 +1,10 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.5.15,
+* Autoprefixer: v10.5.0
+* Browsers: last 4 version
+*/
+
 /* ====================================================\
    LOCAL FONTS — FREEDOKA & POPPINS (Self-hosted)
    ==================================================== */
@@ -58,12 +65,15 @@
   width: 80%;
   border-radius: 16px;
   color: #fff;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
   align-self: center;
   text-align: center;
   font-weight: 500;
   font-size: 12px;
   padding: 16px 0;
   z-index: 9999;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 /* displayed when active */
@@ -76,6 +86,7 @@ body.offline #offline-banner {
 body.offline main,
 body.offline header,
 body.offline section {
+  -webkit-transition: margin-top 0.3s ease;
   transition: margin-top 0.3s ease;
   margin-top: 0px; /* wysokość paska */
 }
@@ -86,28 +97,54 @@ body.offline section {
 /* Kontener główny podstron */
 .page-container {
   opacity: 1;
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
   transform: scale(1);
   will-change: opacity, transform; /* 1. Informujemy GPU, żeby przygotowało warstwę */
   /* 2. Zmieniamy funkcję przejścia na bardziej fizyczną, kinową */
+  -webkit-transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+    -webkit-transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+    -webkit-transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
   transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
     transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+    transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1),
+    -webkit-transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 /* Stan podczas przełączania karty - minimalne, eleganckie odejście w głąb */
 .page-container.is-switching {
   opacity: 0;
+  -webkit-transform: scale(0.985);
+  -ms-transform: scale(0.985);
   transform: scale(0.985);
 }
 
 /* Animacja kaskadowego wlatywania kafelków (Staggered Fade-In) */
-@keyframes bubbleFadeIn {
+@-webkit-keyframes bubbleFadeIn {
   0% {
     opacity: 0;
     /* 3. Używamy translate3d zamiast translateY – to wymusza pełny rendering 3D na GPU! */
+    -webkit-transform: translate3d(0, 16px, 0) scale(0.94);
     transform: translate3d(0, 16px, 0) scale(0.94);
   }
   100% {
     opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@keyframes bubbleFadeIn {
+  0% {
+    opacity: 0;
+    /* 3. Używamy translate3d zamiast translateY – to wymusza pełny rendering 3D na GPU! */
+    -webkit-transform: translate3d(0, 16px, 0) scale(0.94);
+    transform: translate3d(0, 16px, 0) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0) scale(1);
     transform: translate3d(0, 0, 0) scale(1);
   }
 }
@@ -119,6 +156,8 @@ body.offline section {
 
   /* 5. Autorska krzywa bąbelkowa - ma mikro-odbicie (overshoot) na końcu, 
        które daje niesamowicie organiczny, sprężysty feeling przy wpadaniu */
+  -webkit-animation: bubbleFadeIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)
+    forwards;
   animation: bubbleFadeIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
@@ -126,6 +165,7 @@ body.offline section {
 *,
 *::before,
 *::after {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -164,9 +204,14 @@ h2 {
 
 #btnbtnAuthGeo:active,
 #btnAuthNotify:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 /* Liquid glass tokens & delicate shadows */
@@ -223,7 +268,12 @@ body {
       transparent 50%
     );
   color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -237,7 +287,9 @@ body {
   /* Resetujemy/usuwamy stąd background, border i box-shadow! */
   background: transparent;
   border: none;
+  -webkit-box-shadow: none;
   box-shadow: none;
+  -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease; /* Płynne przejście przy pojawianiu się ramki */
 }
 
@@ -260,13 +312,21 @@ body {
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px; /* Zaokrąglenie bombelka */
+  -webkit-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 16px 20px;
 }
 
 .pwa-install-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 12px;
 }
@@ -295,30 +355,64 @@ body {
   padding: 10px 24px;
   border-radius: 50px;
   cursor: pointer;
+  -webkit-box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+  -webkit-transition: background-color 0.2s ease, -webkit-transform 0.2s ease,
+    -webkit-box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, -webkit-transform 0.2s ease,
+    -webkit-box-shadow 0.2s ease;
   transition: transform 0.2s ease, box-shadow 0.2s ease,
     background-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease, -webkit-transform 0.2s ease,
+    -webkit-box-shadow 0.2s ease;
+  -webkit-animation: gentle-pulse 2s infinite ease-in-out;
   animation: gentle-pulse 2s infinite ease-in-out;
 }
 
 .pwa-install-btn:hover {
+  -webkit-transform: scale(1.04);
+  -ms-transform: scale(1.04);
   transform: scale(1.04);
   background: rgba(255, 255, 255, 0.3) !important;
+  -webkit-box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
 }
 .pwa-install-btn:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
-@keyframes gentle-pulse {
+@-webkit-keyframes gentle-pulse {
   0% {
+    -webkit-box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
   }
   50% {
+    -webkit-box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
   }
   100% {
+    -webkit-box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  }
+}
+@keyframes gentle-pulse {
+  0% {
+    -webkit-box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    -webkit-box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    -webkit-box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
   }
 }
@@ -344,15 +438,26 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
+  -webkit-box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   padding: 24px;
   width: 90%;
   max-width: 420px;
   margin: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   gap: 20px;
 }
@@ -372,7 +477,9 @@ body {
 .onboarding-progress-fill {
   height: 100%;
   background: var(--hero-gradient);
+  -webkit-box-shadow: 0 0 15px var(--accent-color, rgba(255, 0, 255, 0.6));
   box-shadow: 0 0 15px var(--accent-color, rgba(255, 0, 255, 0.6));
+  -webkit-transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 0;
 }
@@ -402,22 +509,28 @@ body {
   font-size: 15px;
   text-align: center;
   outline: none;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 
 .onboarding-input:focus {
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.09);
+  -webkit-box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 #onboardingIconPicker {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   gap: 12px;
   width: 100%;
   margin-top: 20px;
   padding: 10px 5px;
   overflow-x: auto;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
   justify-content: start;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -428,6 +541,7 @@ body {
   background: var(--hero-gradient);
   color: #ffffff;
   cursor: pointer;
+  -webkit-transition: opacity 0.3s ease;
   transition: opacity 0.3s ease;
   width: 100%;
   margin: 0;
@@ -439,6 +553,7 @@ body {
   margin: 0;
   border-radius: 14px;
   cursor: pointer;
+  -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
 
@@ -457,12 +572,14 @@ body {
   font-size: 15px;
   text-align: center;
   outline: none;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 
 .onboarding-step-content .modal-input:focus {
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.09);
+  -webkit-box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
@@ -475,8 +592,15 @@ body {
 }
 
 .onboarding-step-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   width: 100%;
 }
@@ -506,7 +630,9 @@ body::before {
     rgba(255, 255, 255, 0.06) 42%,
     transparent 68%
   );
+  -webkit-box-shadow: 0 0 60px rgba(255, 255, 255, 0.06);
   box-shadow: 0 0 60px rgba(255, 255, 255, 0.06);
+  -webkit-filter: blur(2px);
   filter: blur(2px);
 }
 body::after {
@@ -520,6 +646,7 @@ body::after {
     rgba(255, 255, 255, 0.04) 50%,
     transparent 70%
   );
+  -webkit-filter: blur(1px);
   filter: blur(1px);
 }
 
@@ -530,6 +657,8 @@ body::after {
   height: min(180px, 40vw);
   top: 42%;
   left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
   transform: translateX(-50%);
   border-radius: 50%;
   pointer-events: none;
@@ -540,14 +669,24 @@ body::after {
     rgba(255, 255, 255, 0.03) 45%,
     transparent 70%
   );
+  -webkit-filter: blur(1px);
   filter: blur(1px);
 }
 #main-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center; /* To wyśrodkuje kalendarz i listę w poziomie */
   position: relative;
   width: 100%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   min-height: 0;
   padding: 20px;
@@ -557,6 +696,7 @@ body::after {
 .task-type-icon {
   display: inline-block;
   vertical-align: center;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   stroke-width: 2;
   fill: none;
@@ -580,11 +720,14 @@ body::after {
   top: 50%;
   left: 50%;
   /* Wyśrodkowanie + obrót o -90 stopni, żeby rysowało się od góry */
+  -webkit-transform: translate(-50%, -50%) rotate(-90deg);
+  -ms-transform: translate(-50%, -50%) rotate(-90deg);
   transform: translate(-50%, -50%) rotate(-90deg);
   width: 32px;
   height: 32px;
   pointer-events: none; /* Kliknięcia przechodzą do przycisku */
   opacity: 0;
+  -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
 
@@ -599,13 +742,19 @@ body::after {
   /* Obwód koła o promieniu r=14 wynosi dokładnie 2 * PI * 14 = 87.96 */
   stroke-dasharray: 88;
   stroke-dashoffset: 88;
+  -webkit-transition: stroke-dashoffset 3s linear, stroke-width 0.2s;
   transition: stroke-dashoffset 3s linear, stroke-width 0.2s;
 }
 
 /* STAN AKTYWNEGO TRZYMANIA ŚMIETNIKA */
 .deleteBtn.is-holding {
+  -webkit-transform: scale(0.92) !important;
+  -ms-transform: scale(0.92) !important;
   transform: scale(0.92) !important; /* Przycisk się zapada */
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 .deleteBtn.is-holding .delete-progress-svg {
@@ -619,18 +768,40 @@ body::after {
 
 /* Efekt "Explode" po udanym usunięciu */
 .deleteBtn.delete-success {
+  -webkit-animation: bubblePopX 0.3s forwards
+    cubic-bezier(0.175, 0.885, 0.32, 1.275);
   animation: bubblePopX 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes bubblePopX {
+@-webkit-keyframes bubblePopX {
   0% {
+    -webkit-transform: scale(0.92);
     transform: scale(0.92);
   }
   50% {
+    -webkit-transform: scale(1.3);
     transform: scale(1.3);
     background: #ff3b30;
   }
   100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes bubblePopX {
+  0% {
+    -webkit-transform: scale(0.92);
+    transform: scale(0.92);
+  }
+  50% {
+    -webkit-transform: scale(1.3);
+    transform: scale(1.3);
+    background: #ff3b30;
+  }
+  100% {
+    -webkit-transform: scale(0);
     transform: scale(0);
     opacity: 0;
   }
@@ -641,16 +812,32 @@ body::after {
 }
 .deleteBtn:active svg,
 .moreBtn:active svg {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 .navbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
   align-self: center;
   width: 96%;
   margin: 16px;
@@ -658,13 +845,16 @@ body::after {
   position: sticky;
   top: 0;
   z-index: 100;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   padding: 0 8px 0 4%; /*4%*/
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-float);
   box-shadow: var(--shadow-float);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 
@@ -674,10 +864,16 @@ body::after {
 
 .tabNav {
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   height: 80px;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
   width: 40%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 }
 
@@ -691,11 +887,24 @@ body::after {
   position: relative;
   z-index: 2; /* Ponad bąbelkiem */
   height: 80%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
   align-self: center;
   text-decoration: none;
   font-size: 9px;
@@ -715,8 +924,12 @@ body::after {
 }
 
 .tabNavItem.active svg {
+  -webkit-transform: scale(1.04);
+  -ms-transform: scale(1.04);
   transform: scale(1.04);
+  -webkit-filter: drop-shadow(0 0 4px rgba(169, 169, 169, 0.4));
   filter: drop-shadow(0 0 4px rgba(169, 169, 169, 0.4));
+  -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
 
@@ -733,6 +946,8 @@ body::after {
   background: rgba(255, 255, 255, 0.07) !important;
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+  -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0px rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
     inset 0 1px 0px rgba(255, 255, 255, 0.2);
 
@@ -742,18 +957,38 @@ body::after {
 
 /* 🔥 Klasa wstrzykiwana przez JS dopiero PO wyliczeniu pozycji */
 .tabNavIndicator.animate {
+  -webkit-animation: bubbleOrganicPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)
+    forwards;
   animation: bubbleOrganicPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* 🔥 Animacja startuje bezpośrednio z gotowej zmiennej, bez ryzyka pozycji zero! */
-@keyframes bubbleOrganicPop {
+@-webkit-keyframes bubbleOrganicPop {
   0% {
+    -webkit-transform: translateX(var(--target-x)) scale(0.6);
     transform: translateX(var(--target-x)) scale(0.6);
     opacity: 0;
     backdrop-filter: blur(0px) saturate(100%);
     -webkit-backdrop-filter: blur(0px) saturate(100%);
   }
   100% {
+    -webkit-transform: translateX(var(--target-x)) scale(1);
+    transform: translateX(var(--target-x)) scale(1);
+    opacity: 1;
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+  }
+}
+@keyframes bubbleOrganicPop {
+  0% {
+    -webkit-transform: translateX(var(--target-x)) scale(0.6);
+    transform: translateX(var(--target-x)) scale(0.6);
+    opacity: 0;
+    backdrop-filter: blur(0px) saturate(100%);
+    -webkit-backdrop-filter: blur(0px) saturate(100%);
+  }
+  100% {
+    -webkit-transform: translateX(var(--target-x)) scale(1);
     transform: translateX(var(--target-x)) scale(1);
     opacity: 1;
     backdrop-filter: blur(12px) saturate(120%);
@@ -773,13 +1008,22 @@ body::after {
 }
 
 .tabNav a:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 .logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 10px;
   margin: 0;
@@ -788,14 +1032,17 @@ body::after {
   line-height: 1;
   text-decoration: none;
   color: inherit;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
 }
 
 .logo-img {
   width: 80px;
   height: 80px;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   display: block;
+  -webkit-transition: 300ms;
   transition: 300ms;
 }
 
@@ -804,9 +1051,14 @@ body::after {
 }
 
 .logo-img:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 /* MODAL — floating glass bubble (centered, fully rounded) */
@@ -821,20 +1073,26 @@ body::after {
   z-index: 150;
   cursor: pointer;
   pointer-events: auto;
+  -ms-touch-action: manipulation;
   touch-action: manipulation;
   color: rgb(255, 255, 255);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 .addTaskBtn:hover,
 .addTaskBtn:active {
   background: var(--glass-bg-strong);
   border-color: var(--glass-border-bright);
+  -webkit-box-shadow: var(--shadow-float);
   box-shadow: var(--shadow-float);
+  -webkit-transform: translateY(-1px);
+  -ms-transform: translateY(-1px);
   transform: translateY(-1px);
 }
 
@@ -848,13 +1106,19 @@ body::after {
   inset: 0;
   z-index: 200;
   display: none;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   padding: 16px;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.88);
   opacity: 0;
   pointer-events: none;
+  -webkit-transition: opacity 0.3s ease;
   transition: opacity 0.3s ease;
 }
 
@@ -867,7 +1131,12 @@ body::after {
   margin: 0;
   padding: 24px;
   gap: 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: auto;
@@ -878,15 +1147,33 @@ body::after {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-float);
   box-shadow: var(--shadow-float);
+  -webkit-transform: scale(0.96) translateY(12px);
+  -ms-transform: scale(0.96) translateY(12px);
   transform: scale(0.96) translateY(12px);
   opacity: 0;
+  -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease,
+    -webkit-box-shadow 0.3s ease;
+  transition: opacity 0.3s ease, -webkit-transform 0.3s ease,
+    -webkit-box-shadow 0.3s ease;
   transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease,
+    -webkit-transform 0.3s ease, -webkit-box-shadow 0.3s ease;
 }
 .modal-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -901,27 +1188,39 @@ body::after {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
   cursor: pointer;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
 }
 #closeModal:hover {
   opacity: 72%;
 }
 #closeModal:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 .modal-overlay.open {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   opacity: 1;
   pointer-events: auto;
 }
 
 .modal-overlay.open .modal-sheet {
+  -webkit-transform: scale(1) translateY(0);
+  -ms-transform: scale(1) translateY(0);
   transform: scale(1) translateY(0);
   opacity: 1;
 }
@@ -954,19 +1253,29 @@ body::after {
 }
 
 .typePickersWrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 16px;
 }
 
 .typePickers {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
   gap: 8px;
 }
 
 .typePicker {
   cursor: pointer;
+  -webkit-box-shadow: none;
   box-shadow: none;
   color: #ced2de;
   font-weight: 600;
@@ -978,16 +1287,23 @@ body::after {
   backdrop-filter: var(--glass-blur-strong);
   -webkit-backdrop-filter: var(--glass-blur-strong);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 .typePicker:hover {
   opacity: 72%;
 }
 .typePicker:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 .typePicker.active {
@@ -1009,8 +1325,15 @@ body::after {
 }
 
 .nameSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
@@ -1029,11 +1352,33 @@ body::after {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 #taskName:focus {
   text-overflow: clip;
+}
+#taskName::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#taskName::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#taskName:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#taskName::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
 }
 #taskName::placeholder {
   color: rgba(255, 255, 255, 0.56);
@@ -1042,8 +1387,15 @@ body::after {
 }
 
 #habitSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   gap: 40px;
 }
@@ -1053,6 +1405,8 @@ body::after {
   font-size: 14px;
   padding: 10px 16px;
   border-radius: 24px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   width: 224px;
 
@@ -1060,7 +1414,9 @@ body::after {
   backdrop-filter: var(--glass-blur-strong);
   -webkit-backdrop-filter: var(--glass-blur-strong);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 
   padding-right: 40px;
@@ -1070,9 +1426,18 @@ body::after {
 }
 
 #daysPicker:not([style*="display: none"]) {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 6px;
   width: 100%;
@@ -1082,8 +1447,14 @@ body::after {
 #daysPicker label {
   width: 40px;
   height: 40px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   background: var(--glass-bg-whisper);
   border: 1px solid var(--glass-border-soft);
@@ -1092,9 +1463,11 @@ body::after {
   font-size: 11px;
   font-weight: bold;
   cursor: pointer;
+  -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
+  -webkit-box-shadow: var(--shadow-delicate);
   box-shadow: var(--shadow-delicate);
 }
 
@@ -1105,7 +1478,10 @@ body::after {
 #daysPicker label:has(input:checked) {
   background: #4caf50;
   border-color: #81c784;
+  -webkit-box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
   transform: scale(1.1); /* Lekkie powiększenie zaznaczonego dnia */
 }
 
@@ -1113,12 +1489,20 @@ body::after {
 #daysPicker label:active {
   background: var(--glass-bg);
   border-color: var(--glass-border-bright);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
 }
 
 #dateSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
@@ -1138,12 +1522,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 #taskDate,
 #goalDeadline {
   position: relative;
+  -moz-appearance: none;
   appearance: none;
   -webkit-appearance: none;
   padding: 10px 16px;
   border-radius: 24px;
   min-height: 37.5px;
   height: 37.5px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   color: #fff;
   width: 224px;
@@ -1151,7 +1538,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>');
@@ -1177,13 +1566,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .month-selector-grid {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-columns: 1fr 5px 1fr 5px 1fr 5px 1fr 5px 1fr 5px 1fr 5px 1fr;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   background: var(--glass-bg-whisper);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border-soft);
+  -webkit-box-shadow: var(--shadow-delicate);
   box-shadow: var(--shadow-delicate);
   max-height: 240px;
   padding: 10px;
@@ -1202,15 +1594,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .month-selector-grid span,
 .day-selector-grid span {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   height: 30px;
   background: var(--glass-bg-whisper);
   border: 1px solid var(--glass-border-soft);
   border-radius: 10px;
   font-size: 12px;
+  -webkit-transition: 0.2s;
   transition: 0.2s;
+  -webkit-box-shadow: var(--shadow-delicate);
   box-shadow: var(--shadow-delicate);
 }
 
@@ -1222,7 +1622,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .goalDescription {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
   align-items: flex-start;
   margin-top: 4px;
   width: 100%;
@@ -1230,6 +1634,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .goalDescription svg {
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   margin-top: 3px;
   margin-right: 8px;
@@ -1246,20 +1651,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #monthDaysGrid {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-columns: 1fr 8px 1fr 8px 1fr 8px 1fr 8px 1fr 8px 1fr 8px 1fr;
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   margin-top: 10px;
 }
 
 #monthDaysGrid span {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   height: 35px;
   border-radius: 12px;
   background: var(--glass-bg-whisper);
   border: 1px solid var(--glass-border-soft);
+  -webkit-box-shadow: var(--shadow-delicate);
   box-shadow: var(--shadow-delicate);
   cursor: pointer;
 }
@@ -1270,8 +1684,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #heroSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
@@ -1280,8 +1701,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: 64px;
   padding: 0;
   text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   line-height: 40px;
   font-size: 16px;
@@ -1293,8 +1720,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+}
+#habitIcon::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#habitIcon::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#habitIcon:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#habitIcon::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
 }
 #habitIcon::placeholder {
   color: rgba(255, 255, 255, 0.56);
@@ -1303,8 +1752,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #goalSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   gap: 12px;
 }
@@ -1314,6 +1770,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 14px;
   padding: 10px 16px;
   border-radius: 24px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   width: 224px; /* 40% */
 
@@ -1325,7 +1783,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   backdrop-filter: var(--glass-blur-strong);
   -webkit-backdrop-filter: var(--glass-blur-strong);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 
   padding-right: 40px;
@@ -1337,14 +1797,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .descriptionSection,
 .linkHabitSection,
 .deadlineSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
 .deadlinePlusLinkHabit {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
   gap: 12px;
 }
@@ -1362,8 +1836,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+}
+#descriptionInput::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#descriptionInput::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#descriptionInput:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#descriptionInput::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
 }
 #descriptionInput::placeholder {
   color: rgba(255, 255, 255, 0.56);
@@ -1372,14 +1868,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .locationSection {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
 .locationContentWrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 4px;
 }
@@ -1405,11 +1915,33 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 #locationInput:focus {
   text-overflow: clip; /* when focus user is able to scroll */
+}
+#locationInput::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#locationInput::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#locationInput:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+#locationInput::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
 }
 #locationInput::placeholder {
   color: rgba(255, 255, 255, 0.56);
@@ -1419,7 +1951,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .lucide-search-check {
   line-height: 16px;
   margin-top: 2px;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 }
 #searchLocation,
@@ -1428,9 +1964,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: 40px;
   padding: 0;
 
+  display: -webkit-inline-box;
+
+  display: -ms-inline-flexbox;
+
   display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
 
   border-radius: 50%;
@@ -1440,16 +1985,47 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 #searchLocation:hover {
   opacity: 72%;
 }
 #searchLocation:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
+}
+
+#useMyLocation::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+
+#useMyLocation::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+
+#useMyLocation:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
+}
+
+#useMyLocation::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.56);
+  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  font-weight: 400;
 }
 
 #useMyLocation::placeholder {
@@ -1462,28 +2038,47 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #useMyLocation:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 /* Animacja obracania */
-@keyframes spin {
+@-webkit-keyframes spin {
   from {
+    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
   to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
 
 .loading svg {
+  -webkit-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
   opacity: 0.5;
 }
 
 button:disabled {
   cursor: not-allowed;
+  -webkit-filter: grayscale(1);
   filter: grayscale(1);
 }
 
@@ -1511,16 +2106,29 @@ input.error {
   margin: 12px auto;
   padding: 12px 20px;
 
+  display: -webkit-box !important;
+
+  display: -ms-flexbox !important;
+
   display: flex !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-box-direction: normal !important;
+  -ms-flex-direction: column !important;
   flex-direction: column !important;
+  -webkit-box-pack: center !important;
+  -ms-flex-pack: center !important;
   justify-content: center !important;
+  -webkit-box-align: center !important;
+  -ms-flex-align: center !important;
   align-items: center !important;
   min-height: 80px;
 
   text-align: center;
   background: transparent;
   border: none;
+  -webkit-box-shadow: none;
   box-shadow: none;
+  -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease;
 }
 
@@ -1530,14 +2138,24 @@ input.error {
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
+  -webkit-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 16px 20px;
 }
 
 .pwa-install-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
@@ -1549,24 +2167,57 @@ input.error {
 
 /* Klasa, którą JS na chwilę wrzuci na kółko podczas awansu */
 .level-up-flash {
+  -webkit-animation: circlePunchFlash 0.8s
+    cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   animation: circlePunchFlash 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)
     forwards;
 }
 
-@keyframes circlePunchFlash {
+@-webkit-keyframes circlePunchFlash {
   0% {
+    -webkit-transform: scale(1);
     transform: scale(1);
+    -webkit-box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
     background: rgba(255, 255, 255, 0.03);
   }
   30% {
+    -webkit-transform: scale(1.3);
     transform: scale(1.3); /* Kółko gwałtownie rośnie */
     border-color: #00ffcc !important; /* Zamienia się w czysty neon */
     background: rgba(0, 255, 204, 0.4) !important; /* Wypełnia się blaskiem */
+    -webkit-box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
     box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
   }
   100% {
+    -webkit-transform: scale(1);
     transform: scale(1);
+    -webkit-box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+@keyframes circlePunchFlash {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+  }
+  30% {
+    -webkit-transform: scale(1.3);
+    transform: scale(1.3); /* Kółko gwałtownie rośnie */
+    border-color: #00ffcc !important; /* Zamienia się w czysty neon */
+    background: rgba(0, 255, 204, 0.4) !important; /* Wypełnia się blaskiem */
+    -webkit-box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
+    box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
     box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
     background: rgba(255, 255, 255, 0.03);
   }
@@ -1577,6 +2228,8 @@ input.error {
   position: fixed;
   top: -100px; /* Schowany nad ekranem */
   left: 50%;
+  -webkit-transform: translateX(-50%) scale(0.9);
+  -ms-transform: translateX(-50%) scale(0.9);
   transform: translateX(-50%) scale(0.9);
   width: 90%;
   max-width: 400px;
@@ -1590,7 +2243,10 @@ input.error {
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
+  -webkit-box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 255, 204, 0.1);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.1);
+  -webkit-transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
   transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -1598,6 +2254,8 @@ input.error {
 .level-up-toast.show {
   top: 24px; /* Zjeżdża na bezpieczną odległość od krawędzi */
   opacity: 1;
+  -webkit-transform: translateX(-50%) scale(1);
+  -ms-transform: translateX(-50%) scale(1);
   transform: translateX(-50%) scale(1);
 }
 
@@ -1614,21 +2272,39 @@ input.error {
     rgba(0, 0, 0, 0) 60%
   );
   will-change: transform; /* Wymuszenie akceleracji sprzętowej GPU */
+  -webkit-animation: rotateGlow 6s linear infinite;
   animation: rotateGlow 6s linear infinite;
   pointer-events: none;
 }
 
-@keyframes rotateGlow {
+@-webkit-keyframes rotateGlow {
   0% {
+    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
   100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateGlow {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
 
 .level-up-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 16px;
   position: relative;
@@ -1637,20 +2313,39 @@ input.error {
 
 .level-up-icon {
   font-size: 28px;
+  -webkit-animation: bubblePop 1s ease infinite alternate;
   animation: bubblePop 1s ease infinite alternate;
+}
+
+@-webkit-keyframes bubblePop {
+  0% {
+    -webkit-transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: scale(1.15) rotate(5deg);
+    transform: scale(1.15) rotate(5deg);
+  }
 }
 
 @keyframes bubblePop {
   0% {
+    -webkit-transform: scale(1) rotate(0deg);
     transform: scale(1) rotate(0deg);
   }
   100% {
+    -webkit-transform: scale(1.15) rotate(5deg);
     transform: scale(1.15) rotate(5deg);
   }
 }
 
 .level-up-text {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
 }
 
@@ -1671,6 +2366,7 @@ input.error {
 
 /* Dynamiczne płynne przejście dla paska postępu (gwarantuje kinowy przelot) */
 .levelIndicator .progress-bar-fill {
+  -webkit-transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1681,6 +2377,8 @@ input.error {
 /* Mikro-bąbelek XP - minimalistyczny, szary styl */
 .task-xp-badge {
   position: absolute;
+  -webkit-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
   transform: translate(-50%, 0);
   background: rgba(30, 41, 59, 0.9); /* Bardzo ciemny szary/grafit */
   color: #f1f5f9; /* Jasnoszary tekst */
@@ -1692,27 +2390,56 @@ input.error {
   font-weight: 600;
   pointer-events: none; /* Żeby nie blokował kliknięć myszką */
   z-index: 9999;
+  -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
   /* Odpalenie mikro-animacji uniesienia i zanikania */
+  -webkit-animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@-webkit-keyframes taskXpFloatUp {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate(-50%, 10px) scale(0.85);
+    transform: translate(-50%, 10px) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    -webkit-transform: translate(-50%, 0) scale(1);
+    transform: translate(-50%, 0) scale(1);
+  }
+  60% {
+    opacity: 1;
+    -webkit-transform: translate(-50%, -20px) scale(1);
+    transform: translate(-50%, -20px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translate(-50%, -35px) scale(0.9);
+    transform: translate(-50%, -35px) scale(0.9);
+  }
 }
 
 @keyframes taskXpFloatUp {
   0% {
     opacity: 0;
+    -webkit-transform: translate(-50%, 10px) scale(0.85);
     transform: translate(-50%, 10px) scale(0.85);
   }
   20% {
     opacity: 1;
+    -webkit-transform: translate(-50%, 0) scale(1);
     transform: translate(-50%, 0) scale(1);
   }
   60% {
     opacity: 1;
+    -webkit-transform: translate(-50%, -20px) scale(1);
     transform: translate(-50%, -20px) scale(1);
   }
   100% {
     opacity: 0;
+    -webkit-transform: translate(-50%, -35px) scale(0.9);
     transform: translate(-50%, -35px) scale(0.9);
   }
 }
@@ -1723,6 +2450,7 @@ input.error {
 
 /* Klon Twojego oryginalnego stylu #closeModal dla przewodnika */
 .infoWrapper {
+  -webkit-transition: opacity 0.2s;
   transition: opacity 0.2s;
 }
 
@@ -1740,12 +2468,21 @@ input.error {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
   cursor: pointer;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
@@ -1754,9 +2491,14 @@ input.error {
 }
 
 .guide-close-circle:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
 /* Mechanika Karuzeli Slajdów wewnątrz modal-sheet */
@@ -1764,6 +2506,8 @@ input.error {
   width: 100%;
   overflow: hidden;
   position: relative;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
@@ -1789,13 +2533,20 @@ input.error {
     top: auto;
     width: auto; /* nadpisujemy 96% z desktopa */
     margin: 8px; /* nadpisujemy margin: 16px z desktopa */
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 36px;
     padding: 0px 4px;
     height: 64px;
     z-index: 200;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     gap: 20px;
   }
@@ -1807,13 +2558,20 @@ input.error {
 
   /* Logo shrinks to just the icon, left-anchored */
   .navbar .logo {
+    -ms-flex-negative: 0;
     flex-shrink: 0;
   }
 
   /* Tabs fill remaining space evenly */
   .tabNav {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: space-evenly;
+    -ms-flex-pack: space-evenly;
     justify-content: space-evenly;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
     width: 100%;
     min-width: 0;
@@ -1822,6 +2580,8 @@ input.error {
 
   .tabNav a {
     height: 80%;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
   }
 
@@ -1864,9 +2624,15 @@ input.error {
 
 @media (max-width: 600px) {
   .deadlinePlusLinkHabit {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
   }
   .userStats {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
   }
   #habitSection {
@@ -1884,7 +2650,12 @@ input.error {
 }
 @media (max-width: 424px) {
   .typePickersWrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
     align-items: flex-start;
     gap: 10px;
   }

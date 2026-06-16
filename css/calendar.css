@@ -1,3 +1,10 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.5.15,
+* Autoprefixer: v10.5.0
+* Browsers: last 4 version
+*/
+
 /* ====================================================
    CALENDAR — calendar grid (calendar.html only)
    ==================================================== */
@@ -6,13 +13,20 @@
 .calendar {
   margin-bottom: 1.5svh;
   background-color: transparent;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   height: 360px;
 }
 
 .calendar-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   width: 100%;
   margin-bottom: 1%;
@@ -23,6 +37,8 @@
   margin-left: 12px;
   margin-right: 12px;
   text-align: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   line-height: 40px;
   border-radius: 50px;
@@ -32,7 +48,9 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 .monthArrow {
@@ -48,13 +66,16 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
 .monthArrow:hover,
 .monthArrow:active {
   background: var(--glass-bg);
   border-color: var(--glass-border-bright);
+  -webkit-box-shadow: var(--shadow-float);
   box-shadow: var(--shadow-float);
 }
 .calendar-grid-wrapper {
@@ -64,8 +85,11 @@
   text-align: center;
 }
 .calendar-grid {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-columns: 1fr 8px 1fr 8px 1fr 8px 1fr 8px 1fr 8px 1fr 8px 1fr;
   grid-template-columns: repeat(7, 1fr);
+  -ms-grid-rows: 40px 8px 40px 8px 40px 8px 40px 8px 40px 8px 40px;
   grid-template-rows: repeat(6, 40px);
   gap: 8px;
   padding-left: 20px;
@@ -74,8 +98,14 @@
 }
 .day,
 .day-label {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
   align-items: end;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   font-size: 12px;
   opacity: 0.6;
@@ -95,16 +125,25 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border-soft);
+  -webkit-box-shadow: var(--shadow-delicate);
   box-shadow: var(--shadow-delicate);
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   cursor: pointer;
+  -webkit-transition: all 0.25s ease;
   transition: all 0.25s ease;
 }
 .day:hover .day:active {
   background: var(--glass-bg-subtle);
   border-color: var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
 }
 .day.active {
@@ -112,6 +151,9 @@
   color: #fff;
   background: var(--glass-bg-active);
   border-color: var(--glass-border-bright);
+  -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 20px rgba(0, 0, 0, 0.1),
+    0 0 24px rgba(255, 255, 255, 0.1);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
     0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 20px rgba(0, 0, 0, 0.1),
     0 0 24px rgba(255, 255, 255, 0.1);
@@ -121,8 +163,14 @@
   position: absolute;
   bottom: 3px;
   left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
   transform: translateX(-50%);
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
@@ -136,7 +184,11 @@
 }
 
 .task-overdue-date-badge {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 3px;
   color: var(--color-danger);
@@ -147,6 +199,7 @@
 }
 
 .overdue-calendar-icon {
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   stroke: var(
     --color-danger
@@ -157,16 +210,32 @@
   text-align: center;
   font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.45);
+  -webkit-animation: fadeInCenter 0.4s ease-out;
   animation: fadeInCenter 0.4s ease-out;
+}
+
+@-webkit-keyframes fadeInCenter {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInCenter {
   from {
     opacity: 0;
+    -webkit-transform: translateY(10px);
     transform: translateY(10px);
   }
   to {
     opacity: 1;
+    -webkit-transform: translateY(0);
     transform: translateY(0);
   }
 }
@@ -174,8 +243,14 @@
 #emptyListMessageWrapper,
 #calendarEmptyListMessageWrapper {
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   padding: 32px 16px;
 }

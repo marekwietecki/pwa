@@ -25,39 +25,33 @@ const APP_ASSETS = [
   "./js/onboarding.js",
   "./js/services.js",
   "./js/ui.js",
-  "./js/ui-calendar.js",
-  "./js/ui-global.js",
-  "./js/ui-habits.js",
-  "./js/ui-hero.js",
-  "./js/ui-index.js",
 
   // fonts
-  "./assets/fonts/fredoka-v12-latin-600.woff2",
-  "./assets/fonts/fredoka-v12-latin-700.woff2",
-  "./assets/fonts/poppins-v21-latin-regular.woff2",
-  "./assets/fonts/poppins-v21-latin-500.woff2",
-  "./assets/fonts/poppins-v21-latin-600.woff2",
-  "./assets/fonts/poppins-v21-latin-700.woff2",
+  "./assets/fonts/fredoka-v17-latin-600.woff2",
+  "./assets/fonts/fredoka-v17-latin-700.woff2",
+  "./assets/fonts/poppins-v24-latin-regular.woff2",
+  "./assets/fonts/poppins-v24-latin-500.woff2",
+  "./assets/fonts/poppins-v24-latin-600.woff2",
+  "./assets/fonts/poppins-v24-latin-700.woff2",
 
   // PWA manifest
   "./manifest.webmanifest",
 
   // Wszystkie zasoby graficzne i ikony z folderu assets
-  "./assets/favicon.ico",
-  "./assets/favicon-16x16.png",
-  "./assets/favicon-32x32.png",
-  "./assets/apple-touch-icon.png",
-  "./assets/android-chrome-192x192.png",
-  "./assets/android-chrome-512x512.png",
-  "./assets/logo.svg",
-  "./assets/logo-icon.svg",
-  "./assets/logo-192.png",
-  "./assets/logo-512.png",
-  "./assets/logo-habit-bubbles.png",
-  "./assets/logo-transparent.png",
+  "./assets/icons/android-chrome-192x192.png",
+  "./assets/icons/android-chrome-512x512.png",  
+  "./assets/icons/apple-touch-icon.png",
+  "./assets/icons/favicon.ico",  
+  "./assets/icons/habitbubbl-favicon.svg",  
+  "./assets/icons/logo-192.png",
+  "./assets/icons/logo-512.png",
+  "./assets/icons/logo-habit-bubbles.png",
+  "./assets/icons/logo-icon.svg",
+  "./assets/icons/logo-transparent.png",
+  "./assets/icons/logo.svg",
 
   // Pliki dźwiękowe dla dopaminowego UX
-  "./assets/bubble_pop.wav",
+  "./assets/sounds/bubble_pop.mp3",
 ];
 
 console.log("🔧 SW: Inicjalizacja - Cache Name:", CACHE_NAME);
@@ -297,8 +291,8 @@ async function checkAndNotify() {
 
             self.registration.showNotification("Habit Bubble", {
               body: `Hey, You have ${undoneCount} thing(s) to do today! Let's go!`,
-              icon: "./assets/logo-192.png",
-              badge: "./assets/logo-192.png",
+              icon: "./assets/icons/logo-192.png",
+              badge: "./assets/icons/logo-192.png",
               tag: "daily-briefing",
               renotify: true,
             });

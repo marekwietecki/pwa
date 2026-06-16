@@ -7,7 +7,7 @@ import {
 } from "./services.js";
 import { UI } from "./ui.js";
 
-const bubbleSound = new Audio("./assets/bubble_pop.wav");
+const bubbleSound = new Audio("./assets/sounds/bubble_pop.mp3");
 bubbleSound.volume = 0.4;
 
 async function openAddTaskModal(AppState) {

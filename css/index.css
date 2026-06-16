@@ -1,3 +1,10 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.5.15,
+* Autoprefixer: v10.5.0
+* Browsers: last 4 version
+*/
+
 /* ====================================================
    INDEX — tasks list, dynamic card, delete friction, XP animations (index.html only)
    ==================================================== */
@@ -9,9 +16,18 @@
   font-style: italic;
   color: #555;
   text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
@@ -20,13 +36,21 @@
   padding-top: 4px;
   padding-left: 4vw;
   margin: 0;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
 }
 .toDo,
 .calendarToDo {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   /* flex: 1 1 0; */
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
   align-self: center;
   min-height: 0;
   width: 100%;
@@ -36,7 +60,12 @@
 }
 
 main {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   height: calc(100vh - 80px);
   overflow: hidden;
@@ -45,8 +74,15 @@ main {
 .toDoListWrapper,
 .calendarToDoListWrapper,
 .goalsContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
@@ -57,10 +93,24 @@ main {
   /* 🔥 NOWOŚĆ: Dodajemy maskę gradientową na sam dół kontenera */
   /* Od góry (0%) do 85% wysokości element jest w 100% widoczny (nieprzezroczysty) */
   /* Od 85% do 100% (samego dołu) płynnie zanika do zera (pełna przezroczystość) */
+  -webkit-mask-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(72%, rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
+  );
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 1) 72%,
     rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(72%, rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
   );
   mask-image: linear-gradient(
     to bottom,
@@ -72,6 +122,8 @@ main {
 #calendarToDoList,
 #goalsList {
   width: 100%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -87,6 +139,7 @@ main {
 
 #goalsList {
   list-style-type: none;
+  -webkit-padding-start: 0;
   padding-inline-start: 0;
   padding: 0;
   margin: 0;
@@ -100,16 +153,32 @@ main {
   margin-top: 12px;
   margin-bottom: 16px;
   list-style: none;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
   border-radius: 32px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-transition: opacity 0.25s ease, -webkit-transform 0.25s ease,
+    -webkit-box-shadow 0.25s ease;
+  transition: opacity 0.25s ease, -webkit-transform 0.25s ease,
+    -webkit-box-shadow 0.25s ease;
   transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease,
+    -webkit-transform 0.25s ease, -webkit-box-shadow 0.25s ease;
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
 }
 
@@ -121,6 +190,8 @@ main {
   text-overflow: ellipsis; /* 🔥 Dodajemy automatyczne "..." na końcu */
 
   word-break: break-word; /* Bezpieczne łamanie długich słów */
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   min-width: 0;
 }
@@ -135,6 +206,7 @@ main {
 }
 .taskItem.is-completed {
   opacity: 0.5 !important;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 
@@ -156,17 +228,29 @@ main {
 }
 
 .taskContent {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
 .taskLabel {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 6px;
   margin-top: 3px;
   font-size: 14px;
   font-weight: 600;
+
+  -webkit-box-flex: 1;
+
+  -ms-flex: 1;
 
   flex: 1;
   min-width: 0;
@@ -174,6 +258,7 @@ main {
 
 .taskLabel svg {
   /* margin-top: 3px; */
+  -ms-flex-negative: 0;
   flex-shrink: 0; /* Pilnuje, żeby ikonka nigdy się nie spłaszczyła */
 }
 
@@ -184,6 +269,7 @@ main {
 */
 
 .task-type-icon {
+  -ms-flex-negative: 0;
   flex-shrink: 0; /* Ikona się nie skurczy mi */
   opacity: 0.7;
 }
@@ -195,18 +281,31 @@ main {
   max-width: 360px;
 }
 .rowWrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 8px;
 }
 .taskMetaWrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.6);
 }
 .taskLocation {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.6);
@@ -217,8 +316,15 @@ main {
 }
 
 .taskActions {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   gap: 6px;
 }
@@ -227,16 +333,23 @@ main {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
   margin-left: 20px;
 }
 
 /* 3. Zmniejszenie przycisku moreBtn oraz ikonki wielokropka, by wysokość taska była idealna */
 .moreBtn {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
-  width: 28px !important;       /* Mniejsza, zgrabna klikalna przestrzeń */
+  width: 28px !important; /* Mniejsza, zgrabna klikalna przestrzeń */
   height: 28px !important;
   /*   padding: 8px  */
   border-radius: 50%;
@@ -246,14 +359,19 @@ main {
   outline: none;
 
   border: none;
-  position: relative;          /* Kluczowe pod pozycjonowanie paska góra/dół */
+  position: relative; /* Kluczowe pod pozycjonowanie paska góra/dół */
+  -webkit-transition: background 0.2s ease, -webkit-transform 0.2s ease;
+  transition: background 0.2s ease, -webkit-transform 0.2s ease;
   transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease,
+    -webkit-transform 0.2s ease;
 }
 
 .moreBtn svg {
-  width: 14px !important;      /* Wymuszamy małą ikonę zarówno dla (...) jak i dla kosza */
+  width: 14px !important; /* Wymuszamy małą ikonę zarówno dla (...) jak i dla kosza */
   height: 14px !important;
   opacity: 0.6;
+  -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
 
@@ -265,13 +383,13 @@ main {
 
 .moreBtn.deleteBtn svg {
   opacity: 1;
-  stroke: #ef4444;            /* Piękna krwista czerwień zamiast białego */
+  stroke: #ef4444; /* Piękna krwista czerwień zamiast białego */
 }
 
 /* 2. Konstrukcja mikroskopijnego paska ładowania NAD przyciskiem (Micro-interactions) */
 .delete-progress-line-track {
   position: absolute;
-  top: -6px;                  /* Wyrzucenie paska 6 pikseli nad kciuk usera */
+  top: -6px; /* Wyrzucenie paska 6 pikseli nad kciuk usera */
   left: -2px;
   right: -2px;
   height: 3px;
@@ -279,6 +397,7 @@ main {
   border-radius: 100px;
   overflow: hidden;
   opacity: 0;
+  -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
@@ -287,8 +406,10 @@ main {
   height: 100%;
   width: 0%;
   background: #ef4444;
+  -webkit-box-shadow: 0 0 8px #ef4444;
   box-shadow: 0 0 8px #ef4444;
   border-radius: 100px;
+  -webkit-transition: width 0.1s linear;
   transition: width 0.1s linear;
 }
 
@@ -299,6 +420,7 @@ main {
 
 .moreBtn.is-holding .delete-progress-bar-line {
   width: 100%;
+  -webkit-transition: width 3s linear;
   transition: width 3s linear; /* Ładowanie paska idealnie zsynchronizowane z 3s timeoutem z JS */
 }
 
@@ -309,35 +431,64 @@ main {
 
 .deleteTaskBtn {
   display: none;
+  -webkit-animation: fadeIn 0.2s ease forwards;
   animation: fadeIn 0.2s ease forwards;
   background: transparent;
 }
 
 .show-delete .deleteTaskBtn {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(5px);
+    transform: translateX(5px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
+    -webkit-transform: translateX(5px);
     transform: translateX(5px);
   }
   to {
     opacity: 1;
+    -webkit-transform: translateX(0);
     transform: translateX(0);
   }
 }
 
 .progress-ring-container {
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
 .progress-ring__circle {
+  -webkit-transition: stroke-dashoffset 0.35s;
   transition: stroke-dashoffset 0.35s;
+  -webkit-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
   transform: rotate(-90deg);
+  -webkit-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
 }
 
@@ -381,8 +532,13 @@ main {
   color: var(--text-muted, #888);
   padding: 0;
   cursor: pointer;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-transition: color 0.2s;
   transition: color 0.2s;
   vertical-align: middle;
 }
@@ -392,7 +548,12 @@ main {
 }
 
 .edit-inline-btn:active {
+  -webkit-transform: scale(0.96);
+  -ms-transform: scale(0.96);
   transform: scale(0.96);
   opacity: 0.72;
+  -webkit-transition: -webkit-transform 0.1s ease;
+  transition: -webkit-transform 0.1s ease;
   transition: transform 0.1s ease;
+  transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
