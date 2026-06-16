@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v22";
+const CACHE_VERSION = "v23";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // Główne dokumenty HTML
@@ -39,10 +39,10 @@ const APP_ASSETS = [
 
   // Wszystkie zasoby graficzne i ikony z folderu assets
   "./assets/icons/android-chrome-192x192.png",
-  "./assets/icons/android-chrome-512x512.png",  
+  "./assets/icons/android-chrome-512x512.png",
   "./assets/icons/apple-touch-icon.png",
-  "./assets/icons/favicon.ico",  
-  "./assets/icons/habitbubbl-favicon.svg",  
+  "./assets/icons/favicon.ico",
+  "./assets/icons/habitbubbl-favicon.svg",
   "./assets/icons/logo-192.png",
   "./assets/icons/logo-512.png",
   "./assets/icons/logo-habit-bubbles.png",
