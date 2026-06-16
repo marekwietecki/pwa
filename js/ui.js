@@ -917,7 +917,7 @@ export const UI = {
     if (!li) return;
 
     if (!isAlreadyTrash) {
-      // PIERWSZE KLIKNIĘCIE: Zamiana w czerwony bąbel
+      // PIERWSZE KLIKNIĘCIE: Zamiana w bąbel usuwania
       moreBtn.classList.add("deleteBtn");
       moreBtn.innerHTML = "";
 
@@ -929,33 +929,49 @@ export const UI = {
       `
       );
 
-      // Wstrzykujemy kółko postępu
+      // Wstrzykujemy pasek postępu nad przyciskiem
       moreBtn.insertAdjacentHTML(
         "beforeend",
-        `
-        <svg class="delete-progress-svg" width="32" height="32" viewBox="0 0 32 32">
-          <circle class="delete-progress-bg" cx="16" cy="16" r="14" fill="none" stroke-width="2"/>
-          <circle class="delete-progress-bar" cx="16" cy="16" r="14" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
-      `
+        `<div class="delete-progress-line-track"><div class="delete-progress-bar-line"></div></div>`
       );
 
-      // MECHANIKA LICZNIKA
       let holdTimeout;
+      let isHoldingNow = false;
+
+      // Funkcja pomocnicza do pełnego przywrócenia wielokropka (...)
+      const resetToEllipsis = () => {
+        moreBtn.classList.remove("deleteBtn"); // 🔥 KLUCZOWE: Usuwamy klasę bąbla usuwania
+        moreBtn.innerHTML = "";
+        moreBtn.appendChild(UI.createEllipsisIcon()); // Przywracamy oryginalne trzy kropki
+      };
+
+      // Automatyczny powrót do trzech kropek po 4 sekundach bezczynności
+      let revertTimeout = setTimeout(() => {
+        if (!isHoldingNow && moreBtn.classList.contains("deleteBtn")) {
+          cancelHold();
+          resetToEllipsis();
+        }
+      }, 4000);
 
       const startHold = (e) => {
         if (e.type === "mousedown" && e.button !== 0) return;
         e.preventDefault();
         e.stopPropagation();
 
+        isHoldingNow = true;
+        if (revertTimeout) {
+          clearTimeout(revertTimeout);
+          revertTimeout = null;
+        }
+
         moreBtn.classList.add("is-holding");
 
         holdTimeout = setTimeout(async () => {
           moreBtn.classList.remove("is-holding");
+          isHoldingNow = false;
 
           if (typeof navigator.vibrate === "function") navigator.vibrate(60);
 
-          // Jeśli to był aktywny habit w statystykach, zerujemy go w pamięci RAM aplikacji
           if (
             AppState &&
             AppState.selectedHabitForStats?.id === data.id &&
@@ -964,17 +980,14 @@ export const UI = {
             AppState.selectedHabitForStats = null;
           }
 
-          // 1. Odpalamy animację bąbelkowego znikania
-          li.style.transition = "all 0.2s ease-out";
-          li.style.transform = "scale(0.7)";
+          li.style.transition = "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)";
+          li.style.transform = "scale(0.8) translateY(-10px)";
           li.style.opacity = "0";
 
-          // 2. 🔥 NAJPIERW wykonujemy twardy zapis w bazie IndexedDB (czekamy na niego!)
           if (typeof onConfirmDelete === "function") {
             await onConfirmDelete();
           }
 
-          // 3. DOPIERO NA KOŃCU czyścimy DOM, kiedy baza jest czysta
           setTimeout(() => {
             li.remove();
           }, 200);
@@ -982,9 +995,19 @@ export const UI = {
       };
 
       const cancelHold = (e) => {
+        isHoldingNow = false;
         if (holdTimeout) {
           clearTimeout(holdTimeout);
           moreBtn.classList.remove("is-holding");
+        }
+        
+        // Jeśli użytkownik puścił palec, a przycisk to wciąż kosz, odpalamy timer 3s na powrót
+        if (moreBtn.classList.contains("deleteBtn") && !revertTimeout) {
+          revertTimeout = setTimeout(() => {
+            if (!isHoldingNow && moreBtn.classList.contains("deleteBtn")) {
+              resetToEllipsis();
+            }
+          }, 3000);
         }
       };
 

@@ -138,6 +138,10 @@ export const NotificationService = {
     const currentHour = now.getHours();
     const todayKey = Utils.formatDateKey(now);
 
+    // Pobieramy nazwę użytkownika do personalizacji powiadomień
+    const stats = await DataManager.getUserStats();
+    const userName = stats?.userName || "Hero";
+
     // 1. PORANNY SCREENING (między 08:00 a 10:00)
     if (currentHour >= 8 && currentHour < 10) {
       const lastBriefing = await DataManager.getMetadata("last_briefing_date");
@@ -145,8 +149,8 @@ export const NotificationService = {
         const undoneCount = await DataManager.countUndoneTasks(todayKey);
 
         if (undoneCount > 0) {
-          await this.send("Good Morning, Hero! 🦸‍♂️", {
-            body: `You have ${undoneCount} pending tasks for today. Let's stack some multiplier combos!`,
+          await this.send(`Good Morning, ${userName}! 🦸‍♂️`, {
+            body: `You have ${undoneCount} pending bubbl(s) for today. Let's stack some multiplier combos!`,
           });
           await DataManager.setMetadata("last_briefing_date", todayKey);
         }
@@ -161,9 +165,9 @@ export const NotificationService = {
 
         // Strzelamy tylko, jeśli cokolwiek zostało do zrobienia
         if (undoneCount > 0) {
-          await this.send("Don't let the tasks wait! 🕠", {
-            body: `Quick check: ${undoneCount} task(s) are still waiting to be burst today. Imrove your level!`,
-            tag: "habit-hero-reminder", // Inny tag, żeby poranny i wieczorny alert nie nadpisywały się nawzajem, jeśli oba wiszą
+          await this.send(`${userName}, don't let the tasks wait! 🕠`, {
+            body: ` ${undoneCount} bubbl(s) are still waiting to be burst today. Imrove your level!`,
+            tag: "habit-hero-reminder",
           });
           await DataManager.setMetadata("last_reminder_date", todayKey);
         }

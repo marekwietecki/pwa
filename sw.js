@@ -1,25 +1,44 @@
 const CACHE_VERSION = "v18";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
-  // tylko niezbędne do działania offline
+  // Główne dokumenty HTML
   "./",
   "./index.html",
   "./calendar.html",
   "./habits.html",
   "./hero.html",
   "./style.css",
+
+  // Architektura JS aplikacji
   "./js/app.js",
   "./js/data.js",
+  "./js/db.js",
   "./js/elements.js",
   "./js/events.js",
   "./js/icons.js",
+  "./js/onboarding.js",
   "./js/services.js",
   "./js/ui.js",
+
+  // PWA manifest
   "./manifest.webmanifest",
+
+  // Wszystkie zasoby graficzne i ikony z folderu assets
+  "./assets/favicon.ico",
+  "./assets/favicon-16x16.png",
+  "./assets/favicon-32x32.png",
+  "./assets/apple-touch-icon.png",
+  "./assets/android-chrome-192x192.png",
+  "./assets/android-chrome-512x512.png",
   "./assets/logo.svg",
   "./assets/logo-icon.svg",
   "./assets/logo-192.png",
   "./assets/logo-512.png",
+  "./assets/logo-habit-bubble.png",
+  "./assets/logo-transparent.png",
+
+  // Pliki dźwiękowe dla dopaminowego UX
+  "./assets/bubble_pop.wav",
 ];
 
 console.log("🔧 SW: Inicjalizacja - Cache Name:", CACHE_NAME);
@@ -259,8 +278,8 @@ async function checkAndNotify() {
 
             self.registration.showNotification("Habit Bubble", {
               body: `Hey, You have ${undoneCount} thing(s) to do today! Let's go!`,
-              icon: "/assets/192x192.png",
-              badge: "/assets/192x192.png",
+              icon: "./assets/logo-192.png",
+              badge: "./assets/logo-192.png",
               tag: "daily-briefing",
               renotify: true,
             });
