@@ -38,16 +38,16 @@ const APP_ASSETS = [
   "./manifest.webmanifest",
 
   // Wszystkie zasoby graficzne i ikony z folderu assets
-  "./assets/icons/android-chrome-192x192.png",
-  "./assets/icons/android-chrome-512x512.png",
+  "./assets/icons/android-chrome-192x192.webp",
+  "./assets/icons/android-chrome-512x512.webp",
   "./assets/icons/apple-touch-icon.png",
   "./assets/icons/favicon.ico",
   "./assets/icons/habitbubbl-favicon.svg",
-  "./assets/icons/logo-192.png",
-  "./assets/icons/logo-512.png",
-  "./assets/icons/logo-habit-bubbles.png",
+  "./assets/icons/logo-192.webp",
+  "./assets/icons/logo-512.webp",
+  "./assets/icons/logo-habit-bubbles.webp",
   "./assets/icons/logo-icon.svg",
-  "./assets/icons/logo-transparent.png",
+  "./assets/icons/logo-transparent.webp",
   "./assets/icons/logo.svg",
 
   // Pliki dźwiękowe dla dopaminowego UX
