@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v23";
+const CACHE_VERSION = "v24";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
   // Główne dokumenty HTML
@@ -50,7 +50,7 @@ const APP_ASSETS = [
   "./assets/icons/logo-transparent.webp",
   "./assets/icons/logo.svg",
 
-  // Pliki dźwiękowe dla dopaminowego UX
+  // Pliki dźwiękowe
   "./assets/sounds/bubble_pop.mp3",
 ];
 
@@ -129,15 +129,20 @@ self.addEventListener("fetch", (event) => {
   }
   */
 
-  //CACHE FIRST: css, assets
+  // CACHE FIRST: css, assets (ZABEZPIECZONY PRZED STATUSEM 206 DLA AUDIO)
   if (path.endsWith(".css") || path.includes("/assets/")) {
     event.respondWith(
       caches.match(request).then((cached) => {
         return (
           cached ||
           fetch(request).then((response) => {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            // Odpowiedzi typu Partial Content (206) dla audio lecą prosto do odtwarzacza.
+            if (response.status === 200) {
+              const clone = response.clone();
+              caches
+                .open(CACHE_NAME)
+                .then((cache) => cache.put(request, clone));
+            }
             return response;
           })
         );
