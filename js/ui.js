@@ -940,7 +940,7 @@ export const UI = {
 
       // Funkcja pomocnicza do pełnego przywrócenia wielokropka (...)
       const resetToEllipsis = () => {
-        moreBtn.classList.remove("deleteBtn"); // 🔥 KLUCZOWE: Usuwamy klasę bąbla usuwania
+        moreBtn.classList.remove("deleteBtn"); 
         moreBtn.innerHTML = "";
         moreBtn.appendChild(UI.createEllipsisIcon()); // Przywracamy oryginalne trzy kropki
       };
@@ -991,7 +991,7 @@ export const UI = {
           setTimeout(() => {
             li.remove();
           }, 200);
-        }, 3000);
+        }, 2000);
       };
 
       const cancelHold = (e) => {

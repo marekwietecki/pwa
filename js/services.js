@@ -119,8 +119,8 @@ export const NotificationService = {
     const registration = await navigator.serviceWorker.ready;
 
     const defaultOptions = {
-      icon: "/assets/icons/logo-192.png",
-      badge: "/assets/icons/logo-192.png",
+      icon: "/assets/icons/logo-192.webp",
+      badge: "/assets/icons/logo-192.webp",
       vibrate: [200, 100, 200],
       tag: "habit-hero-alert", // Grupuje powiadomienia pod jednym tagiem
       renotify: true,
@@ -218,7 +218,7 @@ export const PermissionsManager = {
           if (Notification.permission === "granted") {
             new Notification("Habit Bubbl 🫧", {
               body: "📍 Space-time synced! Your environment is now successfully linked.",
-              icon: "/assets/icons/logo-192.png", // upewnij się, że ścieżka do Twojej ikony PWA się zgadza
+              icon: "/assets/icons/logo-192.webp", // upewnij się, że ścieżka do Twojej ikony PWA się zgadza
               vibrate: [100, 50, 100],
             });
           }

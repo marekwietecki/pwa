@@ -296,8 +296,8 @@ async function checkAndNotify() {
 
             self.registration.showNotification("Habit Bubble", {
               body: `Hey, You have ${undoneCount} thing(s) to do today! Let's go!`,
-              icon: "./assets/icons/logo-192.png",
-              badge: "./assets/icons/logo-192.png",
+              icon: "./assets/icons/logo-192.webp",
+              badge: "./assets/icons/logo-192.webp",
               tag: "daily-briefing",
               renotify: true,
             });
