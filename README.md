@@ -1,6 +1,6 @@
-# 🏆 Habit Bubble - Gamified Task Manager PWA
+# 🏆 Habit Bubbl - Gamified Task Manager PWA
 
-Habit Bubble is a Progressive Web App (PWA) that turns daily responsibilities into an RPG adventure. Earn experience points (XP), level up your character, and track your habits through an interactive calendar.
+Habit Bubbl is a Progressive Web App (PWA) that turns daily responsibilities into an RPG adventure. Earn experience points (XP), level up your character, and track your habits through an interactive calendar.
 
 ---
 
@@ -66,7 +66,7 @@ A **Service Worker** is implemented to manage network traffic and provide robust
 
 ### Live Demo
 The application is hosted on Netlify and is available at:
-[https://habit-hero-pwa.netlify.app](https://habit-hero-pwa.netlify.app)
+[https://habitbubbl.netlify.app](https://habitbubbl.netlify.app)
 
 ---
 
