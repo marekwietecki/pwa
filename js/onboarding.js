@@ -1,6 +1,6 @@
 import { DataManager } from "./data.js";
 import { DB } from "./db.js";
-import { UI } from "./ui.js";
+import { UI } from "./ui.min.js";
 
 const ONBOARDING_ICONS = ["💧", "🛌", "💪", "🍏", "🏃‍♂️", "📚", "💵", "🚭", "📱", "🐶", "🧠", "🧘", "🎯", "🌟"];
 
