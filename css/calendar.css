@@ -52,6 +52,14 @@
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
+
+@media (display-mode: browser) {
+  #currentMonth {
+    margin-top: 0px;
+    margin-bottom: 8px;
+  }
+}
+
 .monthArrow {
   border-radius: 50px;
   height: 40px;
@@ -98,14 +106,24 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
   font-size: 12px;
   opacity: 0.6;
-  line-height: 12px;
-  position: relative;
-  margin-bottom: 6px;
+}
+
+.day-label {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+
+  height: 100%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 .day {
   aspect-ratio: 1;
@@ -131,6 +149,7 @@
   -webkit-transition: all 0.25s ease;
   transition: all 0.25s ease;
 }
+
 .day:hover,
 .day:active {
   background: var(--glass-bg-subtle);

@@ -1,5 +1,5 @@
 import { Utils, DataManager, LevelManager } from "./data.js";
-import { QuoteService, PermissionsManager } from "./services.js";
+import { QuoteService } from "./services.js";
 import { elements } from "./elements.js";
 import { Icons } from "./icons.js";
 
@@ -799,7 +799,7 @@ export const UI = {
     const dateKey = Utils.formatDateKey(targetDate);
 
     if (titleEl)
-      titleEl.textContent = `Tasks for ${targetDate.toDateString()}:`;
+      titleEl.textContent = `To Do for ${targetDate.toDateString()}:`;
 
     const [tasks, habits, goals] = await Promise.all([
       DataManager.getTasksByDate(dateKey),
@@ -1002,7 +1002,7 @@ export const UI = {
 
           if (
             AppState &&
-            AppState.selectedHabitForStats?.id === data.id &&
+            AppState.selectedHabitForStats && AppState.selectedHabitForStats.id === data.id &&
             data.type === "habit"
           ) {
             AppState.selectedHabitForStats = null;
@@ -1291,8 +1291,8 @@ export const UI = {
   renderHabits: async (AppState) => {
     const listContainer = document.getElementById("habitDropdownList");
     const trigger = document.getElementById("habitDropdownTrigger");
-    const dropdownContainer = trigger?.parentElement;
-
+    const dropdownContainer = trigger ? trigger.parentElement : null;
+    
     if (!listContainer || !trigger || !dropdownContainer) return;
 
     const habits = await DataManager.getHabits();
@@ -1324,7 +1324,7 @@ export const UI = {
     `;
 
       const isSelected =
-        AppState.selectedHabitForStats?.id === habit.id ||
+      AppState.selectedHabitForStats && AppState.selectedHabitForStats.id === habit.id ||
         (!AppState.selectedHabitForStats && index === 0);
 
       if (isSelected) {
@@ -1604,13 +1604,13 @@ export const UI = {
         : stats.level;
     }
 
-    console.log("=== 🫧 NEUROBUBBLE GLOBAL UI OBJECT CHECK ===");
-    console.log("Poziom aktualny z bazy:", stats.level);
-    console.log("Ostatni zapamiętany poziom w UI:", UI.lastObservedLevelGlobal);
-    console.log(
-      "Czy poziom z bazy jest większy?:",
-      stats.level > UI.lastObservedLevelGlobal
-    );
+    // console.log("=== 🫧 NEUROBUBBLE GLOBAL UI OBJECT CHECK ===");
+    // console.log("Poziom aktualny z bazy:", stats.level);
+    // console.log("Ostatni zapamiętany poziom w UI:", UI.lastObservedLevelGlobal);
+    // console.log(
+    //   "Czy poziom z bazy jest większy?:",
+    //   stats.level > UI.lastObservedLevelGlobal
+    // );
 
     if (stats.level > UI.lastObservedLevelGlobal) {
       console.log(

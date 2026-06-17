@@ -9,7 +9,7 @@ import {
   swManager,
   PwaService,
 } from "./services.js";
-import { UI } from "./ui.js";
+import { UI } from "./ui.min.js";
 
 const AppState = {
   date: new Date(), // Miesiąc w kalendarzu

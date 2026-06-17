@@ -5,11 +5,15 @@ import {
   NotificationService,
   PermissionsManager,
 } from "./services.js";
-import { UI } from "./ui.js";
+import { UI } from "./ui.min.js";
 
 const bubbleSound = new Audio("./assets/sounds/bubble_pop.mp3");
 bubbleSound.volume = 0.4;
 
+/**
+ * Otwiera modal dodawania nowego elementu, automatycznie dopasowując typ tworzonego 
+ * obiektu (cel, nawyk, zadanie) na podstawie aktualnej ścieżki URL podstrony aplikacji.
+ */
 async function openAddTaskModal(AppState) {
   if (!elements.modalOverlay) return;
 
@@ -27,6 +31,10 @@ async function openAddTaskModal(AppState) {
   elements.modalOverlay.classList.add("open");
 }
 
+/**
+ * Główna funkcja inicjalizująca nasłuchiwanie zdarzeń (Event Listeners) dla całego interfejsu, 
+ * zarządzająca delegacją kliknięć na listach zadań, interakcjami w modalach, geolokalizacją oraz tooltipami.
+ */
 export function initEventListeners(AppState) {
   const onAddTaskClick = async (e) => {
     e.preventDefault();
@@ -362,6 +370,10 @@ export function initEventListeners(AppState) {
     if (navigator.vibrate) navigator.vibrate(30);
   });
 
+  /**
+   * Pomocnicza funkcja zbierająca zaznaczone dni tygodnia lub miesiąca z pickerów w modalu, 
+   * mapująca je na tablicę liczb reprezentującą harmonogram nawyku.
+   */
   const getHabitSchedule = () => {
     const freq = document.getElementById("habitFrequency").value;
     if (freq === "weekly") {
@@ -379,6 +391,10 @@ export function initEventListeners(AppState) {
     return [];
   };
 
+  /**
+   * Pomocnicza funkcja obsługująca proces walidacji oraz zapisu zmodyfikowanych danych 
+   * istniejącego już celu (Goal) bądź nawyku (Habit) w bazie danych.
+   */
   const handleSaveEdit = async (editId, editType, AppState) => {
     const id = parseInt(editId);
 
@@ -416,6 +432,10 @@ export function initEventListeners(AppState) {
     await refreshCurrentView(AppState); 
   };
 
+  /**
+   * Pomocnicza funkcja parsująca formularz modala pod kątem poprawności, formatująca dane wejściowe 
+   * i wywołująca asynchroniczny zapis nowego wpisu (zadania, nawyku, celu) do IndexedDB.
+   */
   const handleAddNew = async (AppState) => {
     let name = elements.taskName.value.trim();
     if (!name) return UI.showModalMessage("Provide a name! ✍️");
@@ -497,6 +517,10 @@ export function initEventListeners(AppState) {
     }
   });
 
+  /**
+   * Pomocnicza funkcja odświeżająca aktualnie widoczne struktury list, kalendarza 
+   * i sekcji nawyków po dokonaniu zmian lub usunięciu jakiegoś elementu.
+   */
   const refreshCurrentView = async (AppState) => {
     if (elements.calendarGrid) await UI.renderCalendar(AppState);
 
@@ -593,7 +617,10 @@ export function initEventListeners(AppState) {
     });
   }
 
-  // xp engine
+  /**
+   * Pomocnicza funkcja pośrednicząca w silniku grywalizacji, obliczająca bilans zysku lub straty punktów XP 
+   * przy zaznaczaniu/odznaczaniu zadań, zapisująca nowy poziom w statystykach oraz wywołująca event 'statsUpdated'.
+   */
   async function handleCompletion(type, item, isDone) {
     let xpAmount = LevelManager.calculateXP(type, item);
 

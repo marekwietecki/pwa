@@ -31,6 +31,11 @@
   width: 100%;
   margin-bottom: 20px;
 }
+@media (display-mode: browser) {
+  .habit-dropdown-container {
+    margin-bottom: 4px;
+  }
+}
 
 .habit-dropdown-trigger {
   display: -webkit-box;
@@ -514,6 +519,12 @@
   padding: 0px 12px 12px; /* TRBL // Trzy wartości (Góra, Boki, Dół) // Dwie wartości (Góra/Dół, Boki)*/
 }
 
+@media (display-mode: browser) {
+  .stats-grid {
+    padding: 0px 12px;
+  }
+}
+
 .habit-percentage-label {
   font-size: 14px;
   font-weight: bold;
@@ -636,9 +647,12 @@
   font-size: 11px;
   font-weight: bold;
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 auto 8px auto;
+  margin: 0 auto;
   width: 100%;
   max-width: 300px;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: end;
 }
 
 .activity-day-labels div {
