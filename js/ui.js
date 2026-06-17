@@ -12,7 +12,6 @@ export const GRADIENTS = [
   "linear-gradient(90deg, #f093fb, #f5576c)",
 ];
 
-// 🔥 Lista pięknych ikon współdzielona z onboardingiem
 export const ONBOARDING_ICONS = [
   "💧",
   "🛌",
@@ -31,7 +30,6 @@ export const ONBOARDING_ICONS = [
 ];
 
 export const UI = {
-  // 🔥 Przechowuje aktualnie wybrane emoji w modalu głównym
   selectedHabitIcon: "💧",
 
   createDeadlineIcon: () => Icons.createDeadlineIcon(),
@@ -44,6 +42,11 @@ export const UI = {
   createDescriptionIcon: () => Icons.createDescriptionIcon(),
   createPencilIcon: () => Icons.createPencilIcon(),
 
+  /**
+   * Tworzy i konfiguruje pierścień postępu SVG na podstawie przekazanej wartości procentowej.
+   * @param {number} percentage - Procent ukończenia (0 - 100).
+   * @returns {HTMLDivElement} Kontener z wyrenderowanym elementem SVG.
+   */
   createProgressCircle: (percentage) => {
     const size = 32;
     const stroke = 4;
@@ -93,12 +96,21 @@ export const UI = {
     return container;
   },
 
+  /**
+   * Aktualizuje nazwę użytkownika w nagłówku oraz odświeża pasek doświadczenia (XP).
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   updateUserHeader: async (AppState) => {
     const stats = await DataManager.getUserStats();
     const nameLabel = document.getElementById("displayUserName");
     if (nameLabel) nameLabel.textContent = stats.userName;
     await UI.updateXPBar(AppState);
   },
+
+  /**
+   * Zarządza asynchronicznym renderowaniem aktualnej strony z animacją przejścia.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   renderCurrentPage: async (AppState) => {
     const mainContent =
       document.querySelector(".page-container") ||
@@ -109,7 +121,6 @@ export const UI = {
       await new Promise((resolve) => setTimeout(resolve, 150));
     }
 
-    // Renderowanie podstron...
     if (elements.toDoList) {
       await UI.renderQuote();
       await UI.renderDailyTasks(AppState);
@@ -123,7 +134,7 @@ export const UI = {
     if (elements.goalsList) {
       await UI.setupSettingsToggles();
       UI.applyRandomGradient();
-      await UI.renderLongTermGoals();
+      await UI.renderLongTermGoals(AppState);
     }
 
     if (mainContent) {
@@ -133,18 +144,21 @@ export const UI = {
     }
   },
 
+  /**
+   * Losuje jeden z dostępnych gradientów i ustawia go jako zmienną CSS dla tła profilu.
+   */
   applyRandomGradient: () => {
     const randomIndex = Math.floor(Math.random() * GRADIENTS.length);
     const selectedGradient = GRADIENTS[randomIndex];
-
     document.documentElement.style.setProperty(
       "--hero-gradient",
       selectedGradient
     );
   },
 
-  // MODAL
-
+  /**
+   * Pobiera aktywne nawyki i uzupełnia nimi listę rozwijaną (select) w modalu tworzenia celu.
+   */
   fillModalHabitSelect: async () => {
     const select = elements.goalHabitSelect;
     if (!select) return;
@@ -160,7 +174,6 @@ export const UI = {
 
     try {
       const habits = await DataManager.getHabits();
-
       habits.forEach((habit) => {
         const option = document.createElement("option");
         option.value = habit.id;
@@ -172,6 +185,10 @@ export const UI = {
     }
   },
 
+  /**
+   * Rozpoznaje i zwraca domyślny typ formularza (task/habit/goal) na podstawie bieżącego adresu URL lub hasha.
+   * @returns {"task" | "habit" | "goal"} Rozpoznany typ widoku.
+   */
   detectModalDefaultType: () => {
     const path = window.location.hash || window.location.pathname;
     const cleanPath = path.toLowerCase();
@@ -182,6 +199,9 @@ export const UI = {
     return "task";
   },
 
+  /**
+   * Resetuje wartości wszystkich głównych pól tekstowych i datowników w modalu.
+   */
   clearModalInputs: () => {
     const inputs = [
       elements.taskName,
@@ -203,6 +223,10 @@ export const UI = {
       .forEach((cb) => (cb.checked = false));
   },
 
+  /**
+   * Uniwersalny generator siatki ikon (Emoji Picker) obsługujący zaznaczenia i wywołanie callbacku.
+   * @param {Object} config - Obiekt konfiguracyjny (kontener, ikony, ikona aktywna, zdarzenie onSelect).
+   */
   createEmojiPicker: ({
     container,
     icons,
@@ -214,7 +238,6 @@ export const UI = {
     if (!container) return;
     container.innerHTML = "";
 
-    // Globalne zapewnienie ukrycia scrollbara bez dotykania innych stylów kontenera
     if (!document.getElementById("bubble-picker-scrollbar-style")) {
       const styleSheet = document.createElement("style");
       styleSheet.id = "bubble-picker-scrollbar-style";
@@ -230,25 +253,15 @@ export const UI = {
       iconWrapper.className = "bubble-picker-item";
       iconWrapper.textContent = emoji;
 
-      // Używamy przekazanych wymiarów (np. 44px dla UI, 48px dla Onboardingu)
       const size = itemFlex || "44px";
       const fSize = fontSize || "20px";
 
       iconWrapper.style.cssText = `
-        flex: 0 0 ${size};
-        width: ${size};
-        height: ${size};
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.04);
-        border: 2px solid transparent;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: ${fSize};
-        transition: all 0.25s ease;
-        user-select: none;
-        box-sizing: border-box;
+        flex: 0 0 ${size}; width: ${size}; height: ${size};
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.04); border: 2px solid transparent;
+        border-radius: 12px; cursor: pointer; font-size: ${fSize};
+        transition: all 0.25s ease; user-select: none; box-sizing: border-box;
       `;
 
       if (emoji === activeIcon) {
@@ -277,13 +290,16 @@ export const UI = {
     });
   },
 
+  /**
+   * Inicjalizuje pasek wyboru odznaki nawyku wraz z obsługą pola dla własnego znaku użytkownika.
+   * @param {string} activeEmoji - Początkowo zaznaczona ikona.
+   */
   setupHabitIconPicker: (activeEmoji) => {
     const wrapper = document.getElementById("habitIconWrapper");
     if (!wrapper) return;
 
     wrapper.innerHTML = "";
 
-    // 1. Nagłówek sekcji
     const subTitle = document.createElement("div");
     subTitle.className = "modalSubTitle";
     subTitle.textContent = "Choose Habit Badge";
@@ -291,28 +307,15 @@ export const UI = {
     subTitle.style.marginBottom = "8px";
     wrapper.appendChild(subTitle);
 
-    // 2. GŁÓWNY KONTENER JEDNOLINIJKOWY
     const rowContainer = document.createElement("div");
     rowContainer.style.cssText = `
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      width: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
     `;
 
-    // 3. Kontener na kafelki z emoji (Przywracamy poziomą taśmę/slider)
     const pickerContainer = document.createElement("div");
     pickerContainer.id = "mainHabitIconPicker";
     pickerContainer.style.cssText = `
-      display: flex;
-      gap: 12px;
-      flex: 1;
-      padding: 5px 0;
-      overflow-x: auto;
-      justify-content: start;
-      scrollbar-width: none;
-      min-width: 0;
+      display: flex; gap: 12px; flex: 1; padding: 5px 0; overflow-x: auto; justify-content: start; scrollbar-width: none; min-width: 0;
     `;
 
     UI.selectedHabitIcon = activeEmoji || "💧";
@@ -335,26 +338,15 @@ export const UI = {
 
     rowContainer.appendChild(pickerContainer);
 
-    // 4. KWADRATOWY INPUT PO PRAWEJ
     const customInput = document.createElement("input");
     customInput.type = "text";
     customInput.id = "customHabitIconInput";
     customInput.placeholder = "+";
     customInput.maxLength = 2;
     customInput.style.cssText = `
-      flex: 0 0 44px;
-      width: 44px;
-      height: 44px;
-      padding: 0;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      color: #ffffff;
-      font-size: 18px;
-      text-align: center;
-      outline: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
+      flex: 0 0 44px; width: 44px; height: 44px; padding: 0; background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #ffffff; font-size: 18px;
+      text-align: center; outline: none; transition: all 0.3s ease; cursor: pointer;
     `;
 
     if (!isPreset && activeEmoji) {
@@ -374,7 +366,6 @@ export const UI = {
       customInput.style.background = "rgba(255, 255, 255, 0.12)";
       customInput.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.2)";
 
-      // Gaszenie podświetleń z karuzeli poprzez nową wspólną klasę
       pickerContainer
         .querySelectorAll(".bubble-picker-item")
         .forEach((item) => {
@@ -410,6 +401,11 @@ export const UI = {
     wrapper.appendChild(rowContainer);
   },
 
+  /**
+   * Przełącza widoczność sekcji modala dopasowując układ pól do wybranego typu i trybu edycji.
+   * @param {"task" | "habit" | "goal"} type - Aktualny typ formularza w modalu.
+   * @param {boolean} isEdit - Czy modal jest w trybie edycji zasobu.
+   */
   toggleModalFields: async (type, isEdit = false) => {
     const dSection = document.getElementById("dateSection");
     const hSection = document.getElementById("habitSection");
@@ -438,7 +434,7 @@ export const UI = {
       if (hSection) hSection.style.display = "flex";
       if (habitIcon) {
         habitIcon.style.display = "flex";
-        habitIcon.style.flexDirection = "column"; // Zapewnia ładne układanie tytułu i paska
+        habitIcon.style.flexDirection = "column";
       }
 
       if (isEdit) {
@@ -467,6 +463,10 @@ export const UI = {
       elements.monthlyDayPicker.style.display = "none";
   },
 
+  /**
+   * Przełącza klasę aktywności na przyciskach wyboru typu wewnątrz modala.
+   * @param {string} currentType - Obecnie wybrany typ (task/habit/goal).
+   */
   refreshTypePickerButtons: (currentType) => {
     const typePickers = document.querySelectorAll(".typePicker");
     typePickers.forEach((btn) => {
@@ -475,34 +475,36 @@ export const UI = {
     });
   },
 
+  /**
+   * Resetuje dane wejściowe, odznacza checkbox'y oraz przywraca domyślny stan widoku modala.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   resetModal: (AppState) => {
     if (!AppState) {
       console.warn("⚠️ resetModal: Brak obiektu AppState!");
       return;
     }
 
-    // 1. Czyszczenie standardowych inputów tekstowych/selectów
     UI.clearModalInputs();
 
-    // 2. 🔥 NOWOŚĆ: Ręcznie resetujemy i czyścimy wszystkie checkboxy harmonogramów (dni tygodnia/miesiąca)
-    // Dzięki temu żaden stary harmonogram nie "zostanie" w pamięci modalu
     const scheduleCheckboxes = document.querySelectorAll(
       '#daysPicker input[type="checkbox"], #monthDaysGrid input[type="checkbox"]'
     );
     scheduleCheckboxes.forEach((cb) => (cb.checked = false));
 
-    // 3. Przełączanie widoczności pól na bazie aktualnego typu
     UI.toggleModalFields(AppState.currentCreateType, false);
     UI.refreshTypePickerButtons(AppState.currentCreateType);
-
-    // 4. Reset ikony na domyślną kropelkę
     UI.setupHabitIconPicker("💧");
   },
 
+  /**
+   * Konfiguruje etykiety tekstowe nagłówka oraz przycisku głównego modala dla trybu zapisu lub kreacji.
+   * @param {"create" | "edit"} mode - Tryb pracy formularza.
+   * @param {string} type - Nazwa typu elementu.
+   */
   setModalMode: (mode = "create", type = "") => {
     const btn = document.getElementById("confirmAddBtn");
     const title = elements.modalTitle;
-
     const formattedType = type
       ? type.charAt(0).toUpperCase() + type.slice(1)
       : "";
@@ -518,7 +520,6 @@ export const UI = {
         btn.removeAttribute("data-edit-type");
       }
     } else {
-      // EDIT MODE
       if (title) {
         title.textContent = formattedType ? `Edit ${formattedType}` : "Edit";
         title.classList.remove("modal-title-hide-mobile");
@@ -527,6 +528,11 @@ export const UI = {
     }
   },
 
+  /**
+   * Otwiera formularz modala i uzupełnia go danymi istniejącego nawyku przygotowanego do edycji.
+   * @param {Object} habit - Obiekt struktury danych nawyku.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   openEditHabitModal: async (habit, AppState) => {
     if (!AppState) return;
 
@@ -560,7 +566,6 @@ export const UI = {
         container
           .querySelectorAll('input[type="checkbox"]')
           .forEach((cb) => (cb.checked = false));
-
         habit.schedule.forEach((val) => {
           const cb = container.querySelector(`input[value="${val}"]`);
           if (cb) cb.checked = true;
@@ -579,11 +584,15 @@ export const UI = {
     if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
+  /**
+   * Otwiera formularz modala i uzupełnia go danymi istniejącego celu długoterminowego przygotowanego do edycji.
+   * @param {Object} goal - Obiekt struktury danych celu.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   openEditGoalModal: async (goal, AppState) => {
     if (!AppState) return;
 
     AppState.currentCreateType = "goal";
-
     UI.resetModal(AppState);
 
     UI.setModalMode("edit", "goal");
@@ -615,6 +624,9 @@ export const UI = {
     if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
+  /**
+   * Odczytuje stan ustawień powiadomień oraz lokalizacji z localStorage i odpowiednio ustawia przełączniki w widoku.
+   */
   setupSettingsToggles: async () => {
     const notifyToggle = document.getElementById("toggleNotifications");
     const locationToggle = document.getElementById("toggleLocation");
@@ -632,6 +644,9 @@ export const UI = {
     }
   },
 
+  /**
+   * Pobiera codzienną poradę/cytat motywacyjny za pomocą QuoteService i wstrzykuje jej treść oraz autora do DOM.
+   */
   renderQuote: async () => {
     const quoteText = document.getElementById("quote-text");
     const quoteAuthor = document.getElementById("quote-author");
@@ -644,6 +659,9 @@ export const UI = {
     quoteAuthor.textContent = quote.author;
   },
 
+  /**
+   * Generuje dynamicznie siatkę 31 dni (jako zestaw pól checkbox i etykiet) wewnątrz kontenera wyboru dni miesiąca.
+   */
   setupMonthlyGrid: () => {
     const grid = document.getElementById("monthDaysGrid");
     if (!grid) return;
@@ -668,6 +686,11 @@ export const UI = {
     grid.appendChild(fragment);
   },
 
+  /**
+   * Uniwersalna metoda czyszcząca wskazany kontener i bezpiecznie wstrzykująca do niego nową tablicę węzłów DOM.
+   * @param {HTMLElement} container - Kontener docelowy.
+   * @param {HTMLElement[]} nodes - Tablica elementów do wyrenderowania.
+   */
   renderToContainer: (container, nodes) => {
     if (!container) return;
     container.innerHTML = "";
@@ -676,6 +699,10 @@ export const UI = {
     container.appendChild(fragment);
   },
 
+  /**
+   * Pobiera i renderuje listę zadań nieukończonych (w tym przeterminowanych) oraz nawyków zaplanowanych na wybrany dzień.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   renderDailyTasks: async (AppState) => {
     const listEl = document.getElementById("toDoList");
     const wrapperEl = document.getElementById("emptyListMessageWrapper");
@@ -687,17 +714,14 @@ export const UI = {
     const undoneTasks = await DataManager.getUndoneTasks(dateKey);
     const savedHabits = await DataManager.getHabits();
 
-    // Sortowanie zadań (Najstarsze/Przeterminowane na górę)
     undoneTasks.sort((a, b) => {
       if (a.date !== b.date) return a.date.localeCompare(b.date);
       return a.name.localeCompare(b.name);
     });
 
     const undoneNodes = [];
-    // 🔥 Licznik, który zapewni ciągłość fali między zadaniami a nawykami
     let globalIndex = 0;
 
-    // TASKS
     undoneTasks.forEach((task) => {
       const isOverdue = task.date < dateKey;
       const li = UI.createItem(
@@ -709,14 +733,12 @@ export const UI = {
         isOverdue
       );
 
-      // 🔥 NAKŁADAMY DELAY: Pierwsze zadanie 0s, drugie 0.04s, trzecie 0.08s...
       li.style.animationDelay = `${globalIndex * 0.04}s`;
       globalIndex++;
 
       undoneNodes.push(li);
     });
 
-    // HABITS
     const sortedHabits = [...savedHabits].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
@@ -730,7 +752,6 @@ export const UI = {
       if (isDue && !isDone) {
         const li = UI.createItem(habit.name, habit, dateKey, "habit", AppState);
 
-        // 🔥 KONTYNUACJA FALI: Nawyki lecą z opóźnieniem zaraz po zadaniach
         li.style.animationDelay = `${globalIndex * 0.04}s`;
         globalIndex++;
 
@@ -738,7 +759,6 @@ export const UI = {
       }
     });
 
-    // if empty
     if (wrapperEl) {
       wrapperEl.style.display = undoneNodes.length === 0 ? "flex" : "none";
     }
@@ -746,6 +766,10 @@ export const UI = {
     UI.renderToContainer(listEl, undoneNodes);
   },
 
+  /**
+   * Pobiera z bazy danych i renderuje listę aktywnych, nieukończonych celów długoterminowych.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   renderLongTermGoals: async (AppState) => {
     const goalsListEl = document.getElementById("goalsList");
     if (!goalsListEl) return;
@@ -754,18 +778,18 @@ export const UI = {
     const goalNodes = savedGoals
       .filter((g) => !g.done)
       .map((goal, index) => {
-        // 🔥 Pobieramy index z metody map
         const li = UI.createItem(goal.name, goal, null, "goal", AppState);
-
-        // 🔥 NAKŁADAMY DELAY dla celów
         li.style.animationDelay = `${index * 0.04}s`;
-
         return li;
       });
 
     UI.renderToContainer(goalsListEl, goalNodes);
   },
 
+  /**
+   * Renderuje pełną listę wszystkich obiektów (zadań, nawyków, celów) przypisanych do wybranej daty w widoku kalendarza.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   renderCalendarTasks: async (AppState) => {
     const listEl = document.getElementById("calendarToDoList");
     const titleEl = document.getElementById("calendarTaskDateTitle");
@@ -789,13 +813,11 @@ export const UI = {
     const sortNode = (li, isDone) =>
       isDone ? doneNodes.push(li) : undoneNodes.push(li);
 
-    // TASKS
     tasks.forEach((task) => {
       const li = UI.createItem(task.name, task, dateKey, "task", AppState);
       sortNode(li, task.done);
     });
 
-    // HABITS
     habits.forEach((habit) => {
       if (dateKey < Utils.formatDateKey(new Date(habit.createdAt))) return;
       if (Utils.isHabitDue(habit, targetDate)) {
@@ -805,7 +827,6 @@ export const UI = {
       }
     });
 
-    // GOALS
     goals.forEach((goal) => {
       if (goal.deadline && goal.deadline.startsWith(dateKey)) {
         const li = UI.createItem(goal.name, goal, dateKey, "goal", AppState);
@@ -813,8 +834,6 @@ export const UI = {
       }
     });
 
-    // 🔥 ŁĄCZYMY TABLICE I NAKŁADAMY DELAY NA CAŁOŚĆ:
-    // Chcemy, żeby zrobione zadania na samym dole też ładnie wleciały w kaskadzie
     const finalNodes = [...undoneNodes, ...doneNodes];
     finalNodes.forEach((li, index) => {
       li.style.animationDelay = `${index * 0.04}s`;
@@ -823,6 +842,13 @@ export const UI = {
     UI.renderToContainer(listEl, finalNodes);
   },
 
+  /**
+   * Buduje i zwraca kontener z metadanymi elementu (lokalizacja, deadline, powiązany nawyk, opis).
+   * @param {Object} data - Dane wejściowe obiektu.
+   * @param {string} type - Typ elementu (task/habit/goal).
+   * @param {Object[]} allHabits - Lista wszystkich nawyków do dopasowania powiązań.
+   * @returns {HTMLDivElement} Kontener zawierający ikony i etykiety metadanych.
+   */
   getItemMetadata: (data, type, allHabits) => {
     const metaWrapper = document.createElement("div");
     metaWrapper.className = "taskMetaWrapper";
@@ -906,6 +932,13 @@ export const UI = {
     return metaWrapper;
   },
 
+  /**
+   * Obsługuje dwustopniowy proces usuwania elementu (zabezpieczenie przytrzymania przycisku, animacja paska i usunięcie z DOM).
+   * @param {HTMLButtonElement} moreBtn - Przycisk opcji/usuwania.
+   * @param {Object} data - Struktura danych usuwanego zasobu.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   * @param {Function} onConfirmDelete - Asynchroniczny callback wywoływany po pomyślnym zatwierdzeniu usunięcia.
+   */
   renderDeleteWithFriction: function (
     moreBtn,
     data,
@@ -917,19 +950,16 @@ export const UI = {
     if (!li) return;
 
     if (!isAlreadyTrash) {
-      // PIERWSZE KLIKNIĘCIE: Zamiana w bąbel usuwania
       moreBtn.classList.add("deleteBtn");
       moreBtn.innerHTML = "";
 
-      // Wstrzykujemy ikonę śmietnika
       moreBtn.insertAdjacentHTML(
         "beforeend",
         `
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-      `
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+    `
       );
 
-      // Wstrzykujemy pasek postępu nad przyciskiem
       moreBtn.insertAdjacentHTML(
         "beforeend",
         `<div class="delete-progress-line-track"><div class="delete-progress-bar-line"></div></div>`
@@ -938,14 +968,12 @@ export const UI = {
       let holdTimeout;
       let isHoldingNow = false;
 
-      // Funkcja pomocnicza do pełnego przywrócenia wielokropka (...)
       const resetToEllipsis = () => {
-        moreBtn.classList.remove("deleteBtn"); 
+        moreBtn.classList.remove("deleteBtn");
         moreBtn.innerHTML = "";
-        moreBtn.appendChild(UI.createEllipsisIcon()); // Przywracamy oryginalne trzy kropki
+        moreBtn.appendChild(UI.createEllipsisIcon());
       };
 
-      // Automatyczny powrót do trzech kropek po 4 sekundach bezczynności
       let revertTimeout = setTimeout(() => {
         if (!isHoldingNow && moreBtn.classList.contains("deleteBtn")) {
           cancelHold();
@@ -1000,8 +1028,7 @@ export const UI = {
           clearTimeout(holdTimeout);
           moreBtn.classList.remove("is-holding");
         }
-        
-        // Jeśli użytkownik puścił palec, a przycisk to wciąż kosz, odpalamy timer 3s na powrót
+
         if (moreBtn.classList.contains("deleteBtn") && !revertTimeout) {
           revertTimeout = setTimeout(() => {
             if (!isHoldingNow && moreBtn.classList.contains("deleteBtn")) {
@@ -1011,7 +1038,6 @@ export const UI = {
         }
       };
 
-      // Eventy wejściowe
       moreBtn.addEventListener("mousedown", startHold);
       moreBtn.addEventListener("mouseup", cancelHold);
       moreBtn.addEventListener("mouseleave", cancelHold);
@@ -1021,6 +1047,10 @@ export const UI = {
     }
   },
 
+  /**
+   * Konstruuje pojedynczy element listy (li) reprezentujący zadanie, nawyk lub cel wraz z checkboxem i akcjami.
+   * @returns {HTMLLIElement} Gotowy element listy struktury DOM.
+   */
   createItem: (
     name,
     data,
@@ -1076,15 +1106,12 @@ export const UI = {
     }
 
     taskContent.appendChild(taskLabel);
-
-    // Wrzucamy standardowe metadane (np. lokalizację)
     taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));
 
     if (isOverdue && type === "task" && data.date) {
       const overdueBadge = document.createElement("div");
       overdueBadge.className = "task-overdue-date-badge";
 
-      // Tworzymy ikonkę kalendarza SVG (czysty kod, pasuje do reszty Lucide Icons w aplikacji)
       const calendarSvg = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "svg"
@@ -1097,14 +1124,11 @@ export const UI = {
       calendarSvg.setAttribute("stroke-width", "2");
       calendarSvg.setAttribute("stroke-linecap", "round");
       calendarSvg.setAttribute("stroke-linejoin", "round");
-
-      // 🔥 TUTAJ BYŁ PIES POGRZEBANY: Używamy setAttribute zamiast .className
       calendarSvg.setAttribute(
         "class",
         "lucide lucide-calendar overdue-calendar-icon"
       );
 
-      // Ścieżki SVG dla klasycznego kalendarza
       const rect = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect"
@@ -1113,7 +1137,7 @@ export const UI = {
       rect.setAttribute("height", "14");
       rect.setAttribute("x", "5");
       rect.setAttribute("y", "6");
-      rect.setAttribute("rx", "1.5"); // Lekko mniejszy zaokrąglony róg, żeby pasował do skali
+      rect.setAttribute("rx", "1.5");
       rect.setAttribute("ry", "1.5");
 
       const line1 = document.createElementNS(
@@ -1148,11 +1172,9 @@ export const UI = {
       calendarSvg.appendChild(line2);
       calendarSvg.appendChild(line3);
 
-      // Tworzymy span na samą zaległą datę
       const dateText = document.createElement("span");
-      dateText.textContent = data.date; // format: RRRR-MM-DD
+      dateText.textContent = data.date;
 
-      // Składamy komponent w całość
       overdueBadge.appendChild(calendarSvg);
       overdueBadge.appendChild(dateText);
       taskContent.appendChild(overdueBadge);
@@ -1173,10 +1195,6 @@ export const UI = {
     moreBtn.setAttribute("aria-label", `More options for ${name}`);
     moreBtn.appendChild(UI.createEllipsisIcon());
 
-    // Usuwanie (hold-to-delete) jest obsługiwane wyłącznie przez delegowany
-    // listener w handleListAction (events.js) — nie podpinamy tu onclick,
-    // żeby uniknąć podwójnej, konfliktowej rejestracji.
-
     taskActions.appendChild(checkbox);
     taskActions.appendChild(moreBtn);
 
@@ -1186,6 +1204,10 @@ export const UI = {
     return li;
   },
 
+  /**
+   * Buduje interaktywną siatkę dni wybranego miesiąca dla widoku kalendarza, uwzględniając zaległe cele i dni aktywne.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   renderCalendar: async (AppState) => {
     const grid = elements.calendarGrid;
     if (!grid) return;
@@ -1253,7 +1275,7 @@ export const UI = {
     }
 
     const totalRenderedSlots = startIndex + daysInMonth;
-    const totalSlotsNeeded = 42; // 6 rzędów * 7 dni
+    const totalSlotsNeeded = 42;
 
     for (let i = totalRenderedSlots; i < totalSlotsNeeded; i++) {
       fragment.appendChild(document.createElement("div"));
@@ -1262,6 +1284,10 @@ export const UI = {
     grid.appendChild(fragment);
   },
 
+  /**
+   * Renderuje i konfiguruje rozwijaną listę (dropdown) nawyków w zakładce statystyk oraz przypina do nich akcje kliknięcia.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
   renderHabits: async (AppState) => {
     const listContainer = document.getElementById("habitDropdownList");
     const trigger = document.getElementById("habitDropdownTrigger");
@@ -1272,13 +1298,11 @@ export const UI = {
     const habits = await DataManager.getHabits();
     listContainer.innerHTML = "";
 
-    // 1. Obsługa otwierania/zamykania dropdownu (Toggle)
     trigger.onclick = (e) => {
-      e.stopPropagation(); // Żeby kliknięcie w przycisk nie odpalało innych eventów
+      e.stopPropagation();
       dropdownContainer.classList.toggle("open");
     };
 
-    // Zamykanie listy, jeśli użytkownik kliknie gdziekolwiek indziej na ekranie
     document.addEventListener("click", () => {
       dropdownContainer.classList.remove("open");
     });
@@ -1290,17 +1314,15 @@ export const UI = {
 
     const fragment = document.createDocumentFragment();
     habits.forEach((habit, index) => {
-      // 2. Budujemy pozycje (opcje) na liście rozwijanej
       const item = document.createElement("div");
       item.className = "dropdown-item";
       item.dataset.id = habit.id;
 
       item.innerHTML = `
-        <span class="habit-item-icon">${habit.icon || "🫧"}</span>
-        <span class="habit-item-name">${habit.name}</span>
-      `;
+      <span class="habit-item-icon">${habit.icon || "🫧"}</span>
+      <span class="habit-item-name">${habit.name}</span>
+    `;
 
-      // Sprawdzamy, czy ten nawyk jest aktualnie zaznaczony
       const isSelected =
         AppState.selectedHabitForStats?.id === habit.id ||
         (!AppState.selectedHabitForStats && index === 0);
@@ -1308,7 +1330,6 @@ export const UI = {
       if (isSelected) {
         item.classList.add("selected");
 
-        // Wstrzykujemy dane domyślnego nawyku do widocznego paska głównego
         document.getElementById("currentHabitIcon").textContent =
           habit.icon || "🫧";
         document.getElementById("currentHabitName").textContent = habit.name;
@@ -1319,26 +1340,21 @@ export const UI = {
         }
       }
 
-      // 3. Kliknięcie w element na liście rozwijanej
       item.onclick = (e) => {
         e.stopPropagation();
 
-        // Podmieniamy wizualne zaznaczenie klasy na liście
         listContainer
           .querySelectorAll(".dropdown-item.selected")
           .forEach((el) => el.classList.remove("selected"));
         item.classList.add("selected");
 
-        // Aktualizujemy główny pasek (Belkę dropdownu)
         document.getElementById("currentHabitIcon").textContent =
           habit.icon || "🫧";
         document.getElementById("currentHabitName").textContent = habit.name;
 
-        // Ładujemy statystyki poniżej
         AppState.selectedHabitForStats = habit;
         UI.showHabitDetails(habit, AppState);
 
-        // Chowamy listę po wyborze
         dropdownContainer.classList.remove("open");
       };
 
@@ -1346,9 +1362,11 @@ export const UI = {
     });
     listContainer.appendChild(fragment);
   },
-
+  /**
+   * Tworzy i konfiguruje powiadomienie typu Toast (bąbelek) na górze ekranu,
+   * obsługując animację wejścia, automatyczne ukrywanie po 4 sekundach oraz zamknięcie po kliknięciu.
+   */
   showToast: (message, type = "info") => {
-    // Sprawdzamy, czy istnieje już kontener na toasty, jeśli nie - tworzymy go
     let container = document.getElementById("bubble-toast-container");
     if (!container) {
       container = document.createElement("div");
@@ -1369,7 +1387,6 @@ export const UI = {
       document.body.appendChild(container);
     }
 
-    // Tworzenie pojedynczego bąbelka powiadomienia
     const toast = document.createElement("div");
     toast.style.cssText = `
       pointer-events: auto;
@@ -1390,35 +1407,34 @@ export const UI = {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Dynamiczny powrót bąbelka */
     `;
 
-    // Dobieranie ikonki w zależności od kontekstu
     const icon = type === "error" ? "⚠️ " : "❌ ";
     toast.textContent = icon + message;
 
     container.appendChild(toast);
 
-    // Odpalenie animacji wsuniecia (w następnym ticku silnika renderowania)
     setTimeout(() => {
       toast.style.transform = "translateY(0)";
       toast.style.opacity = "1";
     }, 10);
 
-    // Funkcja usuwająca powiadomienie
     const dismissToast = () => {
       toast.style.transform = "translateY(-20px)";
       toast.style.opacity = "0";
       setTimeout(() => toast.remove(), 400);
     };
 
-    // Automatyczne ukrywanie po 4 sekundach
     const autoDismiss = setTimeout(dismissToast, 4000);
 
-    // Opcjonalnie: kliknięcie w toast zamyka go natychmiast
     toast.addEventListener("click", () => {
       clearTimeout(autoDismiss);
       dismissToast();
     });
   },
 
+  /**
+   * Przełącza widok na szczegóły wybranego nawyku, oblicza statystyki (progres, streak)
+   * i aktualizuje powiązane elementy interfejsu oraz kołowy wykres postępu.
+   */
   showHabitDetails: (habit, AppState) => {
     AppState.selectedHabitForStats = habit;
 
@@ -1449,6 +1465,10 @@ export const UI = {
     UI.renderActivityGrid(habit, AppState);
   },
 
+  /**
+   * Generuje siatkę aktywności (mini-kalendarz) dla nawyku w obrębie wskazanego miesiąca,
+   * oznaczając dni zrealizowane, zaplanowane oraz nieaktywne.
+   */
   renderActivityGrid: (habit, AppState) => {
     const grid = document.getElementById("activityGrid");
     if (!grid || !AppState) return;
@@ -1490,6 +1510,9 @@ export const UI = {
     UI.updateActivityStats(stats);
   },
 
+  /**
+   * Aktualizuje tekstowe wskaźniki podsumowania miesięcznego (najlepszy streak, procent wykonania, licznik).
+   */
   updateActivityStats: (stats) => {
     const percentage =
       stats.scheduled === 0
@@ -1508,6 +1531,9 @@ export const UI = {
 
   modalTimer: null,
 
+  /**
+   * Wyświetla błąd lub komunikat walidacji wewnątrz wrappera modala, uruchamiając animację potrząsania (shake).
+   */
   showModalMessage: (text, duration = 3000) => {
     const wrapper = document.getElementById("modalMessageWrapper");
     const msgSpan = document.getElementById("modalMessage");
@@ -1526,6 +1552,9 @@ export const UI = {
     }, duration);
   },
 
+  /**
+   * Zarządza stanem ładowania (loading) dla pól input oraz powiązanych przycisków, manipulując klasami sukcesu/błędu.
+   */
   async setInputLoading(input, btn, isLoading, status = "") {
     input.disabled = isLoading;
     if (btn) btn.disabled = isLoading;
@@ -1541,6 +1570,9 @@ export const UI = {
     }
   },
 
+  /**
+   * Przełącza widoczność elementów DOM pomiędzy tekstowym wyświetlaniem nazwy użytkownika a polem edycji (input).
+   */
   toggleUserNameEdit(isEditing) {
     const isVisible = isEditing ? "inline-block" : "none";
     const isHidden = isEditing ? "none" : "block";
@@ -1556,12 +1588,15 @@ export const UI = {
     }
   },
 
+  /**
+   * Przeprowadza kalkulację i aktualizację paska postępu punktów doświadczenia (XP) użytkownika oraz poziomu,
+   * wykrywając i wywołując animację awansu (Level Up).
+   */
   updateXPBar: async (AppState) => {
     const stats = await DataManager.getUserStats();
     const threshold = LevelManager.getXpThreshold(stats.level);
     const progressPercent = (stats.currentXp / threshold) * 100;
 
-    // 🔥 KROK 1: Inicjalizujemy globalnego strażnika bezwzględnie w obiekcie UI (jeśli jeszcze nie istnieje)
     if (UI.lastObservedLevelGlobal === undefined) {
       const el = document.getElementById("user-level-value");
       UI.lastObservedLevelGlobal = el
@@ -1569,7 +1604,6 @@ export const UI = {
         : stats.level;
     }
 
-    // 🔥 LOGI DEWELOPERSKIE - SPRAWDZAMY GLOBALNEGO STRAŻNIKA W PAMIĘCI UI
     console.log("=== 🫧 NEUROBUBBLE GLOBAL UI OBJECT CHECK ===");
     console.log("Poziom aktualny z bazy:", stats.level);
     console.log("Ostatni zapamiętany poziom w UI:", UI.lastObservedLevelGlobal);
@@ -1578,21 +1612,17 @@ export const UI = {
       stats.level > UI.lastObservedLevelGlobal
     );
 
-    // 🔥 KROK 2: Pancerne porównanie. Jeśli poziom z bazy wzrósł w stosunku do tego, co UI pamięta globalnie
     if (stats.level > UI.lastObservedLevelGlobal) {
       console.log(
         "🚀 BINGO! Wykryto awans w pamięci globalnej UI. Odpalam animację."
       );
 
-      // Aktualizujemy strażnika natychmiast, żeby kolejne szybkie wywołania (te duble z logów) nie odpaliły animacji drugi raz!
       UI.lastObservedLevelGlobal = stats.level;
 
-      // Odpalamy show!
       UI.triggerLevelUpAnimation(stats.level);
     } else {
       console.log("📉 Brak awansu lub dubel wywołania.");
 
-      // Standardowa aktualizacja paska dla zwykłego przyrostu XP
       const progressBar = document.getElementById("xp-progress-bar");
       if (progressBar) {
         progressBar.style.setProperty("height", `${progressPercent}%`);
@@ -1604,11 +1634,9 @@ export const UI = {
         currentDisplayedLevelEl.textContent = stats.level;
       }
 
-      // Aktualizujemy na wypadek, gdyby poziom spadł lub ładował się na start
       UI.lastObservedLevelGlobal = stats.level;
     }
 
-    // Aktualizacja reszty statystyk tekstowych
     const elementsToUpdate = {
       currentLevel: stats.level,
       "next-level-value": stats.level + 1,
@@ -1623,17 +1651,16 @@ export const UI = {
   },
 
   /**
-   * 🔥 EFEKTOWNA ANIMACJA LEVEL UP (TOP TOAST) - WERSJA PANCERNA
-   * @param {number} newLevelValue - Numer nowego poziomu
+   * ANIMACJA LEVEL UP
+   * Obsługuje pełną sekwencję wizualną awansu poziomu: wypełnienie paska, błysk koła poziomu
+   * oraz wysunięcie dedykowanego baneru toast z góry ekranu.
    */
   triggerLevelUpAnimation(newLevelValue) {
-    // Łapiemy elementy ŚWIEŻO z DOM w momencie wywołania funkcji
     const progressBar = document.getElementById("xp-progress-bar");
     const levelText = document.getElementById("user-level-value");
     const levelCircle = document.querySelector(".heroLvlWrapper");
     const toast = document.getElementById("levelUpToast");
 
-    // Jeśli nie ma nawet toasta w HTML, to nic nie zrobimy
     if (!toast) {
       console.error(
         "⚠️ LevelUp Error: Nie znaleziono elementu #levelUpToast w HTML!"
@@ -1641,17 +1668,13 @@ export const UI = {
       return;
     }
 
-    // --- SEKCJA ANIMACJI EKRANU GŁÓWNEGO (odpala się tylko gdy jesteśmy na ekranie głównym) ---
     if (progressBar) {
-      // ETAP 1: Błyskawiczne nabicie paska doświadczenia do 100%
       progressBar.style.width = "100%";
 
-      // ETAP 2: Po uderzeniu paska (350ms) odpalamy błysk kółka i podmieniamy cyfrę poziomu
       setTimeout(() => {
         if (levelCircle) levelCircle.classList.add("level-up-flash");
         if (levelText) levelText.textContent = newLevelValue;
 
-        // Resetujemy pasek na 0% w tle
         progressBar.style.transition = "none";
         progressBar.style.width = "0%";
 
@@ -1660,11 +1683,9 @@ export const UI = {
         }, 50);
       }, 350);
     } else {
-      // Jeśli jesteśmy na innej podstronie, po prostu cicho aktualizujemy cyfrę (jeśli element gdzieś tam jest)
       if (levelText) levelText.textContent = newLevelValue;
     }
 
-    // --- SEKCJA BANERU (odpala się ZAWSZE i wszędzie) ---
     setTimeout(
       () => {
         const toastSubtitle = toast.querySelector(".level-up-subtitle");
@@ -1672,31 +1693,31 @@ export const UI = {
           toastSubtitle.textContent = `LEVEL UP: LEVEL ${newLevelValue} 🫧`;
         }
 
-        // Wjeżdżamy z banerem z góry ekranu
+        // baner z góry ekranu
         toast.classList.add("show");
 
-        // ETAP 4: Automatyczne schowanie baneru po 4 sekundach wyświetlania
         setTimeout(() => {
           toast.classList.remove("show");
 
-          // Czyszczenie klasy błysku z kółka
           setTimeout(() => {
             if (levelCircle) levelCircle.classList.remove("level-up-flash");
           }, 600);
         }, 4000);
       },
       progressBar ? 550 : 50
-    ); // Jeśli nie ma paska, baner wjeżdża natychmiast (po 50ms)!
+    );
   },
 
+  /**
+   * Odpowiada za mikrointerakcję przyznawania XP: aktualizuje szerokość paska postępu
+   * oraz tworzy pływający, znikający bąbelek tekstu "+XP" w miejscu kliknięcia elementu.
+   */
   triggerTaskXpAnimation(event, xpValue, newBarPercentage) {
-    // 1. Aktualizacja paska postępu
     const progressBar = document.getElementById("xp-progress-bar");
     if (progressBar) {
       progressBar.style.width = `${newBarPercentage}%`;
     }
 
-    // 2. Pobieramy element wywołujący
     const clickedElement = event.currentTarget || event.target;
     if (!clickedElement) {
       console.warn("🫧 XP Animation: Brak klikniętego elementu w evencie!");
@@ -1705,7 +1726,6 @@ export const UI = {
 
     const rect = clickedElement.getBoundingClientRect();
 
-    // Zabezpieczenie: Jeśli element ma szerokość 0 (bo np. właśnie zniknął z DOM)
     if (rect.width === 0 && rect.height === 0) {
       console.warn(
         "🫧 XP Animation: Element zniknął z DOM przed pobraniem pozycji! Uruchom animację ułamek sekundy wcześniej."
@@ -1713,12 +1733,10 @@ export const UI = {
       return;
     }
 
-    // 3. Tworzenie mikro-bąbelka XP
     const xpBadge = document.createElement("div");
     xpBadge.className = "task-xp-badge";
     xpBadge.textContent = `+${xpValue} XP 🫧`;
 
-    // Wyliczanie dokładnej pozycji
     const targetLeft = rect.left + window.scrollX + rect.width / 2;
     const targetTop = rect.top + window.scrollY - 15;
 
@@ -1731,12 +1749,15 @@ export const UI = {
 
     document.body.appendChild(xpBadge);
 
-    // 4. Usuwamy element z DOM po zakończeniu animacji (800ms)
     setTimeout(() => {
       xpBadge.remove();
     }, 800);
   },
 
+  /**
+   * Inicjalizuje dolny pasek nawigacji kart (tabs), oblicza pozycję ruchomego indykatora podświetlenia (tabIndicator)
+   * przy załadowaniu i zmianie rozmiaru okna, oraz podpina przejścia widoków (View Transitions API).
+   */
   initTabNav() {
     const navContainer = document.querySelector(".tabNav");
     const indicator = document.getElementById("tabIndicator");
@@ -1744,9 +1765,7 @@ export const UI = {
 
     if (!navContainer || !indicator || navItems.length === 0) return;
 
-    // Funkcja czysto pozycjonująca bąbel
     const updatePosition = () => {
-      // Sprawdzamy, czy wskaźnik ma już szerokość (jeśli ukryty w CSS, daj mu domyślną wartość)
       const indicatorWidth = indicator.offsetWidth || 40;
 
       const activeIndex = Array.from(navItems).findIndex((item) =>
@@ -1757,7 +1776,6 @@ export const UI = {
       const containerRect = navContainer.getBoundingClientRect();
       const itemRect = navItems[safeIndex].getBoundingClientRect();
 
-      // Jeśli z jakiegoś powodu jesteśmy przed pełnym renderem i rect ma 0, przerywamy
       if (itemRect.width === 0) return;
 
       const itemCenter =
@@ -1767,32 +1785,25 @@ export const UI = {
       indicator.style.setProperty("--target-x", `${targetX}px`);
     };
 
-    // 1. Zdejmij animację na start, żeby bąbel nie leciał z kosmosu (pozycja 0)
     indicator.classList.remove("animate");
 
-    // 2. Pierwsze pozycjonowanie robimy po pełnym załadowaniu drzewa i stylów
     updatePosition();
 
-    // 3. PANCERNE ZABEZPIECZENIE: Odpalamy po pełnym załadowaniu okna (czcionki, layout)
     window.addEventListener("load", () => {
       updatePosition();
       indicator.classList.add("animate");
     });
 
-    // 4. Mobilny ratunek – jeśli layout zmieni się przy obrocie ekranu lub zmianie viewportu
     window.addEventListener("resize", updatePosition);
 
-    // Jeśli window.load już minął (bo to SPA/PWA i komponent montuje się później)
     if (document.readyState === "complete") {
       updatePosition();
-      // Dajemy minimalny timeout na ułożenie się bąbelkowego layoutu mobile
       setTimeout(() => {
         updatePosition();
         indicator.classList.add("animate");
       }, 50);
     }
 
-    // Obsługa kliknięć
     navItems.forEach((item) => {
       item.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1810,8 +1821,10 @@ export const UI = {
       });
     });
   },
+
   /**
-   * 🫧 INICJALIZACJA OBSŁUGI WIELOEKRANOWEGO PRZEWODNIKA (PANCERNY FIX)
+   * Konfiguruje pełną funkcjonalność modala przewodnika (Guide), w tym nawigację przyciskami,
+   * kropki statusu, skrót klawiszowy Escape, a także pełną obsługę gestów swipowania na ekranach dotykowych.
    */
   initGuideModal() {
     const overlay = document.getElementById("guideModal");
@@ -1825,22 +1838,18 @@ export const UI = {
 
     // Funkcja nawigacji po slajdach
     const goToSlide = (index) => {
-      // Łapiemy kropeczki dynamicznie na żywo
       const dynamicDots = overlay.querySelectorAll(".guide-dot");
-      const totalSlides = dynamicDots.length || 3; // fallback na 3 slajdy jeśli pusto
+      const totalSlides = dynamicDots.length || 3;
 
       if (index < 0 || index >= totalSlides) return;
       currentSlide = index;
 
-      // Przesuwamy tor sprzętowo na GPU
       track.style.transform = `translateX(-${currentSlide * 100}%)`;
 
-      // Aktualizujemy kropeczki podstron
       dynamicDots.forEach((dot) => dot.classList.remove("active"));
       if (dynamicDots[currentSlide])
         dynamicDots[currentSlide].classList.add("active");
 
-      // Podmiana etykiety przycisku akcji na finiszu
       if (currentSlide === totalSlides - 1) {
         nextBtn.innerHTML = "Wszystko jasne, lecimy! 🚀";
       } else {
@@ -1848,12 +1857,11 @@ export const UI = {
       }
     };
 
-    // Usuwamy stare listenery (na wypadek podwójnego wywołania) i dodajemy nowy
     nextBtn.replaceWith(nextBtn.cloneNode(true));
     const freshNextBtn = document.getElementById("understandGuideBtn");
 
     freshNextBtn.addEventListener("click", (e) => {
-      e.preventDefault(); // Blokujemy ewentualne przeładowanie/skoki strony
+      e.preventDefault();
 
       const dynamicDots = overlay.querySelectorAll(".guide-dot");
       const totalSlides = dynamicDots.length || 3;
@@ -1861,13 +1869,11 @@ export const UI = {
       if (currentSlide < totalSlides - 1) {
         goToSlide(currentSlide + 1);
       } else {
-        // Zamykamy używając Twojej natywnej klasy .open
         overlay.classList.remove("open");
-        setTimeout(() => goToSlide(0), 300); // Reset karuzeli w tle po zamknięciu
+        setTimeout(() => goToSlide(0), 300);
       }
     });
 
-    // Skakanie po kropkach bezpośrednio kliknięciem (szukamy kontenera i nasłuchujemy na żywo)
     const dotsContainer = document.getElementById("guideDots");
     if (dotsContainer) {
       dotsContainer.addEventListener("click", (e) => {
@@ -1878,7 +1884,6 @@ export const UI = {
       });
     }
 
-    // Wymuszone zamknięcie (X, kliknięcie w tło, ESC)
     const closeModalForce = () => {
       overlay.classList.remove("open");
       setTimeout(() => goToSlide(0), 300);
@@ -1901,11 +1906,10 @@ export const UI = {
       }
     });
 
-    // 👉 SWIPE: przesuwanie palcem po slajdach (mobile)
     let touchStartX = 0;
     let touchCurrentX = 0;
     let isSwiping = false;
-    const SWIPE_THRESHOLD = 50; // min px, żeby uznać gest za swipe
+    const SWIPE_THRESHOLD = 50;
 
     track.addEventListener(
       "touchstart",
@@ -1913,7 +1917,6 @@ export const UI = {
         touchStartX = e.touches[0].clientX;
         touchCurrentX = touchStartX;
         isSwiping = true;
-        // Wyłączamy transition na czas przeciągania, żeby ślizgało się 1:1 z palcem
         track.style.transition = "none";
       },
       { passive: true }
@@ -1926,7 +1929,6 @@ export const UI = {
         touchCurrentX = e.touches[0].clientX;
         const deltaX = touchCurrentX - touchStartX;
 
-        // Bazowa pozycja aktualnego slajdu + delta przeciągania (w %)
         const trackWidth = track.offsetWidth || 1;
         const deltaPercent = (deltaX / trackWidth) * 100;
         const basePercent = -currentSlide * 100;
@@ -1940,7 +1942,6 @@ export const UI = {
       if (!isSwiping) return;
       isSwiping = false;
 
-      // Przywracamy płynną animację
       track.style.transition = "";
 
       const deltaX = touchCurrentX - touchStartX;
@@ -1964,7 +1965,7 @@ export const UI = {
   },
 
   /**
-   * 🔓 OTWARCIE MODALA PRZEWODNIKA (Wykorzystuje Twoją klasę .open)
+   * Otwiera modal przewodnika po aplikacji poprzez dodanie klasy "open" do overlay'a.
    */
   showGuide() {
     const overlay = document.getElementById("guideModal");
@@ -1978,7 +1979,7 @@ export const UI = {
   },
 
   /**
-   * 🔄 INICJALIZACJA MICRO-INTERACTION DLA UPRAWNIEŃ (OBRÓT + WLOT)
+   * Inicjalizuje przycisk przełączania panelu zezwoleń (Permissions) w sekcji ustawień, obsługując rozwijanie menu.
    */
   initPermissionsToggle() {
     const toggleBtn = document.getElementById("settingsToggleBtn");
@@ -1989,7 +1990,6 @@ export const UI = {
     toggleBtn.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // Przełączamy klasę .open na przycisku (obrót zębatki) i na panelu (wjazd tekstu)
       toggleBtn.classList.toggle("open");
       panel.classList.toggle("open");
     });

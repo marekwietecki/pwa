@@ -1,0 +1,28 @@
+NOTATKI PWA:
+
+inner html w js to antypattern
+kod po angielsku
+rozbijać na małe funkcje
+na ios nie ma dostepu do bluetooth api
+alert to antypattern
+
+---
+
+PWA = reliable + fast + engaging
+theme_color to pasek statusu, który ios ignoruje
+najlepiej png z przezroczystym tłem
+sw powinien przechwytywać tylko requesty z tego samego origina
+sw nie ma dostępu do domu
+sw jest w pełni asynchroniczny
+CYKL ŻYCIA: registration, installing (cache'ujemy ikony, css'a itd. - jak fail 
+to idzie do redundant), installed/waiting, activating, activated, redundant
+
+dawać w promiskach tego try catcha i ogólnie error handling
+
+sw kontroluje zakres swojego scope'a i poniżej (bo czasami jest >1 sw, ale 99% przypadków mamy 1 sw)
+
+przeglądarka sprawdza co 24h czy jest nowa wersja sw, ale jest button zaktualizuj w dev tools aby natychmiastowo sprawdzić
+---
+LCP <2.5s
+INP/FID reakcja na działanie 100 lub mniej super, 100-200 ok, 200 słabo w lighthouse Total Blocking Time
+CLS skok nieprzewidziany -> 0.1 to dobry próg

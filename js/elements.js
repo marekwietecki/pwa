@@ -43,12 +43,10 @@ export function domElements() {
     if (el) {
       elements[id] = el;
     } else {
-      // Opcjonalnie: console.warn(`Element #${id} nie istnieje w obecnym widoku`);
       elements[id] = null;
     }
   });
 
-  // Selektory klasowe (jeśli nie mają unikalnych ID)
   elements.geoLocBtn = elements.useMyLocation; 
   elements.searchLocationBtn = elements.searchLocation;
   elements.confirmAddBtn = document.querySelector(".addTask");

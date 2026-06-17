@@ -130,19 +130,17 @@ export const NotificationService = {
     return registration.showNotification(title, defaultOptions);
   },
 
-  /**
-   * Główny dispatcher sprawdzający czas i odpalający odpowiednie alerty
-   */
+ 
   async runDailyCheck() {
     const now = new Date();
     const currentHour = now.getHours();
     const todayKey = Utils.formatDateKey(now);
 
-    // Pobieramy nazwę użytkownika do personalizacji powiadomień
+    // nazw użytkownika do personalizacji powiadomień
     const stats = await DataManager.getUserStats();
     const userName = stats?.userName || "Hero";
 
-    // 1. PORANNY SCREENING (między 08:00 a 10:00)
+    // PORANNY SCREENING (między 08:00 a 10:00)
     if (currentHour >= 8 && currentHour < 10) {
       const lastBriefing = await DataManager.getMetadata("last_briefing_date");
       if (lastBriefing !== todayKey) {
@@ -157,13 +155,12 @@ export const NotificationService = {
       }
     }
 
-    // 2. POPOŁUDNIOWA PRZYPOMINAJKA (od 17:00 wzwyż)
+    // POPOŁUDNIOWA PRZYPOMINAJKA (od 17:00)
     if (currentHour >= 17) {
       const lastReminder = await DataManager.getMetadata("last_reminder_date");
       if (lastReminder !== todayKey) {
         const undoneCount = await DataManager.countUndoneTasks(todayKey);
 
-        // Strzelamy tylko, jeśli cokolwiek zostało do zrobienia
         if (undoneCount > 0) {
           await this.send(`${userName}, don't let the tasks wait! 🕠`, {
             body: ` ${undoneCount} bubbl(s) are still waiting to be burst today. Imrove your level!`,
@@ -194,12 +191,10 @@ export const PermissionsManager = {
 
   geolocationEnabled() {
     const userWants = localStorage.getItem("user_location_enabled") === "true";
-    // W geolokacji nie sprawdzimy synchronicznie stanu uprawnień przeglądarki tak łatwo jak w Notification,
-    // dlatego opieramy się na fladze z localStorage, którą ustawiamy przy sukcesie.
     return userWants;
   },
 
-  // 2. Asynchroniczne żądanie dostępu i wywołanie powiadomienia push po sukcesie
+  // Asynchroniczne żądanie dostępu i wywołanie powiadomienia push po sukcesie
   async requestGeolocation() {
     return new Promise((resolve, reject) => {
       if (!("geolocation" in navigator)) {
@@ -210,15 +205,13 @@ export const PermissionsManager = {
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // Sukces: Zapisujemy stan w pamięci lokalnej
           localStorage.setItem("user_location_enabled", "true");
           console.log("📍 Geolocation active:", position.coords);
 
-          // 🔥 Odpalamy powiadomienie push, jeśli aplikacja ma do tego uprawnienia
           if (Notification.permission === "granted") {
             new Notification("Habit Bubbl 🫧", {
               body: "📍 Space-time synced! Your environment is now successfully linked.",
-              icon: "/assets/icons/logo-192.webp", // upewnij się, że ścieżka do Twojej ikony PWA się zgadza
+              icon: "/assets/icons/logo-192.webp", 
               vibrate: [100, 50, 100],
             });
           }
@@ -226,7 +219,6 @@ export const PermissionsManager = {
           resolve(position);
         },
         (error) => {
-          // Obsługa błędu lub odrzucenia przez użytkownika
           localStorage.setItem("user_location_enabled", "false");
           console.warn("📍 Geolocation denied or error:", error.message);
           reject(error);
@@ -265,11 +257,9 @@ export const swManager = {
       try {
         const registration = await navigator.serviceWorker.register("/sw.js");
 
-        // Czekamy, aż Service Worker będzie aktywny
         if (registration.active) {
           setupPeriodicSync(registration);
         } else {
-          // Jeśli się instaluje, czekamy na zmianę stanu
           registration.addEventListener("updatefound", () => {
             const newWorker = registration.installing;
             newWorker.addEventListener("statechange", () => {
@@ -348,10 +338,8 @@ export const PwaService = {
     const cardContainer = document.getElementById("hero-dynamic-card");
     if (!cardContainer) return;
 
-    // Na start zawsze renderujemy cytat, żeby nie było pustki!
     PwaService.renderDailyQuote(cardContainer);
 
-    // Przechwytujemy prompt instalacji PWA od przeglądarki
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;

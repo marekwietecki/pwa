@@ -86,7 +86,7 @@ const onboardingSteps = [
           itemFlex: "48px",
           fontSize: "22px",
           onSelect: (emoji) => { 
-            state.selectedIconId = emoji; // Poprawnie aktualizujemy stan współdzielony
+            state.selectedIconId = emoji; // stan współdzielony
           },
         });
       }
@@ -149,7 +149,7 @@ export const OnboardingService = {
     const originalHTML = modal.innerHTML;
     let currentStepIdx = 0;
     
-    // 🌟 STAN WSPÓŁDZIELONY: Bezpieczne przekazywanie danych między krokami
+    // STAN WSPÓŁDZIELONY
     const state = {
       selectedIconId: "💧",
       userName: "Hero"
@@ -163,7 +163,6 @@ export const OnboardingService = {
       const step = onboardingSteps[currentStepIdx];
       const isLastStep = currentStepIdx === onboardingSteps.length - 1;
 
-      // Dynamiczne ładowanie nicku w kroku finałowym
       if (step.id === 4) {
         const freshStats = await DataManager.getUserStats();
         state.userName = freshStats.userName || "Hero";
@@ -204,10 +203,8 @@ export const OnboardingService = {
       card.appendChild(footer);
       modal.appendChild(card);
 
-      // Inicjalizacja eventów wewnętrznych (np. EmojiPicker)
       if (step.initEvents) step.initEvents(body, state);
 
-      // 🌟 POPRAWKA: Natychmiastowa blokada przycisku "Next" przy wejściu na krok z walidacją
       if (step.validate) {
         const inputEl = body.querySelector(".modal-input");
         const check = () => {
@@ -217,7 +214,7 @@ export const OnboardingService = {
           nextBtn.style.cursor = isValid ? "pointer" : "not-allowed";
           nextBtn.style.pointerEvents = isValid ? "auto" : "none";
         };
-        check(); // Odpala walidację na dzień dobry
+        check(); 
         inputEl?.addEventListener("input", check);
       }
 

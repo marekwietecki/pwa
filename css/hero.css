@@ -6,14 +6,8 @@
 */
 
 /* ====================================================
-   HERO — profile, XP vial, toggles, permissions, guide modal (hero.html only)
-   ==================================================== */
-
-/* HERO */ /* ------------------------------------------------------------------------ */
-
-/* ==========================================================================
-   🫧 NEW VERTICAL LIQUID PROFILE CONTAINER
-   ========================================================================== */
+  HERO — profile, XP vial, toggles, permissions, guide modal (hero.html only)
+  ==================================================== */
 
 .userStats {
   display: -webkit-box;
@@ -25,7 +19,7 @@
   flex-direction: row;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
-  justify-content: space-between; /* Rozpycha: Dane w lewo, Poziom w prawo */
+  justify-content: space-between;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -33,7 +27,7 @@
   width: 100%;
   margin: 20px auto 0px;
   padding: 32px;
-  border-radius: 28px;
+  border-radius: 32px;
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -47,10 +41,9 @@
 }
 
 /* ==========================================================================
-       🟢 HERMETYCZNY iOS TOGGLE SWITCH - ULTRA FIX
-       ========================================================================== */
+  🟢 iOS TOGGLE SWITCH
+  ========================================================================== */
 
-/* Główny kontener - całkowicie odizolowany */
 .switch {
   position: relative;
   display: inline-block !important;
@@ -78,7 +71,7 @@
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: flex-start;
-  gap: 16px; /* Przestrzeń między nickiem a ikonami menu */
+  gap: 16px;
 }
 
 .actionsWrapper {
@@ -95,7 +88,6 @@
   gap: 16px;
 }
 
-/* KONTENER POZIOMU (PIONOWY) */
 .levelWrapperVertical {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -117,34 +109,30 @@
   }
 }
 
-/* Fiolka na ciecz */
 .liquid-container {
   position: relative;
   width: 32px;
-  height: 100px; /* Wysokość naszej próbówki/bąbla */
-  border-radius: 20px; /* Kapsułkowy, bąbelkowy kształt */
+  height: 100px;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.03);
   border: 2px solid var(--glass-border-bright);
   -webkit-box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.4),
     var(--shadow-delicate);
   box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.4), var(--shadow-delicate);
-  overflow: hidden; /* Ścina ciecz i bąbelki do wnętrza fiolki */
-
-  /* 🔥 KLUCZOWE: Te 3 linijki blokują jakikolwiek wyciek owali na zewnątrz */
+  overflow: hidden;
   overflow: hidden !important;
   isolation: isolate;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
 }
 
-/* CIECZ XP: Zmiana działania z szerokości na wysokość (od dołu do góry) */
 #xp-progress-bar {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 0%; /* Zarządzane przez JS (np. element.style.height = '40%') */
-  background: var(--hero-gradient); /* Twój gradient postępu */
+  height: 0%;
+  background: var(--hero-gradient);
   -webkit-transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: height;
@@ -205,7 +193,6 @@
   animation: floatUpBubble 3s infinite linear;
 }
 
-/* Różne pozycje, wielkości i opóźnienia bąbelków dla naturalnego efektu */
 .b-particle:nth-child(1) {
   left: 20%;
   width: 4px;
@@ -281,7 +268,6 @@
   }
 }
 
-/* Kompaktowe statystyki pod fiolką */
 .vertical-xp-stats {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -307,10 +293,9 @@
 }
 
 /* ==========================================================================
-       🟢 HERMETYCZNY iOS TOGGLE SWITCH - ULTRA FIX (Wersja Globalna + Mobile)
+       🟢 iOS TOGGLE SWITCH
        ========================================================================== */
 
-/* Ukrywamy oryginalny domyślny checkbox (Zawsze, nie tylko na mobile) */
 .switch input {
   opacity: 0 !important;
   width: 0 !important;
@@ -320,19 +305,13 @@
   position: absolute;
 }
 
-/* Tło gąbki/slidera - STAN BAZOWY (Działa na Desktop i Mobile) */
 .switch .slider {
   position: absolute !important;
   cursor: pointer;
   inset: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ) !important; /* Szklane tło pasywne */
+  background-color: rgba(255, 255, 255, 0.1) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   -webkit-box-sizing: border-box !important;
   box-sizing: border-box !important;
@@ -340,7 +319,6 @@
   transition: all 0.25s cubic-bezier(0.25, 1.1, 0.4, 1) !important;
 }
 
-/* Zaokrąglenia kapsułki */
 .switch .slider.round {
   border-radius: 24px !important;
 }
@@ -349,14 +327,13 @@
   border-radius: 50% !important;
 }
 
-/* ⚪️ KÓŁECZKO (Stan nieaktywny - po lewej) */
 .switch .slider::before {
   position: absolute !important;
   content: "" !important;
   height: 18px !important;
   width: 18px !important;
   left: 2px !important;
-  top: 2px !important; /* Centrowanie w pionie wewnątrz wysokości 24px */
+  top: 2px !important;
   background-color: #ffffff !important;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
@@ -369,27 +346,24 @@
   padding: 0 !important;
 }
 
-/* 🟢 STAN AKTYWNY (CHECKED) */
 .switch input:checked + .slider {
-  background-color: #4cd964 !important; /* Soczysty zielony iOS */
+  background-color: #4cd964 !important;
   border-color: #4cd964 !important;
   background-image: none !important;
 }
 
-/* Przesunięcie kółka do prawej krawędzi */
 .switch input:checked + .slider::before {
   -webkit-transform: translateX(20px) !important;
   -ms-transform: translateX(20px) !important;
   transform: translateX(20px) !important;
 }
 
-/* Ewentualne specyficzne poprawki tylko dla bardzo małych ekranów */
 @media (max-width: 600px) {
   .userStats {
     -webkit-box-orient: horizontal !important;
     -webkit-box-direction: normal !important;
     -ms-flex-direction: row !important;
-    flex-direction: row !important; /* Blokujemy wymuszone kolumny */
+    flex-direction: row !important;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
@@ -399,14 +373,14 @@
   }
 }
 
-/* ⚪️ KÓŁECZKO (Stan nieaktywny - po lewej) */
+/* ⚪️ Stan nieaktywny  */
 .switch .slider::before {
   position: absolute !important;
   content: "" !important;
   height: 18px !important;
   width: 18px !important;
   left: 2px !important;
-  top: 2px !important; /* Idealne centrowanie w pionie (24px - 18px - 2px borderu) */
+  top: 2px !important;
   background-color: #ffffff !important;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
@@ -419,22 +393,19 @@
   padding: 0 !important;
 }
 
-/* 🟢 STAN AKTYWNY (CHECKED) - ORYGINALNY ZIELONY iOS SAKSEN */
+/* 🟢 STAN AKTYWNY */
 .switch input:checked + .slider {
-  background-color: #4cd964 !important; /* Wymuszamy piękny, soczysty zielony */
+  background-color: #4cd964 !important;
   border-color: #4cd964 !important;
-  background-image: none !important; /* Kasujemy ewentualne inne tła */
+  background-image: none !important;
 }
 
-/* 🚀 FIX PRZESUNIĘCIA: Kółeczko leci idealnie do prawej krawędzi bez ucinania!
-       Szerokość kontenera (42px) - szerokość kółka (18px) - marginesy (2px z lewej + 2px na border) = dokładnie 20px ruchu! */
 .switch input:checked + .slider::before {
   -webkit-transform: translateX(20px) !important;
   -ms-transform: translateX(20px) !important;
   transform: translateX(20px) !important;
 }
 
-/* Zaokrąglenia kapsułki */
 .switch .slider.round {
   border-radius: 24px !important;
 }
@@ -464,7 +435,6 @@ h3 {
   align-items: baseline;
   margin: 0px;
   gap: 8px;
-  /* Zapewnia, że żaden element w tym wierszu się nie zawinie */
   white-space: nowrap;
 }
 
@@ -484,17 +454,13 @@ h3 {
 
 #displayUserName {
   font-size: 24px;
-  font-weight: 600; /* zakładałem, że chcesz grubszy nick */
-
-  /* 🔥 KLUCZOWA ZMIANA: Przechodzimy na blok, żeby zadziałało text-overflow */
+  font-weight: 600;
   display: block;
   -webkit-box-flex: 1;
   -ms-flex: 1;
   flex: 1;
-  min-width: 0; /* To już miałeś i jest super ważne dla flexboxa! */
+  min-width: 0;
   vertical-align: bottom;
-
-  /* 🔥 TRÓJCA ŚWIĘTA UCINANIA TEKSTU */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -505,17 +471,11 @@ h3 {
   opacity: 0.6;
   font-weight: 500;
   font-size: 20px;
-
-  /* Margines po prawej zastąpi gap-a, ponieważ zmieniliśmy display na block */
   margin: 0 4px 6px 0;
-
-  /* Sprawiamy, że małpka traktowana jest jako element tekstowy, 
-         dzięki czemu nie zostanie ucięta osobno i idealnie trzyma się baseline */
   display: inline-block;
   vertical-align: middle;
 }
 
-/* Tekst nicku ograniczamy osobno */
 #displayUserName span {
   white-space: nowrap;
   overflow: hidden;
@@ -539,7 +499,7 @@ h3 {
   color: white;
   font-size: 1.17em; /* Taka sama wielkość jak H3 */
   font-weight: bold;
-  border-radius: 4px;
+  border-radius: 16px;
   padding: 2px 6px;
   outline: none;
   width: auto;
@@ -619,7 +579,7 @@ h3 {
 .levelIndicator {
   height: 12px;
   width: 200px;
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--glass-bg-whisper);
   border: 1px solid var(--glass-border-soft);
   -webkit-box-shadow: var(--shadow-delicate);
@@ -660,7 +620,6 @@ h3 {
 }
 
 .heroLvlWrapper {
-  /* 🔥 Tworzymy idealne, elastyczne kółeczko */
   display: -webkit-box !important;
   display: -ms-flexbox !important;
   display: flex !important;
@@ -674,21 +633,18 @@ h3 {
   -ms-grid-row-align: center;
   align-self: center;
 
-  width: 44px !important; /* Średnica kółka (możesz zwiększyć do 40px, jeśli chcesz większe) */
+  width: 44px !important;
   height: 44px !important;
-  border-radius: 50% !important; /* Idealny okrąg */
+  border-radius: 50% !important;
 
-  /* Stylistyka: ciemne półprzezroczyste tło + neonowa ramka */
   background: rgba(255, 255, 255, 0.03) !important;
   border: 2px solid var(--accent-color, #ffffff) !important;
 
-  /* Delikatny gamingowy blask wokół kółka */
   -webkit-box-shadow: 0 0 10px rgba(0, 255, 204, 0.15),
     inset 0 0 5px rgba(0, 255, 204, 0.1) !important;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.15),
     inset 0 0 5px rgba(0, 255, 204, 0.1) !important;
 
-  /* Bezpieczeństwo */
   -ms-flex-negative: 0 !important;
   flex-shrink: 0 !important;
   -webkit-box-sizing: border-box !important;
@@ -696,15 +652,14 @@ h3 {
 }
 
 #user-level-value {
-  font-size: 20px !important; /* Idealnie dobrany rozmiar fontu do kółka 36px */
-  font-weight: 800 !important; /* Gruby, czytelny, cyfrowy font */
-  color: #fff !important; /* Kolor poziomów pasujący do ramki */
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
   line-height: 1 !important;
   text-align: center !important;
-  letter-spacing: -0.5px !important; /* Zgęszczenie cyfr przy wyższych levelach (np. 10+) */
+  letter-spacing: -0.5px !important;
 }
 
-/* Styl bazowy dla wrapperów ikonek */
 .infoWrapper,
 .settingsWrapper {
   display: -webkit-box;
@@ -737,7 +692,7 @@ h3 {
   transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
-/* 🔄 ANIMACJA OBRACANIA ZĘBATKI */
+/* ANIMACJA OBRACANIA ZĘBATKI */
 .settingsWrapper .lucide-settings {
   will-change: transform;
   -webkit-transition: -webkit-transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -747,15 +702,14 @@ h3 {
     -webkit-transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Stan obrócony, gdy panel jest otwarty */
 .settingsWrapper.open .lucide-settings {
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg);
-  color: #ffffff; /* Podświetlenie zębatki na biało w stanie aktywnym */
+  color: #ffffff;
 }
 
-/* 🫧 PANEL PERMISSIONS (Ukryty, czekający na wyjście) */
+/* 🫧 PANEL PERMISSIONS */
 .permissions {
   max-height: 0;
   overflow: hidden;
@@ -785,13 +739,12 @@ h3 {
   gap: 10px;
 }
 
-/* 🔥 STAN OTWARTY - WYSZŁY PERMISSIONS */
 .permissions.open {
-  max-height: 120px; /* Bezpieczna maksymalna wysokość dla dwóch pozycji */
+  max-height: 120px;
   opacity: 1;
   -webkit-transform: translateY(12px) scale(1);
   -ms-transform: translateY(12px) scale(1);
-  transform: translateY(12px) scale(1); /* Przesunięcie w dół pod przyciski */
+  transform: translateY(12px) scale(1);
   padding-bottom: 20px;
 }
 
@@ -816,7 +769,6 @@ h3 {
   -ms-flex: 1;
   flex: 1;
 }
-/* Stylizacja elementów wewnątrz (baza pod szklany styl, jeśli potrzebujesz) */
 .permission-item {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -825,7 +777,6 @@ h3 {
   -ms-flex-align: center;
   align-items: center;
   width: 232px;
-  /* gap: 12px; */
   background: rgba(255, 255, 255, 0.03);
   padding: 10px 14px;
   border-radius: 16px;
@@ -903,7 +854,6 @@ h3 {
   width: 100%;
   height: 100%;
   will-change: transform;
-  /* Śpiewające, równe przejście dopasowane czasowo do Twoich modalów (0.3s) */
   -webkit-transition: -webkit-transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
   transition: -webkit-transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
   transition: transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
@@ -916,7 +866,6 @@ h3 {
   -ms-flex: 0 0 100%;
   flex: 0 0 100%;
   width: 100%;
-  /* Matchuje się z max-height Twojego modal-sheet */
   max-height: calc(100vh - 180px);
   max-height: calc(100dvh - 180px);
   overflow-x: hidden;
@@ -927,7 +876,6 @@ h3 {
   box-sizing: border-box;
 }
 
-/* --- Detale estetyczne treści (sekcje, ikonki) --- */
 .guide-section h3 {
   font-size: 13px;
   text-transform: uppercase;
@@ -994,7 +942,7 @@ h3 {
   min-width: 38px;
   height: 38px;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  border-radius: 16px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1042,7 +990,7 @@ h3 {
   font-size: 14px;
   background: rgba(255, 255, 255, 0.06);
   padding: 6px;
-  border-radius: 8px;
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   line-height: 1;
 }
@@ -1103,20 +1051,19 @@ h3 {
 .guide-dot.active {
   background: #ffffff;
   width: 18px;
-  border-radius: 4px;
+  border-radius: 16px;
   -webkit-box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
-/* Przycisk akceptacji */
 .guide-primary-btn {
-  background: var(--hero-gradient); /*#ffffff;*/
+  background: #fff;
   color: #000000;
   border: none;
   padding: 10px 20px;
   font-size: 13px;
   font-weight: 600;
-  border-radius: 14px;
+  border-radius: 16px;
   cursor: pointer;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;

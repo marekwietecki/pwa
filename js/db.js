@@ -1,6 +1,6 @@
 export const DB = {
-  dbName: "HabitHeroDB",
-  version: 6,
+  dbName: "HabitBubblDB",
+  version: 7,
 
   open() {
     return new Promise((resolve, reject) => {
@@ -84,7 +84,7 @@ export const DB = {
       const store = tx.objectStore(storeName);
       const index = store.index("by_done");
 
-      const request = index.getAll(false);
+      const request = index.getAll(0);
 
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => resolve([]);

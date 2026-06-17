@@ -163,13 +163,13 @@ export function initEventListeners(AppState) {
           name: li.querySelector(".taskNodeName")?.textContent,
         };
 
-        // 1. Wywołanie silnika XP (Tylko JEDNO wspólne miejsce dla dzisiejszych zadań / celów)
+        //  Wywołanie silnika XP (Tylko JEDNO wspólne miejsce dla dzisiejszych zadań / celów)
         const todayKey = Utils.formatDateKey(new Date());
         if (dateKey === todayKey || type === "goal") {
           // NALICZAMY XP W BAZIE
           await handleCompletion(type, itemData, isChecked);
 
-          // 2. ANIMACJA + BĄBELEK XP i dzwięk (Odpala się tylko gdy zadanie jest zaznaczane jako zrobione)
+          // ANIMACJA + BĄBELEK XP i dzwięk (Odpala się tylko gdy zadanie jest zaznaczane jako zrobione)
           if (isChecked) {
             // Pobieramy wartość XP dla bąbelka
             const xpValue = LevelManager.calculateXP(type, itemData);
@@ -202,15 +202,12 @@ export function initEventListeners(AppState) {
         console.error("Błąd podczas aktualizacji statusu:", err);
         target.checked = !isChecked;
       }
-    } // 💥 Tutaj prawidłowo zamyka się warunek IF dla Checkboxa
+    } 
 
-    // DELETE (Zaktualizowana sekcja w handleListAction)
-    // ==========================================
     const moreBtn = target.closest(".moreBtn");
     if (moreBtn) {
       e.stopPropagation();
 
-      // Wyciągamy poprawne dane z li zanim cokolwiek zmienimy
       const currentId = parseInt(li.dataset.id);
       const currentType = li.dataset.type;
 
@@ -223,15 +220,15 @@ export function initEventListeners(AppState) {
           AppState,
           async () => {
             try {
-              // 1. Usunięcie z bazy IndexedDB
+              // Usunięcie z bazy IndexedDB
               await DataManager.deleteItemByType(currentType, currentId);
               console.log(`[IndexedDB] Permanentnie usunięto: ${currentType} o ID: ${currentId}`);
               
-              // 🔥 DYNAMICZNY TOAST: Pierwsza litera typu duża (habit -> Habit, task -> Task)
+              // DYNAMICZNY TOAST
               const displayType = currentType.charAt(0).toUpperCase() + currentType.slice(1);
               UI.showToast(`${displayType} "${itemName}" has been permanently deleted.`, "info");
 
-              // 2. Odświeżenie widoku aplikacji
+              // Odświeżenie widoku aplikacji
               if (typeof refreshCurrentView === "function") {
                 await refreshCurrentView(AppState);
               }
@@ -296,7 +293,6 @@ export function initEventListeners(AppState) {
     if (!navigator.geolocation)
       return UI.showModalMessage("Geolocation not supported");
 
-    // --- START LOADING ---
     const btn = elements.geoLocBtn;
     const input = elements.locationInput;
 
@@ -313,7 +309,6 @@ export function initEventListeners(AppState) {
         LocationService.formatAddress(data.address) || data.display_name;
       UI.setInputLoading(input, btn, false, "success");
     } catch (err) {
-      // Obsługa błędów GPS i API w jednym miejscu
       const gpsErrors = {
         1: "Permission denied",
         2: "Position unavailable",
@@ -400,7 +395,7 @@ export function initEventListeners(AppState) {
       }
       await DataManager.updateGoalDetails(id, newData);
     } else {
-      // Logika edycji nawyku - czysto i czytelnie
+
       const newFreq = document.getElementById("habitFrequency").value;
       const newStartDate = document.getElementById("taskDate").value;
       const newSchedule = getHabitSchedule();
@@ -412,14 +407,13 @@ export function initEventListeners(AppState) {
         newStartDate
       );
 
-      // Zamiast find(), użyj swojego nowego DataManager.getItemByTypeAndId!
       const updatedHabit = await DataManager.getItemByTypeAndId("habit", id);
       if (updatedHabit) {
         AppState.selectedHabitForStats = updatedHabit;
         UI.showHabitDetails(updatedHabit, AppState);
       }
     }
-    await refreshCurrentView(AppState); // Użyj swojej nowej uniwersalnej funkcji!
+    await refreshCurrentView(AppState); 
   };
 
   const handleAddNew = async (AppState) => {
@@ -488,7 +482,7 @@ export function initEventListeners(AppState) {
       } else {
         const success = await handleAddNew(AppState);
         if (!success) {
-          elements.confirmAddBtn.disabled = false; // Odblokuj przycisk, żeby mógł poprawić błąd!
+          elements.confirmAddBtn.disabled = false; 
           return;
         }
       }
@@ -499,7 +493,7 @@ export function initEventListeners(AppState) {
     } catch (err) {
       console.error("Critical Save Error:", err);
     } finally {
-      elements.confirmAddBtn.disabled = false; // back enabled
+      elements.confirmAddBtn.disabled = false;
     }
   });
 
@@ -519,15 +513,12 @@ export function initEventListeners(AppState) {
     if (elements.habitSection) await UI.renderHabits?.(AppState);
   };
 
-  // ==========================================
-  // BUBBLE TOOLTIPS HANDLER (Streak & Effectiveness)
-  // ==========================================
+  // BUBBLE TOOLTIPS HANDLER 
   const tooltipsConfig = [
     { btnId: "streakInfoBtn", boxId: "streakTooltip" },
     { btnId: "effectivenessInfoBtn", boxId: "effectivenessTooltip" },
   ];
 
-  // Mapujemy konfigurację i podpinamy listenery
   tooltipsConfig.forEach(({ btnId, boxId }) => {
     const btn = document.getElementById(btnId);
     const box = document.getElementById(boxId);
@@ -536,12 +527,10 @@ export function initEventListeners(AppState) {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
 
-        // Zamykamy INNE otwarte tooltipy przed otwarciem tego, żeby nie nachodziły na siebie
         document.querySelectorAll(".tooltip-box").forEach((el) => {
           if (el !== box) el.classList.remove("is-active");
         });
 
-        // Przełączamy stan obecnego bąbelka
         box.classList.toggle("is-active");
 
         if (box.classList.contains("is-active") && navigator.vibrate) {
@@ -551,7 +540,6 @@ export function initEventListeners(AppState) {
     }
   });
 
-  // Globalne zamykanie (kliknięcie poza tooltipami lub klawisz Escape)
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".tooltip-container")) {
       document

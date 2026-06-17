@@ -899,7 +899,7 @@ body::after {
   color: var(--color-danger);
   font-size: 10px;
   font-weight: 500;
-  margin-top: 4px; /* Odstęp od stojącej wyżej lokalizacji */
+  margin-top: 4px; 
   opacity: 0.9;
 }
 
@@ -907,7 +907,7 @@ body::after {
   flex-shrink: 0;
   stroke: var(
     --color-danger
-  ); /* Zapewnia, że ikonka też dostanie czerwony kolor */
+  ); 
 }
 
 .emptyListMessage {
@@ -967,7 +967,6 @@ body::after {
   width: 100%;
   margin: 0 auto;
   max-width: 740px;
-  /* background-color: rebeccapurple; */
 }
 
 main {
@@ -989,7 +988,6 @@ main {
   padding: 0;
   margin-bottom: 0;
 
-  /* 🔥 NOWOŚĆ: Dodajemy maskę gradientową na sam dół kontenera */
   /* Od góry (0%) do 85% wysokości element jest w 100% widoczny (nieprzezroczysty) */
   /* Od 85% do 100% (samego dołu) płynnie zanika do zera (pełna przezroczystość) */
   -webkit-mask-image: linear-gradient(
@@ -1010,7 +1008,7 @@ main {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  /* 🔥 DODAJEMY padding na dole, żeby ostatnie zadanie na liście dało się przewinąć 
+  /* padding na dole, żeby ostatnie zadanie na liście dało się przewinąć 
      poza strefę zanikania i użytkownik mógł je bez problemu kliknąć */
   padding: 0 20px 60px 20px;
   margin: 0;
@@ -1049,13 +1047,13 @@ main {
 }
 
 .taskNodeName {
-  display: -webkit-box; /* Przełączamy w tryb boxa WebKit */
-  -webkit-line-clamp: 2; /* 🔥 Blokada na dokładnie 2 linijki */
-  -webkit-box-orient: vertical; /* Układ pionowy dla boxa */
-  overflow: hidden; /* Ukrywamy to, co wystaje poza 2 linie */
-  text-overflow: ellipsis; /* 🔥 Dodajemy automatyczne "..." na końcu */
+  display: -webkit-box; 
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 
-  word-break: break-word; /* Bezpieczne łamanie długich słów */
+  word-break: break-word; 
   flex: 1;
   min-width: 0;
 }
@@ -1108,18 +1106,11 @@ main {
 }
 
 .taskLabel svg {
-  /* margin-top: 3px; */
   flex-shrink: 0; /* Pilnuje, żeby ikonka nigdy się nie spłaszczyła */
 }
 
-/*
-.taskLabel:hover {
-  opacity: 64%;
-}
-*/
-
 .task-type-icon {
-  flex-shrink: 0; /* Ikona się nie skurczy mi */
+  flex-shrink: 0; 
   opacity: 0.7;
 }
 
@@ -1171,7 +1162,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px !important;       /* Mniejsza, zgrabna klikalna przestrzeń */
+  width: 28px !important;       
   height: 28px !important;
   /*   padding: 8px  */
   border-radius: 50%;
@@ -1181,18 +1172,17 @@ main {
   outline: none;
 
   border: none;
-  position: relative;          /* Kluczowe pod pozycjonowanie paska góra/dół */
+  position: relative;          
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .moreBtn svg {
-  width: 14px !important;      /* Wymuszamy małą ikonę zarówno dla (...) jak i dla kosza */
+  width: 14px !important;      
   height: 14px !important;
   opacity: 0.6;
   transition: opacity 0.2s ease;
 }
 
-/* Stan kosza - czerwony, zgrabny bąbel błędu */
 .moreBtn.deleteBtn {
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.4);
@@ -1200,13 +1190,12 @@ main {
 
 .moreBtn.deleteBtn svg {
   opacity: 1;
-  stroke: #ef4444;            /* Piękna krwista czerwień zamiast białego */
+  stroke: #ef4444;           
 }
 
-/* 2. Konstrukcja mikroskopijnego paska ładowania NAD przyciskiem (Micro-interactions) */
 .delete-progress-line-track {
   position: absolute;
-  top: -6px;                  /* Wyrzucenie paska 6 pikseli nad kciuk usera */
+  top: -6px;                  /* 6 pikseli nad kciuk usera */
   left: -2px;
   right: -2px;
   height: 3px;
@@ -1227,14 +1216,13 @@ main {
   transition: width 0.1s linear;
 }
 
-/* Kiedy użytkownik aktywnie zaciska kciuk na ikonce */
 .moreBtn.is-holding .delete-progress-line-track {
   opacity: 1;
 }
 
 .moreBtn.is-holding .delete-progress-bar-line {
   width: 100%;
-  transition: width 3s linear; /* Ładowanie paska idealnie zsynchronizowane z 3s timeoutem z JS */
+  transition: width 3s linear; 
 }
 
 .show-delete .moreBtn {
@@ -1396,7 +1384,6 @@ main {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 28px;
-  /* match navbar / hero userStats glass bubbles */
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1544,7 +1531,7 @@ main {
   font-weight: 600;
   width: 184px; /* 32% */
 
-  white-space: nowrap; /* hidden text in one line*/
+  white-space: nowrap; /* hidden text in one line */
   overflow: hidden;
   text-overflow: ellipsis;
 
@@ -1629,7 +1616,7 @@ main {
   background: #4caf50;
   border-color: #81c784;
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-  transform: scale(1.1); /* Lekkie powiększenie zaznaczonego dnia */
+  transform: scale(1.1); 
 }
 
 #daysPicker label:hover,

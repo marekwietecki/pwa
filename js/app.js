@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   PwaService.initInstallHandler();
 });
 
-window.testOnboarding = () => OnboardingService.forceRun();
+// window.testOnboarding = () => OnboardingService.forceRun();
 
 const checkDailyNotifications = async () => {
   const todayCount = await DataManager.countUndoneTasks(new Date());

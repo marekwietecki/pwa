@@ -5,11 +5,10 @@
 * Browsers: last 4 version
 */
 
-/* ====================================================\
-   LOCAL FONTS — FREEDOKA & POPPINS (Self-hosted)
-   ==================================================== */
+/* ====================================================
+  LOCAL FONTS — FREEDOKA & POPPINS (Self-hosted)
+  ==================================================== */
 
-/* --- FREDOKA --- */
 @font-face {
   font-family: "Fredoka";
   font-style: normal;
@@ -25,7 +24,6 @@
   src: url("../assets/fonts/fredoka-v17-latin-700.woff2") format("woff2");
 }
 
-/* --- POPPINS --- */
 @font-face {
   font-family: "Poppins";
   font-style: normal;
@@ -113,7 +111,7 @@ body.offline section {
     -webkit-transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-/* Stan podczas przełączania karty - minimalne, eleganckie odejście w głąb */
+/* eleganckie odejście w głąb */
 .page-container.is-switching {
   opacity: 0;
   -webkit-transform: scale(0.985);
@@ -121,11 +119,11 @@ body.offline section {
   transform: scale(0.985);
 }
 
-/* Animacja kaskadowego wlatywania kafelków (Staggered Fade-In) */
+/* Animacja wlatywania kafelków */
 @-webkit-keyframes bubbleFadeIn {
   0% {
     opacity: 0;
-    /* 3. Używamy translate3d zamiast translateY – to wymusza pełny rendering 3D na GPU! */
+    /* translate3d zamiast translateY - pełny rendering 3D na GPU! */
     -webkit-transform: translate3d(0, 16px, 0) scale(0.94);
     transform: translate3d(0, 16px, 0) scale(0.94);
   }
@@ -138,7 +136,6 @@ body.offline section {
 @keyframes bubbleFadeIn {
   0% {
     opacity: 0;
-    /* 3. Używamy translate3d zamiast translateY – to wymusza pełny rendering 3D na GPU! */
     -webkit-transform: translate3d(0, 16px, 0) scale(0.94);
     transform: translate3d(0, 16px, 0) scale(0.94);
   }
@@ -149,13 +146,11 @@ body.offline section {
   }
 }
 
-/* Klasa aplikowana do każdego generowanego zadania/nawyku/celu */
 .taskItem {
   opacity: 0;
-  will-change: transform, opacity; /* 4. Każdy bąbelek staje się osobną warstwą sprzętową */
+  will-change: transform, opacity; /* Każdy bąbelek staje się osobną warstwą */
 
-  /* 5. Autorska krzywa bąbelkowa - ma mikro-odbicie (overshoot) na końcu, 
-       które daje niesamowicie organiczny, sprężysty feeling przy wpadaniu */
+  /* sprężysty feeling przy wpadaniu */
   -webkit-animation: bubbleFadeIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)
     forwards;
   animation: bubbleFadeIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -169,7 +164,7 @@ body.offline section {
   box-sizing: border-box;
 }
 
-/* 1. Globalny reset na Poppins dla całej aplikacji (baza, przyciski, opisy) */
+/* Poppins dla całej aplikacji */
 body,
 input,
 button,
@@ -180,7 +175,7 @@ textarea,
   font-weight: 400;
 }
 
-/* 2. Nagłówki sekcji i nazwy zadań z Poppins (pogrubione, bardzo czytelne) */
+/* Nagłówki sekcji i nazwy zadań z Poppins bold */
 .habit-name,
 .task-title,
 .modalSubTitle,
@@ -189,10 +184,10 @@ h2 {
   font-weight: 600;
 }
 
-/* 3. Fredoka wjeżdża na pełnej - tylko dla tożsamości marki */
+/* Fredoka - tylko dla tożsamości marki */
 .onboarding-title {
   font-family: "Fredoka", sans-serif !important;
-  font-weight: 600; /* Gruby, soczysty bąbel */
+  font-weight: 600;
   font-size: 28px;
   letter-spacing: 0.5px;
 }
@@ -278,40 +273,25 @@ body {
   overflow-x: hidden;
   overflow-y: hidden;
 }
-/* Install */
 .dynamic-card {
   max-width: 600px;
   margin: 0 auto 20px;
   padding: 12px 20px;
   text-align: center;
-  /* Resetujemy/usuwamy stąd background, border i box-shadow! */
   background: transparent;
   border: none;
   -webkit-box-shadow: none;
   box-shadow: none;
   -webkit-transition: all 0.4s ease;
-  transition: all 0.4s ease; /* Płynne przejście przy pojawianiu się ramki */
-}
-
-.quote-text {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.75); /* Delikatny, nienachalny kolor */
-  font-style: italic;
-  margin: 0;
-  line-height: 1.4;
+  transition: all 0.4s ease;
 }
 
 .dynamic-card.has-banner {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.05
-  ); /* Twoje dotychczasowe tło glassmorphism */
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px; /* Zaokrąglenie bombelka */
+  border-radius: 16px;
   -webkit-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 16px 20px;
@@ -417,18 +397,19 @@ body {
   }
 }
 
-/* Styl dla cytatu, gdy już się podmieni */
 .quote-text {
   font-family: "Poppins", sans-serif;
-  font-size: 15px;
+  font-size: 0.95rem;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
   line-height: 1.4;
 }
 
+
 /* ==========================================================================
-     🫧 ONBOARDING WIZARD LIQUID GLASS STYLES
-     ========================================================================== */
+  🫧 ONBOARDING LIQUID GLASS STYLES
+  ========================================================================== */
 
 .onboarding-card {
   position: relative;
@@ -437,7 +418,7 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  border-radius: 32px;
   -webkit-box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4),
@@ -470,7 +451,7 @@ body {
   height: 12px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 100px;
+  border-radius: 9999px;
   overflow: hidden;
 }
 
@@ -497,14 +478,13 @@ body {
   margin-top: 36px;
 }
 
-/* Szklany input w stylu Habit Bubbl 🫧 */
 .onboarding-input {
   width: 100%;
   margin-top: 20px;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
+  border-radius: 16px;
   color: #ffffff;
   font-size: 15px;
   text-align: center;
@@ -536,7 +516,6 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Klasy dla przycisków autoryzacji */
 .onboarding-auth-btn {
   background: var(--hero-gradient);
   color: #ffffff;
@@ -545,13 +524,13 @@ body {
   transition: opacity 0.3s ease;
   width: 100%;
   margin: 0;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 #onboardingNextBtn {
   width: 100%;
   margin: 0;
-  border-radius: 14px;
+  border-radius: 16px;
   cursor: pointer;
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
@@ -567,7 +546,7 @@ body {
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
+  border-radius: 16px;
   color: #ffffff;
   font-size: 15px;
   text-align: center;
@@ -610,7 +589,6 @@ body {
   margin-top: 10px;
 }
 
-/* Soft ambient glass bubbles */
 body::before,
 body::after {
   content: "";
@@ -682,7 +660,7 @@ body::after {
   flex-direction: column;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  align-items: center; /* To wyśrodkuje kalendarz i listę w poziomie */
+  align-items: center;
   position: relative;
   width: 100%;
   -webkit-box-flex: 1;
@@ -703,18 +681,17 @@ body::after {
   margin-right: 2px;
 }
 /* ==========================================================================
-     🫧 HOLD TO DELETE - PROGRESS RING (DOPASOWANY DO ŚMIETNIKA)
+     🫧 HOLD TO DELETE 
      ========================================================================== */
 
-/* Kontener na śmietnik, żeby kółko na nim leżało */
+/* Kontener na śmietnik */
 .deleteBtn {
-  position: relative !important; /* Ważne! */
+  position: relative !important;
   overflow: visible !important;
   color: var(--color-danger);
   stroke: var(--color-danger);
 }
 
-/* Ukryty domyślnie okrąg postępu SVG */
 .delete-progress-svg {
   position: absolute;
   top: 50%;
@@ -761,12 +738,10 @@ body::after {
   opacity: 1;
 }
 
-/* Gdy trzymamy, odpalamy animację rysowania linii w 2 sekundy */
 .deleteBtn.is-holding .delete-progress-bar {
   stroke-dashoffset: 0;
 }
 
-/* Efekt "Explode" po udanym usunięciu */
 .deleteBtn.delete-success {
   -webkit-animation: bubblePopX 0.3s forwards
     cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -841,7 +816,7 @@ body::after {
   align-self: center;
   width: 96%;
   margin: 16px;
-  border-radius: 36px;
+  border-radius: 32px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -859,7 +834,7 @@ body::after {
 }
 
 /* ==========================================================================
-     🫧 NEUROBUBBLE SLIDING TAB NAVIGATION (ORGANIC POP VERSION)
+     🫧 SLIDING TAB NAVIGATION 
      ========================================================================== */
 
 .tabNav {
@@ -885,7 +860,7 @@ body::after {
 
 .tabNav a {
   position: relative;
-  z-index: 2; /* Ponad bąbelkiem */
+  z-index: 2;
   height: 80%;
   -webkit-box-flex: 1;
   -ms-flex: 1;
@@ -916,7 +891,7 @@ body::after {
   color: rgba(169, 169, 169);
   width: 100%;
   height: 100%;
-  border-radius: 30px;
+  border-radius: 32px;
 }
 
 .tabNavItem.active {
@@ -933,7 +908,6 @@ body::after {
   transition: all 0.2s ease;
 }
 
-/* 🔥 POPRAWKA BZURA: Bąbel bez klasy .animate stoi bez ruchu i czeka ukryty */
 .tabNavIndicator {
   position: absolute;
   z-index: 1;
@@ -942,9 +916,8 @@ body::after {
   width: 20.5%;
   height: 75%;
 
-  /* Szklany design */
   background: rgba(255, 255, 255, 0.07) !important;
-  border-radius: 30px;
+  border-radius: 32px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
     inset 0 1px 0px rgba(255, 255, 255, 0.2);
@@ -952,17 +925,15 @@ body::after {
     inset 0 1px 0px rgba(255, 255, 255, 0.2);
 
   will-change: transform, opacity;
-  opacity: 0; /* Bazowo niewidoczny */
+  opacity: 0;
 }
 
-/* 🔥 Klasa wstrzykiwana przez JS dopiero PO wyliczeniu pozycji */
 .tabNavIndicator.animate {
   -webkit-animation: bubbleOrganicPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)
     forwards;
   animation: bubbleOrganicPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* 🔥 Animacja startuje bezpośrednio z gotowej zmiennej, bez ryzyka pozycji zero! */
 @-webkit-keyframes bubbleOrganicPop {
   0% {
     -webkit-transform: translateX(var(--target-x)) scale(0.6);
@@ -1061,9 +1032,8 @@ body::after {
   transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
-/* MODAL — floating glass bubble (centered, fully rounded) */
 .addTaskBtn {
-  border-radius: 24px;
+  border-radius: 50%;
   padding: 12px;
   font-size: 28px;
   line-height: 20px;
@@ -1141,8 +1111,7 @@ body::after {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  border-radius: 28px;
-  /* match navbar / hero userStats glass bubbles */
+  border-radius: 32px;
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1172,9 +1141,9 @@ body::after {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
   margin-bottom: 20px;
 }
 
@@ -1183,7 +1152,7 @@ body::after {
   color: white;
   width: 40px;
   height: 40px;
-  border-radius: 100%;
+  border-radius: 50%;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1233,7 +1202,7 @@ body::after {
   .modal-sheet {
     max-width: 600px;
     padding: 28px 32px 24px;
-    border-radius: 36px;
+    border-radius: 32px;
   }
 }
 
@@ -1250,6 +1219,8 @@ body::after {
 
 #modalTitle {
   padding-left: 10px;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
 }
 
 .typePickersWrapper {
@@ -1342,7 +1313,7 @@ body::after {
   border-radius: 24px;
   color: #fff;
   font-weight: 600;
-  width: 184px; /* 32% */
+  width: 184px;
 
   white-space: nowrap; /* hidden text in one line*/
   overflow: hidden;
@@ -1360,29 +1331,30 @@ body::after {
 #taskName:focus {
   text-overflow: clip;
 }
+/* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #taskName::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #taskName::-moz-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #taskName:-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #taskName::-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #taskName::placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
@@ -1482,7 +1454,7 @@ body::after {
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);
-  transform: scale(1.1); /* Lekkie powiększenie zaznaczonego dnia */
+  transform: scale(1.1);
 }
 
 #daysPicker label:hover,
@@ -1606,7 +1578,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: 30px;
   background: var(--glass-bg-whisper);
   border: 1px solid var(--glass-border-soft);
-  border-radius: 10px;
+  border-radius: 16px;
   font-size: 12px;
   -webkit-transition: 0.2s;
   transition: 0.2s;
@@ -1670,7 +1642,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -ms-flex-align: center;
   align-items: center;
   height: 35px;
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--glass-bg-whisper);
   border: 1px solid var(--glass-border-soft);
   -webkit-box-shadow: var(--shadow-delicate);
@@ -1679,7 +1651,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 #monthDaysGrid input:checked + span {
-  background: var(--color-success); /* Twój zielony kolor */
+  background: var(--color-success);
   color: white;
 }
 
@@ -1725,29 +1697,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
+/* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #habitIcon::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #habitIcon::-moz-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #habitIcon:-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #habitIcon::-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #habitIcon::placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
@@ -1773,9 +1746,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 224px; /* 40% */
+  width: 224px;
 
-  white-space: nowrap; /* hidden text in one line*/
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
@@ -1841,29 +1814,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
+/* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #descriptionInput::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #descriptionInput::-moz-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #descriptionInput:-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #descriptionInput::-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #descriptionInput::placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
@@ -1907,7 +1881,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   max-width: 224px !important;
   width: 100% !important;
 
-  white-space: nowrap; /* hidden text in one line*/
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
@@ -1923,29 +1897,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 #locationInput:focus {
   text-overflow: clip; /* when focus user is able to scroll */
 }
+/* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #locationInput::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #locationInput::-moz-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #locationInput:-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #locationInput::-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #locationInput::placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 .lucide-search-check {
@@ -2003,34 +1978,34 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: transform 0.1s ease;
   transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
-
+/* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #useMyLocation::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
 #useMyLocation::-moz-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
 #useMyLocation:-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
 #useMyLocation::-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 
 #useMyLocation::placeholder {
   color: rgba(255, 255, 255, 0.56);
-  opacity: 1; /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
+  opacity: 1;
   font-weight: 400;
 }
 #useMyLocation:hover {
@@ -2048,7 +2023,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
-/* Animacja obracania */
 @-webkit-keyframes spin {
   from {
     -webkit-transform: rotate(0deg);
@@ -2162,10 +2136,9 @@ input.error {
 }
 
 /* ==========================================================================
-     🔥 EXTRA GAMING LEVEL UP ANIMATIONS & MODAL
+     🔥 GAMING LEVEL UP ANIMATION
      ========================================================================== */
 
-/* Klasa, którą JS na chwilę wrzuci na kółko podczas awansu */
 .level-up-flash {
   -webkit-animation: circlePunchFlash 0.8s
     cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -2183,9 +2156,9 @@ input.error {
   }
   30% {
     -webkit-transform: scale(1.3);
-    transform: scale(1.3); /* Kółko gwałtownie rośnie */
-    border-color: #00ffcc !important; /* Zamienia się w czysty neon */
-    background: rgba(0, 255, 204, 0.4) !important; /* Wypełnia się blaskiem */
+    transform: scale(1.3);
+    border-color: #00ffcc !important;
+    background: rgba(0, 255, 204, 0.4) !important;
     -webkit-box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
     box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
   }
@@ -2208,9 +2181,9 @@ input.error {
   }
   30% {
     -webkit-transform: scale(1.3);
-    transform: scale(1.3); /* Kółko gwałtownie rośnie */
-    border-color: #00ffcc !important; /* Zamienia się w czysty neon */
-    background: rgba(0, 255, 204, 0.4) !important; /* Wypełnia się blaskiem */
+    transform: scale(1.3);
+    border-color: #00ffcc !important;
+    background: rgba(0, 255, 204, 0.4) !important;
     -webkit-box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
     box-shadow: 0 0 30px #00ffcc, inset 0 0 15px #00ffcc;
   }
@@ -2223,7 +2196,6 @@ input.error {
   }
 }
 
-/* Szklany Banner / Toast z góry ekranu */
 .level-up-toast {
   position: fixed;
   top: -100px; /* Schowany nad ekranem */
@@ -2233,11 +2205,11 @@ input.error {
   transform: translateX(-50%) scale(0.9);
   width: 90%;
   max-width: 400px;
-  background: rgba(10, 15, 28, 0.75); /* Głęboki, mroczny szklany podkład */
+  background: rgba(10, 15, 28, 0.75);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(0, 255, 204, 0.3);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 16px 20px;
   z-index: 99999; /* Zawsze na samym wierzchu */
   opacity: 0;
@@ -2250,7 +2222,6 @@ input.error {
   transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* Stan aktywny - wjazd na ekran */
 .level-up-toast.show {
   top: 24px; /* Zjeżdża na bezpieczną odległość od krawędzi */
   opacity: 1;
@@ -2259,7 +2230,6 @@ input.error {
   transform: translateX(-50%) scale(1);
 }
 
-/* Wewnętrzny pulsacyjny blask tła modalu */
 .level-up-glow {
   position: absolute;
   top: -50%;
@@ -2271,7 +2241,7 @@ input.error {
     rgba(0, 255, 204, 0.15) 0%,
     rgba(0, 0, 0, 0) 60%
   );
-  will-change: transform; /* Wymuszenie akceleracji sprzętowej GPU */
+  will-change: transform;
   -webkit-animation: rotateGlow 6s linear infinite;
   animation: rotateGlow 6s linear infinite;
   pointer-events: none;
@@ -2374,26 +2344,25 @@ input.error {
   xp add animation
   */
 
-/* Mikro-bąbelek XP - minimalistyczny, szary styl */
+/* Mikro-bąbelek XP  */
 .task-xp-badge {
   position: absolute;
   -webkit-transform: translate(-50%, 0);
   -ms-transform: translate(-50%, 0);
   transform: translate(-50%, 0);
-  background: rgba(30, 41, 59, 0.9); /* Bardzo ciemny szary/grafit */
-  color: #f1f5f9; /* Jasnoszary tekst */
+  background: rgba(30, 41, 59, 0.9);
+  color: #f1f5f9;
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 4px 12px;
-  border-radius: 30px; /* Twój bubble-radius */
+  border-radius: 32px;
   font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 600;
-  pointer-events: none; /* Żeby nie blokował kliknięć myszką */
+  pointer-events: none;
   z-index: 9999;
   -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
-  /* Odpalenie mikro-animacji uniesienia i zanikania */
   -webkit-animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -2448,7 +2417,6 @@ input.error {
      🫧 ONBOARDING SLIDER COMPLEMENTARY STYLES
      ========================================================================== */
 
-/* Klon Twojego oryginalnego stylu #closeModal dla przewodnika */
 .infoWrapper {
   -webkit-transition: opacity 0.2s;
   transition: opacity 0.2s;
@@ -2463,7 +2431,7 @@ input.error {
   background-color: rgba(0, 0, 0, 0);
   width: 40px;
   height: 40px;
-  border-radius: 100%;
+  border-radius: 50%;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -2501,7 +2469,6 @@ input.error {
   transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
 
-/* Mechanika Karuzeli Slajdów wewnątrz modal-sheet */
 .guide-modal-carousel {
   width: 100%;
   overflow: hidden;
@@ -2524,18 +2491,17 @@ input.error {
     height: 20px;
   }
 
-  /* Floating bottom bubble */
   .navbar {
     position: fixed;
     bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     left: calc(12px + env(safe-area-inset-left, 0px));
     right: calc(12px + env(safe-area-inset-right, 0px));
     top: auto;
-    width: auto; /* nadpisujemy 96% z desktopa */
-    margin: 8px; /* nadpisujemy margin: 16px z desktopa */
+    width: auto;
+    margin: 8px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    border-radius: 36px;
+    border-radius: 32px;
     padding: 0px 4px;
     height: 64px;
     z-index: 200;
@@ -2551,18 +2517,15 @@ input.error {
     gap: 20px;
   }
 
-  /* Push main content up so it doesn't hide behind the floating bar */
   body {
     padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Logo shrinks to just the icon, left-anchored */
   .navbar .logo {
     -ms-flex-negative: 0;
     flex-shrink: 0;
   }
 
-  /* Tabs fill remaining space evenly */
   .tabNav {
     display: -webkit-box;
     display: -ms-flexbox;

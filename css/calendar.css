@@ -6,10 +6,9 @@
 */
 
 /* ====================================================
-   CALENDAR — calendar grid (calendar.html only)
-   ==================================================== */
+  CALENDAR — calendar grid (calendar.html only)
+  ==================================================== */
 
-/* CALENDAR */ /* ------------------------------------------------------------------------ */
 .calendar {
   margin-bottom: 1.5svh;
   background-color: transparent;
@@ -60,8 +59,6 @@
   font-size: 20px;
   cursor: pointer;
   color: white;
-
-  /* liquid glass effect */
   background: var(--glass-bg-subtle);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -101,9 +98,6 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: end;
-  -ms-flex-align: end;
-  align-items: end;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
@@ -127,9 +121,6 @@
   border: 1px solid var(--glass-border-soft);
   -webkit-box-shadow: var(--shadow-delicate);
   box-shadow: var(--shadow-delicate);
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -140,7 +131,8 @@
   -webkit-transition: all 0.25s ease;
   transition: all 0.25s ease;
 }
-.day:hover .day:active {
+.day:hover,
+.day:active {
   background: var(--glass-bg-subtle);
   border-color: var(--glass-border);
   -webkit-box-shadow: var(--shadow-bubble);
@@ -194,16 +186,14 @@
   color: var(--color-danger);
   font-size: 10px;
   font-weight: 500;
-  margin-top: 4px; /* Odstęp od stojącej wyżej lokalizacji */
+  margin-top: 4px; /* Odstęp od lokalizacji wyżej */
   opacity: 0.9;
 }
 
 .overdue-calendar-icon {
   -ms-flex-negative: 0;
   flex-shrink: 0;
-  stroke: var(
-    --color-danger
-  ); /* Zapewnia, że ikonka też dostanie czerwony kolor */
+  stroke: var(--color-danger);
 }
 
 .emptyListMessage {

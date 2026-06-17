@@ -1,21 +1,21 @@
 const CACHE_VERSION = "v25";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
-  // Główne dokumenty HTML
+// html
   "./",
   "./index.html",
   "./calendar.html",
   "./habits.html",
   "./hero.html",
 
-  // Style css
+  // css
   "./css/global.css",
   "./css/index.css",
   "./css/calendar.css",
   "./css/habits.css",
   "./css/hero.css",
 
-  // Architektura JS aplikacji
+  // js 
   "./js/app.js",
   "./js/data.js",
   "./js/db.js",
@@ -34,10 +34,10 @@ const APP_ASSETS = [
   "./assets/fonts/poppins-v24-latin-600.woff2",
   "./assets/fonts/poppins-v24-latin-700.woff2",
 
-  // PWA manifest
+  // manifest
   "./manifest.webmanifest",
 
-  // Wszystkie zasoby graficzne i ikony z folderu assets
+  // assets
   "./assets/icons/android-chrome-192x192.webp",
   "./assets/icons/android-chrome-512x512.webp",
   "./assets/icons/apple-touch-icon.png",
@@ -50,7 +50,7 @@ const APP_ASSETS = [
   "./assets/icons/logo-transparent.webp",
   "./assets/icons/logo.svg",
 
-  // Pliki dźwiękowe
+  // sounds
   "./assets/sounds/bubble_pop.mp3",
 ];
 
