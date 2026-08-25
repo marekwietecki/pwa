@@ -1,0 +1,35 @@
+{
+  "name": "habit-bubbl",
+  "version": "1.0.0",
+  "description": "Habit Bubbl is a Progressive Web App (PWA) that turns daily responsibilities into an RPG adventure. Earn experience points (XP), level up your character, and track your habits through an interactive calendar.",
+  "main": "sw.js",
+  "private": "true",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marekwietecki/pwa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marekwietecki/pwa/issues"
+  },
+  "homepage": "https://github.com/marekwietecki/pwa#readme",
+  "devDependencies": {
+    "storybook": "^10.5.10",
+    "@storybook/html-vite": "^10.5.10",
+    "@chromatic-com/storybook": "latest",
+    "@storybook/addon-vitest": "^10.5.10",
+    "@storybook/addon-a11y": "^10.5.10",
+    "@storybook/addon-docs": "^10.5.10",
+    "vitest": "latest",
+    "playwright": "latest",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest"
+  }
+}
