@@ -162,6 +162,7 @@ main {
   -ms-flex-pack: justify;
   justify-content: space-between;
   border-radius: 32px;
+  max-width: 480px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -224,7 +225,7 @@ main {
   border: 1px solid var(--color-danger);
 }
 
-.taskItem.overdue .item-title {
+.taskItem.overdue .taskNodeName {
   color: var(--color-danger);
 }
 
