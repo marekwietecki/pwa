@@ -7,6 +7,7 @@ Habit Bubbl is a Progressive Web App (PWA) that turns daily responsibilities int
 ## 📖 Table of Contents
 * [🚀 Features](#-features)
 * [🛠️ Technologies](#️-technologies)
+* [🎨 Design System & Storybook](#-design-system--storybook)
 * [📱 Native Features](#-native-features)
 * [🌐 API & Data Strategies](#-api--data-strategies)
 * [⚙️ Deployment](#️-deployment)
@@ -35,6 +36,21 @@ Built with a **Vanilla JavaScript** architecture (no heavy frameworks) to ensure
 * **Motivation Engine:** External REST API (Adviceslip).
 * **Data Storage:** `localStorage` for simple data and `IndexedDB` for more complex one.
 * **Hosting:** Netlify with automated SSL (HTTPS) certification.
+
+---
+
+## 🎨 Design System & Storybook
+
+Habit Bubbl's UI is vanilla HTML/CSS/JS with no component framework, so introducing [Storybook](https://storybook.js.org) meant deliberately choosing, per component, between two patterns rather than following a default one:
+
+* **Direct reuse:** Pure, state-free rendering functions — like the XP progress ring and the task/habit/goal list item — are imported straight from the app's own source (`js/ui.js`) into their stories. No duplicated markup; the story exercises the exact code that ships.
+* **Presentational documentation:** UI that's tightly coupled to global app state (the add-item modal, the habit activity grid) is storied with local render functions that mirror the real markup, classes, and IDs exactly, so real CSS and accessibility issues surface the same way they would in the app.
+
+This isn't just documentation — it's already caught and led to fixing several real bugs: a CSS class-name mismatch that silently broke the progress ring's animation, a dead selector that broke overdue-task styling, and multiple missing form-label associations flagged by Storybook's accessibility addon.
+
+* **Live Storybook:** [main--6a931571e9ffd13d5bff96d2.chromatic.com](https://main--6a931571e9ffd13d5bff96d2.chromatic.com)
+* **Visual regression:** Published via [Chromatic](https://www.chromatic.com), which snapshots every story on every publish and flags visual diffs against the accepted baseline for review.
+* **Accessibility:** Every story is checked against WCAG rules via Storybook's `addon-a11y`.
 
 ---
 
