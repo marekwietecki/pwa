@@ -366,7 +366,7 @@
             id="habitIconWrapper"
             style="display: flex; flex-direction: column"
           >
-            <label class="modalSubTitle">Icon</label>
+            <label class="modalSubTitle" for="habitIcon">Icon</label>
             <input
               type="text"
               id="habitIcon"
@@ -378,7 +378,7 @@
             />
           </div>
           <div style="display: flex; flex-direction: column">
-            <label class="modalSubTitle">Frequency</label>
+            <label class="modalSubTitle" for="habitFrequency">Frequency</label>
             <select id="habitFrequency">
               <option value="daily">Everyday</option>
               <option value="weekly">Select days of the week</option>
@@ -418,12 +418,12 @@
         <div id="goalSection" style="display: none">
           <div class="deadlinePlusLinkHabit">
             <div class="deadlineSection">
-              <label class="modalSubTitle">Deadline</label>
+              <label class="modalSubTitle" for="goalDeadline">Deadline</label>
               <input type="date" id="goalDeadline" name="goalDeadline" />
             </div>
 
             <div class="linkHabitSection">
-              <label class="modalSubTitle"
+              <label class="modalSubTitle" for="goalHabitSelect"
                 >Link Habit - make goal measurable</label
               >
               <select id="goalHabitSelect" name="goalHabitSelect">
@@ -432,7 +432,7 @@
             </div>
           </div>
           <div class="descriptionSection">
-            <label class="modalSubTitle">Description</label>
+            <label class="modalSubTitle" for="descriptionInput">Description</label>
             <textarea
               id="descriptionInput"
               name="descriptionInput"
@@ -446,7 +446,7 @@
           <input type="date" id="taskDate" name="taskDate" />
         </div>
         <div class="locationSection" id="locationSection">
-          <label class="modalSubTitle">Location</label>
+          <label class="modalSubTitle" for="locationInput">Location</label>
           <div class="locationContentWrapper">
             <input
               type="text"
