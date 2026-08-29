@@ -177,12 +177,12 @@ main {
   transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
   transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease,
     -webkit-transform 0.25s ease, -webkit-box-shadow 0.25s ease;
-  background: var(--glass-bg-subtle);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  -webkit-box-shadow: var(--shadow-bubble);
-  box-shadow: var(--shadow-bubble);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-border-bright);
+  -webkit-box-shadow: var(--shadow-float);
+  box-shadow: var(--shadow-float);
 }
 
 .taskNodeName {
