@@ -495,6 +495,27 @@ export const UI = {
     UI.toggleModalFields(AppState.currentCreateType, false);
     UI.refreshTypePickerButtons(AppState.currentCreateType);
     UI.setupHabitIconPicker("💧");
+    UI.updateSubmitButtonState(AppState);
+  },
+
+  /**
+   * Włącza przycisk Create/Save Changes wyłącznie gdy wymagane pola są uzupełnione
+   * (nazwa zawsze; dodatkowo deadline dla celów).
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  updateSubmitButtonState: (AppState) => {
+    const btn = document.getElementById("confirmAddBtn");
+    if (!btn) return;
+
+    const nameInput = document.getElementById("taskName");
+    const hasName = !!nameInput && nameInput.value.trim().length > 0;
+
+    const type = AppState && AppState.currentCreateType;
+    const deadlineInput = document.getElementById("goalDeadline");
+    const hasDeadline =
+      type !== "goal" || !!(deadlineInput && deadlineInput.value);
+
+    btn.disabled = !(hasName && hasDeadline);
   },
 
   /**
@@ -581,6 +602,8 @@ export const UI = {
       btn.setAttribute("data-edit-type", "habit");
     }
 
+    UI.updateSubmitButtonState(AppState);
+
     if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },
 
@@ -620,6 +643,8 @@ export const UI = {
       btn.setAttribute("data-edit-id", goal.id);
       btn.setAttribute("data-edit-type", "goal");
     }
+
+    UI.updateSubmitButtonState(AppState);
 
     if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
   },

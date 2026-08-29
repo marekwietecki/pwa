@@ -129,6 +129,7 @@ export function initEventListeners(AppState) {
       e.target.classList.add("active");
 
       UI.toggleModalFields(type);
+      UI.updateSubmitButtonState(AppState);
     });
   });
 
@@ -343,6 +344,12 @@ export function initEventListeners(AppState) {
         iconInput.placeholder = "★";
       }
     }
+
+    UI.updateSubmitButtonState(AppState);
+  });
+
+  elements.goalDeadline?.addEventListener("input", () => {
+    UI.updateSubmitButtonState(AppState);
   });
 
   // Edycja Nazwy Użytkownika Inline
