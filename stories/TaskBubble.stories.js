@@ -1,3 +1,5 @@
+import { expect, userEvent, within } from 'storybook/test';
+
 import '../css/index.css';
 import { UI } from '../js/ui.js';
 
@@ -44,7 +46,18 @@ export default {
   },
 };
 
-export const Task = {};
+export const Task = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const checkbox = canvas.getByRole('checkbox');
+
+    await expect(checkbox.checked).toBe(false);
+
+    await userEvent.click(checkbox);
+
+    await expect(checkbox.checked).toBe(true);
+  },
+};
 
 export const OverdueTask = {
   args: { overdue: true },
