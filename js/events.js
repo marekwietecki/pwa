@@ -344,7 +344,9 @@ export function initEventListeners(AppState) {
         iconInput.placeholder = "★";
       }
     }
+  });
 
+  elements.taskName.addEventListener("input", () => {
     UI.updateSubmitButtonState(AppState);
   });
 
