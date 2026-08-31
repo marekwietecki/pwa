@@ -1,5 +1,7 @@
 # 🏆 Habit Bubbl - Gamified Task Manager PWA
 
+[![Storybook Tests & Visual Regression](https://github.com/marekwietecki/pwa/actions/workflows/chromatic.yml/badge.svg)](https://github.com/marekwietecki/pwa/actions/workflows/chromatic.yml)
+
 Habit Bubbl is a Progressive Web App (PWA) that turns daily responsibilities into an RPG adventure. Earn experience points (XP), level up your character, and track your habits through an interactive calendar.
 
 ---
