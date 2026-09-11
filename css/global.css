@@ -2626,3 +2626,87 @@ input.error {
     height: 128px;
   }
 }
+
+/* ==========================================================================
+   🫧 EMPTY STATES (shared across Today / Calendar / Goals / Habits)
+   ========================================================================== */
+
+@-webkit-keyframes fadeInCenter {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInCenter {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.emptyState {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 40px 20px;
+  -webkit-animation: fadeInCenter 0.4s ease-out;
+  animation: fadeInCenter 0.4s ease-out;
+}
+
+.emptyState-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: 26px;
+  background: var(--glass-bg-whisper);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-soft);
+  -webkit-box-shadow: var(--shadow-delicate);
+  box-shadow: var(--shadow-delicate);
+}
+
+.emptyState-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.emptyState-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  max-width: 280px;
+}

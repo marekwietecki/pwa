@@ -799,6 +799,8 @@ export const UI = {
     const goalsListEl = document.getElementById("goalsList");
     if (!goalsListEl) return;
 
+    const wrapperEl = document.getElementById("emptyListMessageWrapper");
+
     const savedGoals = await DataManager.getGoals();
     const goalNodes = savedGoals
       .filter((g) => !g.done)
@@ -807,6 +809,10 @@ export const UI = {
         li.style.animationDelay = `${index * 0.04}s`;
         return li;
       });
+
+    if (wrapperEl) {
+      wrapperEl.style.display = goalNodes.length === 0 ? "flex" : "none";
+    }
 
     UI.renderToContainer(goalsListEl, goalNodes);
   },
@@ -863,6 +869,19 @@ export const UI = {
     finalNodes.forEach((li, index) => {
       li.style.animationDelay = `${index * 0.04}s`;
     });
+
+    const wrapperEl = document.getElementById("calendarEmptyListMessageWrapper");
+    const nothingPlannedEl = document.getElementById("calendarMessageFuture");
+    const allDoneEl = document.getElementById("calendarMessageToday");
+
+    if (wrapperEl && nothingPlannedEl && allDoneEl) {
+      const isEmpty = finalNodes.length === 0;
+      const isAllDone = !isEmpty && undoneNodes.length === 0;
+
+      wrapperEl.style.display = isEmpty || isAllDone ? "flex" : "none";
+      nothingPlannedEl.style.display = isEmpty ? "flex" : "none";
+      allDoneEl.style.display = isAllDone ? "flex" : "none";
+    }
 
     UI.renderToContainer(listEl, finalNodes);
   },
@@ -1338,7 +1357,13 @@ export const UI = {
     });
 
     if (habits.length === 0) {
-      listContainer.innerHTML = `<p class="noHabitsMsg" style="padding: 16px;">No habits added yet!</p>`;
+      listContainer.innerHTML = `
+        <div class="emptyState">
+          <div class="emptyState-icon">🔥</div>
+          <p class="emptyState-title">No habits yet</p>
+          <p class="emptyState-subtitle">Add one to start your streak.</p>
+        </div>
+      `;
       return;
     }
 

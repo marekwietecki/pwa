@@ -285,12 +285,6 @@
   color: var(--color-accent, #00ffcc);
 }
 
-.noHabitsMsg {
-  padding: 20px;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-}
-
 .habit-card-mini {
   display: -webkit-box;
   display: -ms-flexbox;

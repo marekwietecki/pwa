@@ -215,51 +215,7 @@
   stroke: var(--color-danger);
 }
 
-.emptyListMessage {
-  text-align: center;
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.45);
-  -webkit-animation: fadeInCenter 0.4s ease-out;
-  animation: fadeInCenter 0.4s ease-out;
-}
-
-@-webkit-keyframes fadeInCenter {
-  from {
-    opacity: 0;
-    -webkit-transform: translateY(10px);
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInCenter {
-  from {
-    opacity: 0;
-    -webkit-transform: translateY(10px);
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-
 #emptyListMessageWrapper,
 #calendarEmptyListMessageWrapper {
   width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  padding: 32px 16px;
 }

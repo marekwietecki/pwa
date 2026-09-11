@@ -221,10 +221,10 @@
       <section class="toDo">
         <h3 id="taskDateTitle">To do today:</h3>
         <div class="toDoListWrapper">
-          <div id="emptyListMessageWrapper" style="display: none">
-            <span id="messageToday" class="emptyListMessage"
-              >All tasks done, keep it up! 🎉</span
-            >
+          <div id="emptyListMessageWrapper" class="emptyState" style="display: none">
+            <div class="emptyState-icon">🎉</div>
+            <p id="messageToday" class="emptyState-title">All tasks done!</p>
+            <p class="emptyState-subtitle">Keep it up, you're on a roll.</p>
           </div>
           <ul id="toDoList"></ul>
         </div>

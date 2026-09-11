@@ -178,12 +178,16 @@
         <h3 id="calendarTaskDateTitle"></h3>
         <div class="calendarToDoListWrapper">
           <div id="calendarEmptyListMessageWrapper" style="display: none">
-            <span id="calendarMessageFuture" class="emptyListMessage"
-              >No tasks planned for this day.</span
-            >
-            <span id="calendarMessageToday" class="emptyListMessage"
-              >All tasks done, keep it up! 🎉</span
-            >
+            <div id="calendarMessageFuture" class="emptyState" style="display: none">
+              <div class="emptyState-icon">📅</div>
+              <p class="emptyState-title">Nothing planned</p>
+              <p class="emptyState-subtitle">No tasks planned for this day.</p>
+            </div>
+            <div id="calendarMessageToday" class="emptyState" style="display: none">
+              <div class="emptyState-icon">🎉</div>
+              <p class="emptyState-title">All tasks done!</p>
+              <p class="emptyState-subtitle">Keep it up, you're on a roll.</p>
+            </div>
           </div>
           <ul id="calendarToDoList"></ul>
         </div>
