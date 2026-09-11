@@ -3,6 +3,24 @@ import { QuoteService } from "./services.js";
 import { elements } from "./elements.js";
 import { Icons } from "./icons.js";
 
+// Tracks whether the browser is running its own native cross-document
+// View Transition for the current page load (see @view-transition in
+// global.css), so initTabNav can skip its own pop-in entrance animation
+// and avoid animating the nav indicator twice.
+let navIndicatorViewTransitionActive = false;
+window.addEventListener(
+  "pagereveal",
+  (e) => {
+    if (e.viewTransition) {
+      navIndicatorViewTransitionActive = true;
+      e.viewTransition.finished.finally(() => {
+        navIndicatorViewTransitionActive = false;
+      });
+    }
+  },
+  { once: true }
+);
+
 export const GRADIENTS = [
   "linear-gradient(90deg, #AD22B6, #FF00FF)",
   "linear-gradient(90deg, #4facfe, #00f2fe)",
@@ -2112,19 +2130,21 @@ export const UI = {
 
     updatePosition();
 
-    window.addEventListener("load", () => {
+    const playEntrance = () => {
       updatePosition();
-      indicator.classList.add("animate");
-    });
+      // Skip the pop-in when the browser is already animating this
+      // element in via its own cross-document view transition.
+      if (!navIndicatorViewTransitionActive) {
+        indicator.classList.add("animate");
+      }
+    };
 
+    window.addEventListener("load", playEntrance);
     window.addEventListener("resize", updatePosition);
 
     if (document.readyState === "complete") {
       updatePosition();
-      setTimeout(() => {
-        updatePosition();
-        indicator.classList.add("animate");
-      }, 50);
+      setTimeout(playEntrance, 50);
     }
 
     // No click handler needed to animate navigation: the `@view-transition`
