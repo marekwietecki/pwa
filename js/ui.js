@@ -2127,22 +2127,9 @@ export const UI = {
       }, 50);
     }
 
-    navItems.forEach((item) => {
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        const href = item.getAttribute("href");
-
-        indicator.style.opacity = "0";
-
-        if (document.startViewTransition) {
-          document.startViewTransition(() => {
-            window.location.href = href;
-          });
-        } else {
-          window.location.href = href;
-        }
-      });
-    });
+    // No click handler needed to animate navigation: the `@view-transition`
+    // rule in global.css opts every same-origin link (including these tab
+    // links) into the browser's native cross-document view transition.
   },
 
   /**

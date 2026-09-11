@@ -6,6 +6,17 @@
 */
 
 /* ====================================================
+  CROSS-DOCUMENT VIEW TRANSITIONS
+  Lets the browser (Chrome/Edge 126+; ignored elsewhere) animate matched
+  elements — like the bottom-nav active pill below — across full page
+  navigations between the app's separate .html pages.
+  ==================================================== */
+
+@view-transition {
+  navigation: auto;
+}
+
+/* ====================================================
   LOCAL FONTS — FREEDOKA & POPPINS (Self-hosted)
   ==================================================== */
 
@@ -915,6 +926,7 @@ body::after {
   left: 0;
   width: 20.5%;
   height: 75%;
+  view-transition-name: tab-indicator;
 
   background: rgba(255, 255, 255, 0.07) !important;
   border-radius: 32px;
