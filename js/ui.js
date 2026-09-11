@@ -1215,12 +1215,17 @@ export const UI = {
     checkbox.checked = isDone;
     checkbox.setAttribute("aria-label", `Mark ${name} as completed`);
 
+    const checkboxWrap = document.createElement("label");
+    checkboxWrap.className = "taskCheckboxWrap";
+    checkboxWrap.setAttribute("for", checkbox.id);
+    checkboxWrap.appendChild(checkbox);
+
     const moreBtn = document.createElement("button");
     moreBtn.className = "moreBtn";
     moreBtn.setAttribute("aria-label", `More options for ${name}`);
     moreBtn.appendChild(UI.createEllipsisIcon());
 
-    taskActions.appendChild(checkbox);
+    taskActions.appendChild(checkboxWrap);
     taskActions.appendChild(moreBtn);
 
     li.appendChild(taskContent);

@@ -148,10 +148,7 @@ main {
 }
 
 .taskItem {
-  padding-top: 14px;
-  padding-bottom: 14px;
-  padding-left: 22px;
-  padding-right: 14px;
+  padding: 16px;
   margin-top: 12px;
   margin-bottom: 16px;
   list-style: none;
@@ -260,7 +257,14 @@ main {
 
 .taskLabel svg {
   -ms-flex-negative: 0;
-  flex-shrink: 0; 
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 6px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  background: var(--glass-bg-whisper);
+  border: 1px solid var(--glass-border-soft);
 }
 
 .task-type-icon {
@@ -324,13 +328,30 @@ main {
   gap: 6px;
 }
 
+.taskCheckboxWrap {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: content-box;
+  cursor: pointer;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  margin-left: 20px;
+}
+
 .taskCheckbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
   -ms-flex-negative: 0;
   flex-shrink: 0;
-  margin-left: 20px;
 }
 
 .moreBtn {
@@ -360,8 +381,14 @@ main {
     -webkit-transform 0.2s ease;
 }
 
+.moreBtn::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
 .moreBtn svg {
-  width: 14px !important; 
+  width: 14px !important;
   height: 14px !important;
   opacity: 0.6;
   -webkit-transition: opacity 0.2s ease;
