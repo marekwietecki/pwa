@@ -47,10 +47,14 @@
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
   padding: 8px 14px;
   border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border-bright);
+  -webkit-box-shadow: var(--shadow-float);
+  box-shadow: var(--shadow-float);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -61,8 +65,8 @@
 }
 
 .habit-dropdown-trigger:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg-strong);
+  border-color: var(--glass-border-bright);
 }
 
 .habit-dropdown-trigger:active {

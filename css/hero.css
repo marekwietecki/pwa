@@ -28,10 +28,10 @@
   margin: 20px auto 0px;
   padding: 32px;
   border-radius: 32px;
-  background: var(--glass-bg-subtle);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-border-bright);
   -webkit-box-shadow: var(--shadow-float);
   box-shadow: var(--shadow-float);
 }
