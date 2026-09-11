@@ -622,15 +622,13 @@
 .activity-grid {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 4px 1fr 4px 1fr 4px 1fr 4px 1fr 4px 1fr 4px 1fr;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  text-align: center;
-  font-size: 0.7rem;
+  grid-template-columns: repeat(7, 11px);
+  gap: 7px;
   -ms-grid-row-align: center;
   align-self: center;
-  width: 100%;
-  max-width: 300px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   margin: 0 auto;
   margin-top: 4px;
 }
@@ -638,19 +636,17 @@
 .activity-day-labels {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 4px 1fr 4px 1fr 4px 1fr 4px 1fr 4px 1fr 4px 1fr;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(7, 11px);
+  gap: 7px;
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   margin: 0 auto;
-  width: 100%;
-  max-width: 300px;
-  -webkit-box-align: end;
-  -ms-flex-align: end;
-  align-items: end;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding-bottom: 4px;
 }
 
 .activity-day-labels div {
@@ -658,27 +654,14 @@
 }
 
 .mini-day {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
   border-radius: 50%;
   background: var(--glass-bg-whisper);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border-soft);
-  -webkit-box-shadow: var(--shadow-delicate);
-  box-shadow: var(--shadow-delicate);
-  color: rgba(255, 255, 255, 0.65);
-  width: 32px;
-  height: 32px;
-  font-size: 12px;
+  width: 11px;
+  height: 11px;
   margin: 0 auto;
+  -webkit-transition: background 0.2s ease, border-color 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .mini-day.habit-done {
@@ -689,6 +672,101 @@
 
 .mini-day.inactive {
   opacity: 0.2;
+}
+
+/* ==========================================================================
+   🫧 YEAR ACTIVITY GRID ("All Habits" combined view)
+   ========================================================================== */
+
+.year-grid-layout {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  gap: 6px;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+
+.year-day-labels {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 20px;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.year-day-labels span {
+  height: 11px;
+  line-height: 11px;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.year-grid-scroll {
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.year-month-labels {
+  display: -ms-grid;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 11px;
+  gap: 3px;
+  height: 16px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+}
+
+.year-activity-grid {
+  display: -ms-grid;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 11px);
+  grid-auto-columns: 11px;
+  gap: 3px;
+}
+
+.year-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.year-dot.tier-0 {
+  background: var(--glass-bg-whisper);
+}
+
+.year-dot.tier-20 {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+.year-dot.tier-40 {
+  background: rgba(33, 150, 243, 0.4);
+}
+
+.year-dot.tier-60 {
+  background: rgba(33, 150, 243, 0.6);
+}
+
+.year-dot.tier-80 {
+  background: rgba(33, 150, 243, 0.8);
+}
+
+.year-dot.tier-100 {
+  background: #2196f3;
 }
 
 .mini-day-label {
@@ -715,6 +793,12 @@
   -ms-flex-align: center;
   align-items: center;
   width: 100%;
+}
+
+.mini-cal-header {
+  width: 100%;
+  -ms-flex-item-align: stretch;
+  align-self: stretch;
 }
 
 .mini-cal-header h4 {

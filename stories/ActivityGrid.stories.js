@@ -29,7 +29,7 @@ function renderActivityGrid(days) {
       return;
     }
     el.className = 'mini-day';
-    el.textContent = dayData.day;
+    el.title = `Day ${dayData.day}`;
     if (dayData.isDone) el.classList.add('habit-done');
     if (!dayData.isScheduled) el.classList.add('inactive');
     grid.appendChild(el);

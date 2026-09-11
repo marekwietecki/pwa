@@ -378,19 +378,40 @@
                   <h4>Month Year</h4>
                   <button id="nextStatMonth">›</button>
                 </div>
-                <div class="activity-day-labels">
-                  <div>M</div>
-                  <div>T</div>
-                  <div>W</div>
-                  <div>T</div>
-                  <div>F</div>
-                  <div>S</div>
-                  <div>S</div>
+
+                <div id="monthActivityView">
+                  <div class="activity-day-labels">
+                    <div>M</div>
+                    <div>T</div>
+                    <div>W</div>
+                    <div>T</div>
+                    <div>F</div>
+                    <div>S</div>
+                    <div>S</div>
+                  </div>
+                  <div id="activityGrid" class="activity-grid"></div>
                 </div>
-                <div id="activityGrid" class="activity-grid"></div>
+
+                <div id="yearActivityView" style="display: none">
+                  <div class="year-grid-layout">
+                    <div class="year-day-labels">
+                      <span></span>
+                      <span>Mon</span>
+                      <span></span>
+                      <span>Wed</span>
+                      <span></span>
+                      <span>Fri</span>
+                      <span></span>
+                    </div>
+                    <div class="year-grid-scroll">
+                      <div id="yearMonthLabels" class="year-month-labels"></div>
+                      <div id="yearActivityGrid" class="year-activity-grid"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="month-stats-row">
+              <div class="month-stats-row" id="monthStatsRow">
                 <div class="stat-box">
                   <span style="display: block; opacity: 0.6">Best Streak</span>
                   <strong id="monthBestStreak">0 days</strong>

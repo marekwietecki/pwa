@@ -124,6 +124,48 @@ export const DataManager = {
     return { days, stats };
   },
 
+  /**
+   * Oblicza dla każdego dnia wskazanego roku procent ukończonych nawyków
+   * spośród wszystkich nawyków zaplanowanych na ten dzień, uwzględniając
+   * wszystkie nawyki użytkownika (widok "All Habits").
+   * @param {number} year - Rok, dla którego liczone są statystyki.
+   * @returns {Promise<{date: Date, dateKey: string, scheduled: number, done: number, percentage: number|null}[]>}
+   */
+  async getYearlyStatsAllHabits(year) {
+    const habits = await DataManager.getHabits();
+    const daysInYear =
+      (new Date(year + 1, 0, 1) - new Date(year, 0, 1)) / 86400000;
+
+    const days = [];
+
+    for (let i = 0; i < daysInYear; i++) {
+      const date = new Date(year, 0, 1 + i);
+      const dateKey = Utils.formatDateKey(date);
+
+      let scheduled = 0;
+      let done = 0;
+
+      habits.forEach((habit) => {
+        const createdDate = new Date(habit.createdAt).setHours(0, 0, 0, 0);
+        if (date < createdDate) return;
+
+        if (Utils.isHabitDue(habit, date)) {
+          scheduled++;
+          if (habit.history && habit.history[dateKey] === true) {
+            done++;
+          }
+        }
+      });
+
+      const percentage =
+        scheduled === 0 ? null : Math.round((done / scheduled) * 100);
+
+      days.push({ date, dateKey, scheduled, done, percentage });
+    }
+
+    return days;
+  },
+
   // TASKS
   async getTasks() {
     return await DB.getAll("tasks");

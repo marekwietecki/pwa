@@ -79,15 +79,29 @@ export function initEventListeners(AppState) {
 
   //mini calendar arrows
   document.getElementById("prevStatMonth")?.addEventListener("click", () => {
-    AppState.statsViewDate.setMonth(AppState.statsViewDate.getMonth() - 1);
-    if (AppState.selectedHabitForStats)
-      UI.renderActivityGrid(AppState.selectedHabitForStats, AppState);
+    if (AppState.selectedHabitForStats === "ALL") {
+      AppState.statsViewDate.setFullYear(
+        AppState.statsViewDate.getFullYear() - 1
+      );
+      UI.renderYearActivityGrid(AppState);
+    } else {
+      AppState.statsViewDate.setMonth(AppState.statsViewDate.getMonth() - 1);
+      if (AppState.selectedHabitForStats)
+        UI.renderActivityGrid(AppState.selectedHabitForStats, AppState);
+    }
   });
 
   document.getElementById("nextStatMonth")?.addEventListener("click", () => {
-    AppState.statsViewDate.setMonth(AppState.statsViewDate.getMonth() + 1);
-    if (AppState.selectedHabitForStats)
-      UI.renderActivityGrid(AppState.selectedHabitForStats, AppState);
+    if (AppState.selectedHabitForStats === "ALL") {
+      AppState.statsViewDate.setFullYear(
+        AppState.statsViewDate.getFullYear() + 1
+      );
+      UI.renderYearActivityGrid(AppState);
+    } else {
+      AppState.statsViewDate.setMonth(AppState.statsViewDate.getMonth() + 1);
+      if (AppState.selectedHabitForStats)
+        UI.renderActivityGrid(AppState.selectedHabitForStats, AppState);
+    }
   });
 
   //calendar arrows

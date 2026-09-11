@@ -1368,6 +1368,37 @@ export const UI = {
     }
 
     const fragment = document.createDocumentFragment();
+
+    const allHabitsItem = document.createElement("div");
+    allHabitsItem.className = "dropdown-item";
+    allHabitsItem.dataset.id = "all";
+    allHabitsItem.innerHTML = `
+      <span class="habit-item-icon">🔥</span>
+      <span class="habit-item-name">All Habits</span>
+    `;
+    if (AppState.selectedHabitForStats === "ALL") {
+      allHabitsItem.classList.add("selected");
+      document.getElementById("currentHabitIcon").textContent = "🔥";
+      document.getElementById("currentHabitName").textContent = "All Habits";
+    }
+    allHabitsItem.onclick = (e) => {
+      e.stopPropagation();
+
+      listContainer
+        .querySelectorAll(".dropdown-item.selected")
+        .forEach((el) => el.classList.remove("selected"));
+      allHabitsItem.classList.add("selected");
+
+      document.getElementById("currentHabitIcon").textContent = "🔥";
+      document.getElementById("currentHabitName").textContent = "All Habits";
+
+      AppState.selectedHabitForStats = "ALL";
+      UI.showAllHabitsStats(AppState);
+
+      dropdownContainer.classList.remove("open");
+    };
+    fragment.appendChild(allHabitsItem);
+
     habits.forEach((habit, index) => {
       const item = document.createElement("div");
       item.className = "dropdown-item";
@@ -1379,7 +1410,7 @@ export const UI = {
     `;
 
       const isSelected =
-      AppState.selectedHabitForStats && AppState.selectedHabitForStats.id === habit.id ||
+      AppState.selectedHabitForStats && AppState.selectedHabitForStats !== "ALL" && AppState.selectedHabitForStats.id === habit.id ||
         (!AppState.selectedHabitForStats && index === 0);
 
       if (isSelected) {
@@ -1504,6 +1535,13 @@ export const UI = {
 
     document.getElementById("habitDetails").style.display = "block";
     document.getElementById("detailHabitName").textContent = habit.name;
+
+    document.querySelector(".crucialHabitStats").style.display = "";
+    document.querySelector(".stat-items-secondary").style.display = "";
+    document.getElementById("monthActivityView").style.display = "";
+    document.getElementById("monthStatsRow").style.display = "";
+    document.getElementById("yearActivityView").style.display = "none";
+
     document.getElementById(
       "detailStreak"
     ).textContent = `${streakValue} ${unit}`;
@@ -1552,7 +1590,7 @@ export const UI = {
     days.forEach((dayData) => {
       const el = document.createElement("div");
       el.className = "mini-day";
-      el.textContent = dayData.day;
+      el.title = `${dayData.day} ${monthLabel ? monthLabel.textContent : ""}`;
 
       if (dayData.isDone) el.classList.add("habit-done");
       if (!dayData.isScheduled) el.classList.add("inactive");
@@ -1563,6 +1601,89 @@ export const UI = {
     grid.appendChild(fragment);
 
     UI.updateActivityStats(stats);
+  },
+
+  /**
+   * Przełącza widok statystyk nawyków na zagregowany widok roczny obejmujący
+   * wszystkie nawyki jednocześnie ("All Habits"), analogicznie do wykresu
+   * aktywności GitHub.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  showAllHabitsStats: (AppState) => {
+    document.getElementById("habitDetails").style.display = "block";
+    document.getElementById("detailHabitName").textContent = "All Habits";
+
+    document.querySelector(".crucialHabitStats").style.display = "none";
+    document.querySelector(".stat-items-secondary").style.display = "none";
+    document.getElementById("monthActivityView").style.display = "none";
+    document.getElementById("monthStatsRow").style.display = "none";
+    document.getElementById("yearActivityView").style.display = "block";
+
+    UI.renderYearActivityGrid(AppState);
+  },
+
+  /**
+   * Generuje roczną siatkę aktywności (styl GitHub) łączącą wszystkie nawyki —
+   * odcień koloru marki odzwierciedla procent ukończonych nawyków danego dnia.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  renderYearActivityGrid: async (AppState) => {
+    const grid = document.getElementById("yearActivityGrid");
+    const monthLabelsEl = document.getElementById("yearMonthLabels");
+    if (!grid || !monthLabelsEl || !AppState) return;
+
+    const year = AppState.statsViewDate.getFullYear();
+
+    const yearLabel = document.querySelector(".activity-section h4");
+    if (yearLabel) yearLabel.textContent = String(year);
+
+    grid.innerHTML = "";
+    monthLabelsEl.innerHTML = "";
+
+    const days = await DataManager.getYearlyStatsAllHabits(year);
+
+    const firstDay = new Date(year, 0, 1);
+    const leadingBlanks = Utils.getMondayFirstDay(firstDay);
+    const cells = [...Array(leadingBlanks).fill(null), ...days];
+
+    const fragment = document.createDocumentFragment();
+    cells.forEach((dayData) => {
+      const dot = document.createElement("div");
+      dot.className = "year-dot";
+
+      if (!dayData || dayData.percentage === null) {
+        dot.classList.add("no-data");
+        if (dayData) dot.title = `${dayData.dateKey}: no habits scheduled`;
+      } else if (dayData.percentage === 0) {
+        dot.classList.add("tier-0");
+        dot.title = `${dayData.dateKey}: 0% completed`;
+      } else {
+        const tier = Math.min(100, Math.ceil(dayData.percentage / 20) * 20);
+        dot.classList.add(`tier-${tier}`);
+        dot.title = `${dayData.dateKey}: ${dayData.percentage}% completed`;
+      }
+
+      fragment.appendChild(dot);
+    });
+    grid.appendChild(fragment);
+
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+    const labelFragment = document.createDocumentFragment();
+    for (let m = 0; m < 12; m++) {
+      const firstOfMonth = new Date(year, m, 1);
+      const dayIndex =
+        Math.round((firstOfMonth - firstDay) / 86400000) + leadingBlanks;
+      const column = Math.floor(dayIndex / 7) + 1;
+
+      const label = document.createElement("span");
+      label.textContent = monthNames[m];
+      label.style.gridColumnStart = column;
+      labelFragment.appendChild(label);
+    }
+    monthLabelsEl.appendChild(labelFragment);
   },
 
   /**
