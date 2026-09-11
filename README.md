@@ -38,6 +38,7 @@ Built with a **Vanilla JavaScript** architecture (no heavy frameworks) to ensure
 * **Motivation Engine:** External REST API (Adviceslip).
 * **Data Storage:** `localStorage` for simple data and `IndexedDB` for more complex one.
 * **Hosting:** Netlify with automated SSL (HTTPS) certification.
+* **Build:** No bundler — the app itself ships as plain ES modules and hand-authored CSS. `esbuild` (`npm run build`) regenerates the `*.min.css`/`*.min.js` files the pages actually load, so source and production stay in sync.
 
 ---
 
