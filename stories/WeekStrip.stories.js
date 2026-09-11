@@ -32,6 +32,7 @@ function buildWeekView({ monthLabel, days, dropdownOpen, months }) {
 
   const list = document.createElement('div');
   list.className = 'month-year-dropdown-list';
+  list.tabIndex = 0;
   if (dropdownOpen) {
     list.style.maxHeight = '260px';
   }
