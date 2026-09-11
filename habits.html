@@ -394,19 +394,38 @@
 
                 <div id="yearActivityView" style="display: none">
                   <div class="year-grid-layout">
-                    <div class="year-day-labels-row">
-                      <span>M</span>
-                      <span>T</span>
-                      <span>W</span>
-                      <span>T</span>
-                      <span>F</span>
-                      <span>S</span>
-                      <span>S</span>
-                    </div>
                     <div class="year-grid-scroll">
-                      <div class="year-grid-row">
-                        <div id="yearMonthLabels" class="year-month-labels"></div>
-                        <div id="yearActivityGrid" class="year-activity-grid"></div>
+                      <div class="year-grid-halves">
+                        <div class="year-grid-half">
+                          <div class="year-day-labels-row">
+                            <span>M</span>
+                            <span>T</span>
+                            <span>W</span>
+                            <span>T</span>
+                            <span>F</span>
+                            <span>S</span>
+                            <span>S</span>
+                          </div>
+                          <div class="year-grid-row">
+                            <div class="year-month-labels" data-half="0"></div>
+                            <div class="year-activity-grid" data-half="0"></div>
+                          </div>
+                        </div>
+                        <div class="year-grid-half">
+                          <div class="year-day-labels-row">
+                            <span>M</span>
+                            <span>T</span>
+                            <span>W</span>
+                            <span>T</span>
+                            <span>F</span>
+                            <span>S</span>
+                            <span>S</span>
+                          </div>
+                          <div class="year-grid-row">
+                            <div class="year-month-labels" data-half="1"></div>
+                            <div class="year-activity-grid" data-half="1"></div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

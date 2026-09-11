@@ -1641,62 +1641,84 @@ export const UI = {
    * @param {Object} AppState - Globalny stan aplikacji.
    */
   renderYearActivityGrid: async (AppState) => {
-    const grid = document.getElementById("yearActivityGrid");
-    const monthLabelsEl = document.getElementById("yearMonthLabels");
-    if (!grid || !monthLabelsEl || !AppState) return;
+    if (!AppState) return;
 
     const year = AppState.statsViewDate.getFullYear();
 
     const yearLabel = document.querySelector(".activity-section h4");
     if (yearLabel) yearLabel.textContent = String(year);
 
-    grid.innerHTML = "";
-    monthLabelsEl.innerHTML = "";
-
     const days = await DataManager.getYearlyStatsAllHabits(year);
-
-    const firstDay = new Date(year, 0, 1);
-    const leadingBlanks = Utils.getMondayFirstDay(firstDay);
-    const cells = [...Array(leadingBlanks).fill(null), ...days];
-
-    const fragment = document.createDocumentFragment();
-    cells.forEach((dayData) => {
-      const dot = document.createElement("div");
-      dot.className = "year-dot";
-
-      if (!dayData || dayData.percentage === null) {
-        dot.classList.add("no-data");
-        if (dayData) dot.title = `${dayData.dateKey}: no habits scheduled`;
-      } else if (dayData.percentage === 0) {
-        dot.classList.add("tier-0");
-        dot.title = `${dayData.dateKey}: 0% completed`;
-      } else {
-        const tier = Math.min(100, Math.ceil(dayData.percentage / 20) * 20);
-        dot.classList.add(`tier-${tier}`);
-        dot.title = `${dayData.dateKey}: ${dayData.percentage}% completed`;
-      }
-
-      fragment.appendChild(dot);
-    });
-    grid.appendChild(fragment);
 
     const monthNames = [
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ];
-    const labelFragment = document.createDocumentFragment();
-    for (let m = 0; m < 12; m++) {
-      const firstOfMonth = new Date(year, m, 1);
-      const dayIndex =
-        Math.round((firstOfMonth - firstDay) / 86400000) + leadingBlanks;
-      const row = Math.floor(dayIndex / 7) + 1;
 
-      const label = document.createElement("span");
-      label.textContent = monthNames[m];
-      label.style.gridRowStart = row;
-      labelFragment.appendChild(label);
-    }
-    monthLabelsEl.appendChild(labelFragment);
+    // Two half-year columns (Jan-Jun, Jul-Dec) side by side, each an
+    // independent GitHub-style week grid, so the wide card width gets
+    // used instead of one narrow column scrolling for the whole year.
+    const halves = [
+      { startMonth: 0, endMonth: 5 },
+      { startMonth: 6, endMonth: 11 },
+    ];
+
+    halves.forEach((half, halfIndex) => {
+      const grid = document.querySelector(
+        `.year-activity-grid[data-half="${halfIndex}"]`
+      );
+      const monthLabelsEl = document.querySelector(
+        `.year-month-labels[data-half="${halfIndex}"]`
+      );
+      if (!grid || !monthLabelsEl) return;
+
+      grid.innerHTML = "";
+      monthLabelsEl.innerHTML = "";
+
+      const halfStart = new Date(year, half.startMonth, 1);
+      const halfEnd = new Date(year, half.endMonth + 1, 0);
+      const halfDays = days.filter(
+        (d) => d.date >= halfStart && d.date <= halfEnd
+      );
+
+      const leadingBlanks = Utils.getMondayFirstDay(halfStart);
+      const cells = [...Array(leadingBlanks).fill(null), ...halfDays];
+
+      const fragment = document.createDocumentFragment();
+      cells.forEach((dayData) => {
+        const dot = document.createElement("div");
+        dot.className = "year-dot";
+
+        if (!dayData || dayData.percentage === null) {
+          dot.classList.add("no-data");
+          if (dayData) dot.title = `${dayData.dateKey}: no habits scheduled`;
+        } else if (dayData.percentage === 0) {
+          dot.classList.add("tier-0");
+          dot.title = `${dayData.dateKey}: 0% completed`;
+        } else {
+          const tier = Math.min(100, Math.ceil(dayData.percentage / 20) * 20);
+          dot.classList.add(`tier-${tier}`);
+          dot.title = `${dayData.dateKey}: ${dayData.percentage}% completed`;
+        }
+
+        fragment.appendChild(dot);
+      });
+      grid.appendChild(fragment);
+
+      const labelFragment = document.createDocumentFragment();
+      for (let m = half.startMonth; m <= half.endMonth; m++) {
+        const firstOfMonth = new Date(year, m, 1);
+        const dayIndex =
+          Math.round((firstOfMonth - halfStart) / 86400000) + leadingBlanks;
+        const row = Math.floor(dayIndex / 7) + 1;
+
+        const label = document.createElement("span");
+        label.textContent = monthNames[m];
+        label.style.gridRowStart = row;
+        labelFragment.appendChild(label);
+      }
+      monthLabelsEl.appendChild(labelFragment);
+    });
   },
 
   /**
