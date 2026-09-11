@@ -1689,11 +1689,11 @@ export const UI = {
       const firstOfMonth = new Date(year, m, 1);
       const dayIndex =
         Math.round((firstOfMonth - firstDay) / 86400000) + leadingBlanks;
-      const column = Math.floor(dayIndex / 7) + 1;
+      const row = Math.floor(dayIndex / 7) + 1;
 
       const label = document.createElement("span");
       label.textContent = monthNames[m];
-      label.style.gridColumnStart = column;
+      label.style.gridRowStart = row;
       labelFragment.appendChild(label);
     }
     monthLabelsEl.appendChild(labelFragment);
