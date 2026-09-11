@@ -128,6 +128,7 @@ export const UI = {
     }
     if (elements.calendarGrid) {
       await UI.renderCalendar(AppState);
+      await UI.renderWeekStrip(AppState);
       await UI.renderCalendarTasks(AppState);
     }
     if (elements.habitSection) await UI.renderHabits(AppState);
@@ -1331,6 +1332,117 @@ export const UI = {
     }
 
     grid.appendChild(fragment);
+  },
+
+  /**
+   * Renderuje pasek jednego tygodnia (widok mobilny kalendarza) zawierający
+   * tydzień, w którym znajduje się AppState.date.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  renderWeekStrip: async (AppState) => {
+    const grid = document.getElementById("weekStrip");
+    const labelsRow = document.getElementById("weekDayLabels");
+    if (!grid || !AppState) return;
+
+    grid.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+
+    if (labelsRow && !labelsRow.childElementCount) {
+      const labelsFragment = document.createDocumentFragment();
+      ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((d) => {
+        const el = document.createElement("div");
+        el.textContent = d;
+        el.className = "day-label";
+        labelsFragment.appendChild(el);
+      });
+      labelsRow.appendChild(labelsFragment);
+    }
+
+    const anchor = AppState.date;
+    const offset = Utils.getMondayFirstDay(anchor);
+    const monday = new Date(anchor);
+    monday.setDate(monday.getDate() - offset);
+
+    const allGoals = await DataManager.getGoals();
+    const todayStr = Utils.formatDateKey(new Date());
+
+    for (let i = 0; i < 7; i++) {
+      const currentLoopDate = new Date(monday);
+      currentLoopDate.setDate(monday.getDate() + i);
+      const dateKey = Utils.formatDateKey(currentLoopDate);
+
+      const el = document.createElement("div");
+      el.className = "day";
+      el.dataset.date = dateKey;
+
+      const dayNumber = document.createElement("span");
+      dayNumber.textContent = currentLoopDate.getDate();
+      el.appendChild(dayNumber);
+
+      const goalsForThisDay = allGoals.filter((g) => g.deadline === dateKey);
+      if (goalsForThisDay.length > 0) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "day-goal-wrapper";
+        if (goalsForThisDay.some((g) => !g.done && dateKey < todayStr)) {
+          wrapper.classList.add("is-overdue");
+        }
+        wrapper.appendChild(UI.createGoalIcon());
+        el.appendChild(wrapper);
+      }
+
+      if (Utils.formatDateKey(AppState.selectedDate) === dateKey) {
+        el.classList.add("active");
+      }
+
+      fragment.appendChild(el);
+    }
+
+    grid.appendChild(fragment);
+
+    const labelEl = document.getElementById("weekMonthYearLabel");
+    if (labelEl) {
+      labelEl.textContent = anchor.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+    }
+  },
+
+  /**
+   * Wypełnia rozwijaną listę wyboru miesiąca/roku (widok tygodniowy, mobile)
+   * elementami z zakresu +/-12 miesięcy od dzisiejszej daty.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  populateMonthYearList: (AppState) => {
+    const listContainer = document.getElementById("monthYearDropdownList");
+    if (!listContainer || !AppState) return;
+
+    listContainer.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    const today = new Date();
+    const selectedKey = `${AppState.date.getFullYear()}-${AppState.date.getMonth()}`;
+
+    for (let offset = -12; offset <= 12; offset++) {
+      const optionDate = new Date(
+        today.getFullYear(),
+        today.getMonth() + offset,
+        1
+      );
+      const item = document.createElement("div");
+      item.className = "month-year-item";
+      item.dataset.year = optionDate.getFullYear();
+      item.dataset.month = optionDate.getMonth();
+      item.textContent = optionDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+
+      const key = `${optionDate.getFullYear()}-${optionDate.getMonth()}`;
+      if (key === selectedKey) item.classList.add("selected");
+
+      fragment.appendChild(item);
+    }
+    listContainer.appendChild(fragment);
   },
 
   /**

@@ -172,6 +172,49 @@
         <div class="calendar-grid-wrapper">
           <div class="calendar-grid" id="calendarGrid"></div>
         </div>
+
+        <div class="week-view">
+          <div class="month-year-dropdown-container" id="monthYearDropdownContainer">
+            <button
+              class="month-year-trigger"
+              id="monthYearTrigger"
+              type="button"
+              aria-label="Choose month and year"
+            >
+              <span id="weekMonthYearLabel"></span>
+              <svg
+                class="dropdown-chevron"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            <div
+              class="month-year-dropdown-list"
+              id="monthYearDropdownList"
+            ></div>
+          </div>
+
+          <div class="week-day-labels" id="weekDayLabels"></div>
+
+          <div class="week-strip-row">
+            <button id="prevWeek" class="monthArrow" aria-label="Previous week">
+              ‹
+            </button>
+            <div class="week-strip" id="weekStrip"></div>
+            <button id="nextWeek" class="monthArrow" aria-label="Next week">
+              ›
+            </button>
+          </div>
+        </div>
       </section>
 
       <section class="calendarToDo">

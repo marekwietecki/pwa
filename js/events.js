@@ -108,28 +108,128 @@ export function initEventListeners(AppState) {
   document.getElementById("prevMonth")?.addEventListener("click", async () => {
     AppState.date.setMonth(AppState.date.getMonth() - 1);
     await UI.renderCalendar(AppState);
+    await UI.renderWeekStrip(AppState);
   });
 
   document.getElementById("nextMonth")?.addEventListener("click", async () => {
     AppState.date.setMonth(AppState.date.getMonth() + 1);
     await UI.renderCalendar(AppState);
+    await UI.renderWeekStrip(AppState);
   });
 
+  // week strip arrows (mobile)
+  document.getElementById("prevWeek")?.addEventListener("click", async () => {
+    AppState.date.setDate(AppState.date.getDate() - 7);
+    await UI.renderCalendar(AppState);
+    await UI.renderWeekStrip(AppState);
+  });
+
+  document.getElementById("nextWeek")?.addEventListener("click", async () => {
+    AppState.date.setDate(AppState.date.getDate() + 7);
+    await UI.renderCalendar(AppState);
+    await UI.renderWeekStrip(AppState);
+  });
+
+  // week strip touch-swipe navigation (mobile)
+  (() => {
+    const stripEl = document.getElementById("weekStrip");
+    if (!stripEl) return;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    stripEl.addEventListener(
+      "touchstart",
+      (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      },
+      { passive: true }
+    );
+
+    stripEl.addEventListener(
+      "touchend",
+      async (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+
+        AppState.date.setDate(AppState.date.getDate() + (dx < 0 ? 7 : -7));
+        await UI.renderCalendar(AppState);
+        await UI.renderWeekStrip(AppState);
+      },
+      { passive: true }
+    );
+  })();
+
   // Klikanie w konkretny dzień kalendarza (Delegacja zdarzeń)
-  elements.calendarGrid?.addEventListener("click", async (e) => {
+  const handleDayClick = async (e, container) => {
     const dayEl = e.target.closest(".day");
 
     if (dayEl && dayEl.dataset.date) {
       AppState.selectedDate = new Date(dayEl.dataset.date);
 
-      elements.calendarGrid
+      container
         .querySelectorAll(".day")
         .forEach((el) => el.classList.remove("active"));
       dayEl.classList.add("active");
 
       await UI.renderCalendarTasks(AppState);
     }
+  };
+
+  elements.calendarGrid?.addEventListener("click", (e) =>
+    handleDayClick(e, elements.calendarGrid)
+  );
+
+  document
+    .getElementById("weekStrip")
+    ?.addEventListener("click", (e) =>
+      handleDayClick(e, document.getElementById("weekStrip"))
+    );
+
+  // month/year dropdown (mobile week view)
+  const monthYearContainer = document.getElementById(
+    "monthYearDropdownContainer"
+  );
+  const monthYearTrigger = document.getElementById("monthYearTrigger");
+  const monthYearList = document.getElementById("monthYearDropdownList");
+
+  const openMonthYearDropdown = () => {
+    UI.populateMonthYearList(AppState);
+    monthYearContainer.classList.add("open");
+    monthYearList.style.maxHeight =
+      Math.min(monthYearList.scrollHeight, 260) + "px";
+  };
+  const closeMonthYearDropdown = () => {
+    monthYearContainer?.classList.remove("open");
+    if (monthYearList) monthYearList.style.maxHeight = "0px";
+  };
+
+  monthYearTrigger?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (monthYearContainer.classList.contains("open")) {
+      closeMonthYearDropdown();
+    } else {
+      openMonthYearDropdown();
+    }
   });
+
+  monthYearList?.addEventListener("click", async (e) => {
+    const item = e.target.closest(".month-year-item");
+    if (!item) return;
+
+    AppState.date = new Date(
+      parseInt(item.dataset.year),
+      parseInt(item.dataset.month),
+      1
+    );
+    await UI.renderCalendar(AppState);
+    await UI.renderWeekStrip(AppState);
+    closeMonthYearDropdown();
+  });
+
+  document.addEventListener("click", closeMonthYearDropdown);
 
   // modal type switch
   document.querySelectorAll(".typePicker").forEach((btn) => {
@@ -545,7 +645,10 @@ export function initEventListeners(AppState) {
    * i sekcji nawyków po dokonaniu zmian lub usunięciu jakiegoś elementu.
    */
   const refreshCurrentView = async (AppState) => {
-    if (elements.calendarGrid) await UI.renderCalendar(AppState);
+    if (elements.calendarGrid) {
+      await UI.renderCalendar(AppState);
+      await UI.renderWeekStrip(AppState);
+    }
 
     const isCalendarView = !!document.getElementById("calendarToDoList");
     const isHeroView = !!document.getElementById("goalsList");
