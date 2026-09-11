@@ -9,7 +9,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_fe795f564e9d2e3"
+    "chromatic": "npx chromatic --project-token=chpt_fe795f564e9d2e3",
+    "build:css": "esbuild css/global.css css/index.css css/hero.css css/habits.css css/calendar.css --minify --outdir=css --entry-names=[name].min",
+    "build:js": "esbuild js/ui.js --minify --format=esm --outdir=js --entry-names=[name].min",
+    "build": "npm run build:css && npm run build:js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +34,7 @@
     "@vitest/browser-playwright": "latest",
     "@vitest/coverage-v8": "latest",
     "chromatic": "^18.7.1",
+    "esbuild": "^0.28.2",
     "playwright": "latest",
     "storybook": "^10.5.10",
     "vitest": "latest"
