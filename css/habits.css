@@ -369,6 +369,20 @@
   display: none;
 }
 
+.habit-details-card {
+  width: 100%;
+  max-width: 480px;
+  margin: 20px auto 0;
+  padding: 28px 20px;
+  border-radius: 32px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-border-bright);
+  -webkit-box-shadow: var(--shadow-float);
+  box-shadow: var(--shadow-float);
+}
+
 .crucialHabitStats {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -548,7 +562,7 @@
   width: 100%;
   -ms-grid-column-align: center;
   justify-self: center;
-  margin-top: 0px;
+  margin-top: 24px;
 }
 
 .progress-value {
