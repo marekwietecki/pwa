@@ -1347,14 +1347,27 @@ export const UI = {
     const habits = await DataManager.getHabits();
     listContainer.innerHTML = "";
 
-    trigger.onclick = (e) => {
-      e.stopPropagation();
-      dropdownContainer.classList.toggle("open");
+    const openDropdown = () => {
+      dropdownContainer.classList.add("open");
+      listContainer.style.maxHeight =
+        Math.min(listContainer.scrollHeight, 300) + "px";
     };
 
-    document.addEventListener("click", () => {
+    const closeDropdown = () => {
       dropdownContainer.classList.remove("open");
-    });
+      listContainer.style.maxHeight = "0px";
+    };
+
+    trigger.onclick = (e) => {
+      e.stopPropagation();
+      if (dropdownContainer.classList.contains("open")) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+    };
+
+    document.addEventListener("click", closeDropdown);
 
     if (habits.length === 0) {
       listContainer.innerHTML = `
@@ -1395,7 +1408,7 @@ export const UI = {
       AppState.selectedHabitForStats = "ALL";
       UI.showAllHabitsStats(AppState);
 
-      dropdownContainer.classList.remove("open");
+      closeDropdown();
     };
     fragment.appendChild(allHabitsItem);
 
@@ -1441,7 +1454,7 @@ export const UI = {
         AppState.selectedHabitForStats = habit;
         UI.showHabitDetails(habit, AppState);
 
-        dropdownContainer.classList.remove("open");
+        closeDropdown();
       };
 
       fragment.appendChild(item);

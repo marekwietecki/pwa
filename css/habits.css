@@ -50,7 +50,7 @@
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur-strong);
   -webkit-backdrop-filter: var(--glass-blur-strong);
-  padding: 8px 14px;
+  padding: 8px 22px;
   border-radius: 32px;
   border: 1px solid var(--glass-border-bright);
   -webkit-box-shadow: var(--shadow-float);
@@ -374,13 +374,6 @@
   max-width: 480px;
   margin: 20px auto 0;
   padding: 28px 20px;
-  border-radius: 32px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur-strong);
-  -webkit-backdrop-filter: var(--glass-blur-strong);
-  border: 1px solid var(--glass-border-bright);
-  -webkit-box-shadow: var(--shadow-float);
-  box-shadow: var(--shadow-float);
 }
 
 .crucialHabitStats {
