@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v25";
+const CACHE_VERSION = "v26";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
 // html
@@ -8,14 +8,14 @@ const APP_ASSETS = [
   "./habits.html",
   "./hero.html",
 
-  // css
-  "./css/global.css",
-  "./css/index.css",
-  "./css/calendar.css",
-  "./css/habits.css",
-  "./css/hero.css",
+  // css (the pages load the built .min.css files, not these sources)
+  "./css/global.min.css",
+  "./css/index.min.css",
+  "./css/calendar.min.css",
+  "./css/habits.min.css",
+  "./css/hero.min.css",
 
-  // js 
+  // js
   "./js/app.js",
   "./js/data.js",
   "./js/db.js",
@@ -24,7 +24,7 @@ const APP_ASSETS = [
   "./js/icons.js",
   "./js/onboarding.js",
   "./js/services.js",
-  "./js/ui.js",
+  "./js/ui.min.js",
 
   // fonts
   "./assets/fonts/fredoka-v17-latin-600.woff2",
