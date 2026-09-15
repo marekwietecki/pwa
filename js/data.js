@@ -231,13 +231,22 @@ export const DataManager = {
     return await DB.put("habits", habit);
   },
 
-  async updateHabitDetails(habitId, newFrequency, newSchedule, newStartDate) {
+  async updateHabitDetails(
+    habitId,
+    newFrequency,
+    newSchedule,
+    newStartDate,
+    newName,
+    newIcon
+  ) {
     const habit = await DB.get("habits", habitId);
     if (!habit) return false;
 
     habit.frequency = newFrequency;
     habit.schedule = newSchedule;
     habit.createdAt = new Date(newStartDate).toISOString();
+    if (newName) habit.name = newName;
+    if (newIcon) habit.icon = newIcon;
 
     return await DB.put("habits", habit);
   },

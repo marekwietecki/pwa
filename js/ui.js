@@ -456,15 +456,11 @@ export const UI = {
         habitIcon.style.flexDirection = "column";
       }
 
+      // Name and icon stay visible in both create and edit mode (habits
+      // don't have a location field, so that stays hidden either way).
       if (isEdit) {
         if (dSection) dSection.style.display = "flex";
         if (dateTitle) dateTitle.textContent = "Start Date";
-        if (nameSection) nameSection.style.display = "none";
-        if (lSection) lSection.style.display = "none";
-        if (habitIcon) habitIcon.style.display = "none";
-      } else {
-        if (nameSection) nameSection.style.display = "flex";
-        if (lSection) lSection.style.display = "flex";
       }
     }
 

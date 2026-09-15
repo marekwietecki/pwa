@@ -26,6 +26,10 @@ async function openAddTaskModal(AppState) {
 
   UI.setModalMode("create", AppState.currentCreateType);
 
+  if (page.includes("calendar.html") && elements.taskDate) {
+    elements.taskDate.value = Utils.formatDateKey(AppState.selectedDate);
+  }
+
   await UI.fillModalHabitSelect();
 
   elements.modalOverlay.classList.add("open");
@@ -538,12 +542,22 @@ export function initEventListeners(AppState) {
       const newFreq = document.getElementById("habitFrequency").value;
       const newStartDate = document.getElementById("taskDate").value;
       const newSchedule = getHabitSchedule();
+      let newName = elements.taskName.value.trim();
+      if (newName) newName = newName.charAt(0).toUpperCase() + newName.slice(1);
+      const newIcon = UI.selectedHabitIcon;
+
+      if (!newName) {
+        UI.showModalMessage("Provide a name! ✍️");
+        throw new Error("Validation failed");
+      }
 
       await DataManager.updateHabitDetails(
         id,
         newFreq,
         newSchedule,
-        newStartDate
+        newStartDate,
+        newName,
+        newIcon
       );
 
       const updatedHabit = await DataManager.getItemByTypeAndId("habit", id);
