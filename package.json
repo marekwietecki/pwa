@@ -12,7 +12,7 @@
     "chromatic": "npx chromatic --project-token=chpt_fe795f564e9d2e3",
     "build:css": "esbuild css/global.css css/index.css css/hero.css css/habits.css css/calendar.css --minify --outdir=css --entry-names=[name].min",
     "build:js": "esbuild js/ui.js --minify --format=esm --outdir=js --entry-names=[name].min",
-    "build": "npm run build:css && npm run build:js"
+    "build": "npm run build:css && npm run build:js && node scripts/bump-sw-cache.js"
   },
   "repository": {
     "type": "git",
