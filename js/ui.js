@@ -1672,7 +1672,7 @@ export const UI = {
 
     const frequencyText = Utils.getFrequencyText(habit);
     const startDate = habit.createdAt
-      ? new Date(habit.createdAt).toLocaleDateString("en-US")
+      ? Utils.formatDisplayDate(new Date(habit.createdAt))
       : "Unknown";
     const unit = Utils.getStreakUnit(habit.frequency, streakValue);
 

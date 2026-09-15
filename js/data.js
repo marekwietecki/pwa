@@ -29,6 +29,15 @@ export const Utils = {
     return `${year}-${month}-${day}`;
   },
 
+  // EU-style display date (dd.mm.yyyy), matching the app's own date-input
+  // placeholder convention, instead of the browser's locale-dependent format.
+  formatDisplayDate: (date) => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  },
+
   isHabitDue(habit, date) {
     const dayOfWeek = date.getDay();
     const dayOfMonth = date.getDate();
