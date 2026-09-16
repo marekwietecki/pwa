@@ -2070,7 +2070,7 @@ export const UI = {
 
     setTimeout(() => {
       badge.remove();
-    }, 800);
+    }, 3000);
   },
 
   triggerTaskXpAnimation(event, xpValue, newBarPercentage) {

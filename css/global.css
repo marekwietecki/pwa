@@ -2391,8 +2391,8 @@ input.error {
   -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
-  -webkit-animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  animation: taskXpFloatUp 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  -webkit-animation: taskXpFloatUp 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: taskXpFloatUp 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @-webkit-keyframes taskXpFloatUp {
@@ -2401,20 +2401,20 @@ input.error {
     -webkit-transform: translate(-50%, 10px) scale(0.85);
     transform: translate(-50%, 10px) scale(0.85);
   }
-  20% {
+  8% {
     opacity: 1;
     -webkit-transform: translate(-50%, 0) scale(1);
     transform: translate(-50%, 0) scale(1);
   }
-  60% {
+  85% {
     opacity: 1;
-    -webkit-transform: translate(-50%, -20px) scale(1);
-    transform: translate(-50%, -20px) scale(1);
+    -webkit-transform: translate(-50%, 0) scale(1);
+    transform: translate(-50%, 0) scale(1);
   }
   100% {
     opacity: 0;
-    -webkit-transform: translate(-50%, -35px) scale(0.9);
-    transform: translate(-50%, -35px) scale(0.9);
+    -webkit-transform: translate(-50%, -20px) scale(0.95);
+    transform: translate(-50%, -20px) scale(0.95);
   }
 }
 
@@ -2424,20 +2424,20 @@ input.error {
     -webkit-transform: translate(-50%, 10px) scale(0.85);
     transform: translate(-50%, 10px) scale(0.85);
   }
-  20% {
+  8% {
     opacity: 1;
     -webkit-transform: translate(-50%, 0) scale(1);
     transform: translate(-50%, 0) scale(1);
   }
-  60% {
+  85% {
     opacity: 1;
-    -webkit-transform: translate(-50%, -20px) scale(1);
-    transform: translate(-50%, -20px) scale(1);
+    -webkit-transform: translate(-50%, 0) scale(1);
+    transform: translate(-50%, 0) scale(1);
   }
   100% {
     opacity: 0;
-    -webkit-transform: translate(-50%, -35px) scale(0.9);
-    transform: translate(-50%, -35px) scale(0.9);
+    -webkit-transform: translate(-50%, -20px) scale(0.95);
+    transform: translate(-50%, -20px) scale(0.95);
   }
 }
 
