@@ -277,6 +277,20 @@ export function initEventListeners(AppState) {
     if (target.classList.contains("taskCheckbox")) {
       const isChecked = target.checked;
 
+      if (
+        isChecked &&
+        (type === "task" || type === "habit") &&
+        dateKey &&
+        dateKey > Utils.formatDateKey(new Date())
+      ) {
+        target.checked = false;
+        UI.showToast(
+          "You cannot check a future task. Build your habits day by day!",
+          "error"
+        );
+        return;
+      }
+
       try {
         if (type === "task") {
           await DataManager.toggleTaskDone(id, isChecked);
