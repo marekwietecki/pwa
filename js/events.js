@@ -17,16 +17,19 @@ bubbleSound.volume = 0.4;
 async function openAddTaskModal(AppState) {
   if (!elements.modalOverlay) return;
 
+  // Netlify serves these pages with the .html extension stripped from
+  // internal links (pretty URLs), so pathname is "/calendar", not
+  // "/calendar.html" — match on the page name alone, not the extension.
   const page = window.location.pathname;
-  if (page.includes("hero.html")) AppState.currentCreateType = "goal";
-  else if (page.includes("habits.html")) AppState.currentCreateType = "habit";
+  if (page.includes("hero")) AppState.currentCreateType = "goal";
+  else if (page.includes("habits")) AppState.currentCreateType = "habit";
   else AppState.currentCreateType = "task";
 
   UI.resetModal(AppState);
 
   UI.setModalMode("create", AppState.currentCreateType);
 
-  if (page.includes("calendar.html") && elements.taskDate) {
+  if (page.includes("calendar") && elements.taskDate) {
     elements.taskDate.value = Utils.formatDateKey(AppState.selectedDate);
   }
 
