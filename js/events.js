@@ -337,6 +337,9 @@ export function initEventListeners(AppState) {
               .play()
               .catch((err) => console.log("Audio block bypass:", err));
           }
+        } else if (isChecked && type !== "goal") {
+          // Zadanie/nawyk z przeszłości - można odznaczyć, ale bez XP.
+          UI.createFloatingBadge(e, "No points for past tasks");
         }
 
         // REFRESH UI - bezpieczne 300ms na wzniesienie się bąbelka

@@ -2035,15 +2035,15 @@ export const UI = {
    * Odpowiada za mikrointerakcję przyznawania XP: aktualizuje szerokość paska postępu
    * oraz tworzy pływający, znikający bąbelek tekstu "+XP" w miejscu kliknięcia elementu.
    */
-  triggerTaskXpAnimation(event, xpValue, newBarPercentage) {
-    const progressBar = document.getElementById("xp-progress-bar");
-    if (progressBar) {
-      progressBar.style.width = `${newBarPercentage}%`;
-    }
-
+  /**
+   * Tworzy pływający "bąbelek" z dowolnym tekstem tuż nad klikniętym elementem
+   * (np. checkboxem zadania), używany zarówno dla zdobytego XP, jak i innych
+   * krótkich komunikatów kontekstowych.
+   */
+  createFloatingBadge(event, text) {
     const clickedElement = event.currentTarget || event.target;
     if (!clickedElement) {
-      console.warn("🫧 XP Animation: Brak klikniętego elementu w evencie!");
+      console.warn("🫧 Floating badge: Brak klikniętego elementu w evencie!");
       return;
     }
 
@@ -2051,30 +2051,35 @@ export const UI = {
 
     if (rect.width === 0 && rect.height === 0) {
       console.warn(
-        "🫧 XP Animation: Element zniknął z DOM przed pobraniem pozycji! Uruchom animację ułamek sekundy wcześniej."
+        "🫧 Floating badge: Element zniknął z DOM przed pobraniem pozycji! Uruchom animację ułamek sekundy wcześniej."
       );
       return;
     }
 
-    const xpBadge = document.createElement("div");
-    xpBadge.className = "task-xp-badge";
-    xpBadge.textContent = `+${xpValue} XP 🫧`;
+    const badge = document.createElement("div");
+    badge.className = "task-xp-badge";
+    badge.textContent = text;
 
     const targetLeft = rect.left + window.scrollX + rect.width / 2;
     const targetTop = rect.top + window.scrollY - 15;
 
-    xpBadge.style.left = `${targetLeft}px`;
-    xpBadge.style.top = `${targetTop}px`;
+    badge.style.left = `${targetLeft}px`;
+    badge.style.top = `${targetTop}px`;
 
-    console.log(
-      `🫧 XP Animation: Tworzę bąbelek na pozycji X: ${targetLeft}, Y: ${targetTop}`
-    );
-
-    document.body.appendChild(xpBadge);
+    document.body.appendChild(badge);
 
     setTimeout(() => {
-      xpBadge.remove();
+      badge.remove();
     }, 800);
+  },
+
+  triggerTaskXpAnimation(event, xpValue, newBarPercentage) {
+    const progressBar = document.getElementById("xp-progress-bar");
+    if (progressBar) {
+      progressBar.style.width = `${newBarPercentage}%`;
+    }
+
+    UI.createFloatingBadge(event, `+${xpValue} XP 🫧`);
   },
 
   /**
