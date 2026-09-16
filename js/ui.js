@@ -205,20 +205,6 @@ export const UI = {
   },
 
   /**
-   * Rozpoznaje i zwraca domyślny typ formularza (task/habit/goal) na podstawie bieżącego adresu URL lub hasha.
-   * @returns {"task" | "habit" | "goal"} Rozpoznany typ widoku.
-   */
-  detectModalDefaultType: () => {
-    const path = window.location.hash || window.location.pathname;
-    const cleanPath = path.toLowerCase();
-
-    if (cleanPath.includes("goal")) return "goal";
-    if (cleanPath.endsWith("habits") || cleanPath.includes("#habit"))
-      return "habit";
-    return "task";
-  },
-
-  /**
    * Resetuje wartości wszystkich głównych pól tekstowych i datowników w modalu.
    */
   clearModalInputs: () => {
