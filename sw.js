@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v1789547458961";
+const CACHE_VERSION = "v1789547659522";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
 // html

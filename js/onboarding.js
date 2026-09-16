@@ -109,7 +109,7 @@ const onboardingSteps = [
     title: "You Are Ready, Hero! ⚔️",
     renderBody: (container, state) => `
       <div class="onboarding-step-content" style="text-align: center;">
-        <p style="font-size: 16px; margin-bottom: 16px;">Welcome to the ranks, <strong>@${state.userName}</strong>! Your character profile has been successfully initialized.</p>
+        <p style="font-size: 16px; margin-bottom: 16px;">Welcome to the ranks, <strong>${state.userName}</strong>! Your character profile has been successfully initialized.</p>
         <div style="
           background: rgba(255, 255, 255, 0.04); 
           border: 1px solid rgba(255, 255, 255, 0.1); 
