@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v1789547269136";
+const CACHE_VERSION = "v1789547458961";
 const CACHE_NAME = `habitHero-cache-${CACHE_VERSION}`;
 const APP_ASSETS = [
 // html
@@ -52,6 +52,7 @@ const APP_ASSETS = [
 
   // sounds
   "./assets/sounds/bubble_pop.mp3",
+  "./assets/sounds/future_task_denied.mp3",
 ];
 
 console.log("🔧 SW: Inicjalizacja - Cache Name:", CACHE_NAME);

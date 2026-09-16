@@ -10,6 +10,11 @@ import { UI } from "./ui.min.js";
 const bubbleSound = new Audio("./assets/sounds/bubble_pop.mp3");
 bubbleSound.volume = 0.4;
 
+const futureTaskDeniedSound = new Audio(
+  "./assets/sounds/future_task_denied.mp3"
+);
+futureTaskDeniedSound.volume = 0.4;
+
 /**
  * Otwiera modal dodawania nowego elementu, automatycznie dopasowując typ tworzonego 
  * obiektu (cel, nawyk, zadanie) na podstawie aktualnej ścieżki URL podstrony aplikacji.
@@ -288,6 +293,10 @@ export function initEventListeners(AppState) {
           "You cannot check a future task. Build your habits day by day!",
           "error"
         );
+        futureTaskDeniedSound.currentTime = 0;
+        futureTaskDeniedSound
+          .play()
+          .catch((err) => console.log("Audio block bypass:", err));
         return;
       }
 
