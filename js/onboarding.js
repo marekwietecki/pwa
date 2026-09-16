@@ -106,7 +106,7 @@ const onboardingSteps = [
   },
   {
     id: 4,
-    title: "You Are Ready, Hero! ⚔️",
+    title: "You Are Ready! ⚔️",
     renderBody: (container, state) => `
       <div class="onboarding-step-content" style="text-align: center;">
         <p style="font-size: 16px; margin-bottom: 16px;">Welcome to the ranks, <strong>${state.userName}</strong>! Your character profile has been successfully initialized.</p>
@@ -166,7 +166,6 @@ export const OnboardingService = {
       if (step.id === 4) {
         const freshStats = await DataManager.getUserStats();
         state.userName = freshStats.userName || "Hero";
-        step.title = `You Are Ready, ${state.userName}! ⚔️`;
       }
 
       const card = document.createElement("div");
