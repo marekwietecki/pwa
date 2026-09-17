@@ -53,6 +53,7 @@ export const UI = {
   createDeadlineIcon: () => Icons.createDeadlineIcon(),
   createLocationIcon: () => Icons.createLocationIcon(),
   createRepeatIcon: () => Icons.createRepeatIcon(),
+  createLinkIcon: () => Icons.createLinkIcon(),
   createCheckIcon: () => Icons.createCheckIcon(),
   createEllipsisIcon: () => Icons.createEllipsisIcon(),
   createDeleteIcon: () => Icons.createDeleteIcon(),
@@ -1064,9 +1065,9 @@ export const UI = {
           const linkedSpan = document.createElement("span");
           linkedSpan.className = "linkedHabitBadge";
 
-          const icon = UI.createRepeatIcon
-            ? UI.createRepeatIcon()
-            : document.createTextNode("🔄 ");
+          const icon = UI.createLinkIcon
+            ? UI.createLinkIcon()
+            : document.createTextNode("🔗 ");
           icon.classList.add("small-icon");
 
           linkedSpan.appendChild(icon);
