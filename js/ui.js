@@ -1050,17 +1050,17 @@ export const UI = {
 
       const linkedHabitIds = UI.getLinkedHabitIds(data);
       if (linkedHabitIds.length) {
-        const linkedNames = [];
+        const linkedHabits = [];
         linkedHabitIds.forEach((id) => {
           const habit = allHabits.find((h) => Number(h.id) === Number(id));
           if (habit) {
-            linkedNames.push(habit.name);
+            linkedHabits.push(habit);
           } else {
             console.warn("Nie znaleziono nawyku o ID:", id);
           }
         });
 
-        if (linkedNames.length) {
+        if (linkedHabits.length) {
           const linkedSpan = document.createElement("span");
           linkedSpan.className = "linkedHabitBadge";
 
@@ -1071,17 +1071,21 @@ export const UI = {
 
           linkedSpan.appendChild(icon);
           linkedSpan.appendChild(
-            document.createTextNode(` Linked: ${linkedNames.join(", ")}`)
+            document.createTextNode(
+              ` Linked: ${linkedHabits.map((h) => h.name).join(", ")}`
+            )
           );
           metaWrapper.appendChild(linkedSpan);
 
-          const todayKey = Utils.formatDateKey(new Date());
-          const doneCount = linkedHabitIds.filter((id) => {
-            const habit = allHabits.find((h) => Number(h.id) === Number(id));
-            return !!(habit?.history && habit.history[todayKey]);
-          }).length;
-          const donePercent = Math.round(
-            (doneCount / linkedHabitIds.length) * 100
+          // Same per-habit "effectiveness" used on the habit detail page
+          // (days completed / days scheduled since the habit's own
+          // createdAt) - a goal's habit progress is the mean of that
+          // across its linked habits, not a single day's checkbox state.
+          const avgEffectiveness = Math.round(
+            linkedHabits.reduce(
+              (sum, h) => sum + DataManager.calculateHabitProgress(h),
+              0
+            ) / linkedHabits.length
           );
 
           const progressSpan = document.createElement("span");
@@ -1095,7 +1099,7 @@ export const UI = {
           progressSpan.appendChild(progressIcon);
           progressSpan.appendChild(
             document.createTextNode(
-              ` ${doneCount}/${linkedHabitIds.length} linked habits done today (${donePercent}%)`
+              ` Linked habits effectiveness: ${avgEffectiveness}% avg`
             )
           );
           metaWrapper.appendChild(progressSpan);
