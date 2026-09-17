@@ -312,6 +312,38 @@
               <div id="monthDaysGrid" class="month-selector-grid"></div>
             </div>
           </div>
+
+          <div class="measurableSection">
+            <label class="habit-checkbox-row">
+              <input type="checkbox" id="habitMeasurableToggle" />
+              <span>Make this habit measurable</span>
+            </label>
+            <div id="measurableFields" class="measurableFieldsRow" hidden>
+              <div class="quantitySection">
+                <label class="modalSubTitle" for="habitTargetQuantity"
+                  >Target quantity</label
+                >
+                <input
+                  type="number"
+                  id="habitTargetQuantity"
+                  class="modal-text-input"
+                  min="1"
+                  step="1"
+                  placeholder="e.g. 10"
+                />
+              </div>
+              <div class="unitSection">
+                <label class="modalSubTitle" for="habitUnit">Unit</label>
+                <input
+                  type="text"
+                  id="habitUnit"
+                  class="modal-text-input"
+                  maxlength="20"
+                  placeholder="e.g. mins, reps"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="goalSection" style="display: none">
@@ -425,6 +457,68 @@
         <div class="level-up-text">
           <span class="level-up-subtitle">LEVEL UP!</span>
           <span class="level-up-title">You just achieved higher level!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="habitProgressOverlay">
+      <div class="modal-sheet habit-progress-sheet">
+        <div class="habit-progress-header">
+          <span id="habitProgressIcon" class="habit-progress-icon">💧</span>
+          <h3 id="habitProgressName" class="habit-progress-name">Habit</h3>
+        </div>
+        <p class="habit-progress-date" id="habitProgressDateLabel"></p>
+
+        <div class="habit-progress-track">
+          <div id="habitProgressBarFill" class="habit-progress-fill"></div>
+        </div>
+
+        <div class="habit-progress-stepper">
+          <button
+            type="button"
+            id="habitProgressDecBtn"
+            class="habit-progress-step-btn"
+            aria-label="Decrease"
+          >
+            −
+          </button>
+          <div class="habit-progress-amount-wrap">
+            <input
+              type="number"
+              id="habitProgressAmountInput"
+              class="habit-progress-amount-input"
+              min="0"
+            />
+            <span class="habit-progress-target-label"
+              >/ <span id="habitProgressTarget"></span>
+              <span id="habitProgressUnit"></span
+            ></span>
+          </div>
+          <button
+            type="button"
+            id="habitProgressIncBtn"
+            class="habit-progress-step-btn"
+            aria-label="Increase"
+          >
+            +
+          </button>
+        </div>
+
+        <div class="confirm-dialog-actions">
+          <button
+            type="button"
+            id="habitProgressCancelBtn"
+            class="confirm-dialog-btn confirm-dialog-cancel"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            id="habitProgressSaveBtn"
+            class="confirm-dialog-btn confirm-dialog-confirm"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>

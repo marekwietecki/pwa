@@ -231,24 +231,51 @@ export const DataManager = {
     return await DB.put("habits", habit);
   },
 
-  async updateHabitDetails(
-    habitId,
-    newFrequency,
-    newSchedule,
-    newStartDate,
-    newName,
-    newIcon
-  ) {
+  async updateHabitDetails(habitId, updates) {
     const habit = await DB.get("habits", habitId);
     if (!habit) return false;
 
-    habit.frequency = newFrequency;
-    habit.schedule = newSchedule;
-    habit.createdAt = new Date(newStartDate).toISOString();
-    if (newName) habit.name = newName;
-    if (newIcon) habit.icon = newIcon;
+    habit.frequency = updates.frequency;
+    habit.schedule = updates.schedule;
+    habit.createdAt = new Date(updates.startDate).toISOString();
+    if (updates.name) habit.name = updates.name;
+    if (updates.icon) habit.icon = updates.icon;
+
+    habit.measurable = !!updates.measurable;
+    if (habit.measurable) {
+      habit.targetQuantity = updates.targetQuantity;
+      habit.unit = updates.unit;
+    } else {
+      delete habit.targetQuantity;
+      delete habit.unit;
+    }
 
     return await DB.put("habits", habit);
+  },
+
+  /**
+   * Zapisuje dzienny postęp (ilość) dla mierzalnego nawyku. Dzień jest
+   * automatycznie oznaczany jako ukończony (history[dateKey] = true), gdy
+   * zalogowana ilość osiąga lub przekracza cel - bez oddzielnego ręcznego
+   * potwierdzenia, zgodnie z tym samym mechanizmem, którego używają
+   * streak/effectiveness dla zwykłych nawyków.
+   */
+  async logHabitProgress(habitId, dateKey, amount) {
+    const habit = await DB.get("habits", habitId);
+    if (!habit) return false;
+
+    const clampedAmount = Math.max(0, amount);
+    habit.progress = habit.progress || {};
+    habit.history = habit.history || {};
+
+    if (clampedAmount > 0) habit.progress[dateKey] = clampedAmount;
+    else delete habit.progress[dateKey];
+
+    if (clampedAmount >= habit.targetQuantity) habit.history[dateKey] = true;
+    else delete habit.history[dateKey];
+
+    await DB.put("habits", habit);
+    return habit;
   },
 
   // GOALS

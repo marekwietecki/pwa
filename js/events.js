@@ -70,6 +70,13 @@ export function initEventListeners(AppState) {
     });
   }
 
+  if (elements.habitMeasurableToggle && elements.measurableFields) {
+    elements.habitMeasurableToggle.addEventListener("change", () => {
+      elements.measurableFields.hidden =
+        !elements.habitMeasurableToggle.checked;
+    });
+  }
+
   // XP change
   document.addEventListener("statsUpdated", () => {
     UI.updateXPBar();
@@ -219,6 +226,15 @@ export function initEventListeners(AppState) {
     monthYearContainer.classList.add("open");
     monthYearList.style.maxHeight =
       Math.min(monthYearList.scrollHeight, 260) + "px";
+
+    // Land on the current month centered in the scrollable list instead of
+    // wherever the top of the 25-month range happens to be - most relevant
+    // on small screens where the dropdown only shows a few rows at once.
+    requestAnimationFrame(() => {
+      monthYearList
+        .querySelector(".month-year-item.selected")
+        ?.scrollIntoView({ block: "center", behavior: "auto" });
+    });
   };
   const closeMonthYearDropdown = () => {
     monthYearContainer?.classList.remove("open");
@@ -266,6 +282,39 @@ export function initEventListeners(AppState) {
     });
   });
 
+  /**
+   * Zapisuje ilość dla mierzalnego nawyku danego dnia i - jeśli to
+   * zmieniło stan ukończenia na dziś - nalicza/cofa XP tym samym torem co
+   * zwykły checkbox. Współdzielone przez szybkie dopełnienie checkboxem
+   * (ustaw = target/0) i bąbelek logowania (dowolna wpisana wartość).
+   */
+  const applyHabitProgress = async (habit, dateKey, amount) => {
+    const wasDone = habit.history?.[dateKey] === true;
+    const updatedHabit = await DataManager.logHabitProgress(
+      habit.id,
+      dateKey,
+      amount
+    );
+    if (!updatedHabit) return null;
+    const isNowDone = updatedHabit.history?.[dateKey] === true;
+
+    const todayKey = Utils.formatDateKey(new Date());
+    if (dateKey === todayKey && isNowDone !== wasDone) {
+      await handleCompletion("habit", updatedHabit, isNowDone);
+      if (isNowDone) {
+        const xpValue = LevelManager.calculateXP("habit", updatedHabit);
+        UI.showToast(`Habit completed! +${xpValue} XP 🫧`, "info");
+        bubbleSound.currentTime = 0;
+        bubbleSound
+          .play()
+          .catch((err) => console.log("Audio block bypass:", err));
+      }
+    }
+
+    await refreshCurrentView(AppState);
+    return updatedHabit;
+  };
+
   // DELEGACJA ZDARZEŃ DLA LIST
   const handleListAction = async (e) => {
     const target = e.target;
@@ -307,6 +356,34 @@ export function initEventListeners(AppState) {
         return;
       }
 
+      // A measurable habit's checkbox is a quick-complete shortcut, not a
+      // partial-progress editor: checking it fills the amount straight to
+      // the target (e.g. 4/8 -> 8/8) and unchecking resets it to 0. Logging
+      // an in-between amount (3 out of 5) happens via the row tap instead
+      // (see the ".taskContent" branch below), which opens the bubble.
+      if (type === "habit" && itemObject?.measurable) {
+        target.checked = !isChecked;
+
+        if (isChecked && dateKey && dateKey > Utils.formatDateKey(new Date())) {
+          UI.showToast(
+            "You cannot log a future habit. Build your habits day by day!",
+            "error"
+          );
+          futureTaskDeniedSound.currentTime = 0;
+          futureTaskDeniedSound
+            .play()
+            .catch((err) => console.log("Audio block bypass:", err));
+          return;
+        }
+
+        await applyHabitProgress(
+          itemObject,
+          dateKey,
+          isChecked ? itemObject.targetQuantity : 0
+        );
+        return;
+      }
+
       // Completing a goal is a bigger, harder-to-notice action than
       // checking off a task/habit (it awards XP and drops the goal out
       // of the active list entirely), so guard the one-tap checkbox with
@@ -317,7 +394,7 @@ export function initEventListeners(AppState) {
         target.checked = false;
         const goalName = itemObject?.name || "this goal";
         const confirmed = await UI.confirmDialog(
-          `Mark "${goalName}" as complete? 🎉`,
+          `Mark "${goalName}" as complete?`,
           "Complete 🎉"
         );
         if (!confirmed) return;
@@ -382,7 +459,30 @@ export function initEventListeners(AppState) {
         console.error("Błąd podczas aktualizacji statusu:", err);
         target.checked = !isChecked;
       }
-    } 
+    } else if (
+      type === "habit" &&
+      itemObject?.measurable &&
+      target.closest(".taskContent")
+    ) {
+      // Tapping the row itself (icon/name/meta, not the checkbox) opens the
+      // logging bubble so partial amounts (3 out of 5) can be entered - the
+      // checkbox above stays a quick "fill to target" shortcut.
+      if (dateKey && dateKey > Utils.formatDateKey(new Date())) {
+        UI.showToast(
+          "You cannot log a future habit. Build your habits day by day!",
+          "error"
+        );
+        futureTaskDeniedSound.currentTime = 0;
+        futureTaskDeniedSound
+          .play()
+          .catch((err) => console.log("Audio block bypass:", err));
+        return;
+      }
+
+      UI.openHabitProgressModal(itemObject, dateKey, (finalAmount) =>
+        applyHabitProgress(itemObject, dateKey, finalAmount)
+      );
+    }
 
     const moreBtn = target.closest(".moreBtn");
     if (moreBtn) {
@@ -572,6 +672,25 @@ export function initEventListeners(AppState) {
   };
 
   /**
+   * Odczytuje z modala ustawienia "mierzalności" nawyku (przełącznik +
+   * docelowa ilość + jednostka). Zwraca measurable: false gdy przełącznik
+   * jest wyłączony lub ilość jest niepoprawna.
+   */
+  const getMeasurableFields = () => {
+    const measurable = !!elements.habitMeasurableToggle?.checked;
+    if (!measurable) return { measurable: false };
+
+    const targetQuantity = parseFloat(elements.habitTargetQuantity?.value);
+    const unit = elements.habitUnit?.value.trim();
+
+    if (!targetQuantity || targetQuantity <= 0 || !unit) {
+      return { measurable: false, invalid: true };
+    }
+
+    return { measurable: true, targetQuantity, unit };
+  };
+
+  /**
    * Pomocnicza funkcja obsługująca proces walidacji oraz zapisu zmodyfikowanych danych 
    * istniejącego już celu (Goal) bądź nawyku (Habit) w bazie danych.
    */
@@ -604,14 +723,20 @@ export function initEventListeners(AppState) {
         throw new Error("Validation failed");
       }
 
-      await DataManager.updateHabitDetails(
-        id,
-        newFreq,
-        newSchedule,
-        newStartDate,
-        newName,
-        newIcon
-      );
+      const measurableFields = getMeasurableFields();
+      if (measurableFields.invalid) {
+        UI.showModalMessage("Provide a valid quantity and unit! 🔢");
+        throw new Error("Validation failed");
+      }
+
+      await DataManager.updateHabitDetails(id, {
+        frequency: newFreq,
+        schedule: newSchedule,
+        startDate: newStartDate,
+        name: newName,
+        icon: newIcon,
+        ...measurableFields,
+      });
 
       const updatedHabit = await DataManager.getItemByTypeAndId("habit", id);
       if (updatedHabit) {
@@ -645,6 +770,12 @@ export function initEventListeners(AppState) {
 
         const createdAt = new Date().setHours(0, 0, 0, 0);
 
+        const measurableFields = getMeasurableFields();
+        if (measurableFields.invalid) {
+          UI.showModalMessage("Provide a valid quantity and unit! 🔢");
+          return false;
+        }
+
         await DataManager.addHabit({
           name,
           icon,
@@ -653,6 +784,8 @@ export function initEventListeners(AppState) {
           schedule,
           createdAt,
           history: {},
+          progress: {},
+          ...measurableFields,
         });
       } else if (type === "goal") {
         const deadline = elements.goalDeadline?.value;

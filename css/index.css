@@ -253,6 +253,10 @@ main {
   justify-content: center;
 }
 
+.taskContent.is-tappable {
+  cursor: pointer;
+}
+
 .taskLabel {
   display: -webkit-box;
   display: -ms-flexbox;

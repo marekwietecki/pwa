@@ -305,6 +305,13 @@ export const UI = {
       if (input) input.value = "";
     });
 
+    if (elements.habitMeasurableToggle) {
+      elements.habitMeasurableToggle.checked = false;
+    }
+    if (elements.measurableFields) elements.measurableFields.hidden = true;
+    if (elements.habitTargetQuantity) elements.habitTargetQuantity.value = "";
+    if (elements.habitUnit) elements.habitUnit.value = "";
+
     if (elements.goalHabitCheckboxList) {
       elements.goalHabitCheckboxList
         .querySelectorAll('input[type="checkbox"]')
@@ -693,6 +700,21 @@ export const UI = {
 
     UI.setupHabitIconPicker(habit.icon || "💧");
 
+    if (elements.habitMeasurableToggle) {
+      elements.habitMeasurableToggle.checked = !!habit.measurable;
+    }
+    if (elements.measurableFields) {
+      elements.measurableFields.hidden = !habit.measurable;
+    }
+    if (elements.habitTargetQuantity) {
+      elements.habitTargetQuantity.value = habit.measurable
+        ? habit.targetQuantity ?? ""
+        : "";
+    }
+    if (elements.habitUnit) {
+      elements.habitUnit.value = habit.measurable ? habit.unit || "" : "";
+    }
+
     const btn = document.getElementById("confirmAddBtn");
     if (btn) {
       btn.setAttribute("data-edit-id", habit.id);
@@ -1013,7 +1035,7 @@ export const UI = {
    * @param {Object[]} allHabits - Lista wszystkich nawyków do dopasowania powiązań.
    * @returns {HTMLDivElement} Kontener zawierający ikony i etykiety metadanych.
    */
-  getItemMetadata: (data, type, allHabits) => {
+  getItemMetadata: (data, type, allHabits, dateKey) => {
     const metaWrapper = document.createElement("div");
     metaWrapper.className = "taskMetaWrapper";
 
@@ -1025,6 +1047,16 @@ export const UI = {
       const textNode = document.createTextNode(` ${data.location}`);
       locSpan.appendChild(textNode);
       metaWrapper.appendChild(locSpan);
+    }
+
+    if (type === "habit" && data.measurable && dateKey) {
+      const amount = (data.progress && data.progress[dateKey]) || 0;
+      const progressSpan = document.createElement("span");
+      progressSpan.className = "habitProgressMeta";
+      progressSpan.textContent = `${amount} / ${data.targetQuantity} ${
+        data.unit || ""
+      }`;
+      metaWrapper.appendChild(progressSpan);
     }
 
     if (type === "goal") {
@@ -1264,6 +1296,7 @@ export const UI = {
       type === "task" || type === "goal"
         ? !!data.done
         : !!(data.history && data.history[dateKey]);
+    const isMeasurableHabit = type === "habit" && !!data.measurable;
 
     li.className = `taskItem is-${type} ${isOverdue ? "overdue" : ""} ${
       isDone ? "is-completed" : ""
@@ -1274,11 +1307,19 @@ export const UI = {
 
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
+    if (isMeasurableHabit) taskContent.classList.add("is-tappable");
 
     const uniqueId = `${type}-${data.id}-${dateKey || "fixed"}`;
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
-    taskLabel.setAttribute("for", `check-${uniqueId}`);
+    // A measurable habit's row opens the logging bubble on tap (see
+    // handleListAction's ".taskContent" branch) rather than toggling the
+    // checkbox directly, so it must NOT be wired to the checkbox via the
+    // native label "for" - that would fire the checkbox's click handler
+    // for every row tap, same as everything else in the list.
+    if (!isMeasurableHabit) {
+      taskLabel.setAttribute("for", `check-${uniqueId}`);
+    }
 
     const icon =
       type === "habit"
@@ -1305,7 +1346,7 @@ export const UI = {
     }
 
     taskContent.appendChild(taskLabel);
-    taskContent.appendChild(UI.getItemMetadata(data, type, allHabits));
+    taskContent.appendChild(UI.getItemMetadata(data, type, allHabits, dateKey));
 
     if (isOverdue && type === "task" && data.date) {
       const overdueBadge = document.createElement("div");
@@ -2107,6 +2148,94 @@ export const UI = {
       overlay.addEventListener("click", onOverlayClick);
       overlay.classList.add("open");
     });
+  },
+
+  /**
+   * Otwiera bąbelkowy modal logowania postępu dla mierzalnego nawyku danego
+   * dnia (dateKey). onSave(amount) jest wywoływane wyłącznie po kliknięciu
+   * Save - Cancel/klik w tło zamyka modal bez żadnego wywołania.
+   */
+  openHabitProgressModal: (habit, dateKey, onSave) => {
+    const overlay = document.getElementById("habitProgressOverlay");
+    const iconEl = document.getElementById("habitProgressIcon");
+    const nameEl = document.getElementById("habitProgressName");
+    const dateEl = document.getElementById("habitProgressDateLabel");
+    const fillEl = document.getElementById("habitProgressBarFill");
+    const input = document.getElementById("habitProgressAmountInput");
+    const targetEl = document.getElementById("habitProgressTarget");
+    const unitEl = document.getElementById("habitProgressUnit");
+    const decBtn = document.getElementById("habitProgressDecBtn");
+    const incBtn = document.getElementById("habitProgressIncBtn");
+    const cancelBtn = document.getElementById("habitProgressCancelBtn");
+    const saveBtn = document.getElementById("habitProgressSaveBtn");
+
+    if (
+      !overlay || !iconEl || !nameEl || !dateEl || !fillEl || !input ||
+      !targetEl || !unitEl || !decBtn || !incBtn || !cancelBtn || !saveBtn
+    ) {
+      console.warn("⚠️ openHabitProgressModal: brak elementów w DOM.");
+      return;
+    }
+
+    const target = habit.targetQuantity || 1;
+    const startingAmount = (habit.progress && habit.progress[dateKey]) || 0;
+    const todayKey = Utils.formatDateKey(new Date());
+
+    iconEl.textContent = habit.icon || "💧";
+    nameEl.textContent = habit.name;
+    dateEl.textContent =
+      dateKey === todayKey
+        ? "Today"
+        : Utils.formatDisplayDate(new Date(dateKey));
+    targetEl.textContent = target;
+    unitEl.textContent = habit.unit || "";
+    input.value = startingAmount;
+
+    const updateFill = () => {
+      const val = Math.max(0, parseFloat(input.value) || 0);
+      const pct = Math.min(100, (val / target) * 100);
+      fillEl.style.width = `${pct}%`;
+    };
+    updateFill();
+
+    const step = (delta) => {
+      const current = Math.max(0, parseFloat(input.value) || 0);
+      input.value = Math.max(0, current + delta);
+      updateFill();
+    };
+
+    const onDec = () => step(-1);
+    const onInc = () => step(1);
+    const onInputChange = () => updateFill();
+
+    const cleanup = () => {
+      overlay.classList.remove("open");
+      decBtn.removeEventListener("click", onDec);
+      incBtn.removeEventListener("click", onInc);
+      input.removeEventListener("input", onInputChange);
+      cancelBtn.removeEventListener("click", onCancel);
+      saveBtn.removeEventListener("click", onConfirmSave);
+      overlay.removeEventListener("click", onOverlayClick);
+    };
+
+    const onCancel = () => cleanup();
+    const onOverlayClick = (e) => {
+      if (e.target === overlay) cleanup();
+    };
+    const onConfirmSave = async () => {
+      const finalAmount = Math.max(0, parseFloat(input.value) || 0);
+      cleanup();
+      if (onSave) await onSave(finalAmount);
+    };
+
+    decBtn.addEventListener("click", onDec);
+    incBtn.addEventListener("click", onInc);
+    input.addEventListener("input", onInputChange);
+    cancelBtn.addEventListener("click", onCancel);
+    saveBtn.addEventListener("click", onConfirmSave);
+    overlay.addEventListener("click", onOverlayClick);
+
+    overlay.classList.add("open");
   },
 
   /**

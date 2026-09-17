@@ -1286,6 +1286,137 @@ body::after {
   transform: scale(0.96);
 }
 
+.modal-sheet.habit-progress-sheet {
+  max-width: 360px;
+  padding: 24px;
+  gap: 18px;
+  text-align: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.habit-progress-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.habit-progress-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.habit-progress-name {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+}
+
+.habit-progress-date {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+.habit-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: var(--glass-bg-whisper);
+  border: 1px solid var(--glass-border-soft);
+}
+
+.habit-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--hero-gradient, var(--color-indigo));
+  -webkit-transition: width 0.3s ease;
+  transition: width 0.3s ease;
+}
+
+.habit-progress-stepper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.habit-progress-step-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  -webkit-box-shadow: var(--shadow-bubble);
+  box-shadow: var(--shadow-bubble);
+  cursor: pointer;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.habit-progress-step-btn:hover {
+  opacity: 72%;
+}
+
+.habit-progress-step-btn:active {
+  -webkit-transform: scale(0.92);
+  -ms-transform: scale(0.92);
+  transform: scale(0.92);
+}
+
+.habit-progress-amount-wrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.habit-progress-amount-input {
+  width: 64px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--glass-border-bright);
+  padding: 2px 0;
+}
+
+.habit-progress-amount-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-indigo);
+}
+
+.habit-progress-target-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
 @media (min-width: 900px) {
   .modal-overlay.open {
     padding: 40px;
@@ -1912,7 +2043,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .descriptionSection,
 .linkHabitSection,
-.deadlineSection {
+.deadlineSection,
+.quantitySection,
+.unitSection {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1923,6 +2056,50 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-box-flex: 1;
   -ms-flex: 1;
   flex: 1;
+}
+
+.measurableSection {
+  margin-top: 14px;
+}
+
+.measurableFieldsRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.measurableFieldsRow[hidden] {
+  display: none;
+}
+
+.modal-text-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 24px;
+  color: #fff;
+  font-weight: 600;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  -webkit-box-shadow: var(--shadow-bubble);
+  box-shadow: var(--shadow-bubble);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.habitProgressMeta {
+  margin-top: 4px;
+  display: block;
 }
 
 .deadlinePlusLinkHabit {
