@@ -175,33 +175,118 @@ export const UI = {
     );
   },
 
+  MAX_LINKED_HABITS: 5,
+  _habitSelectRequestId: 0,
+
   /**
-   * Pobiera aktywne nawyki i uzupełnia nimi listę rozwijaną (select) w modalu tworzenia celu.
+   * Pobiera aktywne nawyki i uzupełnia nimi listę checkboxów w modalu tworzenia celu
+   * (do MAX_LINKED_HABITS zaznaczeń naraz).
+   *
+   * resetModal/toggleModalFields and the caller here can both trigger this
+   * within the same tick (fire-and-forget), so two calls can be in flight
+   * at once - without a guard, whichever call's getHabits() resolves last
+   * appends onto whatever the other already appended, duplicating every
+   * chip. A generation token lets a superseded call bail out instead.
    */
   fillModalHabitSelect: async () => {
-    const select = elements.goalHabitSelect;
-    if (!select) return;
+    const container = elements.goalHabitCheckboxList;
+    if (!container) return;
 
-    while (select.firstChild) {
-      select.removeChild(select.firstChild);
+    const requestId = ++UI._habitSelectRequestId;
+
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
     }
-
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "Select linked habit (optional)";
-    select.appendChild(defaultOption);
 
     try {
       const habits = await DataManager.getHabits();
+      if (requestId !== UI._habitSelectRequestId) return;
+
       habits.forEach((habit) => {
-        const option = document.createElement("option");
-        option.value = habit.id;
-        option.textContent = habit.name;
-        select.appendChild(option);
+        const label = document.createElement("label");
+        label.className = "habit-checkbox-row";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = habit.id;
+        checkbox.addEventListener("change", () =>
+          UI.enforceHabitCheckboxLimit(container)
+        );
+
+        const text = document.createElement("span");
+        text.textContent = habit.name;
+
+        label.appendChild(checkbox);
+        label.appendChild(text);
+        container.appendChild(label);
       });
+
+      UI.updateHabitPickerToggleLabel();
     } catch (error) {
-      console.error("Błąd podczas ładowania nawyków do selecta:", error);
+      console.error("Błąd podczas ładowania nawyków do listy checkboxów:", error);
     }
+  },
+
+  /**
+   * Blokuje zaznaczanie kolejnych checkboxów po osiągnięciu limitu MAX_LINKED_HABITS.
+   */
+  enforceHabitCheckboxLimit: (container) => {
+    const checkboxes = Array.from(
+      container.querySelectorAll('input[type="checkbox"]')
+    );
+    const checkedCount = checkboxes.filter((cb) => cb.checked).length;
+    const atLimit = checkedCount >= UI.MAX_LINKED_HABITS;
+
+    checkboxes.forEach((cb) => {
+      if (!cb.checked) {
+        cb.disabled = atLimit;
+        cb.closest("label")?.classList.toggle("disabled", atLimit);
+      }
+    });
+
+    if (checkedCount === UI.MAX_LINKED_HABITS) {
+      UI.showToast(
+        `You can link up to ${UI.MAX_LINKED_HABITS} habits to a goal.`,
+        "info"
+      );
+    }
+
+    UI.updateHabitPickerToggleLabel();
+  },
+
+  /**
+   * Aktualizuje etykietę przycisku rozwijającego listę checkboxów, pokazując
+   * liczbę aktualnie wybranych nawyków (np. "3/5 habits linked").
+   */
+  updateHabitPickerToggleLabel: () => {
+    const btn = elements.goalHabitToggleBtn;
+    if (!btn) return;
+
+    const count = UI.getSelectedHabitIds().length;
+    btn.textContent =
+      count > 0
+        ? `${count}/${UI.MAX_LINKED_HABITS} habits linked`
+        : "Select habits to link";
+  },
+
+  /**
+   * Odczytuje zaznaczone w modalu checkboxy nawyków i zwraca ich ID.
+   */
+  getSelectedHabitIds: () => {
+    const container = elements.goalHabitCheckboxList;
+    if (!container) return [];
+    return Array.from(
+      container.querySelectorAll('input[type="checkbox"]:checked')
+    ).map((cb) => parseInt(cb.value));
+  },
+
+  /**
+   * Zwraca listę ID nawyków powiązanych z celem, z fallbackiem na starsze
+   * cele zapisane jeszcze z pojedynczym polem linkedHabitId.
+   */
+  getLinkedHabitIds: (goal) => {
+    if (Array.isArray(goal.linkedHabitIds)) return goal.linkedHabitIds;
+    return goal.linkedHabitId ? [goal.linkedHabitId] : [];
   },
 
   /**
@@ -219,7 +304,17 @@ export const UI = {
       if (input) input.value = "";
     });
 
-    if (elements.goalHabitSelect) elements.goalHabitSelect.selectedIndex = 0;
+    if (elements.goalHabitCheckboxList) {
+      elements.goalHabitCheckboxList
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((cb) => {
+          cb.checked = false;
+          cb.disabled = false;
+          cb.closest("label")?.classList.remove("disabled");
+        });
+      elements.goalHabitCheckboxList.hidden = true;
+    }
+    UI.updateHabitPickerToggleLabel();
     if (elements.locationInput)
       elements.locationInput.classList.remove("success", "error");
 
@@ -633,10 +728,14 @@ export const UI = {
       elements.goalDeadline.value = goal.deadline || "";
     }
 
-    if (elements.goalHabitSelect) {
-      elements.goalHabitSelect.value = goal.linkedHabitId
-        ? String(goal.linkedHabitId)
-        : "";
+    if (elements.goalHabitCheckboxList) {
+      const linkedIds = UI.getLinkedHabitIds(goal).map(String);
+      elements.goalHabitCheckboxList
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((cb) => {
+          cb.checked = linkedIds.includes(cb.value);
+        });
+      UI.enforceHabitCheckboxLimit(elements.goalHabitCheckboxList);
     }
 
     const btn = document.getElementById("confirmAddBtn");
@@ -802,11 +901,22 @@ export const UI = {
 
     const wrapperEl = document.getElementById("emptyListMessageWrapper");
 
-    const savedGoals = await DataManager.getGoals();
+    const [savedGoals, allHabits] = await Promise.all([
+      DataManager.getGoals(),
+      DataManager.getHabits(),
+    ]);
     const goalNodes = savedGoals
       .filter((g) => !g.done)
       .map((goal, index) => {
-        const li = UI.createItem(goal.name, goal, null, "goal", AppState);
+        const li = UI.createItem(
+          goal.name,
+          goal,
+          null,
+          "goal",
+          AppState,
+          false,
+          allHabits
+        );
         li.style.animationDelay = `${index * 0.04}s`;
         return li;
       });
@@ -861,7 +971,15 @@ export const UI = {
 
     goals.forEach((goal) => {
       if (goal.deadline && goal.deadline.startsWith(dateKey)) {
-        const li = UI.createItem(goal.name, goal, dateKey, "goal", AppState);
+        const li = UI.createItem(
+          goal.name,
+          goal,
+          dateKey,
+          "goal",
+          AppState,
+          false,
+          habits
+        );
         sortNode(li, goal.done);
       }
     });
@@ -930,11 +1048,19 @@ export const UI = {
         metaWrapper.appendChild(deadlineSpan);
       }
 
-      if (data.linkedHabitId) {
-        const habit = allHabits.find(
-          (h) => Number(h.id) === Number(data.linkedHabitId)
-        );
-        if (habit) {
+      const linkedHabitIds = UI.getLinkedHabitIds(data);
+      if (linkedHabitIds.length) {
+        const linkedNames = [];
+        linkedHabitIds.forEach((id) => {
+          const habit = allHabits.find((h) => Number(h.id) === Number(id));
+          if (habit) {
+            linkedNames.push(habit.name);
+          } else {
+            console.warn("Nie znaleziono nawyku o ID:", id);
+          }
+        });
+
+        if (linkedNames.length) {
           const linkedSpan = document.createElement("span");
           linkedSpan.className = "linkedHabitBadge";
 
@@ -945,11 +1071,34 @@ export const UI = {
 
           linkedSpan.appendChild(icon);
           linkedSpan.appendChild(
-            document.createTextNode(` Linked: ${habit.name}`)
+            document.createTextNode(` Linked: ${linkedNames.join(", ")}`)
           );
           metaWrapper.appendChild(linkedSpan);
-        } else {
-          console.warn("Nie znaleziono nawyku o ID:", data.linkedHabitId);
+
+          const todayKey = Utils.formatDateKey(new Date());
+          const doneCount = linkedHabitIds.filter((id) => {
+            const habit = allHabits.find((h) => Number(h.id) === Number(id));
+            return !!(habit?.history && habit.history[todayKey]);
+          }).length;
+          const donePercent = Math.round(
+            (doneCount / linkedHabitIds.length) * 100
+          );
+
+          const progressSpan = document.createElement("span");
+          progressSpan.className = "linkedHabitProgress";
+
+          const progressIcon = UI.createCheckIcon
+            ? UI.createCheckIcon()
+            : document.createTextNode("✅ ");
+          progressIcon.classList.add("small-icon");
+
+          progressSpan.appendChild(progressIcon);
+          progressSpan.appendChild(
+            document.createTextNode(
+              ` ${doneCount}/${linkedHabitIds.length} linked habits done today (${donePercent}%)`
+            )
+          );
+          metaWrapper.appendChild(progressSpan);
         }
       }
 
@@ -1251,7 +1400,46 @@ export const UI = {
     li.appendChild(taskContent);
     li.appendChild(taskActions);
 
+    if (type === "goal") {
+      const timeProgress = UI.createGoalTimeProgressBar(data);
+      if (timeProgress) li.appendChild(timeProgress);
+    }
+
     return li;
+  },
+
+  /**
+   * Buduje pasek postępu pokazujący, ile czasu upłynęło od utworzenia celu
+   * do jego terminu (deadline). Zwraca null dla celów bez zapisanej daty
+   * utworzenia (starsze wpisy sprzed tej funkcji) zamiast zgadywać.
+   */
+  createGoalTimeProgressBar: (goal) => {
+    if (!goal.createdAt || !goal.deadline) return null;
+
+    const startTs = new Date(goal.createdAt).getTime();
+    const deadlineTs = new Date(goal.deadline).getTime();
+    if (Number.isNaN(startTs) || Number.isNaN(deadlineTs)) return null;
+
+    const totalSpan = deadlineTs - startTs;
+    let percent =
+      totalSpan > 0 ? ((Date.now() - startTs) / totalSpan) * 100 : 100;
+    percent = Math.max(0, Math.min(100, percent));
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "goalTimeProgress";
+    wrapper.setAttribute("role", "progressbar");
+    wrapper.setAttribute("aria-label", "Time elapsed toward deadline");
+    wrapper.setAttribute("aria-valuenow", String(Math.round(percent)));
+    wrapper.setAttribute("aria-valuemin", "0");
+    wrapper.setAttribute("aria-valuemax", "100");
+
+    const fill = document.createElement("div");
+    fill.className = "goalTimeProgressFill";
+    if (percent >= 100) fill.classList.add("overdue");
+    fill.style.width = `${percent}%`;
+
+    wrapper.appendChild(fill);
+    return wrapper;
   },
 
   /**

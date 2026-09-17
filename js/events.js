@@ -63,6 +63,13 @@ export function initEventListeners(AppState) {
     });
   }
 
+  if (elements.goalHabitToggleBtn && elements.goalHabitCheckboxList) {
+    elements.goalHabitToggleBtn.addEventListener("click", () => {
+      elements.goalHabitCheckboxList.hidden =
+        !elements.goalHabitCheckboxList.hidden;
+    });
+  }
+
   // XP change
   document.addEventListener("statsUpdated", () => {
     UI.updateXPBar();
@@ -559,7 +566,7 @@ export function initEventListeners(AppState) {
         name: elements.taskName.value.trim(),
         description: elements.descriptionInput.value.trim(),
         deadline: elements.goalDeadline.value,
-        linkedHabitId: parseInt(elements.goalHabitSelect.value) || null,
+        linkedHabitIds: UI.getSelectedHabitIds(),
       };
       if (!newData.name || !newData.deadline) {
         UI.showModalMessage("Required fields missing!");
@@ -641,8 +648,7 @@ export function initEventListeners(AppState) {
           name,
           deadline,
           description: elements.descriptionInput?.value.trim() || "",
-          linkedHabitId:
-            parseInt(document.getElementById("goalHabitSelect")?.value) || null,
+          linkedHabitIds: UI.getSelectedHabitIds(),
         };
         await DataManager.addGoal(goalData);
       }

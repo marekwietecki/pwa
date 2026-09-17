@@ -258,6 +258,7 @@ export const DataManager = {
 
   async addGoal(goal) {
     if (!goal.id) goal.id = Date.now();
+    if (!goal.createdAt) goal.createdAt = Date.now();
     return await DB.put("goals", goal);
   },
 

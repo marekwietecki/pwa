@@ -329,12 +329,21 @@
             </div>
 
             <div class="linkHabitSection">
-              <label class="modalSubTitle" for="goalHabitSelect"
-                >Link Habit - make goal measurable</label
+              <label class="modalSubTitle"
+                >Link Habits - make goal measurable</label
               >
-              <select id="goalHabitSelect" name="goalHabitSelect">
-                <option value="">No linked habit</option>
-              </select>
+              <button
+                type="button"
+                id="goalHabitToggleBtn"
+                class="habit-picker-toggle"
+              >
+                Select habits to link
+              </button>
+              <div
+                id="goalHabitCheckboxList"
+                class="habit-checkbox-list"
+                hidden
+              ></div>
             </div>
           </div>
           <div class="descriptionSection">

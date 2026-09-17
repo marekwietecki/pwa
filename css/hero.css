@@ -458,9 +458,9 @@ h3 {
   font-size: 24px;
   font-weight: 600;
   display: block;
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
-  flex: 1;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   vertical-align: bottom;
   overflow: hidden;
@@ -527,6 +527,9 @@ h3 {
   transition: opacity 0.2s;
   line-height: 24px;
   gap: 4px;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
 }
 
 #editUserName:hover {
@@ -847,6 +850,18 @@ h3 {
 }
 
 .linkedHabitBadge {
+  padding-top: 4px;
+}
+
+.linkedHabitProgress .small-icon {
+  width: 10px !important;
+  height: 10px !important;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.linkedHabitProgress {
   padding-top: 4px;
 }
 

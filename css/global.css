@@ -1750,20 +1750,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 12px;
 }
 
-#goalHabitSelect {
-  color: #fff;
+.habit-picker-toggle {
+  cursor: pointer;
+  color: #ced2de;
+  font-weight: 600;
   font-size: 14px;
+  font-family: "Poppins", sans-serif;
   padding: 10px 16px;
-  border-radius: 24px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 224px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
+  border-radius: 16px;
+  width: 100%;
+  text-align: center;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur-strong);
   -webkit-backdrop-filter: var(--glass-blur-strong);
@@ -1772,11 +1768,78 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: var(--shadow-bubble);
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+}
 
-  padding-right: 40px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
+.habit-picker-toggle:hover {
+  opacity: 72%;
+}
+
+.habit-picker-toggle:active {
+  -webkit-transform: scale(0.98);
+  -ms-transform: scale(0.98);
+  transform: scale(0.98);
+  opacity: 0.72;
+}
+
+.habit-checkbox-list[hidden] {
+  display: none;
+}
+
+.habit-checkbox-list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 8px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--glass-bg-whisper);
+  border: 1px solid var(--glass-border-soft);
+}
+
+.habit-checkbox-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-transition: background 0.2s ease;
+  transition: background 0.2s ease;
+}
+
+.habit-checkbox-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #4caf50;
+  cursor: pointer;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.habit-checkbox-row:hover {
+  background: var(--glass-bg);
+}
+
+.habit-checkbox-row.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .descriptionSection,
