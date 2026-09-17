@@ -2255,13 +2255,17 @@ export const UI = {
       { passive: true }
     );
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (e) => {
       if (!isSwiping) return;
       isSwiping = false;
 
       track.style.transition = "";
 
-      const deltaX = touchCurrentX - touchStartX;
+      // A quick flick can end before touchmove ever fires, leaving
+      // touchCurrentX stuck at the start position - read the real final
+      // coordinate off the event itself when it's available.
+      const endX = e?.changedTouches?.[0]?.clientX ?? touchCurrentX;
+      const deltaX = endX - touchStartX;
       const dynamicDots = overlay.querySelectorAll(".guide-dot");
       const totalSlides = dynamicDots.length || 3;
 

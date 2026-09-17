@@ -856,6 +856,7 @@ h3 {
   display: flex;
   width: 100%;
   height: 100%;
+  touch-action: pan-y;
   will-change: transform;
   -webkit-transition: -webkit-transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
   transition: -webkit-transform 0.35s cubic-bezier(0.25, 1.1, 0.4, 1);
