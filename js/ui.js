@@ -2069,6 +2069,47 @@ export const UI = {
   },
 
   /**
+   * Pokazuje modal potwierdzenia (Cancel/Confirm) i zwraca Promise<boolean>
+   * rozstrzygane po wyborze użytkownika. Używane dla akcji, które nie
+   * powinny wykonać się od razu po jednym przypadkowym kliknięciu (np.
+   * oznaczenie celu jako ukończony).
+   */
+  confirmDialog: (message, confirmLabel = "Confirm") => {
+    const overlay = document.getElementById("confirmDialogOverlay");
+    const msgEl = document.getElementById("confirmDialogMessage");
+    const cancelBtn = document.getElementById("confirmDialogCancelBtn");
+    const confirmBtn = document.getElementById("confirmDialogConfirmBtn");
+
+    if (!overlay || !msgEl || !cancelBtn || !confirmBtn) {
+      console.warn("⚠️ confirmDialog: brak elementów w DOM, autoconfirm.");
+      return Promise.resolve(true);
+    }
+
+    msgEl.textContent = message;
+    confirmBtn.textContent = confirmLabel;
+
+    return new Promise((resolve) => {
+      const cleanup = (result) => {
+        overlay.classList.remove("open");
+        cancelBtn.removeEventListener("click", onCancel);
+        confirmBtn.removeEventListener("click", onConfirm);
+        overlay.removeEventListener("click", onOverlayClick);
+        resolve(result);
+      };
+      const onCancel = () => cleanup(false);
+      const onConfirm = () => cleanup(true);
+      const onOverlayClick = (e) => {
+        if (e.target === overlay) cleanup(false);
+      };
+
+      cancelBtn.addEventListener("click", onCancel);
+      confirmBtn.addEventListener("click", onConfirm);
+      overlay.addEventListener("click", onOverlayClick);
+      overlay.classList.add("open");
+    });
+  },
+
+  /**
    * Zarządza stanem ładowania (loading) dla pól input oraz powiązanych przycisków, manipulując klasami sukcesu/błędu.
    */
   async setInputLoading(input, btn, isLoading, status = "") {

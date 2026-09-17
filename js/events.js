@@ -307,6 +307,23 @@ export function initEventListeners(AppState) {
         return;
       }
 
+      // Completing a goal is a bigger, harder-to-notice action than
+      // checking off a task/habit (it awards XP and drops the goal out
+      // of the active list entirely), so guard the one-tap checkbox with
+      // an explicit confirmation instead of letting a mistake click
+      // complete it outright. Unchecking (undoing a mistaken complete)
+      // stays instant since that direction isn't destructive.
+      if (isChecked && type === "goal") {
+        target.checked = false;
+        const goalName = itemObject?.name || "this goal";
+        const confirmed = await UI.confirmDialog(
+          `Mark "${goalName}" as complete? 🎉`,
+          "Complete 🎉"
+        );
+        if (!confirmed) return;
+        target.checked = true;
+      }
+
       try {
         if (type === "task") {
           await DataManager.toggleTaskDone(id, isChecked);
