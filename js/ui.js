@@ -1297,6 +1297,7 @@ export const UI = {
         ? !!data.done
         : !!(data.history && data.history[dateKey]);
     const isMeasurableHabit = type === "habit" && !!data.measurable;
+    const opensDetailModal = type === "task" || type === "habit";
 
     li.className = `taskItem is-${type} ${isOverdue ? "overdue" : ""} ${
       isDone ? "is-completed" : ""
@@ -1307,17 +1308,18 @@ export const UI = {
 
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
-    if (isMeasurableHabit) taskContent.classList.add("is-tappable");
+    if (opensDetailModal) taskContent.classList.add("is-tappable");
 
     const uniqueId = `${type}-${data.id}-${dateKey || "fixed"}`;
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
-    // A measurable habit's row opens the logging bubble on tap (see
+    // Tasks and habits open the detail bubble on tap (see
     // handleListAction's ".taskContent" branch) rather than toggling the
-    // checkbox directly, so it must NOT be wired to the checkbox via the
-    // native label "for" - that would fire the checkbox's click handler
-    // for every row tap, same as everything else in the list.
-    if (!isMeasurableHabit) {
+    // checkbox directly, so the row must NOT be wired to the checkbox via
+    // the native label "for" - that would fire the checkbox's click
+    // handler for every row tap instead. Goals are untouched: their row
+    // still toggles the checkbox directly (behind its own confirm dialog).
+    if (!opensDetailModal) {
       taskLabel.setAttribute("for", `check-${uniqueId}`);
     }
 
@@ -1435,13 +1437,18 @@ export const UI = {
     checkboxWrap.setAttribute("for", checkbox.id);
     checkboxWrap.appendChild(checkbox);
 
-    const moreBtn = document.createElement("button");
-    moreBtn.className = "moreBtn";
-    moreBtn.setAttribute("aria-label", `More options for ${name}`);
-    moreBtn.appendChild(UI.createEllipsisIcon());
-
     taskActions.appendChild(checkboxWrap);
-    taskActions.appendChild(moreBtn);
+
+    // Tasks and habits now delete from inside the detail bubble (row tap),
+    // so the list no longer needs its own "..." menu for them. Goals keep
+    // it - they still use the hold-to-confirm delete pattern in place.
+    if (type === "goal") {
+      const moreBtn = document.createElement("button");
+      moreBtn.className = "moreBtn";
+      moreBtn.setAttribute("aria-label", `More options for ${name}`);
+      moreBtn.appendChild(UI.createEllipsisIcon());
+      taskActions.appendChild(moreBtn);
+    }
 
     li.appendChild(taskContent);
     li.appendChild(taskActions);
@@ -2115,7 +2122,7 @@ export const UI = {
    * powinny wykonać się od razu po jednym przypadkowym kliknięciu (np.
    * oznaczenie celu jako ukończony).
    */
-  confirmDialog: (message, confirmLabel = "Confirm") => {
+  confirmDialog: (message, confirmLabel = "Confirm", variant = "default") => {
     const overlay = document.getElementById("confirmDialogOverlay");
     const msgEl = document.getElementById("confirmDialogMessage");
     const cancelBtn = document.getElementById("confirmDialogCancelBtn");
@@ -2128,6 +2135,7 @@ export const UI = {
 
     msgEl.textContent = message;
     confirmBtn.textContent = confirmLabel;
+    confirmBtn.classList.toggle("danger", variant === "danger");
 
     return new Promise((resolve) => {
       const cleanup = (result) => {
@@ -2151,15 +2159,20 @@ export const UI = {
   },
 
   /**
-   * Otwiera bąbelkowy modal logowania postępu dla mierzalnego nawyku danego
-   * dnia (dateKey). onSave(amount) jest wywoływane wyłącznie po kliknięciu
-   * Save - Cancel/klik w tło zamyka modal bez żadnego wywołania.
+   * Otwiera bąbelkowy modal szczegółów dla zadania lub nawyku. Dla
+   * mierzalnego nawyku pokazuje suwak/stepper do logowania ilości
+   * (onSave(amount) wywoływane po Save); dla zwykłego zadania/nawyku
+   * ukrywa tę sekcję i modal służy wyłącznie jako dostęp do usunięcia.
+   * onDelete() jest zawsze dostępne przez ikonę kosza w nagłówku.
    */
-  openHabitProgressModal: (habit, dateKey, onSave) => {
+  openItemDetailModal: (data, type, dateKey, { onSave, onDelete } = {}) => {
     const overlay = document.getElementById("habitProgressOverlay");
     const iconEl = document.getElementById("habitProgressIcon");
     const nameEl = document.getElementById("habitProgressName");
     const dateEl = document.getElementById("habitProgressDateLabel");
+    const progressSection = document.getElementById(
+      "habitProgressProgressSection"
+    );
     const fillEl = document.getElementById("habitProgressBarFill");
     const input = document.getElementById("habitProgressAmountInput");
     const targetEl = document.getElementById("habitProgressTarget");
@@ -2168,27 +2181,35 @@ export const UI = {
     const incBtn = document.getElementById("habitProgressIncBtn");
     const cancelBtn = document.getElementById("habitProgressCancelBtn");
     const saveBtn = document.getElementById("habitProgressSaveBtn");
+    const deleteBtn = document.getElementById("habitProgressDeleteBtn");
 
     if (
-      !overlay || !iconEl || !nameEl || !dateEl || !fillEl || !input ||
-      !targetEl || !unitEl || !decBtn || !incBtn || !cancelBtn || !saveBtn
+      !overlay || !iconEl || !nameEl || !dateEl || !progressSection ||
+      !fillEl || !input || !targetEl || !unitEl || !decBtn || !incBtn ||
+      !cancelBtn || !saveBtn || !deleteBtn
     ) {
-      console.warn("⚠️ openHabitProgressModal: brak elementów w DOM.");
+      console.warn("⚠️ openItemDetailModal: brak elementów w DOM.");
       return;
     }
 
-    const target = habit.targetQuantity || 1;
-    const startingAmount = (habit.progress && habit.progress[dateKey]) || 0;
+    const isMeasurable = type === "habit" && !!data.measurable;
     const todayKey = Utils.formatDateKey(new Date());
 
-    iconEl.textContent = habit.icon || "💧";
-    nameEl.textContent = habit.name;
-    dateEl.textContent =
-      dateKey === todayKey
-        ? "Today"
-        : Utils.formatDisplayDate(new Date(dateKey));
+    iconEl.textContent = data.icon || (type === "task" ? "📝" : "💧");
+    nameEl.textContent = data.name;
+    dateEl.textContent = !dateKey
+      ? ""
+      : dateKey === todayKey
+      ? "Today"
+      : Utils.formatDisplayDate(new Date(dateKey));
+
+    progressSection.hidden = !isMeasurable;
+    saveBtn.hidden = !isMeasurable;
+
+    const target = data.targetQuantity || 1;
+    const startingAmount = (data.progress && data.progress[dateKey]) || 0;
     targetEl.textContent = target;
-    unitEl.textContent = habit.unit || "";
+    unitEl.textContent = data.unit || "";
     input.value = startingAmount;
 
     const updateFill = () => {
@@ -2196,7 +2217,7 @@ export const UI = {
       const pct = Math.min(100, (val / target) * 100);
       fillEl.style.width = `${pct}%`;
     };
-    updateFill();
+    if (isMeasurable) updateFill();
 
     const step = (delta) => {
       const current = Math.max(0, parseFloat(input.value) || 0);
@@ -2215,6 +2236,7 @@ export const UI = {
       input.removeEventListener("input", onInputChange);
       cancelBtn.removeEventListener("click", onCancel);
       saveBtn.removeEventListener("click", onConfirmSave);
+      deleteBtn.removeEventListener("click", onDeleteClick);
       overlay.removeEventListener("click", onOverlayClick);
     };
 
@@ -2227,12 +2249,17 @@ export const UI = {
       cleanup();
       if (onSave) await onSave(finalAmount);
     };
+    const onDeleteClick = async () => {
+      cleanup();
+      if (onDelete) await onDelete();
+    };
 
     decBtn.addEventListener("click", onDec);
     incBtn.addEventListener("click", onInc);
     input.addEventListener("input", onInputChange);
     cancelBtn.addEventListener("click", onCancel);
     saveBtn.addEventListener("click", onConfirmSave);
+    deleteBtn.addEventListener("click", onDeleteClick);
     overlay.addEventListener("click", onOverlayClick);
 
     overlay.classList.add("open");

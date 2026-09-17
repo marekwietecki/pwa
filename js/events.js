@@ -315,6 +315,29 @@ export function initEventListeners(AppState) {
     return updatedHabit;
   };
 
+  /**
+   * Usuwa zadanie/nawyk/cel po potwierdzeniu w confirmDialog (wariant
+   * "danger"). Współdzielone przez detail bubble (zadania/nawyki) i
+   * pozostały hold-to-delete w "..." menu (cele).
+   */
+  const deleteItemWithConfirm = async (itemType, itemId, itemName) => {
+    const name = itemName || "this item";
+    const confirmed = await UI.confirmDialog(
+      `Delete "${name}" permanently?`,
+      "Delete",
+      "danger"
+    );
+    if (!confirmed) return;
+
+    await DataManager.deleteItemByType(itemType, itemId);
+    const displayType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+    UI.showToast(
+      `${displayType} "${name}" has been permanently deleted.`,
+      "info"
+    );
+    await refreshCurrentView(AppState);
+  };
+
   // DELEGACJA ZDARZEŃ DLA LIST
   const handleListAction = async (e) => {
     const target = e.target;
@@ -460,14 +483,17 @@ export function initEventListeners(AppState) {
         target.checked = !isChecked;
       }
     } else if (
-      type === "habit" &&
-      itemObject?.measurable &&
+      (type === "task" || type === "habit") &&
       target.closest(".taskContent")
     ) {
       // Tapping the row itself (icon/name/meta, not the checkbox) opens the
-      // logging bubble so partial amounts (3 out of 5) can be entered - the
-      // checkbox above stays a quick "fill to target" shortcut.
-      if (dateKey && dateKey > Utils.formatDateKey(new Date())) {
+      // detail bubble. For a measurable habit this is where a partial
+      // amount (3 out of 5) gets logged - the checkbox stays a quick "fill
+      // to target" shortcut. For a plain task/habit it's just how delete
+      // is reached now that the list no longer has its own "..." menu.
+      const isMeasurable = type === "habit" && !!itemObject?.measurable;
+
+      if (isMeasurable && dateKey && dateKey > Utils.formatDateKey(new Date())) {
         UI.showToast(
           "You cannot log a future habit. Build your habits day by day!",
           "error"
@@ -479,9 +505,11 @@ export function initEventListeners(AppState) {
         return;
       }
 
-      UI.openHabitProgressModal(itemObject, dateKey, (finalAmount) =>
-        applyHabitProgress(itemObject, dateKey, finalAmount)
-      );
+      UI.openItemDetailModal(itemObject, type, dateKey, {
+        onSave: (finalAmount) =>
+          applyHabitProgress(itemObject, dateKey, finalAmount),
+        onDelete: () => deleteItemWithConfirm(type, id, itemObject?.name),
+      });
     }
 
     const moreBtn = target.closest(".moreBtn");

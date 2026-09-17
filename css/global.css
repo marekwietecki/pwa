@@ -1280,6 +1280,10 @@ body::after {
   opacity: 85%;
 }
 
+.confirm-dialog-confirm.danger {
+  background: var(--color-danger);
+}
+
 .confirm-dialog-btn:active {
   -webkit-transform: scale(0.96);
   -ms-transform: scale(0.96);
@@ -1296,6 +1300,20 @@ body::after {
   align-items: center;
 }
 
+.habit-progress-header-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+}
+
 .habit-progress-header {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1304,6 +1322,42 @@ body::after {
   -ms-flex-align: center;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+
+.habit-progress-delete-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  cursor: pointer;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.habit-progress-delete-btn:hover {
+  background: rgba(255, 68, 68, 0.12);
+  opacity: 0.85;
+}
+
+.habit-progress-delete-btn:active {
+  -webkit-transform: scale(0.92);
+  -ms-transform: scale(0.92);
+  transform: scale(0.92);
 }
 
 .habit-progress-icon {
@@ -1315,6 +1369,10 @@ body::after {
   margin: 0;
   color: #fff;
   font-size: 18px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .habit-progress-date {
