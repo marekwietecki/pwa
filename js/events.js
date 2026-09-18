@@ -508,6 +508,10 @@ export function initEventListeners(AppState) {
       UI.openItemDetailModal(itemObject, type, dateKey, {
         onSave: (finalAmount) =>
           applyHabitProgress(itemObject, dateKey, finalAmount),
+        onEdit: () => {
+          if (type === "task") UI.openEditTaskModal(itemObject, AppState);
+          else UI.openEditHabitModal(itemObject, AppState);
+        },
         onDelete: () => deleteItemWithConfirm(type, id, itemObject?.name),
       });
     }
@@ -737,6 +741,26 @@ export function initEventListeners(AppState) {
         throw new Error("Validation failed");
       }
       await DataManager.updateGoalDetails(id, newData);
+    } else if (editType === "task") {
+      let newName = elements.taskName.value.trim();
+      const newDate = elements.taskDate.value;
+      const newLocation = elements.locationInput?.value.trim() || null;
+
+      if (!newName) {
+        UI.showModalMessage("Provide a name! ✍️");
+        throw new Error("Validation failed");
+      }
+      if (!newDate) {
+        UI.showModalMessage("Provide a date! 📅");
+        throw new Error("Validation failed");
+      }
+      newName = newName.charAt(0).toUpperCase() + newName.slice(1);
+
+      await DataManager.updateTaskDetails(id, {
+        name: newName,
+        date: newDate,
+        location: newLocation,
+      });
     } else {
 
       const newFreq = document.getElementById("habitFrequency").value;

@@ -210,6 +210,17 @@ export const DataManager = {
     return await DB.put("tasks", task);
   },
 
+  async updateTaskDetails(taskId, updates) {
+    const task = await DB.get("tasks", taskId);
+    if (!task) return false;
+
+    if (updates.name) task.name = updates.name;
+    task.date = updates.date;
+    task.location = updates.location;
+
+    return await DB.put("tasks", task);
+  },
+
   // HABITS
   async getHabits() {
     return await DB.getAll("habits");

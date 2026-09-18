@@ -1325,7 +1325,19 @@ body::after {
   min-width: 0;
 }
 
-.habit-progress-delete-btn {
+.habit-progress-header-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 8px;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.habit-progress-icon-btn {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1338,6 +1350,7 @@ body::after {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  color: #fff;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   backdrop-filter: var(--glass-blur);
@@ -1349,15 +1362,19 @@ body::after {
   transition: all 0.2s ease;
 }
 
-.habit-progress-delete-btn:hover {
-  background: rgba(255, 68, 68, 0.12);
-  opacity: 0.85;
+.habit-progress-icon-btn:hover {
+  opacity: 0.72;
 }
 
-.habit-progress-delete-btn:active {
+.habit-progress-icon-btn:active {
   -webkit-transform: scale(0.92);
   -ms-transform: scale(0.92);
   transform: scale(0.92);
+}
+
+.habit-progress-delete-btn:hover {
+  background: rgba(255, 68, 68, 0.12);
+  opacity: 0.85;
 }
 
 .habit-progress-icon {

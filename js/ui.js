@@ -654,6 +654,40 @@ export const UI = {
   },
 
   /**
+   * Otwiera formularz modala i uzupełnia go danymi istniejącego zadania przygotowanego do edycji.
+   * @param {Object} task - Obiekt struktury danych zadania.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  openEditTaskModal: async (task, AppState) => {
+    if (!AppState) return;
+
+    AppState.currentCreateType = "task";
+    UI.resetModal(AppState);
+
+    UI.setModalMode("edit", "task");
+    await UI.toggleModalFields("task", true);
+
+    document.getElementById("taskName").value = task.name || "";
+
+    const dateInput = document.getElementById("taskDate");
+    if (dateInput) dateInput.value = task.date || "";
+
+    if (elements.locationInput) {
+      elements.locationInput.value = task.location || "";
+    }
+
+    const btn = document.getElementById("confirmAddBtn");
+    if (btn) {
+      btn.setAttribute("data-edit-id", task.id);
+      btn.setAttribute("data-edit-type", "task");
+    }
+
+    UI.updateSubmitButtonState(AppState);
+
+    if (elements.modalOverlay) elements.modalOverlay.classList.add("open");
+  },
+
+  /**
    * Otwiera formularz modala i uzupełnia go danymi istniejącego nawyku przygotowanego do edycji.
    * @param {Object} habit - Obiekt struktury danych nawyku.
    * @param {Object} AppState - Globalny stan aplikacji.
@@ -2162,10 +2196,10 @@ export const UI = {
    * Otwiera bąbelkowy modal szczegółów dla zadania lub nawyku. Dla
    * mierzalnego nawyku pokazuje suwak/stepper do logowania ilości
    * (onSave(amount) wywoływane po Save); dla zwykłego zadania/nawyku
-   * ukrywa tę sekcję i modal służy wyłącznie jako dostęp do usunięcia.
-   * onDelete() jest zawsze dostępne przez ikonę kosza w nagłówku.
+   * ukrywa tę sekcję. onEdit()/onDelete() są zawsze dostępne przez ikony
+   * ołówka/kosza w nagłówku (edycja otwiera pełny formularz modala).
    */
-  openItemDetailModal: (data, type, dateKey, { onSave, onDelete } = {}) => {
+  openItemDetailModal: (data, type, dateKey, { onSave, onDelete, onEdit } = {}) => {
     const overlay = document.getElementById("habitProgressOverlay");
     const iconEl = document.getElementById("habitProgressIcon");
     const nameEl = document.getElementById("habitProgressName");
@@ -2181,12 +2215,13 @@ export const UI = {
     const incBtn = document.getElementById("habitProgressIncBtn");
     const cancelBtn = document.getElementById("habitProgressCancelBtn");
     const saveBtn = document.getElementById("habitProgressSaveBtn");
+    const editBtn = document.getElementById("habitProgressEditBtn");
     const deleteBtn = document.getElementById("habitProgressDeleteBtn");
 
     if (
       !overlay || !iconEl || !nameEl || !dateEl || !progressSection ||
       !fillEl || !input || !targetEl || !unitEl || !decBtn || !incBtn ||
-      !cancelBtn || !saveBtn || !deleteBtn
+      !cancelBtn || !saveBtn || !editBtn || !deleteBtn
     ) {
       console.warn("⚠️ openItemDetailModal: brak elementów w DOM.");
       return;
@@ -2236,6 +2271,7 @@ export const UI = {
       input.removeEventListener("input", onInputChange);
       cancelBtn.removeEventListener("click", onCancel);
       saveBtn.removeEventListener("click", onConfirmSave);
+      editBtn.removeEventListener("click", onEditClick);
       deleteBtn.removeEventListener("click", onDeleteClick);
       overlay.removeEventListener("click", onOverlayClick);
     };
@@ -2249,6 +2285,10 @@ export const UI = {
       cleanup();
       if (onSave) await onSave(finalAmount);
     };
+    const onEditClick = async () => {
+      cleanup();
+      if (onEdit) await onEdit();
+    };
     const onDeleteClick = async () => {
       cleanup();
       if (onDelete) await onDelete();
@@ -2259,6 +2299,7 @@ export const UI = {
     input.addEventListener("input", onInputChange);
     cancelBtn.addEventListener("click", onCancel);
     saveBtn.addEventListener("click", onConfirmSave);
+    editBtn.addEventListener("click", onEditClick);
     deleteBtn.addEventListener("click", onDeleteClick);
     overlay.addEventListener("click", onOverlayClick);
 
