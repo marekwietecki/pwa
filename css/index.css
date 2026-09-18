@@ -140,7 +140,7 @@ main {
 }
 
 .taskItem {
-  padding: 16px;
+  padding: 16px 16px 16px 24px;
   margin: 12px auto 16px auto;
   list-style: none;
   -webkit-box-align: center;
