@@ -539,33 +539,54 @@
           </div>
 
           <div class="measurableSection">
-            <label class="habit-checkbox-row">
-              <input type="checkbox" id="habitMeasurableToggle" />
-              <span>Make this habit measurable</span>
-            </label>
-            <div id="measurableFields" class="measurableFieldsRow" hidden>
-              <div class="quantitySection">
-                <label class="modalSubTitle" for="habitTargetQuantity"
-                  >Target quantity</label
-                >
-                <input
-                  type="number"
-                  id="habitTargetQuantity"
-                  class="modal-text-input"
-                  min="1"
-                  step="1"
-                  placeholder="e.g. 10"
-                />
-              </div>
-              <div class="unitSection">
-                <label class="modalSubTitle" for="habitUnit">Unit</label>
-                <input
-                  type="text"
-                  id="habitUnit"
-                  class="modal-text-input"
-                  maxlength="20"
-                  placeholder="e.g. mins, reps"
-                />
+            <div class="quantitySection">
+              <label class="modalSubTitle" for="habitTargetQuantity"
+                >Target quantity (optional)</label
+              >
+              <input
+                type="number"
+                id="habitTargetQuantity"
+                class="modal-text-input"
+                min="1"
+                step="1"
+                placeholder="e.g. 10"
+              />
+            </div>
+            <div class="unitSection">
+              <label class="modalSubTitle">Unit</label>
+              <div id="habitUnitPicker" class="unit-picker-list">
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="mins" />
+                  <span>mins</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="hours" />
+                  <span>hours</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="reps" />
+                  <span>reps</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="pages" />
+                  <span>pages</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="steps" />
+                  <span>steps</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="km" />
+                  <span>km</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="glasses" />
+                  <span>glasses</span>
+                </label>
+                <label class="unit-picker-option">
+                  <input type="radio" name="habitUnit" value="times" />
+                  <span>times</span>
+                </label>
               </div>
             </div>
           </div>

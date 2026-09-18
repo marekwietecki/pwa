@@ -70,13 +70,6 @@ export function initEventListeners(AppState) {
     });
   }
 
-  if (elements.habitMeasurableToggle && elements.measurableFields) {
-    elements.habitMeasurableToggle.addEventListener("change", () => {
-      elements.measurableFields.hidden =
-        !elements.habitMeasurableToggle.checked;
-    });
-  }
-
   // XP change
   document.addEventListener("statsUpdated", () => {
     UI.updateXPBar();
@@ -705,20 +698,23 @@ export function initEventListeners(AppState) {
   };
 
   /**
-   * Odczytuje z modala ustawienia "mierzalności" nawyku (przełącznik +
-   * docelowa ilość + jednostka). Zwraca measurable: false gdy przełącznik
-   * jest wyłączony lub ilość jest niepoprawna.
+   * Odczytuje z modala docelową ilość + wybraną jednostkę nawyku - oba pola
+   * są teraz zawsze widoczne (bez osobnego przełącznika). Puste oba pola =
+   * zwykły nawyk (measurable: false). Wypełnione tylko jedno z nich uznajemy
+   * za pomyłkę użytkownika (invalid), bo połówkowa konfiguracja nie ma
+   * żadnego sensownego znaczenia.
    */
   const getMeasurableFields = () => {
-    const measurable = !!elements.habitMeasurableToggle?.checked;
-    if (!measurable) return { measurable: false };
-
     const targetQuantity = parseFloat(elements.habitTargetQuantity?.value);
-    const unit = elements.habitUnit?.value.trim();
+    const unit = elements.habitUnitPicker?.querySelector(
+      'input[name="habitUnit"]:checked'
+    )?.value;
 
-    if (!targetQuantity || targetQuantity <= 0 || !unit) {
-      return { measurable: false, invalid: true };
-    }
+    const hasQuantity = !!targetQuantity && targetQuantity > 0;
+    const hasUnit = !!unit;
+
+    if (!hasQuantity && !hasUnit) return { measurable: false };
+    if (!hasQuantity || !hasUnit) return { measurable: false, invalid: true };
 
     return { measurable: true, targetQuantity, unit };
   };

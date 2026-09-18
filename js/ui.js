@@ -305,12 +305,10 @@ export const UI = {
       if (input) input.value = "";
     });
 
-    if (elements.habitMeasurableToggle) {
-      elements.habitMeasurableToggle.checked = false;
-    }
-    if (elements.measurableFields) elements.measurableFields.hidden = true;
     if (elements.habitTargetQuantity) elements.habitTargetQuantity.value = "";
-    if (elements.habitUnit) elements.habitUnit.value = "";
+    elements.habitUnitPicker
+      ?.querySelectorAll('input[name="habitUnit"]')
+      .forEach((radio) => (radio.checked = false));
 
     if (elements.goalHabitCheckboxList) {
       elements.goalHabitCheckboxList
@@ -734,20 +732,16 @@ export const UI = {
 
     UI.setupHabitIconPicker(habit.icon || "💧");
 
-    if (elements.habitMeasurableToggle) {
-      elements.habitMeasurableToggle.checked = !!habit.measurable;
-    }
-    if (elements.measurableFields) {
-      elements.measurableFields.hidden = !habit.measurable;
-    }
     if (elements.habitTargetQuantity) {
       elements.habitTargetQuantity.value = habit.measurable
         ? habit.targetQuantity ?? ""
         : "";
     }
-    if (elements.habitUnit) {
-      elements.habitUnit.value = habit.measurable ? habit.unit || "" : "";
-    }
+    elements.habitUnitPicker
+      ?.querySelectorAll('input[name="habitUnit"]')
+      .forEach((radio) => {
+        radio.checked = habit.measurable && radio.value === habit.unit;
+      });
 
     const btn = document.getElementById("confirmAddBtn");
     if (btn) {
@@ -1922,6 +1916,12 @@ export const UI = {
    */
   showHabitDetails: (habit, AppState) => {
     AppState.selectedHabitForStats = habit;
+
+    // This renders the Habits page's own stats panel, which only exists in
+    // habits.html's DOM. Habit editing is now also reachable from the
+    // detail bubble on the Today/Calendar pages, so this can be called
+    // from a page that never has that panel - bail out rather than throw.
+    if (!document.getElementById("habitDetails")) return;
 
     const progress = DataManager.calculateHabitProgress(habit);
     const streakValue = DataManager.calculateStreak(habit);
