@@ -1335,14 +1335,13 @@ export const UI = {
 
     li.className = `taskItem is-${type} ${isOverdue ? "overdue" : ""} ${
       isDone ? "is-completed" : ""
-    }`;
+    } ${opensDetailModal ? "is-tappable" : ""}`;
     li.dataset.id = data.id;
     li.dataset.type = type;
     if (dateKey) li.dataset.dateKey = dateKey;
 
     const taskContent = document.createElement("div");
     taskContent.className = "taskContent";
-    if (opensDetailModal) taskContent.classList.add("is-tappable");
 
     const uniqueId = `${type}-${data.id}-${dateKey || "fixed"}`;
     const taskLabel = document.createElement("label");

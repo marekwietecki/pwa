@@ -1398,6 +1398,10 @@ body::after {
   font-size: 13px;
 }
 
+#habitProgressProgressSection[hidden] {
+  display: none;
+}
+
 #habitProgressProgressSection {
   display: -webkit-box;
   display: -ms-flexbox;

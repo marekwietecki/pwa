@@ -484,13 +484,14 @@ export function initEventListeners(AppState) {
       }
     } else if (
       (type === "task" || type === "habit") &&
-      target.closest(".taskContent")
+      !target.closest(".taskActions")
     ) {
-      // Tapping the row itself (icon/name/meta, not the checkbox) opens the
-      // detail bubble. For a measurable habit this is where a partial
-      // amount (3 out of 5) gets logged - the checkbox stays a quick "fill
-      // to target" shortcut. For a plain task/habit it's just how delete
-      // is reached now that the list no longer has its own "..." menu.
+      // Tapping anywhere on the row (not the checkbox/moreBtn in
+      // taskActions) opens the detail bubble. For a measurable habit this
+      // is where a partial amount (3 out of 5) gets logged - the checkbox
+      // stays a quick "fill to target" shortcut. For a plain task/habit
+      // it's just how delete is reached now that the list no longer has
+      // its own "..." menu.
       const isMeasurable = type === "habit" && !!itemObject?.measurable;
 
       if (isMeasurable && dateKey && dateKey > Utils.formatDateKey(new Date())) {
