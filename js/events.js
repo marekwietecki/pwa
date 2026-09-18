@@ -475,16 +475,12 @@ export function initEventListeners(AppState) {
         console.error("Błąd podczas aktualizacji statusu:", err);
         target.checked = !isChecked;
       }
-    } else if (
-      (type === "task" || type === "habit") &&
-      !target.closest(".taskActions")
-    ) {
-      // Tapping anywhere on the row (not the checkbox/moreBtn in
-      // taskActions) opens the detail bubble. For a measurable habit this
-      // is where a partial amount (3 out of 5) gets logged - the checkbox
-      // stays a quick "fill to target" shortcut. For a plain task/habit
-      // it's just how delete is reached now that the list no longer has
-      // its own "..." menu.
+    } else if (!target.closest(".taskActions")) {
+      // Tapping anywhere on the row (not the checkbox in taskActions) opens
+      // the detail bubble. For a measurable habit this is where a partial
+      // amount (3 out of 5) gets logged - the checkbox stays a quick "fill
+      // to target" shortcut. For everything else it's just how edit/delete
+      // are reached now that the list no longer has a "..." menu anywhere.
       const isMeasurable = type === "habit" && !!itemObject?.measurable;
 
       if (isMeasurable && dateKey && dateKey > Utils.formatDateKey(new Date())) {
@@ -504,46 +500,11 @@ export function initEventListeners(AppState) {
           applyHabitProgress(itemObject, dateKey, finalAmount),
         onEdit: () => {
           if (type === "task") UI.openEditTaskModal(itemObject, AppState);
-          else UI.openEditHabitModal(itemObject, AppState);
+          else if (type === "habit") UI.openEditHabitModal(itemObject, AppState);
+          else UI.openEditGoalModal(itemObject, AppState);
         },
         onDelete: () => deleteItemWithConfirm(type, id, itemObject?.name),
       });
-    }
-
-    const moreBtn = target.closest(".moreBtn");
-    if (moreBtn) {
-      e.stopPropagation();
-
-      const currentId = parseInt(li.dataset.id);
-      const currentType = li.dataset.type;
-
-      const itemName = li.querySelector(".taskNodeName")?.textContent || "Item";
-
-      if (typeof UI !== "undefined" && UI.renderDeleteWithFriction) {
-        UI.renderDeleteWithFriction(
-          moreBtn,
-          { id: currentId, type: currentType },
-          AppState,
-          async () => {
-            try {
-              // Usunięcie z bazy IndexedDB
-              await DataManager.deleteItemByType(currentType, currentId);
-              console.log(`[IndexedDB] Permanentnie usunięto: ${currentType} o ID: ${currentId}`);
-              
-              // DYNAMICZNY TOAST
-              const displayType = currentType.charAt(0).toUpperCase() + currentType.slice(1);
-              UI.showToast(`${displayType} "${itemName}" has been permanently deleted.`, "info");
-
-              // Odświeżenie widoku aplikacji
-              if (typeof refreshCurrentView === "function") {
-                await refreshCurrentView(AppState);
-              }
-            } catch (err) {
-              console.error("Błąd krytyczny podczas usuwania z IndexedDB:", err);
-            }
-          }
-        );
-      }
     }
 
     if (target.closest(".edit-inline-btn") && type === "goal") {

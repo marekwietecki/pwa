@@ -1192,121 +1192,6 @@ export const UI = {
   },
 
   /**
-   * Obsługuje dwustopniowy proces usuwania elementu (zabezpieczenie przytrzymania przycisku, animacja paska i usunięcie z DOM).
-   * @param {HTMLButtonElement} moreBtn - Przycisk opcji/usuwania.
-   * @param {Object} data - Struktura danych usuwanego zasobu.
-   * @param {Object} AppState - Globalny stan aplikacji.
-   * @param {Function} onConfirmDelete - Asynchroniczny callback wywoływany po pomyślnym zatwierdzeniu usunięcia.
-   */
-  renderDeleteWithFriction: function (
-    moreBtn,
-    data,
-    AppState,
-    onConfirmDelete
-  ) {
-    const isAlreadyTrash = moreBtn.classList.contains("deleteBtn");
-    const li = moreBtn.closest("li");
-    if (!li) return;
-
-    if (!isAlreadyTrash) {
-      moreBtn.classList.add("deleteBtn");
-      moreBtn.innerHTML = "";
-
-      moreBtn.insertAdjacentHTML(
-        "beforeend",
-        `
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-    `
-      );
-
-      moreBtn.insertAdjacentHTML(
-        "beforeend",
-        `<div class="delete-progress-line-track"><div class="delete-progress-bar-line"></div></div>`
-      );
-
-      let holdTimeout;
-      let isHoldingNow = false;
-
-      const resetToEllipsis = () => {
-        moreBtn.classList.remove("deleteBtn");
-        moreBtn.innerHTML = "";
-        moreBtn.appendChild(UI.createEllipsisIcon());
-      };
-
-      let revertTimeout = setTimeout(() => {
-        if (!isHoldingNow && moreBtn.classList.contains("deleteBtn")) {
-          cancelHold();
-          resetToEllipsis();
-        }
-      }, 4000);
-
-      const startHold = (e) => {
-        if (e.type === "mousedown" && e.button !== 0) return;
-        e.preventDefault();
-        e.stopPropagation();
-
-        isHoldingNow = true;
-        if (revertTimeout) {
-          clearTimeout(revertTimeout);
-          revertTimeout = null;
-        }
-
-        moreBtn.classList.add("is-holding");
-
-        holdTimeout = setTimeout(async () => {
-          moreBtn.classList.remove("is-holding");
-          isHoldingNow = false;
-
-          if (typeof navigator.vibrate === "function") navigator.vibrate(60);
-
-          if (
-            AppState &&
-            AppState.selectedHabitForStats && AppState.selectedHabitForStats.id === data.id &&
-            data.type === "habit"
-          ) {
-            AppState.selectedHabitForStats = null;
-          }
-
-          li.style.transition = "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)";
-          li.style.transform = "scale(0.8) translateY(-10px)";
-          li.style.opacity = "0";
-
-          if (typeof onConfirmDelete === "function") {
-            await onConfirmDelete();
-          }
-
-          setTimeout(() => {
-            li.remove();
-          }, 200);
-        }, 2000);
-      };
-
-      const cancelHold = (e) => {
-        isHoldingNow = false;
-        if (holdTimeout) {
-          clearTimeout(holdTimeout);
-          moreBtn.classList.remove("is-holding");
-        }
-
-        if (moreBtn.classList.contains("deleteBtn") && !revertTimeout) {
-          revertTimeout = setTimeout(() => {
-            if (!isHoldingNow && moreBtn.classList.contains("deleteBtn")) {
-              resetToEllipsis();
-            }
-          }, 3000);
-        }
-      };
-
-      moreBtn.addEventListener("mousedown", startHold);
-      moreBtn.addEventListener("mouseup", cancelHold);
-      moreBtn.addEventListener("mouseleave", cancelHold);
-      moreBtn.addEventListener("touchstart", startHold, { passive: false });
-      moreBtn.addEventListener("touchend", cancelHold);
-      moreBtn.addEventListener("touchcancel", cancelHold);
-    }
-  },
-
-  /**
    * Konstruuje pojedynczy element listy (li) reprezentujący zadanie, nawyk lub cel wraz z checkboxem i akcjami.
    * @returns {HTMLLIElement} Gotowy element listy struktury DOM.
    */
@@ -1324,12 +1209,10 @@ export const UI = {
       type === "task" || type === "goal"
         ? !!data.done
         : !!(data.history && data.history[dateKey]);
-    const isMeasurableHabit = type === "habit" && !!data.measurable;
-    const opensDetailModal = type === "task" || type === "habit";
 
-    li.className = `taskItem is-${type} ${isOverdue ? "overdue" : ""} ${
-      isDone ? "is-completed" : ""
-    } ${opensDetailModal ? "is-tappable" : ""}`;
+    li.className = `taskItem is-${type} ${
+      isOverdue ? "overdue" : ""
+    } ${isDone ? "is-completed" : ""} is-tappable`;
     li.dataset.id = data.id;
     li.dataset.type = type;
     if (dateKey) li.dataset.dateKey = dateKey;
@@ -1340,15 +1223,11 @@ export const UI = {
     const uniqueId = `${type}-${data.id}-${dateKey || "fixed"}`;
     const taskLabel = document.createElement("label");
     taskLabel.className = "taskLabel";
-    // Tasks and habits open the detail bubble on tap (see
+    // Every row type opens the detail bubble on tap (see
     // handleListAction's ".taskContent" branch) rather than toggling the
     // checkbox directly, so the row must NOT be wired to the checkbox via
     // the native label "for" - that would fire the checkbox's click
-    // handler for every row tap instead. Goals are untouched: their row
-    // still toggles the checkbox directly (behind its own confirm dialog).
-    if (!opensDetailModal) {
-      taskLabel.setAttribute("for", `check-${uniqueId}`);
-    }
+    // handler for every row tap instead.
 
     const icon =
       type === "habit"
@@ -1465,17 +1344,6 @@ export const UI = {
     checkboxWrap.appendChild(checkbox);
 
     taskActions.appendChild(checkboxWrap);
-
-    // Tasks and habits now delete from inside the detail bubble (row tap),
-    // so the list no longer needs its own "..." menu for them. Goals keep
-    // it - they still use the hold-to-confirm delete pattern in place.
-    if (type === "goal") {
-      const moreBtn = document.createElement("button");
-      moreBtn.className = "moreBtn";
-      moreBtn.setAttribute("aria-label", `More options for ${name}`);
-      moreBtn.appendChild(UI.createEllipsisIcon());
-      taskActions.appendChild(moreBtn);
-    }
 
     li.appendChild(taskContent);
     li.appendChild(taskActions);
@@ -2229,7 +2097,9 @@ export const UI = {
     const isMeasurable = type === "habit" && !!data.measurable;
     const todayKey = Utils.formatDateKey(new Date());
 
-    iconEl.textContent = data.icon || (type === "task" ? "📝" : "💧");
+    iconEl.textContent =
+      data.icon ||
+      (type === "task" ? "📝" : type === "goal" ? "🎯" : "💧");
     nameEl.textContent = data.name;
     dateEl.textContent = !dateKey
       ? ""

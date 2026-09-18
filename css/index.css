@@ -140,7 +140,7 @@ main {
 }
 
 .taskItem {
-  padding: 16px 16px 16px 24px;
+  padding: 16px 20px;
   margin: 12px auto 16px auto;
   list-style: none;
   -webkit-box-align: center;
@@ -392,98 +392,6 @@ main {
   background-color: var(--color-blue);
   border-color: var(--color-blue);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
-}
-
-.moreBtn {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  width: 28px !important; 
-  height: 28px !important;
-  border-radius: 50%;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-  outline: none;
-
-  border: none;
-  position: relative; 
-  -webkit-transition: background 0.2s ease, -webkit-transform 0.2s ease;
-  transition: background 0.2s ease, -webkit-transform 0.2s ease;
-  transition: background 0.2s ease, transform 0.2s ease;
-  transition: background 0.2s ease, transform 0.2s ease,
-    -webkit-transform 0.2s ease;
-}
-
-.moreBtn::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-}
-
-.moreBtn svg {
-  width: 14px !important;
-  height: 14px !important;
-  opacity: 0.6;
-  -webkit-transition: opacity 0.2s ease;
-  transition: opacity 0.2s ease;
-}
-
-.moreBtn.deleteBtn {
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-}
-
-.moreBtn.deleteBtn svg {
-  opacity: 1;
-  stroke: #ef4444; 
-}
-
-.delete-progress-line-track {
-  position: absolute;
-  top: -6px; /* Wyrzucenie paska 6 pikseli nad kciuk usera */
-  left: -2px;
-  right: -2px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 9999px;
-  overflow: hidden;
-  opacity: 0;
-  -webkit-transition: opacity 0.2s ease;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.delete-progress-bar-line {
-  height: 100%;
-  width: 0%;
-  background: #ef4444;
-  -webkit-box-shadow: 0 0 8px #ef4444;
-  box-shadow: 0 0 8px #ef4444;
-  border-radius: 9999px;
-  -webkit-transition: width 0.1s linear;
-  transition: width 0.1s linear;
-}
-
-.moreBtn.is-holding .delete-progress-line-track {
-  opacity: 1;
-}
-
-.moreBtn.is-holding .delete-progress-bar-line {
-  width: 100%;
-  -webkit-transition: width 3s linear;
-  transition: width 3s linear; 
-}
-
-.show-delete .moreBtn {
-  color: #ff4e4e;
-  background: transparent;
 }
 
 .deleteTaskBtn {
