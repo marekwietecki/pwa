@@ -2524,16 +2524,24 @@ export const UI = {
     });
 
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchCurrentX = 0;
     let isSwiping = false;
+    // null until the gesture has moved enough to tell intent apart; then
+    // "horizontal" (we drive the slide) or "vertical" (native scroll of
+    // a slide's own overflow-y content keeps the gesture, we stay out).
+    let swipeAxis = null;
     const SWIPE_THRESHOLD = 50;
+    const AXIS_LOCK_THRESHOLD = 10;
 
     track.addEventListener(
       "touchstart",
       (e) => {
         touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
         touchCurrentX = touchStartX;
         isSwiping = true;
+        swipeAxis = null;
         track.style.transition = "none";
       },
       { passive: true }
@@ -2543,16 +2551,46 @@ export const UI = {
       "touchmove",
       (e) => {
         if (!isSwiping) return;
-        touchCurrentX = e.touches[0].clientX;
-        const deltaX = touchCurrentX - touchStartX;
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const deltaX = currentX - touchStartX;
+        const deltaY = currentY - touchStartY;
 
+        if (!swipeAxis) {
+          // A slide taller than the modal (e.g. slide 2/3 with more text)
+          // makes ".guide-slide" a real overflow-y:auto scroll target. Real
+          // fingers rarely move on a perfect diagonal, so wait for a clear
+          // enough move before deciding whether this gesture is meant to
+          // page the carousel or scroll that slide's own content.
+          if (
+            Math.abs(deltaX) < AXIS_LOCK_THRESHOLD &&
+            Math.abs(deltaY) < AXIS_LOCK_THRESHOLD
+          ) {
+            return;
+          }
+          swipeAxis = Math.abs(deltaX) > Math.abs(deltaY) ? "horizontal" : "vertical";
+          if (swipeAxis === "vertical") {
+            // Hand the gesture to the browser's native vertical scroll -
+            // touch-action: pan-y on the track already permits this; we
+            // just stop tracking so touchend doesn't also snap the slide.
+            isSwiping = false;
+            return;
+          }
+        }
+
+        // Locked horizontal: this event's default action would be a native
+        // scroll attempt on the slide beneath the finger - block it so the
+        // page drag below isn't fighting the browser for the same gesture.
+        e.preventDefault();
+
+        touchCurrentX = currentX;
         const trackWidth = track.offsetWidth || 1;
         const deltaPercent = (deltaX / trackWidth) * 100;
         const basePercent = -currentSlide * 100;
 
         track.style.transform = `translateX(${basePercent + deltaPercent}%)`;
       },
-      { passive: true }
+      { passive: false }
     );
 
     const handleTouchEnd = (e) => {
