@@ -1471,40 +1471,54 @@ export const UI = {
   },
 
   /**
-   * Renderuje pasek jednego tygodnia (widok mobilny kalendarza) zawierający
-   * tydzień, w którym znajduje się AppState.date.
-   * @param {Object} AppState - Globalny stan aplikacji.
+   * Wypełnia pasek dni i etykiety dni tygodnia dla podanej liczby dni,
+   * bez żadnych pomiarów - czysta budowa DOM-u, wywoływana raz na próbę
+   * przez renderWeekStrip (patrz niżej), które dobiera daysToShow.
    */
-  renderWeekStrip: async (AppState) => {
+  _buildWeekStripDays: (AppState, daysToShow, allGoals, todayStr) => {
     const grid = document.getElementById("weekStrip");
     const labelsRow = document.getElementById("weekDayLabels");
-    if (!grid || !AppState) return;
 
-    grid.innerHTML = "";
-    const fragment = document.createDocumentFragment();
+    let startDate;
+    if (daysToShow === 7) {
+      const offset = Utils.getMondayFirstDay(AppState.date);
+      startDate = new Date(AppState.date);
+      startDate.setDate(startDate.getDate() - offset);
+    } else {
+      // Fewer than 7 don't map onto a fixed calendar week, so center the
+      // window on AppState.date instead of pinning it to a Monday start.
+      // This has to stay AppState.date (not selectedDate): the prev/next
+      // week arrows only advance AppState.date, so anchoring on
+      // selectedDate here would leave paging with no visible effect.
+      const daysBefore = Math.floor((daysToShow - 1) / 2);
+      startDate = new Date(AppState.date);
+      startDate.setDate(startDate.getDate() - daysBefore);
+    }
 
-    if (labelsRow && !labelsRow.childElementCount) {
+    if (labelsRow) {
+      labelsRow.innerHTML = "";
+      labelsRow.style.gridTemplateColumns = `repeat(${daysToShow}, 1fr)`;
       const labelsFragment = document.createDocumentFragment();
-      ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((d) => {
+      for (let i = 0; i < daysToShow; i++) {
+        const labelDate = new Date(startDate);
+        labelDate.setDate(labelDate.getDate() + i);
         const el = document.createElement("div");
-        el.textContent = d;
+        el.textContent = labelDate.toLocaleDateString("en-US", {
+          weekday: "short",
+        });
         el.className = "day-label";
         labelsFragment.appendChild(el);
-      });
+      }
       labelsRow.appendChild(labelsFragment);
     }
 
-    const anchor = AppState.date;
-    const offset = Utils.getMondayFirstDay(anchor);
-    const monday = new Date(anchor);
-    monday.setDate(monday.getDate() - offset);
+    grid.innerHTML = "";
+    grid.style.gridTemplateColumns = `repeat(${daysToShow}, 1fr)`;
+    const fragment = document.createDocumentFragment();
 
-    const allGoals = await DataManager.getGoals();
-    const todayStr = Utils.formatDateKey(new Date());
-
-    for (let i = 0; i < 7; i++) {
-      const currentLoopDate = new Date(monday);
-      currentLoopDate.setDate(monday.getDate() + i);
+    for (let i = 0; i < daysToShow; i++) {
+      const currentLoopDate = new Date(startDate);
+      currentLoopDate.setDate(startDate.getDate() + i);
       const dateKey = Utils.formatDateKey(currentLoopDate);
 
       const el = document.createElement("div");
@@ -1534,10 +1548,37 @@ export const UI = {
     }
 
     grid.appendChild(fragment);
+  },
+
+  /**
+   * Renderuje pasek dni (widok mobilny kalendarza), dobierając liczbę dni
+   * (7/5/4) tak, żeby pasek faktycznie mieścił się obok strzałek nawigacji.
+   * Zamiast zgadywać próg szerokości ekranu (zawodne - różne silniki/
+   * czcionki dają różne wyniki przy tej samej szerokości viewportu, co
+   * potwierdziło się już przy 390px), renderuje próbnie od 7 w dół i mierzy
+   * realne przepełnienie (#weekStrip.scrollWidth > clientWidth) po każdej
+   * próbie, zatrzymując się na pierwszej liczbie dni, która się mieści.
+   * @param {Object} AppState - Globalny stan aplikacji.
+   */
+  renderWeekStrip: async (AppState) => {
+    const grid = document.getElementById("weekStrip");
+    if (!grid || !AppState) return;
+
+    const allGoals = await DataManager.getGoals();
+    const todayStr = Utils.formatDateKey(new Date());
+
+    const candidateCounts = [7, 5, 4];
+    for (const count of candidateCounts) {
+      UI._buildWeekStripDays(AppState, count, allGoals, todayStr);
+      const fits = grid.scrollWidth <= grid.clientWidth + 1;
+      if (fits || count === candidateCounts[candidateCounts.length - 1]) {
+        break;
+      }
+    }
 
     const labelEl = document.getElementById("weekMonthYearLabel");
     if (labelEl) {
-      labelEl.textContent = anchor.toLocaleDateString("en-US", {
+      labelEl.textContent = AppState.date.toLocaleDateString("en-US", {
         month: "long",
         year: "numeric",
       });

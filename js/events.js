@@ -181,6 +181,18 @@ export function initEventListeners(AppState) {
     );
   })();
 
+  // Re-render the week strip after resizing (debounced) - e.g. rotating
+  // the phone - so it re-measures and adjusts how many days fit.
+  (() => {
+    const stripEl = document.getElementById("weekStrip");
+    if (!stripEl) return;
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => UI.renderWeekStrip(AppState), 200);
+    });
+  })();
+
   // Klikanie w konkretny dzień kalendarza (Delegacja zdarzeń)
   const handleDayClick = async (e, container) => {
     const dayEl = e.target.closest(".day");
