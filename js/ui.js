@@ -1556,12 +1556,15 @@ export const UI = {
    * Zamiast zgadywać próg szerokości ekranu (zawodne - różne silniki/
    * czcionki dają różne wyniki przy tej samej szerokości viewportu, co
    * potwierdziło się już przy 390px), renderuje próbnie od 7 w dół i mierzy
-   * realne przepełnienie (#weekStrip.scrollWidth > clientWidth) po każdej
-   * próbie, zatrzymując się na pierwszej liczbie dni, która się mieści.
+   * realne przepełnienie CAŁEGO wiersza (.week-strip-row, strzałki + siatka
+   * razem - nie tylko samej siatki, bo to strzałki są tym, z czym dni się
+   * kolidują) po każdej próbie, zatrzymując się na pierwszej liczbie dni,
+   * która się mieści.
    * @param {Object} AppState - Globalny stan aplikacji.
    */
   renderWeekStrip: async (AppState) => {
     const grid = document.getElementById("weekStrip");
+    const stripRow = document.querySelector(".week-strip-row");
     if (!grid || !AppState) return;
 
     const allGoals = await DataManager.getGoals();
@@ -1570,7 +1573,8 @@ export const UI = {
     const candidateCounts = [7, 5, 4];
     for (const count of candidateCounts) {
       UI._buildWeekStripDays(AppState, count, allGoals, todayStr);
-      const fits = grid.scrollWidth <= grid.clientWidth + 1;
+      const fits =
+        !stripRow || stripRow.scrollWidth <= stripRow.clientWidth + 1;
       if (fits || count === candidateCounts[candidateCounts.length - 1]) {
         break;
       }

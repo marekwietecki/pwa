@@ -376,6 +376,18 @@
   gap: 6px;
 }
 
+/* Matches the 34px day circles instead of the month view's larger 40px
+   arrows, freeing up width for the day-count measurement in
+   UI.renderWeekStrip to have a better shot at fitting a full 7 days. */
+.week-strip-row .monthArrow {
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+
 .week-strip {
   display: -ms-grid;
   display: grid;

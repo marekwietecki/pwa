@@ -889,7 +889,13 @@ h3 {
   max-height: calc(100dvh - 180px);
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch deliberately omitted: on iOS Safari
+     it can claim a touch gesture for this element's own momentum
+     scrolling even when there's nothing to scroll, fighting the track's
+     custom swipe handling. Modern iOS scrolls overflow:auto smoothly
+     without it, and touch-action: pan-y keeps this element's own gesture
+     resolution consistent with the track's. */
+  touch-action: pan-y;
   padding: 4px 0;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
