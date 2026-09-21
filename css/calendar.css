@@ -409,19 +409,21 @@
   font-size: 14px;
 }
 
-@media (max-width: 600px) {
-  .calendar-header,
-  .calendar-grid-wrapper {
-    display: none;
-  }
+/* The week strip is the one calendar view now, on every screen size -
+   the full month grid it used to swap for above 600px is retired in
+   its favor. UI.renderWeekStrip's own measure-and-retry logic already
+   handles narrow screens by shrinking to 5/4 days when 7 won't fit. */
+.calendar-header,
+.calendar-grid-wrapper {
+  display: none;
+}
 
-  .calendar {
-    width: 100%;
-    height: auto;
-    margin-bottom: 12px;
-  }
+.calendar {
+  width: 100%;
+  height: auto;
+  margin-bottom: 12px;
+}
 
-  .week-view {
-    display: block;
-  }
+.week-view {
+  display: block;
 }
