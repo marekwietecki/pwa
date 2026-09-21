@@ -251,7 +251,7 @@
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur-strong);
   -webkit-backdrop-filter: var(--glass-blur-strong);
-  padding: 8px 20px;
+  padding: 8px 18px 8px 20px;
   border-radius: 32px;
   border: 1px solid var(--glass-border-bright);
   -webkit-box-shadow: var(--shadow-float);

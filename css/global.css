@@ -265,13 +265,18 @@ body {
   background-color: var(--bg-base);
   background-image: radial-gradient(
       ellipse 90% 55% at 15% -5%,
-      rgba(135, 55, 179, 0.1) 0%,
+      rgba(135, 55, 179, 0.14) 0%,
       transparent 55%
     ),
     radial-gradient(
       ellipse 70% 45% at 92% 105%,
-      rgba(33, 150, 243, 0.06) 0%,
+      rgba(33, 150, 243, 0.08) 0%,
       transparent 50%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 50% 40%,
+      rgba(135, 55, 179, 0.05) 0%,
+      transparent 60%
     );
   color: white;
   display: -webkit-box;
@@ -283,6 +288,19 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+/* Faint film-grain layer so the dark gradient reads as a textured
+   surface instead of flat color banding - the same trick premium
+   dark-UI apps (Linear, Arc, Raycast) use over a gradient base. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .dynamic-card {
   max-width: 600px;
