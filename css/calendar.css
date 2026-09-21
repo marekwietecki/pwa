@@ -358,7 +358,9 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  padding: 0 46px;
+  /* Must track .week-strip-row .monthArrow's width (34px) + row gap (6px)
+     so labels line up with the day circles below them. */
+  padding: 0 40px;
   margin-bottom: 4px;
 }
 

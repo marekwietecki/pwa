@@ -247,6 +247,11 @@ main {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+  /* Matches .taskCheckboxWrap's own 12px padding, so the icon has the same
+     empty breathing room on the left that the checkbox has on the right -
+     without this the icon sits flush against the card's edge padding
+     while the checkbox floats visibly further in. */
+  padding-left: 12px;
 }
 
 .taskItem.is-tappable {
