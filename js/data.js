@@ -6,7 +6,7 @@ export const defaultStats = {
   currentXp: 0,
   level: 1,
   userName: "New Hero",
-  avatar: "👧🏼",
+  avatar: "",
 };
 
 export const Utils = {
