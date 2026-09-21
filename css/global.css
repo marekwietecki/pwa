@@ -1508,6 +1508,33 @@ body::after {
   white-space: nowrap;
 }
 
+.modal-sheet.avatar-picker-sheet {
+  max-width: 400px;
+  padding: 24px;
+  gap: 18px;
+}
+
+.avatar-picker-sheet .habit-progress-header-row {
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.avatar-picker-list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 12px;
+  padding: 6px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.avatar-picker-list::-webkit-scrollbar {
+  display: none;
+}
+
 @media (min-width: 900px) {
   .modal-overlay.open {
     padding: 40px;

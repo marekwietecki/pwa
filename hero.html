@@ -162,6 +162,14 @@
       <!-- User -->
       <div class="userStats">
         <div class="userWrapper">
+          <button
+            type="button"
+            id="userAvatarBtn"
+            class="user-avatar-btn"
+            aria-label="Edit avatar"
+          >
+            <span id="userAvatarEmoji">👧🏼</span>
+          </button>
           <div class="usernameWrapper">
             <h3 id="displayUserName"><span>User name</span></h3>
             <input type="text" id="userNameInput" style="display: none" />
@@ -858,6 +866,36 @@
             Save
           </button>
         </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="avatarPickerOverlay">
+      <div class="modal-sheet avatar-picker-sheet">
+        <div class="habit-progress-header-row">
+          <h3 class="habit-progress-name">Choose Avatar</h3>
+          <button
+            type="button"
+            id="avatarPickerCloseBtn"
+            class="habit-progress-icon-btn"
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="avatarPickerList" class="avatar-picker-list"></div>
       </div>
     </div>
 

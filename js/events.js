@@ -624,6 +624,10 @@ export function initEventListeners(AppState) {
     UI.updateSubmitButtonState(AppState);
   });
 
+  elements.userAvatarBtn?.addEventListener("click", () => {
+    UI.openAvatarPicker();
+  });
+
   // Edycja Nazwy Użytkownika Inline
   elements.editUserName?.addEventListener("click", async () => {
     const stats = await DataManager.getUserStats();

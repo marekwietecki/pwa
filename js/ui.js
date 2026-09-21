@@ -47,6 +47,16 @@ export const ONBOARDING_ICONS = [
   "🌟",
 ];
 
+export const AVATAR_ICONS = [
+  "👧🏼",
+  "🧒🏼",
+  "👦🏼",
+  "👩🏼",
+  "🧑🏻",
+  "👨🏼",
+  "👩🏼‍🦱",
+];
+
 export const UI = {
   selectedHabitIcon: "💧",
 
@@ -123,6 +133,8 @@ export const UI = {
     const stats = await DataManager.getUserStats();
     const nameLabel = document.getElementById("displayUserName");
     if (nameLabel) nameLabel.textContent = stats.userName;
+    const avatarLabel = document.getElementById("userAvatarEmoji");
+    if (avatarLabel) avatarLabel.textContent = stats.avatar || AVATAR_ICONS[0];
     await UI.updateXPBar(AppState);
   },
 
@@ -505,6 +517,49 @@ export const UI = {
 
     rowContainer.appendChild(customInput);
     wrapper.appendChild(rowContainer);
+  },
+
+  /**
+   * Otwiera bąbelkowy modal wyboru awatara (nad nazwą użytkownika na
+   * stronie Hero). Wybór ikony zapisuje się i zamyka modal od razu -
+   * bez osobnego przycisku Save, tak jak inne szybkie wybory w apce.
+   */
+  openAvatarPicker: async () => {
+    const overlay = document.getElementById("avatarPickerOverlay");
+    const listEl = document.getElementById("avatarPickerList");
+    const closeBtn = document.getElementById("avatarPickerCloseBtn");
+    if (!overlay || !listEl || !closeBtn) return;
+
+    const cleanup = () => {
+      overlay.classList.remove("open");
+      closeBtn.removeEventListener("click", onClose);
+      overlay.removeEventListener("click", onOverlayClick);
+    };
+    const onClose = () => cleanup();
+    const onOverlayClick = (e) => {
+      if (e.target === overlay) cleanup();
+    };
+
+    closeBtn.addEventListener("click", onClose);
+    overlay.addEventListener("click", onOverlayClick);
+
+    const stats = await DataManager.getUserStats();
+    const currentAvatar = stats.avatar || AVATAR_ICONS[0];
+
+    UI.createEmojiPicker({
+      container: listEl,
+      icons: AVATAR_ICONS,
+      activeIcon: currentAvatar,
+      itemFlex: "52px",
+      fontSize: "26px",
+      onSelect: async (emoji) => {
+        await DataManager.updateUserAvatar(emoji);
+        await UI.updateUserHeader();
+        cleanup();
+      },
+    });
+
+    overlay.classList.add("open");
   },
 
   /**

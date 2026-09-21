@@ -35,6 +35,7 @@ export function domElements() {
     "editUserName",
     "displayUserName",
     "userNameInput",
+    "userAvatarBtn",
     "messageToday",
     "messageFuture",
     "calendarMessageToday",

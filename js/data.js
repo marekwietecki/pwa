@@ -6,6 +6,7 @@ export const defaultStats = {
   currentXp: 0,
   level: 1,
   userName: "New Hero",
+  avatar: "👧🏼",
 };
 
 export const Utils = {
@@ -435,6 +436,12 @@ export const DataManager = {
   async updateUserName(newName) {
     const stats = await this.getUserStats();
     stats.userName = newName;
+    await this.saveUserStats(stats);
+  },
+
+  async updateUserAvatar(newAvatar) {
+    const stats = await this.getUserStats();
+    stats.avatar = newAvatar;
     await this.saveUserStats(stats);
   },
 };
