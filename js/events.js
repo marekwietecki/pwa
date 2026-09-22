@@ -654,6 +654,20 @@ export function initEventListeners(AppState) {
     UI.clearHabitNameGhost();
   });
 
+  elements.saveTaskTemplateBtn?.addEventListener("click", async () => {
+    const name = elements.taskName.value.trim();
+    if (!name) {
+      UI.showModalMessage("Type a name first.");
+      return;
+    }
+
+    const location = elements.locationInput?.value.trim() || "";
+    const saved = await DataManager.addTaskTemplate(name, location);
+
+    UI.showModalMessage(saved ? "Template saved!" : "Already saved.");
+    await UI.fillTaskTemplateDropdown();
+  });
+
   elements.goalDeadline?.addEventListener("input", () => {
     UI.updateSubmitButtonState(AppState);
   });

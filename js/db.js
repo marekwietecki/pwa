@@ -1,6 +1,6 @@
 export const DB = {
   dbName: "HabitBubblDB",
-  version: 7,
+  version: 8,
 
   open() {
     return new Promise((resolve, reject) => {
@@ -37,6 +37,10 @@ export const DB = {
 
         if (!db.objectStoreNames.contains("metadata")) {
           db.createObjectStore("metadata");
+        }
+
+        if (!db.objectStoreNames.contains("taskTemplates")) {
+          db.createObjectStore("taskTemplates", { keyPath: "id" });
         }
       };
 

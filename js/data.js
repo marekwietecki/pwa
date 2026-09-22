@@ -203,6 +203,30 @@ export const DataManager = {
     return await DB.put("tasks", newTask);
   },
 
+  async getTaskTemplates() {
+    return await DB.getAll("taskTemplates");
+  },
+
+  /**
+   * Saves the given name/location as a reusable task template, unless one
+   * with the same name (case-insensitive) already exists.
+   * @returns {boolean} whether a new template was actually created.
+   */
+  async addTaskTemplate(name, location) {
+    const templates = await this.getTaskTemplates();
+    const alreadySaved = templates.some(
+      (t) => t.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+    if (alreadySaved) return false;
+
+    await DB.put("taskTemplates", {
+      id: Date.now(),
+      name: name.trim(),
+      location: (location || "").trim(),
+    });
+    return true;
+  },
+
   async toggleTaskDone(taskId, isDone) {
     const task = await DB.get("tasks", taskId);
     if (!task) return false;

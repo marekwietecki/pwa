@@ -631,16 +631,23 @@ export const UI = {
     const hSection = document.getElementById("habitSection");
     const gSection = document.getElementById("goalSection");
     const lSection = document.getElementById("locationSection");
+    const tSection = elements.taskTemplateSection;
     const typePickers = document.querySelector(".typePickers");
     const dateTitle = document.querySelector("#dateSection .modalSubTitle");
     const nameSection = document.querySelector(".nameSection");
     const habitIcon = document.getElementById("habitIconWrapper");
 
-    [dSection, hSection, gSection, lSection, typePickers, habitIcon].forEach(
-      (el) => {
-        if (el) el.style.display = "none";
-      }
-    );
+    [
+      dSection,
+      hSection,
+      gSection,
+      lSection,
+      tSection,
+      typePickers,
+      habitIcon,
+    ].forEach((el) => {
+      if (el) el.style.display = "none";
+    });
 
     if (dateTitle) dateTitle.textContent = "Date";
     if (nameSection) nameSection.style.display = "flex";
@@ -648,6 +655,8 @@ export const UI = {
     if (type === "task") {
       if (dSection) dSection.style.display = "flex";
       if (lSection) lSection.style.display = "flex";
+      if (tSection) tSection.style.display = "flex";
+      await UI.fillTaskTemplateDropdown();
     }
 
     if (type === "habit") {
@@ -677,6 +686,67 @@ export const UI = {
     if (elements.daysPicker) elements.daysPicker.style.display = "none";
     if (elements.monthlyDayPicker)
       elements.monthlyDayPicker.style.display = "none";
+  },
+
+  /**
+   * Populates the "Use a saved template" dropdown in the task modal and
+   * shows/hides it depending on whether any templates exist yet - same
+   * trigger/list pattern as the habit switcher's dropdown.
+   */
+  fillTaskTemplateDropdown: async () => {
+    const trigger = elements.taskTemplateDropdownTrigger;
+    const listContainer = elements.taskTemplateDropdownList;
+    const dropdownContainer = trigger ? trigger.parentElement : null;
+    if (!trigger || !listContainer || !dropdownContainer) return;
+
+    const templates = await DataManager.getTaskTemplates();
+    listContainer.innerHTML = "";
+    dropdownContainer.classList.remove("open");
+    listContainer.style.maxHeight = "0px";
+
+    if (templates.length === 0) {
+      dropdownContainer.style.display = "none";
+      return;
+    }
+    dropdownContainer.style.display = "block";
+
+    const openDropdown = () => {
+      dropdownContainer.classList.add("open");
+      listContainer.style.maxHeight =
+        Math.min(listContainer.scrollHeight, 250) + "px";
+    };
+    const closeDropdown = () => {
+      dropdownContainer.classList.remove("open");
+      listContainer.style.maxHeight = "0px";
+    };
+
+    trigger.onclick = (e) => {
+      e.stopPropagation();
+      dropdownContainer.classList.contains("open")
+        ? closeDropdown()
+        : openDropdown();
+    };
+    document.addEventListener("click", closeDropdown);
+
+    const fragment = document.createDocumentFragment();
+    templates.forEach((template) => {
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
+      item.innerHTML = `<span class="habit-item-name">${template.name}</span>`;
+      item.onclick = (e) => {
+        e.stopPropagation();
+
+        elements.taskName.value = template.name;
+        elements.taskName.dispatchEvent(new Event("input", { bubbles: true }));
+
+        if (elements.locationInput)
+          elements.locationInput.value = template.location || "";
+
+        closeDropdown();
+      };
+      fragment.appendChild(item);
+    });
+    listContainer.appendChild(fragment);
   },
 
   /**
@@ -1754,6 +1824,25 @@ export const UI = {
     const habits = await DataManager.getHabits();
     listContainer.innerHTML = "";
 
+    // Nothing to pick yet - lock the list open and drop the toggle
+    // entirely, so the empty state is visible right away instead of
+    // sitting behind a tap that would only reveal "no habits" anyway.
+    if (habits.length === 0) {
+      trigger.onclick = null;
+      dropdownContainer.classList.add("open", "empty");
+      listContainer.innerHTML = `
+        <div class="emptyState">
+          <div class="emptyState-icon">🔥</div>
+          <p class="emptyState-title">No habits yet</p>
+          <p class="emptyState-subtitle">Add one to start your streak.</p>
+        </div>
+      `;
+      listContainer.style.maxHeight = listContainer.scrollHeight + "px";
+      return;
+    }
+
+    dropdownContainer.classList.remove("empty");
+
     const openDropdown = () => {
       dropdownContainer.classList.add("open");
       listContainer.style.maxHeight =
@@ -1775,17 +1864,6 @@ export const UI = {
     };
 
     document.addEventListener("click", closeDropdown);
-
-    if (habits.length === 0) {
-      listContainer.innerHTML = `
-        <div class="emptyState">
-          <div class="emptyState-icon">🔥</div>
-          <p class="emptyState-title">No habits yet</p>
-          <p class="emptyState-subtitle">Add one to start your streak.</p>
-        </div>
-      `;
-      return;
-    }
 
     const fragment = document.createDocumentFragment();
 
