@@ -2282,10 +2282,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .unit-picker-option:has(input:checked) {
   color: #fff;
-  background: var(--hero-gradient, var(--color-indigo));
-  border-color: transparent;
-  -webkit-box-shadow: var(--shadow-float);
-  box-shadow: var(--shadow-float);
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-bright);
+  -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 20px rgba(0, 0, 0, 0.1),
+    0 0 24px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.35), 0 6px 20px rgba(0, 0, 0, 0.1),
+    0 0 24px rgba(255, 255, 255, 0.1);
 }
 
 .modal-text-input {
