@@ -377,6 +377,21 @@ export const UI = {
     ghost.dataset.fullSuggestion = suggestion;
   },
 
+  /**
+   * Fills #taskName with the currently-showing ghost suggestion, if any.
+   * Shared by the Tab/ArrowRight keyboard path and the tap-to-accept path,
+   * so both trigger the exact same fill + downstream update. Returns
+   * whether a suggestion was actually accepted.
+   */
+  acceptHabitNameGhost: () => {
+    const suggestion = elements.taskNameGhost?.dataset.fullSuggestion;
+    if (!suggestion) return false;
+
+    elements.taskName.value = suggestion;
+    elements.taskName.dispatchEvent(new Event("input", { bubbles: true }));
+    return true;
+  },
+
   /** Clears the habit-name ghost suggestion, if one is showing. */
   clearHabitNameGhost: () => {
     const ghost = elements.taskNameGhost;

@@ -622,7 +622,9 @@ export function initEventListeners(AppState) {
   });
 
   // habit name inline autocomplete - greyed-out suggestion tail, accepted
-  // with Tab or ArrowRight-at-end, dismissed by any other keystroke or blur
+  // with Tab or ArrowRight-at-end (desktop keyboard), or a tap that lands
+  // at the end of the typed text (touch - see the click listener below),
+  // dismissed by any other keystroke, tap mid-word, or blur
   elements.taskName.addEventListener("input", () => {
     UI.updateHabitNameGhost(AppState);
   });
@@ -630,16 +632,22 @@ export function initEventListeners(AppState) {
   elements.taskName.addEventListener("keydown", (e) => {
     if (e.key !== "Tab" && e.key !== "ArrowRight") return;
 
-    const suggestion = elements.taskNameGhost?.dataset.fullSuggestion;
-    if (!suggestion) return;
-
     const input = elements.taskName;
     const atEnd = input.selectionStart === input.value.length;
     if (e.key === "ArrowRight" && !atEnd) return;
 
-    e.preventDefault();
-    input.value = suggestion;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
+    if (UI.acceptHabitNameGhost()) e.preventDefault();
+  });
+
+  // Touch has no Tab/ArrowRight, so a tap is the equivalent gesture - but
+  // only when it lands at the end of the typed text (which is where a tap
+  // anywhere past the real characters naturally puts the caret anyway,
+  // since there's nothing there for the browser to place it between).
+  // A tap earlier in the word - to fix a typo - passes straight through.
+  elements.taskName.addEventListener("click", () => {
+    const input = elements.taskName;
+    if (input.selectionStart !== input.value.length) return;
+    UI.acceptHabitNameGhost();
   });
 
   elements.taskName.addEventListener("blur", () => {
