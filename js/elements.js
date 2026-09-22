@@ -10,6 +10,7 @@ export function domElements() {
     "calendarTaskDateTitle",
     "modalOverlay",
     "taskName",
+    "taskNameGhost",
     "taskDate",
     "locationInput",
     "locationSection",

@@ -258,13 +258,17 @@
 
         <div class="nameSection">
           <label class="modalSubTitle" for="taskName">Name</label>
-          <input
-            type="text"
-            placeholder="Enter name"
-            id="taskName"
-            name="taskName"
-            enterkeyhint="done"
-          />
+          <div class="taskNameWrap">
+            <div id="taskNameGhost" class="taskNameGhost" aria-hidden="true"></div>
+            <input
+              type="text"
+              placeholder="Enter name"
+              id="taskName"
+              name="taskName"
+              enterkeyhint="done"
+              autocomplete="off"
+            />
+          </div>
         </div>
 
         <div id="habitSection" style="display: none">

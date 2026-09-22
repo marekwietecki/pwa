@@ -1655,17 +1655,10 @@ body::after {
   flex: 1;
 }
 
-#taskName {
-  padding: 10px 16px;
-  border-radius: 24px;
-  color: #fff;
-  font-weight: 600;
+.taskNameWrap {
+  position: relative;
   width: 184px;
-
-  white-space: nowrap; /* hidden text in one line*/
-  overflow: hidden;
-  text-overflow: ellipsis;
-
+  border-radius: 24px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1674,6 +1667,40 @@ body::after {
   box-shadow: var(--shadow-bubble);
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+}
+
+/* Sits behind #taskName and shows the greyed-out suggestion tail; the
+   input's own background is transparent so this peeks through past the
+   caret. Font metrics must stay identical to #taskName below or the
+   ghost text drifts out of alignment with what's actually typed. */
+.taskNameGhost {
+  position: absolute;
+  inset: 0;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#taskName {
+  position: relative;
+  padding: 10px 16px;
+  border-radius: 24px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  background: transparent;
+  border: none;
+
+  white-space: nowrap; /* hidden text in one line*/
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #taskName:focus {
   text-overflow: clip;

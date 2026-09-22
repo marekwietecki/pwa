@@ -2,6 +2,7 @@ import { Utils, DataManager, LevelManager } from "./data.js";
 import { QuoteService } from "./services.js";
 import { elements } from "./elements.js";
 import { Icons } from "./icons.js";
+import { getHabitSuggestion } from "./suggestions.js";
 
 // Tracks whether the browser is running its own native cross-document
 // View Transition for the current page load (see @view-transition in
@@ -345,6 +346,43 @@ export const UI = {
     document
       .querySelectorAll("#daysPicker input, #monthDaysGrid input")
       .forEach((cb) => (cb.checked = false));
+
+    UI.clearHabitNameGhost();
+  },
+
+  /**
+   * Updates the greyed-out inline suggestion behind #taskName while the
+   * user types a habit name - only active for the Habit type, since Tasks
+   * and Goals don't have a suggestion list.
+   */
+  updateHabitNameGhost: (AppState) => {
+    const ghost = elements.taskNameGhost;
+    const input = elements.taskName;
+    if (!ghost || !input) return;
+
+    if (AppState.currentCreateType !== "habit") {
+      UI.clearHabitNameGhost();
+      return;
+    }
+
+    const typed = input.value;
+    const suggestion = getHabitSuggestion(typed);
+
+    if (!suggestion || suggestion.toLowerCase() === typed.toLowerCase()) {
+      UI.clearHabitNameGhost();
+      return;
+    }
+
+    ghost.textContent = typed + suggestion.slice(typed.length);
+    ghost.dataset.fullSuggestion = suggestion;
+  },
+
+  /** Clears the habit-name ghost suggestion, if one is showing. */
+  clearHabitNameGhost: () => {
+    const ghost = elements.taskNameGhost;
+    if (!ghost) return;
+    ghost.textContent = "";
+    delete ghost.dataset.fullSuggestion;
   },
 
   /**

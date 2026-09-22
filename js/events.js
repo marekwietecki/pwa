@@ -284,6 +284,7 @@ export function initEventListeners(AppState) {
 
       UI.toggleModalFields(type);
       UI.updateSubmitButtonState(AppState);
+      UI.updateHabitNameGhost(AppState);
     });
   });
 
@@ -618,6 +619,31 @@ export function initEventListeners(AppState) {
 
   elements.taskName.addEventListener("input", () => {
     UI.updateSubmitButtonState(AppState);
+  });
+
+  // habit name inline autocomplete - greyed-out suggestion tail, accepted
+  // with Tab or ArrowRight-at-end, dismissed by any other keystroke or blur
+  elements.taskName.addEventListener("input", () => {
+    UI.updateHabitNameGhost(AppState);
+  });
+
+  elements.taskName.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab" && e.key !== "ArrowRight") return;
+
+    const suggestion = elements.taskNameGhost?.dataset.fullSuggestion;
+    if (!suggestion) return;
+
+    const input = elements.taskName;
+    const atEnd = input.selectionStart === input.value.length;
+    if (e.key === "ArrowRight" && !atEnd) return;
+
+    e.preventDefault();
+    input.value = suggestion;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+
+  elements.taskName.addEventListener("blur", () => {
+    UI.clearHabitNameGhost();
   });
 
   elements.goalDeadline?.addEventListener("input", () => {
