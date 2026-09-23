@@ -2312,20 +2312,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   gap: 8px;
 }
 
-/* Adds the icon+label layout on top of .habit-picker-toggle's look, so
-   the save-template button reads as the same kind of secondary action
-   as "Select habits to link" instead of a new visual style. */
-.save-template-btn {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  gap: 8px;
+/* The dropdown normally assumes it's the only thing on its row (100%
+   width, its own bottom margin) - here it shares the row with the
+   circular save button, so it needs to flex instead. */
+#taskTemplateSection .habit-dropdown-container {
+  width: auto;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
 }
 
 .habit-checkbox-list[hidden] {
@@ -2650,7 +2646,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: center;
 }
 #searchLocation,
-#useMyLocation {
+#useMyLocation,
+#saveTaskTemplateBtn {
   width: 40px;
   height: 40px;
   padding: 0;
@@ -2681,10 +2678,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
-#searchLocation:hover {
+#searchLocation:hover,
+#saveTaskTemplateBtn:hover {
   opacity: 72%;
 }
-#searchLocation:active {
+#searchLocation:active,
+#saveTaskTemplateBtn:active {
   -webkit-transform: scale(0.96);
   -ms-transform: scale(0.96);
   transform: scale(0.96);

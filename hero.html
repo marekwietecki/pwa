@@ -517,61 +517,63 @@
 
         <div id="taskTemplateSection" style="display: none">
           <label class="modalSubTitle">Templates</label>
-          <div
-            class="habit-dropdown-container"
-            id="taskTemplateDropdownContainer"
-            style="display: none"
-          >
+          <div class="locationContentWrapper">
             <div
-              class="habit-dropdown-trigger"
-              id="taskTemplateDropdownTrigger"
+              class="habit-dropdown-container"
+              id="taskTemplateDropdownContainer"
+              style="display: none"
             >
-              <div class="habit-dropdown-current">
-                <span class="habit-item-name">Use a saved template</span>
+              <div
+                class="habit-dropdown-trigger"
+                id="taskTemplateDropdownTrigger"
+              >
+                <div class="habit-dropdown-current">
+                  <span class="habit-item-name">Use a saved template</span>
+                </div>
+                <svg
+                  class="dropdown-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
               </div>
+              <div
+                class="habit-dropdown-list"
+                id="taskTemplateDropdownList"
+                tabindex="0"
+              ></div>
+            </div>
+            <button
+              type="button"
+              id="saveTaskTemplateBtn"
+              aria-label="Save as template"
+              title="Save as template"
+            >
               <svg
-                class="dropdown-chevron"
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2.5"
+                stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="m6 9 6 6 6-6" />
+                <path
+                  d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"
+                />
               </svg>
-            </div>
-            <div
-              class="habit-dropdown-list"
-              id="taskTemplateDropdownList"
-              tabindex="0"
-            ></div>
+            </button>
           </div>
-          <button
-            type="button"
-            id="saveTaskTemplateBtn"
-            class="habit-picker-toggle save-template-btn"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"
-              />
-            </svg>
-            Save as template
-          </button>
         </div>
 
         <div id="dateSection">
