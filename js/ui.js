@@ -348,6 +348,7 @@ export const UI = {
       .forEach((cb) => (cb.checked = false));
 
     UI.clearHabitNameGhost();
+    elements.saveTaskTemplateBtn?.classList.remove("saved");
   },
 
   /**
@@ -741,6 +742,11 @@ export const UI = {
 
         if (elements.locationInput)
           elements.locationInput.value = template.location || "";
+
+        // The dispatched "input" above clears the saved-glow (it fires
+        // on every name change, including this one) - re-add it after,
+        // since picking a template is itself a match.
+        elements.saveTaskTemplateBtn?.classList.add("saved");
 
         closeDropdown();
       };

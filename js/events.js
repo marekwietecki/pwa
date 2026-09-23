@@ -665,7 +665,14 @@ export function initEventListeners(AppState) {
     const saved = await DataManager.addTaskTemplate(name, location);
 
     UI.showModalMessage(saved ? "Template saved!" : "Already saved.");
+    elements.saveTaskTemplateBtn.classList.add("saved");
     await UI.fillTaskTemplateDropdown();
+  });
+
+  // The "saved" glow only means the CURRENT name matches a template -
+  // clear it the moment that name changes, before it can go stale.
+  elements.taskName.addEventListener("input", () => {
+    elements.saveTaskTemplateBtn?.classList.remove("saved");
   });
 
   elements.goalDeadline?.addEventListener("input", () => {

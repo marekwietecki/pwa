@@ -2693,6 +2693,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: transform 0.1s ease;
   transition: transform 0.1s ease, -webkit-transform 0.1s ease;
 }
+
+/* Confirms the current name is saved as a template - same bright
+   white-glass treatment as a selected day/unit chip elsewhere, plus a
+   solid-filled bookmark instead of just an outline. Cleared as soon as
+   the name changes, since it may no longer match what's saved. */
+#saveTaskTemplateBtn.saved {
+  background: var(--glass-bg-active);
+  border-color: var(--glass-border-bright);
+}
+#saveTaskTemplateBtn.saved svg {
+  fill: #fff;
+}
 /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #useMyLocation::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);
