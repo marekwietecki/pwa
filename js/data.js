@@ -227,6 +227,22 @@ export const DataManager = {
     return true;
   },
 
+  /**
+   * Removes the template matching the given name (case-insensitive), if
+   * one exists.
+   * @returns {boolean} whether a template was actually removed.
+   */
+  async deleteTaskTemplateByName(name) {
+    const templates = await this.getTaskTemplates();
+    const match = templates.find(
+      (t) => t.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+    if (!match) return false;
+
+    await DB.delete("taskTemplates", match.id);
+    return true;
+  },
+
   async toggleTaskDone(taskId, isDone) {
     const task = await DB.get("tasks", taskId);
     if (!task) return false;

@@ -661,6 +661,15 @@ export function initEventListeners(AppState) {
       return;
     }
 
+    // Already saved - clicking again unsaves it instead of re-saving.
+    if (elements.saveTaskTemplateBtn.classList.contains("saved")) {
+      await DataManager.deleteTaskTemplateByName(name);
+      UI.showModalMessage("Template removed.");
+      elements.saveTaskTemplateBtn.classList.remove("saved");
+      await UI.fillTaskTemplateDropdown();
+      return;
+    }
+
     const location = elements.locationInput?.value.trim() || "";
     const saved = await DataManager.addTaskTemplate(name, location);
 
