@@ -1607,6 +1607,7 @@ body::after {
   border: 1px solid var(--glass-border);
   -webkit-box-shadow: var(--shadow-bubble);
   box-shadow: var(--shadow-bubble);
+  opacity: 0.5;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
@@ -1626,8 +1627,8 @@ body::after {
 
 .typePicker.active {
   color: #fff;
-  text-decoration: underline;
   cursor: auto;
+  opacity: 1;
 }
 .typePicker.active:hover,
 .typePicker.active:active {
@@ -2270,6 +2271,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--color-accent, #00ffcc);
 }
 
+/* Also promoted from habits.css alongside the dropdown component above -
+   same reasoning, this class renders inside the shared modal too. */
+.habit-item-icon {
+  font-size: 18px;
+}
+.habit-item-name {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #ffffff;
+}
+.habit-item-name::first-letter {
+  text-transform: uppercase;
+}
+.dropdown-item.selected .habit-item-name {
+  color: var(--color-accent, #00ffcc);
+}
+
+/* The 1.5em above assumes the big page-level "Pick habit" bubble it was
+   designed for - inside the compact modal it needs to match the other
+   14px fields instead. */
+#taskTemplateSection .habit-item-name {
+  font-size: 14px;
+}
+
 .habit-picker-toggle {
   cursor: pointer;
   color: #ced2de;
@@ -2309,7 +2334,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  gap: 8px;
 }
 
 /* The dropdown normally assumes it's the only thing on its row (100%
@@ -2700,7 +2724,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    the name changes, since it may no longer match what's saved. */
 #saveTaskTemplateBtn.saved {
   background: var(--glass-bg-active);
-  border-color: var(--glass-border-bright);
+  border-color: #fff;
 }
 #saveTaskTemplateBtn.saved svg {
   fill: #fff;

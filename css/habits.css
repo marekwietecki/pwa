@@ -130,24 +130,6 @@
   -webkit-transform: translate3d(-50%, 0, 0) scale(1);
   transform: translate3d(-50%, 0, 0) scale(1);
 }
-.habit-item-icon {
-  font-size: 18px;
-}
-
-.habit-item-name {
-  font-size: 1.5em;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.habit-item-name::first-letter {
-  text-transform: uppercase;
-}
-
-.dropdown-item.selected .habit-item-name {
-  color: var(--color-accent, #00ffcc);
-}
-
 .habit-card-mini {
   display: -webkit-box;
   display: -ms-flexbox;
