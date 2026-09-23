@@ -2213,8 +2213,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   left: 0;
   width: 100%;
   background: rgba(22, 22, 22, 0.4);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 32px;
   -webkit-box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6),
@@ -2614,8 +2614,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 24px;
 
   min-width: 160px !important;
-  max-width: 224px !important;
   width: 100% !important;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
 
   white-space: nowrap;
   overflow: hidden;
@@ -2730,6 +2732,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   fill: #fff;
   opacity: 0.72;
 }
+
+/* No name typed yet - nothing to save, so the button is genuinely
+   disabled rather than just dimmed. .56 matches this app's existing
+   "muted, not the main thing" opacity (see the placeholder color used
+   on every text input in this modal). */
+#saveTaskTemplateBtn:disabled {
+  opacity: 0.56;
+  cursor: not-allowed;
+}
+
 /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #useMyLocation::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.56);

@@ -690,6 +690,16 @@ export const UI = {
   },
 
   /**
+   * Disables the save-template button while #taskName is empty - there's
+   * nothing to save, so it shouldn't be clickable at all, not just dimmed.
+   */
+  updateSaveTemplateBtnState: () => {
+    if (elements.saveTaskTemplateBtn) {
+      elements.saveTaskTemplateBtn.disabled = !elements.taskName.value.trim();
+    }
+  },
+
+  /**
    * Populates the "Use a saved template" dropdown in the task modal and
    * shows/hides it depending on whether any templates exist yet - same
    * trigger/list pattern as the habit switcher's dropdown.
@@ -699,6 +709,8 @@ export const UI = {
     const listContainer = elements.taskTemplateDropdownList;
     const dropdownContainer = trigger ? trigger.parentElement : null;
     if (!trigger || !listContainer || !dropdownContainer) return;
+
+    UI.updateSaveTemplateBtnState();
 
     const templates = await DataManager.getTaskTemplates();
     listContainer.innerHTML = "";
@@ -856,6 +868,7 @@ export const UI = {
     await UI.toggleModalFields("task", true);
 
     document.getElementById("taskName").value = task.name || "";
+    UI.updateSaveTemplateBtnState();
 
     const dateInput = document.getElementById("taskDate");
     if (dateInput) dateInput.value = task.date || "";

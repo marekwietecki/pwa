@@ -682,6 +682,7 @@ export function initEventListeners(AppState) {
   // clear it the moment that name changes, before it can go stale.
   elements.taskName.addEventListener("input", () => {
     elements.saveTaskTemplateBtn?.classList.remove("saved");
+    UI.updateSaveTemplateBtnState();
   });
 
   elements.goalDeadline?.addEventListener("input", () => {
