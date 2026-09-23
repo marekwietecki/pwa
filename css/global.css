@@ -2704,6 +2704,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 #saveTaskTemplateBtn.saved svg {
   fill: #fff;
+  opacity: 0.72;
 }
 /* Firefox domyślnie zmniejsza opacity nie wiadomo czemu */
 #useMyLocation::-webkit-input-placeholder {
