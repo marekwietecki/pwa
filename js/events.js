@@ -665,7 +665,7 @@ export function initEventListeners(AppState) {
     if (elements.saveTaskTemplateBtn.classList.contains("saved")) {
       await DataManager.deleteTaskTemplateByName(name);
       UI.showModalMessage("Template removed.");
-      elements.saveTaskTemplateBtn.classList.remove("saved");
+      UI.setTemplateSaved(false);
       await UI.fillTaskTemplateDropdown();
       return;
     }
@@ -674,15 +674,14 @@ export function initEventListeners(AppState) {
     const saved = await DataManager.addTaskTemplate(name, location);
 
     UI.showModalMessage(saved ? "Template saved!" : "Already saved.");
-    elements.saveTaskTemplateBtn.classList.add("saved");
+    UI.setTemplateSaved(true);
     await UI.fillTaskTemplateDropdown();
   });
 
   // The "saved" glow only means the CURRENT name matches a template -
   // clear it the moment that name changes, before it can go stale.
   elements.taskName.addEventListener("input", () => {
-    elements.saveTaskTemplateBtn?.classList.remove("saved");
-    UI.updateSaveTemplateBtnState();
+    UI.setTemplateSaved(false);
   });
 
   elements.goalDeadline?.addEventListener("input", () => {

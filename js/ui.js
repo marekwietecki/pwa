@@ -9,6 +9,11 @@ import { getHabitSuggestion } from "./suggestions.js";
 // global.css), so initTabNav can skip its own pop-in entrance animation
 // and avoid animating the nav indicator twice.
 let navIndicatorViewTransitionActive = false;
+
+// The template dropdown is rebuilt on every modal open/save/unsave; keep a
+// handle on its outside-click listener so a rebuild replaces it instead of
+// stacking another one on document.
+let templateOutsideClickHandler = null;
 window.addEventListener(
   "pagereveal",
   (e) => {
@@ -348,7 +353,7 @@ export const UI = {
       .forEach((cb) => (cb.checked = false));
 
     UI.clearHabitNameGhost();
-    elements.saveTaskTemplateBtn?.classList.remove("saved");
+    UI.setTemplateSaved(false);
   },
 
   /**
@@ -690,13 +695,33 @@ export const UI = {
   },
 
   /**
-   * Disables the save-template button while #taskName is empty - there's
-   * nothing to save, so it shouldn't be clickable at all, not just dimmed.
+   * Syncs the save-template button with the current name: disabled while
+   * #taskName is empty (nothing to save), and labelled for what a click
+   * will actually do - the icon-only button has no visible text, so the
+   * label/aria-pressed carry that for screen readers and the tooltip.
    */
   updateSaveTemplateBtnState: () => {
-    if (elements.saveTaskTemplateBtn) {
-      elements.saveTaskTemplateBtn.disabled = !elements.taskName.value.trim();
-    }
+    const btn = elements.saveTaskTemplateBtn;
+    if (!btn) return;
+
+    const hasName = !!elements.taskName.value.trim();
+    const isSaved = btn.classList.contains("saved");
+    const label = !hasName
+      ? "Type a name to save it as a template"
+      : isSaved
+      ? "Remove from templates"
+      : "Save as template";
+
+    btn.disabled = !hasName;
+    btn.setAttribute("aria-pressed", String(isSaved));
+    btn.setAttribute("aria-label", label);
+    btn.title = label;
+  },
+
+  /** Marks the current name as saved/unsaved as a template, then re-syncs. */
+  setTemplateSaved: (isSaved) => {
+    elements.saveTaskTemplateBtn?.classList.toggle("saved", isSaved);
+    UI.updateSaveTemplateBtnState();
   },
 
   /**
@@ -723,45 +748,115 @@ export const UI = {
     }
     dropdownContainer.style.display = "block";
 
+    // Trigger is a plain div (shared with the habit switcher's markup), so
+    // it needs its button semantics and tab stop spelled out here.
+    trigger.setAttribute("role", "button");
+    trigger.setAttribute("tabindex", "0");
+    trigger.setAttribute("aria-haspopup", "listbox");
+    listContainer.setAttribute("role", "listbox");
+    listContainer.setAttribute("aria-label", "Saved templates");
+
+    const isOpen = () => dropdownContainer.classList.contains("open");
     const openDropdown = () => {
       dropdownContainer.classList.add("open");
+      listContainer.inert = false;
+      trigger.setAttribute("aria-expanded", "true");
       listContainer.style.maxHeight =
         Math.min(listContainer.scrollHeight, 250) + "px";
     };
     const closeDropdown = () => {
       dropdownContainer.classList.remove("open");
+      listContainer.inert = true;
+      trigger.setAttribute("aria-expanded", "false");
       listContainer.style.maxHeight = "0px";
+    };
+    closeDropdown();
+
+    const items = [];
+    const focusItem = (index) => {
+      const next = (index + items.length) % items.length;
+      items[next].focus();
     };
 
     trigger.onclick = (e) => {
       e.stopPropagation();
-      dropdownContainer.classList.contains("open")
-        ? closeDropdown()
-        : openDropdown();
+      isOpen() ? closeDropdown() : openDropdown();
     };
-    document.addEventListener("click", closeDropdown);
+    trigger.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        isOpen() ? closeDropdown() : openDropdown();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (!isOpen()) openDropdown();
+        focusItem(0);
+      } else if (e.key === "Escape" && isOpen()) {
+        e.stopPropagation();
+        closeDropdown();
+      }
+    };
+    // Tabbing out of the control should not leave the list hanging open.
+    dropdownContainer.onfocusout = (e) => {
+      if (!dropdownContainer.contains(e.relatedTarget)) closeDropdown();
+    };
+
+    if (templateOutsideClickHandler) {
+      document.removeEventListener("click", templateOutsideClickHandler);
+    }
+    templateOutsideClickHandler = closeDropdown;
+    document.addEventListener("click", templateOutsideClickHandler);
+
+    const selectTemplate = (template) => {
+      elements.taskName.value = template.name;
+      elements.taskName.dispatchEvent(new Event("input", { bubbles: true }));
+
+      if (elements.locationInput)
+        elements.locationInput.value = template.location || "";
+
+      // The dispatched "input" above clears the saved state (it fires on
+      // every name change, including this one) - set it after, since
+      // picking a template is itself a match.
+      UI.setTemplateSaved(true);
+
+      closeDropdown();
+      trigger.focus();
+    };
 
     const fragment = document.createDocumentFragment();
-    templates.forEach((template) => {
+    templates.forEach((template, index) => {
       const item = document.createElement("div");
       item.className = "dropdown-item";
-      item.innerHTML = `<span class="habit-item-name">${template.name}</span>`;
+      item.setAttribute("role", "option");
+      item.setAttribute("tabindex", "-1");
+
+      // textContent, not innerHTML: template names are free user text.
+      const label = document.createElement("span");
+      label.className = "habit-item-name";
+      label.textContent = template.name;
+      item.appendChild(label);
+
       item.onclick = (e) => {
         e.stopPropagation();
-
-        elements.taskName.value = template.name;
-        elements.taskName.dispatchEvent(new Event("input", { bubbles: true }));
-
-        if (elements.locationInput)
-          elements.locationInput.value = template.location || "";
-
-        // The dispatched "input" above clears the saved-glow (it fires
-        // on every name change, including this one) - re-add it after,
-        // since picking a template is itself a match.
-        elements.saveTaskTemplateBtn?.classList.add("saved");
-
-        closeDropdown();
+        selectTemplate(template);
       };
+      item.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectTemplate(template);
+        } else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          focusItem(index + 1);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          focusItem(index - 1);
+        } else if (e.key === "Escape") {
+          e.stopPropagation();
+          closeDropdown();
+          trigger.focus();
+        }
+      };
+
+      items.push(item);
       fragment.appendChild(item);
     });
     listContainer.appendChild(fragment);

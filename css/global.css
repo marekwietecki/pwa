@@ -2305,6 +2305,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    14px fields instead. */
 #taskTemplateSection .habit-item-name {
   font-size: 14px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .habit-picker-toggle {
